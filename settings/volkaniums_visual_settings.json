@@ -2,7 +2,7 @@
   "orbiter:debug_line_single_buffer": false,
   "orbiter:enable_wide_lines": true,
   "orbiter:global_camera_count": 3,
-  "orbiter:line_width": 1.0,
+  "orbiter:line_width": 4.0,
   "orbiter:present_mode": "Mailbox",
   "orbiter:render_center_point": true,
   "orbiter:title_fps": true,

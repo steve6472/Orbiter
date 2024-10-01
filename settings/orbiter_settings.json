@@ -1,3 +1,4 @@
 {
-  "orbiter:fov": 90.0
+  "orbiter:fov": 90.0,
+  "orbiter:sensitivity": 0.3
 }

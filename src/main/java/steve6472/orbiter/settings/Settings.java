@@ -14,4 +14,5 @@ public class Settings extends SettingRegister
     static { REGISTRY = Registries.SETTINGS; }
 
     public static final FloatSetting FOV = registerFloat("fov",90);
+    public static final FloatSetting SENSITIVITY = registerFloat("sensitivity",0.3f);
 }
