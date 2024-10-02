@@ -24,7 +24,7 @@ public class PCPlayer implements Player
     public static final float HEIGHT = 1.8f;
     public static final float EYE_HEIGHT = 1.6f;
     public static final float STEP_HEIGHT = 0.6f;
-    public static final float JUMP_COOLDOWN = 0.05f;
+    public static final int JUMP_COOLDOWN = 4;
 
     public final PhysicsCharacter character = new PhysicsCharacter(new CapsuleCollisionShape(RADIUS, HEIGHT / 2f), STEP_HEIGHT);
     private float jumpCooldown = 0;
@@ -63,7 +63,7 @@ public class PCPlayer implements Player
         double x = 0;
         double z = 0;
 
-        jumpCooldown = Math.max(jumpCooldown - frameTime, 0);
+        jumpCooldown = Math.max(--jumpCooldown, 0);
 
         if (Keybinds.FORWARD.isActive())
         {

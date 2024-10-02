@@ -19,9 +19,16 @@ public class Keybinds
     public static final Keybind RIGHT = registerRepeat("right", GLFW.GLFW_KEY_D);
     public static final Keybind JUMP = registerRepeat("jump", GLFW.GLFW_KEY_SPACE);
 
+    public static final Keybind TEST = registerOnce("test", GLFW.GLFW_KEY_G);
+
     private static Keybind registerRepeat(String id, int key)
     {
         return register(new Keybind(Key.defaultNamespace(id), KeybindType.REPEAT, key));
+    }
+
+    private static Keybind registerOnce(String id, int key)
+    {
+        return register(new Keybind(Key.defaultNamespace(id), KeybindType.ONCE, key));
     }
 
     private static Keybind register(Keybind keybind)

@@ -1,12 +1,10 @@
 package steve6472.orbiter;
 
-import org.joml.Vector3f;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
 import steve6472.orbiter.player.VRPlayer;
 import steve6472.volkaniums.Camera;
 import steve6472.volkaniums.input.UserInput;
-import steve6472.volkaniums.render.debug.DebugRender;
 import steve6472.volkaniums.vr.VrData;
 import steve6472.volkaniums.vr.VrInput;
 
@@ -36,8 +34,7 @@ public class Client
         return player;
     }
 
-    public void tickClient(float frameTime)
+    public void tickClient()
     {
-        DebugRender.addDebugObjectForFrame(DebugRender.lineCube(new Vector3f(player.getFeetPos()).sub(0.4f, 0, 0.4f), new Vector3f(player.getFeetPos()).add(0.4f, 1.8f, 0.4f), DebugRender.WHITE));
     }
 }

@@ -30,6 +30,11 @@
             <artifactId>Libbulletjme</artifactId>
             <version>21.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.code-disaster.steamworks4j</groupId>
+            <artifactId>steamworks4j</artifactId>
+            <version>1.9.0</version>
+        </dependency>
     </dependencies>
 
 </project>

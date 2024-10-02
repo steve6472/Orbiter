@@ -1,5 +1,10 @@
 package steve6472.orbiter;
 
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
+import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.math.Transform;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.function.Function;
@@ -30,6 +35,25 @@ public class Convert
     public static Vector3f physGetToJoml(Function<com.jme3.math.Vector3f, com.jme3.math.Vector3f> getter)
     {
         return physGetToJoml(getter, new Vector3f());
+    }
+
+    public static Matrix4f physToJoml(com.jme3.math.Matrix4f mat, Matrix4f store)
+    {
+        store.set(
+            mat.m00, mat.m10, mat.m20, mat.m30,   // First row
+            mat.m01, mat.m11, mat.m21, mat.m31,   // Second row
+            mat.m02, mat.m12, mat.m22, mat.m32,   // Third row
+            mat.m03, mat.m13, mat.m23, mat.m33    // Fourth row
+        );
+
+        return store;
+    }
+
+    public static Matrix4f physGetTransformToJoml(PhysicsRigidBody body, Matrix4f store)
+    {
+        Transform transform = new Transform();
+        body.getTransform(transform);
+        return physToJoml(transform.toTransformMatrix(), store);
     }
 
     /*

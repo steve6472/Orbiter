@@ -1,5 +1,6 @@
 package steve6472.orbiter.settings;
 
+import steve6472.core.setting.BoolSetting;
 import steve6472.core.setting.FloatSetting;
 import steve6472.core.setting.SettingRegister;
 import steve6472.orbiter.Registries;
