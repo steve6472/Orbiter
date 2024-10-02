@@ -4,15 +4,11 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.util.NativeLibrary;
 import com.jme3.system.NativeLibraryLoader;
-import org.joml.Vector2i;
-import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.setting.SettingsLoader;
 import steve6472.orbiter.player.PCPlayer;
-import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.world.World;
-import steve6472.test.TestRegistries;
 import steve6472.volkaniums.core.FrameInfo;
 import steve6472.volkaniums.core.VolkaniumsApp;
 import steve6472.volkaniums.input.KeybindUpdater;
@@ -74,14 +70,6 @@ public class OrbiterApp extends VolkaniumsApp
         client.handleInput(input(), vrInput(), frameInfo.frameTime());
         world.tick(frameInfo.frameTime());
         client.tickClient(frameInfo.frameTime());
-
-//        frameInfo.camera().setViewTarget(new Vector3f(1f, 1.5f, -1), new Vector3f(0, 0.5f, 0));
-//        Vector2i mousePos = input().getMousePositionRelativeToTopLeftOfTheWindow();
-//        if (window().isFocused())
-//        {
-//            frameInfo.camera().center.set(0, 0, 0);
-//            frameInfo.camera().headOrbit(mousePos.x, mousePos.y, 0.4f, 8.5f);
-//        }
     }
 
     @Override

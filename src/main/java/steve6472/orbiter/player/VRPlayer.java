@@ -31,6 +31,12 @@ public class VRPlayer implements Player
     }
 
     @Override
+    public Vector3f getEyePos()
+    {
+        return null;
+    }
+
+    @Override
     public void handleInput(UserInput userInput, VrInput vrInput, Camera camera, float frameTime)
     {
 

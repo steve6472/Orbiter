@@ -10,8 +10,6 @@ import steve6472.volkaniums.Camera;
 import steve6472.volkaniums.input.UserInput;
 import steve6472.volkaniums.vr.VrInput;
 
-import java.awt.*;
-
 import static steve6472.orbiter.Convert.jomlToPhys;
 import static steve6472.orbiter.Convert.physGetToJoml;
 
@@ -47,6 +45,12 @@ public class PCPlayer implements Player
     public Vector3f getFeetPos()
     {
         return physGetToJoml(character::getPhysicsLocation).sub(0, HEIGHT / 2f, 0);
+    }
+
+    @Override
+    public Vector3f getEyePos()
+    {
+        return getFeetPos().add(0, EYE_HEIGHT, 0);
     }
 
     @Override
@@ -92,9 +96,8 @@ public class PCPlayer implements Player
         }
 
         Vector2i mousePos = userInput.getMousePositionRelativeToTopLeftOfTheWindow();
-        Vector3f feetPos = getFeetPos();
-        // TODO: make getEyePos();
-        camera.viewPosition.set(feetPos.x, feetPos.y + EYE_HEIGHT, feetPos.z);
+        Vector3f eyePos = getEyePos();
+        camera.viewPosition.set(eyePos.x, eyePos.y, eyePos.z);
         camera.head(mousePos.x, mousePos.y, Settings.SENSITIVITY.get());
         camera.updateViewMatrix();
 
