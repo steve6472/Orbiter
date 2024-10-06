@@ -41,6 +41,9 @@ public class StaticWorldRender extends StaticModelRenderImpl
     {
         var physicsModels = world.ecs().findEntitiesWith(IndexModel.class, UUID.class);
         List<Results.With2<IndexModel, UUID>> list = new ArrayList<>(physicsModels.stream().toList());
+        if (list.isEmpty())
+            return;
+
         sboTransfromArray.sort(list, obj -> sboTransfromArray.addArea(obj.comp1().model()).index());
 
         var lastArea = sboTransfromArray.getAreaByIndex(0);

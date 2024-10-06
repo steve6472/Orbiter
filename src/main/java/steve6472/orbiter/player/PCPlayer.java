@@ -44,13 +44,19 @@ public class PCPlayer implements Player
     @Override
     public Vector3f getFeetPos()
     {
-        return physGetToJoml(character::getPhysicsLocation).sub(0, HEIGHT / 2f, 0);
+        return getCenterPos().sub(0, HEIGHT / 2f, 0);
     }
 
     @Override
     public Vector3f getEyePos()
     {
         return getFeetPos().add(0, EYE_HEIGHT, 0);
+    }
+
+    @Override
+    public Vector3f getCenterPos()
+    {
+        return physGetToJoml(character::getPhysicsLocation);
     }
 
     @Override

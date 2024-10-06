@@ -7,6 +7,8 @@ import com.jme3.system.NativeLibraryLoader;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.setting.SettingsLoader;
+import steve6472.orbiter.commands.Commands;
+import steve6472.orbiter.debug.Console;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.settings.Settings;
@@ -35,6 +37,7 @@ public class OrbiterApp extends VolkaniumsApp
     private SteamMain network;
     private Client client;
     private World world;
+    private Commands commands;
 
     @Override
     protected void preInit()
@@ -44,7 +47,7 @@ public class OrbiterApp extends VolkaniumsApp
         NativeLibraryLoader.logger.setLevel(Level.WARNING);
         NativeLibraryLoader.loadLibbulletjme(true, new File("dep"), "Debug", "Sp");
         NativeLibrary.setStartupMessageEnabled(false);
-        network = new SteamMain();
+        network = new SteamMain(this);
         if (ENABLE_STEAM)
             network.setup();
         network.listFriends();
@@ -86,6 +89,9 @@ public class OrbiterApp extends VolkaniumsApp
 
         if (!VrData.VR_ON)
             world.physics().add(((PCPlayer) client.player()).character);
+
+        commands = new Commands();
+        Console.openConsole(commands, client, world);
     }
 
     private float timeToNextTick = 0;
@@ -96,6 +102,7 @@ public class OrbiterApp extends VolkaniumsApp
         frameInfo.camera().setPerspectiveProjection(Settings.FOV.get(), aspectRatio(), 0.1f, 1024f);
 
         client.handleInput(input(), vrInput(), frameInfo.frameTime());
+
         timeToNextTick -= frameInfo.frameTime();
         if (timeToNextTick <= 0)
         {
@@ -115,6 +122,16 @@ public class OrbiterApp extends VolkaniumsApp
 
     }
 
+    public World getWorld()
+    {
+        return world;
+    }
+
+    public Client getClient()
+    {
+        return client;
+    }
+
     @Override
     public void saveSettings()
     {
@@ -124,6 +141,7 @@ public class OrbiterApp extends VolkaniumsApp
     @Override
     public void cleanup()
     {
+        Console.closeConsole();
         network.shutdown();
     }
 

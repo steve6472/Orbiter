@@ -9,5 +9,5 @@ public final class Tag
 {
     public static final Object PHYSICS = new Physics();
 
-    private static final class Physics {}
+    public static final class Physics {private Physics() {}}
 }

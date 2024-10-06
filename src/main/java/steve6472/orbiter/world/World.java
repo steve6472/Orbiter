@@ -1,5 +1,6 @@
 package steve6472.orbiter.world;
 
+import com.codedisaster.steamworks.SteamID;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
@@ -35,7 +36,7 @@ import static steve6472.volkaniums.render.debug.DebugRender.*;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class World
+public class World implements EntityControl
 {
     PhysicsSpace physics;
     Dominion ecs;
@@ -51,10 +52,6 @@ public class World
 
     public void init()
     {
-        PhysicsRigidBody body = new PhysicsRigidBody(new CapsuleCollisionShape(PCPlayer.RADIUS, PCPlayer.HEIGHT / 2f));
-        body.setAngularFactor(Convert.jomlToPhys(new Vector3f(0, 1, 0)));
-        addPhysicsEntity(body, VolkaniumsRegistries.STATIC_MODEL.get(Key.defaultNamespace("blockbench/static/player_capsule")));
-
         addPlane(new Vector3f(0, 1, 0), -1);
         initSystems();
     }
@@ -68,33 +65,22 @@ public class World
         systems.registerSystem(new UpdatePhysicsPositions(), "Update Physics Positions", "Updates Physics Positions with data from last tick ECS Systems");
     }
 
+    @Override
     public PhysicsSpace physics()
     {
         return physics;
     }
 
+    @Override
     public Dominion ecs()
     {
         return ecs;
     }
 
-    public Entity addPhysicsEntity(PhysicsRigidBody body, Model model, Object... extraComponents)
+    @Override
+    public Map<UUID, PhysicsRigidBody> bodyMap()
     {
-        ArrayList<Object> objects = new ArrayList<>();
-        objects.add(new IndexModel(model));
-        UUID uuid = UUID.randomUUID();
-        objects.add(uuid);
-
-        objects.add(Tag.PHYSICS);
-        objects.add(new Position());
-
-        Collections.addAll(objects, extraComponents);
-        Entity entity = ecs.createEntity(objects.toArray());
-        body.setUserObject(uuid);
-        physics.add(body);
-        bodyMap.put(uuid, body);
-
-        return entity;
+        return bodyMap;
     }
 
     public void tick()

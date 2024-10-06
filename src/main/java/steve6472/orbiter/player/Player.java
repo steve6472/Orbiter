@@ -24,6 +24,7 @@ public interface Player
      */
     Vector3f getFeetPos();
     Vector3f getEyePos();
+    Vector3f getCenterPos();
 
     void handleInput(UserInput userInput, VrInput vrInput, Camera camera, float frameTime);
 }
