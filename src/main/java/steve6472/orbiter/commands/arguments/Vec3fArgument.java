@@ -13,6 +13,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Created by steve6472
+ * Date: 10/5/2024
+ * Project: Orbiter <br>
+ */
 public class Vec3fArgument implements ArgumentType<Vector3f>
 {
 	private static Collection<String> EXAMPLES = List.of("0 0 0", "32 32 32");

@@ -15,7 +15,7 @@ public class TpCommand extends Command
 
 	public void register(CommandDispatcher<CommandSource> dispatcher)
 	{
-		dispatcher.register(literal("teleport").then(argument("location", Vec3fArgument.vec3()).executes(c ->
+		dispatcher.register(literal("tp").then(argument("location", Vec3fArgument.vec3()).executes(c ->
 		{
 			Vector3f location = Vec3fArgument.getCoords(c, "location");
 			c.getSource().getPlayer().teleport(location);

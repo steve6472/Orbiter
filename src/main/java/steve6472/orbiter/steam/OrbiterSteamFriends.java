@@ -5,7 +5,10 @@ import com.codedisaster.steamworks.SteamFriendsCallback;
 import com.codedisaster.steamworks.SteamID;
 import com.codedisaster.steamworks.SteamResult;
 import steve6472.core.log.Log;
+import steve6472.orbiter.debug.Console;
+import steve6472.orbiter.steam.lobby.Lobby;
 
+import java.awt.*;
 import java.util.logging.Logger;
 
 /**
@@ -16,6 +19,12 @@ import java.util.logging.Logger;
 public class OrbiterSteamFriends implements SteamFriendsCallback
 {
     private static final Logger LOGGER = Log.getLogger(OrbiterSteamFriends.class);
+    public SteamMain steamMain;
+
+    public OrbiterSteamFriends(SteamMain steamMain)
+    {
+        this.steamMain = steamMain;
+    }
 
     @Override
     public void onSetPersonaNameResponse(boolean success, boolean localSuccess, SteamResult result)
@@ -27,6 +36,13 @@ public class OrbiterSteamFriends implements SteamFriendsCallback
     public void onPersonaStateChange(SteamID steamID, SteamFriends.PersonaChange change)
     {
         LOGGER.finest("onPersonaStateChange: %s, %s".formatted(steamID, change));
+
+        if (change == SteamFriends.PersonaChange.GamePlayed)
+        {
+            SteamFriends.FriendGameInfo friendGameInfo = new SteamFriends.FriendGameInfo();
+            steamMain.steamFriends.getFriendGamePlayed(steamID, friendGameInfo);
+            LOGGER.finest(steamMain.steamFriends.getFriendPersonaName(steamID) + " GamePlayed: " + friendGameInfo.getGameID() + ", " + friendGameInfo.getGameIP() + ", " + friendGameInfo.getSteamIDLobby() + ", " + friendGameInfo.getGamePort() + ", " + friendGameInfo.getQueryPort());
+        }
     }
 
     @Override
@@ -39,6 +55,17 @@ public class OrbiterSteamFriends implements SteamFriendsCallback
     public void onGameLobbyJoinRequested(SteamID steamIDLobby, SteamID steamIDFriend)
     {
         LOGGER.finest("onGameLobbyJoinRequested: %s, %s".formatted(steamIDLobby, steamIDFriend));
+
+        if (steamMain.lobbyManager.currentLobby() != null)
+        {
+            LOGGER.warning("Tried to join a different lobby, this is not supported yet!");
+            return;
+        }
+
+        steamMain.lobbyManager.setCurrentLobby(new Lobby(steamIDLobby, steamMain));
+
+        Console.log("Joining lobby " + steamIDLobby + ", requested by " + steamMain.steamFriends.getFriendPersonaName(steamIDFriend), new Color(0xFF056B42, true));
+        steamMain.steamMatchmaking.joinLobby(steamIDLobby);
     }
 
     @Override

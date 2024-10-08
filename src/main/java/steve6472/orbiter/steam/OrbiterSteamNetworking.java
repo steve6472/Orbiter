@@ -4,6 +4,7 @@ import com.codedisaster.steamworks.SteamID;
 import com.codedisaster.steamworks.SteamNetworking;
 import com.codedisaster.steamworks.SteamNetworkingCallback;
 import steve6472.core.log.Log;
+import steve6472.orbiter.network.packets.game.GameListener;
 
 import java.util.logging.Logger;
 
@@ -36,5 +37,6 @@ public class OrbiterSteamNetworking implements SteamNetworkingCallback
         LOGGER.fine("Accept result: " + b);
         steamMain.peer = steamIDRemote;
         steamMain.orbiterApp.getWorld().spawnDebugPlayer(steamIDRemote);
+        LOGGER.info("Peer set!");
     }
 }

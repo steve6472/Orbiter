@@ -52,7 +52,8 @@ class CommandInput extends JTextField
                     int x = metrics.stringWidth(userInput);
                     int y = getHeight() - (getHeight() - metrics.getHeight()) / 2 - metrics.getDescent();
 
-                    g.drawString(suggestion.getText().substring(userInput.length()), x + 2, y);
+                    String text = suggestion.getText();
+                    g.drawString(text.substring(Math.min(text.length(), userInput.length())), x + 2, y);
                     break;
                 }
             } catch (InterruptedException | ExecutionException e)

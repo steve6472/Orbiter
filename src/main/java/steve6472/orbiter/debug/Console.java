@@ -25,45 +25,36 @@ public class Console
 {
     private static final Logger LOGGER = Log.getLogger(Console.class);
 
-    /* Singleton */
-    private static Console console;
-
-    private static final int WIDTH = 16 * 40;
-    private static final int HEIGHT = 9 * 40;
-
     private final Commands commands;
     private final Client client;
     private final World world;
 
-    private JFrame frame;
     private JTextPane logPane;
     private CommandInput commandInput;
+    JPanel mainPanel;
 
-    private Console(Commands commands, Client client, World world) {
+    Console(Commands commands, Client client, World world)
+    {
         this.commands = commands;
         this.client = client;
         this.world = world;
+        start();
     }
 
     private void start()
     {
-        frame = new JFrame();
-        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        frame.setSize(WIDTH, HEIGHT);
-        frame.setLocationRelativeTo(null);
-
-        JPanel logPanel = new OverlayPanel(() ->
+        mainPanel = new OverlayPanel(() ->
         {
             ParseResults<CommandSource> parseResults = commands.dispatcher.parse(commandInput.getText(), createSource());
             return commands.dispatcher.getCompletionSuggestions(parseResults, commandInput.getCaretPosition());
         });
-        logPanel.setLayout(new BorderLayout());
-        frame.getContentPane().add(logPanel);
+        mainPanel.setLayout(new BorderLayout());
 
         logPane = new JTextPane();
         logPane.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(logPane);
-        logPanel.add(scrollPane, BorderLayout.CENTER);
+        scrollPane.getViewport().addChangeListener(_ -> mainPanel.repaint());
+        mainPanel.add(scrollPane, BorderLayout.CENTER);
 
         commandInput = new CommandInput(commands.dispatcher, this::createSource);
 
@@ -79,11 +70,9 @@ public class Console
             {
                 appendToLog(ex.getMessage(), Color.RED);
             }
-        }, logPanel::repaint));
+        }, mainPanel::repaint));
 
-        logPanel.add(commandInput, BorderLayout.SOUTH);
-
-        frame.setVisible(true);
+        mainPanel.add(commandInput, BorderLayout.SOUTH);
     }
 
     private void appendToLog(String text, Color color)
@@ -107,25 +96,14 @@ public class Console
 
     private CommandSource createSource()
     {
-        return new CommandSource(client.player(), world, feedback -> appendToLog(feedback, Color.GRAY));
+        return new CommandSource(client.player(), world, this::appendToLog);
     }
 
-    public static void openConsole(Commands commands, Client client, World world)
+    public static void log(String text, Color color)
     {
-        if (console != null)
-        {
-            LOGGER.warning("Console is already open");
+        if (DebugWindow.instance() == null)
             return;
-        }
-        console = new Console(commands, client, world);
-        console.start();
-    }
 
-    public static void closeConsole()
-    {
-        if (console != null)
-        {
-            console.frame.dispose();
-        }
+        DebugWindow.instance().console.appendToLog(text, color);
     }
 }

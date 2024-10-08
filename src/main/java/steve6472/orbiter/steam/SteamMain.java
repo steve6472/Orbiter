@@ -4,15 +4,18 @@ import com.codedisaster.steamworks.*;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import steve6472.core.log.Log;
-import steve6472.orbiter.Convert;
+import steve6472.core.network.Packet;
 import steve6472.orbiter.OrbiterApp;
+import steve6472.orbiter.network.PacketManager;
+import steve6472.orbiter.network.packets.game.GameListener;
+import steve6472.orbiter.network.packets.game.TeleportToPosition;
 import steve6472.orbiter.settings.Keybinds;
-import steve6472.orbiter.world.World;
-import steve6472.orbiter.world.ecs.components.MPControlled;
-import steve6472.orbiter.world.ecs.components.Tag;
+import steve6472.orbiter.steam.lobby.LobbyManager;
 
 import java.nio.ByteBuffer;
-import java.util.UUID;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +32,15 @@ public class SteamMain
 
     public SteamFriends steamFriends;
     public SteamNetworking steamNetworking;
+    public SteamMatchmaking steamMatchmaking;
+    public SteamUser steamUser;
     public SteamID peer;
+    public SteamID userID;
+    public LobbyManager lobbyManager;
+    public PacketManager packetManager;
+
+    @Deprecated(forRemoval = true)
+    public List<LobbyInvite> invites = new ArrayList<>();
 
     public SteamMain(OrbiterApp orbiterApp)
     {
@@ -52,9 +63,23 @@ public class SteamMain
         }
 
         if (!enabled) return;
-        steamFriends = new SteamFriends(new OrbiterSteamFriends());
+        packetManager = new PacketManager();
+        steamUser = new SteamUser(new OrbiterSteamUserCallback());
+        userID = steamUser.getSteamID();
+        steamFriends = new SteamFriends(new OrbiterSteamFriends(this));
         steamNetworking = new SteamNetworking(new OrbiterSteamNetworking(this));
+        steamMatchmaking = new SteamMatchmaking(new OrbiterSteamMatchmaking(this));
+        lobbyManager = new LobbyManager(this);
+
+        createListeners();
     }
+
+    private void createListeners()
+    {
+        packetManager.registerListener(new GameListener(this, orbiterApp.getWorld()));
+    }
+
+    int tick = 0;
 
     public void tick()
     {
@@ -64,7 +89,7 @@ public class SteamMain
         {
             receiveMessage();
             Vector3f vector3f = orbiterApp.getClient().player().getCenterPos();
-            sendMessage(vector3f.x + "," + vector3f.y + "," + vector3f.z);
+            sendMessage(new TeleportToPosition(vector3f));
         } catch (SteamException e)
         {
             throw new RuntimeException(e);
@@ -77,18 +102,17 @@ public class SteamMain
         }
     }
 
-    public void sendMessage(String message) throws SteamException
+    public <T extends Packet<T, ?>> void sendMessage(T packet) throws SteamException
     {
         if (peer == null)
-        {
             return;
-        }
 
-        byte[] data = message.getBytes();
-        ByteBuffer buffer = BufferUtils.createByteBuffer(data.length);
-        buffer.put(data);
-        steamNetworking.sendP2PPacket(peer, buffer, SteamNetworking.P2PSend.Reliable, 0);
-        LOGGER.finest("Message sent: " + message);
+        ByteBuffer dataPacket = packetManager.createDataPacket(packet);
+        dataPacket.flip();
+        if (!steamNetworking.sendP2PPacket(peer, dataPacket, SteamNetworking.P2PSend.Reliable, 0))
+        {
+            LOGGER.warning("Packet was not sent!");
+        }
     }
 
 
@@ -103,60 +127,33 @@ public class SteamMain
             // Read the packet
             SteamID remoteID = new SteamID();
             ByteBuffer buffer = BufferUtils.createByteBuffer(messageSize[0]);
-            steamNetworking.readP2PPacket(remoteID, buffer, 0);
+            int i = steamNetworking.readP2PPacket(remoteID, buffer, 0);
 
-            // Echo the message back to the sender
-            String receivedMessage = new String(buffer.array());
-            LOGGER.finest("Message received: " + receivedMessage);
+            if (i != messageSize[0])
+                LOGGER.warning("Packet size mismatch");
 
-            processMessage(remoteID, receivedMessage);
-        }
-    }
+            //            if (messageSize[0] == 0)
+//                continue;
 
-    private void processMessage(SteamID remoteID, String message)
-    {
-        var entityList = orbiterApp
-            .getWorld()
-            .ecs()
-            .findEntitiesWith(MPControlled.class, UUID.class, Tag.Physics.class);
+            byte[] bytes = PacketManager.getByteArrayWithoutAffecting(buffer);
 
-        for (var entityData : entityList)
-        {
-            MPControlled mpControlled = entityData.comp1();
-            if (!mpControlled.controller().equals(remoteID))
-                continue;
-
-            UUID uuid = entityData.comp2();
-
-            String[] split = message.split(",");
-            Vector3f vector3f = new Vector3f(Float.parseFloat(split[0]), Float.parseFloat(split[1]), Float.parseFloat(split[2]));
-            orbiterApp.getWorld().bodyMap.get(uuid).setPhysicsLocation(Convert.jomlToPhys(vector3f));
+            // TODO: update for max P2P packet size
+            packetManager.handleRawPacket(bytes, GameListener.class, remoteID);
         }
     }
 
     private void runCallbacks()
     {
-        if (SteamAPI.isSteamRunning())
+        if (tick % 30 == 0)
         {
-            SteamAPI.runCallbacks();
+            if (SteamAPI.isSteamRunning())
+            {
+                SteamAPI.runCallbacks();
+            }
         }
-    }
-
-    private SteamID findFriendByName(String name)
-    {
-        int friendCount = steamFriends.getFriendCount(SteamFriends.FriendFlags.All);
-        for (int i = 0; i < friendCount; i++)
-        {
-            SteamID friendByIndex = steamFriends.getFriendByIndex(i, SteamFriends.FriendFlags.All);
-            if (steamFriends.getFriendPersonaName(friendByIndex).equals(name))
-                return friendByIndex;
-        }
-
-        return null;
-    }
-
-    public void listFriends()
-    {
+        if (tick == 0)
+            tick = 60;
+        tick--;
     }
 
     public void shutdown()
