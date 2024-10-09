@@ -58,7 +58,7 @@ public class OrbiterSteamFriends implements SteamFriendsCallback
     }
 
     @Override
-    public void onGameOverlayActivated(boolean active/*1.10.0*/, boolean userInitiated, int appID/*1.10.0*/)
+    public void onGameOverlayActivated(boolean active)
     {
         LOGGER.finest("onGameOverlayActivated: %s".formatted(active));
     }

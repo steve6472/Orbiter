@@ -1,18 +1,15 @@
 package steve6472.orbiter;
 
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.util.NativeLibrary;
 import com.jme3.system.NativeLibraryLoader;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
-import steve6472.core.registry.Key;
 import steve6472.core.setting.SettingsLoader;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.debug.DebugWindow;
 import steve6472.orbiter.network.packets.game.AcceptedPeerConnection;
-import steve6472.orbiter.network.packets.game.Heartbeat;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.settings.Settings;
@@ -22,7 +19,6 @@ import steve6472.volkaniums.core.FrameInfo;
 import steve6472.volkaniums.core.VolkaniumsApp;
 import steve6472.volkaniums.input.KeybindUpdater;
 import steve6472.volkaniums.pipeline.Pipelines;
-import steve6472.volkaniums.registry.VolkaniumsRegistries;
 import steve6472.volkaniums.render.StaticModelRenderSystem;
 import steve6472.volkaniums.render.debug.DebugRender;
 import steve6472.volkaniums.vr.VrData;
@@ -37,8 +33,6 @@ import java.util.logging.Level;
  */
 public class OrbiterApp extends VolkaniumsApp
 {
-    private static final boolean ENABLE_STEAM = true;
-
     private static OrbiterApp instance;
 
     private SteamMain steam;
@@ -65,7 +59,7 @@ public class OrbiterApp extends VolkaniumsApp
         world = new World();
 
         steam = new SteamMain(this);
-        if (ENABLE_STEAM)
+        if (OrbiterMain.ENABLE_STEAM)
             steam.setup();
     }
 
@@ -107,7 +101,7 @@ public class OrbiterApp extends VolkaniumsApp
         commands = new Commands();
         DebugWindow.openDebugWindow(commands, client, world, steam);
 
-        if (SteamMain.FAKE_P2P)
+        if (OrbiterMain.FAKE_P2P)
         {
             steam.connections.broadcastMessage(AcceptedPeerConnection.instance());
         }

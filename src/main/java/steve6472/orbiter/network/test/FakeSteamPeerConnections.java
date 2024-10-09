@@ -3,7 +3,6 @@ package steve6472.orbiter.network.test;
 import com.codedisaster.steamworks.SteamID;
 import steve6472.orbiter.OrbiterMain;
 import steve6472.orbiter.network.PeerConnections;
-import steve6472.orbiter.network.packets.game.Heartbeat;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.steam.SteamPeer;
 

@@ -12,7 +12,6 @@ import steve6472.orbiter.network.packets.game.Heartbeat;
 import steve6472.orbiter.network.packets.game.TeleportToPosition;
 import steve6472.orbiter.network.test.FakeP2PConstants;
 import steve6472.orbiter.network.test.FakeSteamPeerConnections;
-import steve6472.orbiter.network.test.SteamLibraryLoaderLwjgl3;
 import steve6472.orbiter.steam.lobby.LobbyManager;
 
 import java.util.logging.Level;
@@ -25,8 +24,6 @@ import java.util.logging.Logger;
  */
 public class SteamMain
 {
-    public static final boolean FAKE_P2P = true;
-
     private static final Logger LOGGER = Log.getLogger(SteamMain.class);
     public final OrbiterApp orbiterApp;
     private boolean enabled;
@@ -48,11 +45,11 @@ public class SteamMain
 
     public void setup()
     {
-        if (!FAKE_P2P)
+        if (!OrbiterMain.FAKE_P2P)
         {
             try
             {
-                SteamAPI.loadLibraries(new SteamLibraryLoaderLwjgl3());
+                SteamAPI.loadLibraries();
                 enabled = SteamAPI.init();
                 if (!enabled)
                     LOGGER.warning("Failed to start SteamAPI");
@@ -61,6 +58,7 @@ public class SteamMain
             } catch (SteamException e)
             {
                 LOGGER.log(Level.WARNING, e, () -> "Error");
+                throw new RuntimeException(e);
             }
         } else
         {
@@ -71,7 +69,7 @@ public class SteamMain
 
         packetManager = new PacketManager();
 
-        if (FAKE_P2P)
+        if (OrbiterMain.FAKE_P2P)
         {
             connections = new FakeSteamPeerConnections(this);
             if (OrbiterMain.FAKE_PEER)
@@ -128,7 +126,7 @@ public class SteamMain
 
     private void runCallbacks()
     {
-        if (!FAKE_P2P && SteamAPI.isSteamRunning())
+        if (!OrbiterMain.FAKE_P2P && SteamAPI.isSteamRunning())
         {
             SteamAPI.runCallbacks();
         }
@@ -142,7 +140,7 @@ public class SteamMain
     {
         if (!enabled) return;
 
-        if (!FAKE_P2P)
+        if (!OrbiterMain.FAKE_P2P)
             SteamAPI.shutdown();
     }
 }

@@ -4,6 +4,7 @@ import com.codedisaster.steamworks.SteamID;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
 import steve6472.orbiter.Convert;
+import steve6472.orbiter.OrbiterMain;
 import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.steam.SteamPeer;
@@ -49,7 +50,7 @@ public class GameListener extends OrbiterPacketListener
 
     public void acceptedPeerConnection()
     {
-        if (!SteamMain.FAKE_P2P)
+        if (!OrbiterMain.FAKE_P2P)
             LOGGER.info(steamMain.friendNames.getUserName(sender()) + " accepted peer connection!");
         connections.broadcastMessageExclude(new SpawnPlayerCharacter(sender()), peer());
         sendExistingData();
