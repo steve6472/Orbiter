@@ -11,6 +11,8 @@ import steve6472.core.registry.Key;
 import steve6472.core.setting.SettingsLoader;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.debug.DebugWindow;
+import steve6472.orbiter.network.packets.game.AcceptedPeerConnection;
+import steve6472.orbiter.network.packets.game.Heartbeat;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.settings.Settings;
@@ -104,6 +106,11 @@ public class OrbiterApp extends VolkaniumsApp
 
         commands = new Commands();
         DebugWindow.openDebugWindow(commands, client, world, steam);
+
+        if (SteamMain.FAKE_P2P)
+        {
+            steam.connections.broadcastMessage(AcceptedPeerConnection.instance());
+        }
     }
 
     private float timeToNextTick = 0;

@@ -49,7 +49,8 @@ public class GameListener extends OrbiterPacketListener
 
     public void acceptedPeerConnection()
     {
-        LOGGER.info(steamMain.friendNames.getUserName(sender()) + " accepted peer connection!");
+        if (!SteamMain.FAKE_P2P)
+            LOGGER.info(steamMain.friendNames.getUserName(sender()) + " accepted peer connection!");
         connections.broadcastMessageExclude(new SpawnPlayerCharacter(sender()), peer());
         sendExistingData();
         world.spawnDebugPlayer(sender());

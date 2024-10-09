@@ -4,12 +4,15 @@ import com.codedisaster.steamworks.*;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
 import steve6472.orbiter.OrbiterApp;
+import steve6472.orbiter.OrbiterMain;
 import steve6472.orbiter.network.PacketManager;
 import steve6472.orbiter.network.PeerConnections;
 import steve6472.orbiter.network.packets.game.GameListener;
 import steve6472.orbiter.network.packets.game.Heartbeat;
 import steve6472.orbiter.network.packets.game.TeleportToPosition;
-import steve6472.orbiter.settings.Keybinds;
+import steve6472.orbiter.network.test.FakeP2PConstants;
+import steve6472.orbiter.network.test.FakeSteamPeerConnections;
+import steve6472.orbiter.network.test.SteamLibraryLoaderLwjgl3;
 import steve6472.orbiter.steam.lobby.LobbyManager;
 
 import java.util.logging.Level;
@@ -22,6 +25,8 @@ import java.util.logging.Logger;
  */
 public class SteamMain
 {
+    public static final boolean FAKE_P2P = true;
+
     private static final Logger LOGGER = Log.getLogger(SteamMain.class);
     public final OrbiterApp orbiterApp;
     private boolean enabled;
@@ -43,29 +48,47 @@ public class SteamMain
 
     public void setup()
     {
-        try
+        if (!FAKE_P2P)
         {
-            SteamAPI.loadLibraries();
-            enabled = SteamAPI.init();
-            if (!enabled)
-                LOGGER.warning("Failed to start SteamAPI");
-            else
-                LOGGER.info("Started SteamAPI");
-        } catch (SteamException e)
+            try
+            {
+                SteamAPI.loadLibraries(new SteamLibraryLoaderLwjgl3());
+                enabled = SteamAPI.init();
+                if (!enabled)
+                    LOGGER.warning("Failed to start SteamAPI");
+                else
+                    LOGGER.info("Started SteamAPI");
+            } catch (SteamException e)
+            {
+                LOGGER.log(Level.WARNING, e, () -> "Error");
+            }
+        } else
         {
-            LOGGER.log(Level.WARNING, e, () -> "Error");
+            enabled = true;
         }
 
         if (!enabled) return;
+
         packetManager = new PacketManager();
-        steamUser = new SteamUser(new OrbiterSteamUserCallback());
-        userID = steamUser.getSteamID();
-        steamFriends = new SteamFriends(new OrbiterSteamFriends(this));
-        friendNames = new SteamFriendNameCache(steamFriends, userID);
-        steamNetworking = new SteamNetworking(new OrbiterSteamNetworking(this));
-        steamMatchmaking = new SteamMatchmaking(new OrbiterSteamMatchmaking(this));
-        lobbyManager = new LobbyManager(this);
-        connections = new SteamPeerConnections(this);
+
+        if (FAKE_P2P)
+        {
+            connections = new FakeSteamPeerConnections(this);
+            if (OrbiterMain.FAKE_PEER)
+                userID = FakeP2PConstants.FAKE_PEER;
+            else
+                userID = FakeP2PConstants.USER_ID;
+        } else
+        {
+            steamUser = new SteamUser(new OrbiterSteamUserCallback());
+            userID = steamUser.getSteamID();
+            steamFriends = new SteamFriends(new OrbiterSteamFriends(this));
+            friendNames = new SteamFriendNameCache(steamFriends, userID);
+            steamNetworking = new SteamNetworking(new OrbiterSteamNetworking(this));
+            steamMatchmaking = new SteamMatchmaking(new OrbiterSteamMatchmaking(this));
+            lobbyManager = new LobbyManager(this);
+            connections = new SteamPeerConnections(this);
+        }
 
         createListeners();
     }
@@ -101,19 +124,15 @@ public class SteamMain
             throw new RuntimeException(e);
         }
         runCallbacks();
-
-        if (Keybinds.TEST.isActive())
-        {
-            steamFriends.activateGameOverlay(SteamFriends.OverlayDialog.Friends);
-        }
     }
 
     private void runCallbacks()
     {
-        if (SteamAPI.isSteamRunning())
+        if (!FAKE_P2P && SteamAPI.isSteamRunning())
         {
             SteamAPI.runCallbacks();
         }
+
         if (tick == 0)
             tick = 60;
         tick--;
@@ -123,6 +142,7 @@ public class SteamMain
     {
         if (!enabled) return;
 
-        SteamAPI.shutdown();
+        if (!FAKE_P2P)
+            SteamAPI.shutdown();
     }
 }
