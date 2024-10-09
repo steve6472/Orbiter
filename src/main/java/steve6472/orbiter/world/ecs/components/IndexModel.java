@@ -1,6 +1,13 @@
 package steve6472.orbiter.world.ecs.components;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
+import steve6472.core.network.BufferCodec;
+import steve6472.core.network.BufferCodecs;
+import steve6472.core.registry.Key;
 import steve6472.volkaniums.assets.model.Model;
+import steve6472.volkaniums.registry.VolkaniumsRegistries;
 
 /**
  * Created by steve6472
@@ -9,6 +16,14 @@ import steve6472.volkaniums.assets.model.Model;
  */
 public class IndexModel
 {
+    public static final Codec<IndexModel> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        Key.CODEC.fieldOf("key").forGetter(e -> e.model().key())
+    ).apply(instance, key -> new IndexModel(VolkaniumsRegistries.STATIC_MODEL.get(key))));
+
+    public static final BufferCodec<ByteBuf, IndexModel> BUFFER_CODEC = BufferCodec.of(
+        BufferCodecs.KEY, e -> e.model().key(),
+        key -> new IndexModel(VolkaniumsRegistries.STATIC_MODEL.get(key)));
+
     private final Model model;
     private int modelIndex = -1;
 

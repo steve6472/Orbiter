@@ -1,6 +1,11 @@
 package steve6472.orbiter.world.ecs.components;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import org.joml.Vector3f;
+import steve6472.core.network.BufferCodec;
+import steve6472.core.network.BufferCodecs;
 
 /**
  * Created by steve6472
@@ -9,6 +14,18 @@ import org.joml.Vector3f;
  */
 public class Position
 {
+    public static final Codec<Position> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+        Codec.DOUBLE.fieldOf("x").forGetter(Position::x),
+        Codec.DOUBLE.fieldOf("y").forGetter(Position::y),
+        Codec.DOUBLE.fieldOf("z").forGetter(Position::z)
+    ).apply(instance, Position::new));
+
+    public static final BufferCodec<ByteBuf, Position> BUFFER_CODEC = BufferCodec.of(
+        BufferCodecs.DOUBLE, Position::x,
+        BufferCodecs.DOUBLE, Position::y,
+        BufferCodecs.DOUBLE, Position::z,
+        Position::new);
+
     private double x, y, z;
     boolean modified;
 

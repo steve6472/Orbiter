@@ -12,6 +12,7 @@ import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.MPControlled;
 import steve6472.orbiter.world.ecs.components.Tag;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -52,6 +53,8 @@ public class GameListener extends OrbiterPacketListener
     {
         if (!OrbiterMain.FAKE_P2P)
             LOGGER.info(steamMain.friendNames.getUserName(sender()) + " accepted peer connection!");
+        else
+            LOGGER.info("Fake P2P accepted");
         connections.broadcastMessageExclude(new SpawnPlayerCharacter(sender()), peer());
         sendExistingData();
         world.spawnDebugPlayer(sender());
@@ -83,5 +86,19 @@ public class GameListener extends OrbiterPacketListener
             .stream()
             .filter(e -> e.comp1().controller().equals(disconnectedPlayer))
             .forEach(e -> world.removeEntity(e.comp2()));
+    }
+
+    public void updateEntity(UUID uuid, List<Object> components)
+    {
+        world.getEntityByUUID(uuid).ifPresentOrElse(entity -> {
+            for (Object component : components)
+            {
+                entity.removeType(component.getClass());
+                entity.add(component);
+            }
+        }, () -> {
+            components.add(uuid);
+            world.ecs().createEntity(components.toArray());
+        });
     }
 }

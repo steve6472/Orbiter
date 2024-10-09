@@ -12,6 +12,7 @@ import steve6472.orbiter.network.packets.game.Heartbeat;
 import steve6472.orbiter.network.packets.game.TeleportToPosition;
 import steve6472.orbiter.network.test.FakeP2PConstants;
 import steve6472.orbiter.network.test.FakeSteamPeerConnections;
+import steve6472.orbiter.steam.lobby.Lobby;
 import steve6472.orbiter.steam.lobby.LobbyManager;
 
 import java.util.logging.Level;
@@ -45,7 +46,7 @@ public class SteamMain
 
     public void setup()
     {
-        if (!OrbiterMain.FAKE_P2P)
+        if (!OrbiterMain.FAKE_P2P && OrbiterMain.ENABLE_STEAM)
         {
             try
             {
@@ -76,6 +77,10 @@ public class SteamMain
                 userID = FakeP2PConstants.FAKE_PEER;
             else
                 userID = FakeP2PConstants.USER_ID;
+            lobbyManager = new LobbyManager(this);
+            Lobby lobby = new Lobby(FakeP2PConstants.LOBBY_ID, this);
+            lobbyManager.setCurrentLobby(lobby);
+            lobby._setLobbyOwner(FakeP2PConstants.USER_ID);
         } else
         {
             steamUser = new SteamUser(new OrbiterSteamUserCallback());
@@ -89,6 +94,11 @@ public class SteamMain
         }
 
         createListeners();
+    }
+
+    public boolean isHost()
+    {
+        return lobbyManager.currentLobby() != null && lobbyManager.currentLobby().lobbyOwner() == userID;
     }
 
     private void createListeners()

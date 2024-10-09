@@ -1,10 +1,12 @@
 package steve6472.orbiter;
 
+import com.jme3.bullet.objects.PhysicsRigidBody;
 import dev.dominion.ecs.api.Results;
 import org.joml.Matrix4f;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.IndexModel;
+import steve6472.orbiter.world.ecs.components.Position;
 import steve6472.volkaniums.assets.model.Model;
 import steve6472.volkaniums.core.FrameInfo;
 import steve6472.volkaniums.registry.VolkaniumsRegistries;
@@ -33,6 +35,7 @@ public class StaticWorldRender extends StaticModelRenderImpl
     protected void init(SBOTransfromArray<Model> sboTransfromArray)
     {
         sboTransfromArray.addArea(VolkaniumsRegistries.STATIC_MODEL.get(Key.defaultNamespace("blockbench/static/player_capsule")));
+        sboTransfromArray.addArea(VolkaniumsRegistries.STATIC_MODEL.get(Key.defaultNamespace("blockbench/static/firefly")));
     }
 
     @Override
@@ -56,8 +59,21 @@ public class StaticWorldRender extends StaticModelRenderImpl
                 lastModel = entity.comp1().model();
             }
 
-            Matrix4f jomlMat = Convert.physGetTransformToJoml(world.bodyMap.get(entity.comp2()), new Matrix4f());
-            lastArea.updateTransform(jomlMat);
+            PhysicsRigidBody body = world.bodyMap.get(entity.comp2());
+            if (body != null)
+            {
+                Matrix4f jomlMat = Convert.physGetTransformToJoml(body, new Matrix4f());
+                lastArea.updateTransform(jomlMat);
+            } else
+            {
+                Matrix4f primitiveTransform = new Matrix4f();
+                if (entity.entity().has(Position.class))
+                {
+                    Position position = entity.entity().get(Position.class);
+                    primitiveTransform.translate(position.toVec3f());
+                }
+                lastArea.updateTransform(primitiveTransform);
+            }
         }
     }
 }

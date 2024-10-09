@@ -7,17 +7,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class Systems<T>
+public class ComponentSystems<T>
 {
-    public final List<SystemEntry<T>> systemEntries;
+    public final List<ComponentSystemEntry<T>> systemEntries;
     public Consumer<T> systemRunFunction;
-    public List<Object> eventQueue;
     public Profiler profiler = new Profiler(15);
 
-    public Systems(Consumer<T> systemRunFunction)
+    public ComponentSystems(Consumer<T> systemRunFunction)
     {
         systemEntries = new ArrayList<>();
-        eventQueue = new ArrayList<>();
         this.systemRunFunction = systemRunFunction;
     }
 
@@ -32,7 +30,7 @@ public class Systems<T>
             return;
 
         profiler.start();
-        for (SystemEntry<T> entry : systemEntries)
+        for (ComponentSystemEntry<T> entry : systemEntries)
         {
             if (!entry.enabled)
                 continue;
@@ -77,7 +75,7 @@ public class Systems<T>
 
     public void registerSystem(T system, String name, String description, boolean enabled, boolean debug)
     {
-        SystemEntry<T> entry = new SystemEntry<>();
+        ComponentSystemEntry<T> entry = new ComponentSystemEntry<>();
         entry.system = system;
         entry.id = name.toLowerCase(Locale.ROOT).replace(' ', '_');
         entry.enabled = enabled;

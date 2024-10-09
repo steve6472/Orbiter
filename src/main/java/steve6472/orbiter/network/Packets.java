@@ -27,9 +27,10 @@ public class Packets
         registerPacket(Heartbeat.KEY, Heartbeat.BUFFER_CODEC);
 
         registerPacket(AcceptedPeerConnection.KEY, AcceptedPeerConnection.BUFFER_CODEC);
-        registerPacket(SpawnPlayerCharacter.KEY, SpawnPlayerCharacter.BUFFER_CODEC);
+        registerPacket(SpawnPlayerCharacter.KEY, SpawnPlayerCharacter.BUFFER_CODEC); // TODO: change this packet
         registerPacket(PlayerDisconnected.KEY, PlayerDisconnected.BUFFER_CODEC);
-        registerPacket(TeleportToPosition.KEY, TeleportToPosition.BUFFER_CODEC);
+        registerPacket(TeleportToPosition.KEY, TeleportToPosition.BUFFER_CODEC); // TODO: change this packet
+        registerPacket(UpdateEntityComponents.KEY, UpdateEntityComponents.BUFFER_CODEC);
 
         return new Object();
     }

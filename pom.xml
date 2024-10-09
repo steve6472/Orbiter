@@ -42,7 +42,7 @@
         <dependency>
             <groupId>com.code-disaster.steamworks4j</groupId>
             <artifactId>steamworks4j</artifactId>
-                        <version>1.9.0-TEST</version>
+            <version>1.9.0-TEST</version>
 <!--            <version>1.9.0</version>-->
         </dependency>
         <dependency>

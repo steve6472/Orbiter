@@ -2,12 +2,11 @@ package steve6472.orbiter.world.ecs.systems;
 
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import dev.dominion.ecs.api.Dominion;
-import org.joml.Vector3f;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.Position;
 import steve6472.orbiter.world.ecs.components.Tag;
-import steve6472.orbiter.world.ecs.core.ECSystem;
+import steve6472.orbiter.world.ecs.core.ComponentSystem;
 
 import java.util.UUID;
 
@@ -16,7 +15,7 @@ import java.util.UUID;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class UpdatePhysicsPositions implements ECSystem
+public class UpdatePhysicsPositions implements ComponentSystem
 {
     @Override
     public void tick(Dominion dominion, World world)

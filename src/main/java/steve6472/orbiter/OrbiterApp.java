@@ -59,8 +59,9 @@ public class OrbiterApp extends VolkaniumsApp
         world = new World();
 
         steam = new SteamMain(this);
-        if (OrbiterMain.ENABLE_STEAM)
+        if (OrbiterMain.ENABLE_STEAM || OrbiterMain.FAKE_P2P)
             steam.setup();
+        world.steam = steam;
     }
 
     @Override

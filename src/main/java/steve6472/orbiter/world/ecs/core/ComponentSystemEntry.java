@@ -2,7 +2,7 @@ package steve6472.orbiter.world.ecs.core;
 
 import steve6472.orbiter.util.Profiler;
 
-public class SystemEntry<T>
+public class ComponentSystemEntry<T>
 {
     public T system;
     public boolean enabled;

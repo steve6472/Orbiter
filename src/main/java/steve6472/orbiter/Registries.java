@@ -9,6 +9,8 @@ import steve6472.core.setting.Setting;
 import steve6472.orbiter.network.Packets;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.core.Component;
 import steve6472.volkaniums.input.Keybind;
 import steve6472.volkaniums.registry.RegistryCreators;
 
@@ -28,6 +30,7 @@ public class Registries extends RegistryCreators
     public static final Registry<Keybind> KEYBINDS = createRegistry("keybinds", () -> Keybinds.FORWARD);
     public static final Registry<Rarity> RARITY = createRegistry("rarity", () -> Rarities.COMMON);
     public static final PacketRegistry PACKET = createPacketRegistry("packet", Packets::init);
+    public static final Registry<Component<?>> COMPONENT = createRegistry("component", () -> Components.POSITION);
 
     // TODO: add to volkaniums
     private static PacketRegistry createPacketRegistry(String id, Supplier<?> bootstrap)

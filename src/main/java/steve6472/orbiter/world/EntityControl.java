@@ -6,6 +6,7 @@ import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import dev.dominion.ecs.api.Dominion;
 import dev.dominion.ecs.api.Entity;
+import dev.dominion.ecs.api.Results;
 import org.joml.Vector3f;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Convert;
@@ -17,10 +18,7 @@ import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.volkaniums.assets.model.Model;
 import steve6472.volkaniums.registry.VolkaniumsRegistries;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by steve6472
@@ -61,6 +59,22 @@ public interface EntityControl
         return entity;
     }
 
+    default Entity addEntity(Model model, UUID uuid, Object... extraComponents)
+    {
+        ArrayList<Object> objects = new ArrayList<>();
+        objects.add(new IndexModel(model));
+        objects.add(uuid);
+
+        Collections.addAll(objects, extraComponents);
+
+        return ecs().createEntity(objects.toArray());
+    }
+
+    default Entity addEntity(Model model, Object... extraComponents)
+    {
+        return addEntity(model, UUID.randomUUID(), extraComponents);
+    }
+
     default Entity spawnDebugPlayer(SteamID steamID)
     {
         PhysicsRigidBody body = new PhysicsRigidBody(new CapsuleCollisionShape(PCPlayer.RADIUS, PCPlayer.HEIGHT / 2f));
@@ -76,5 +90,10 @@ public interface EntityControl
             physics().remove(body);
         }
         ecs().findEntitiesWith(UUID.class).forEach(e -> ecs().deleteEntity(e.entity()));
+    }
+
+    default Optional<Entity> getEntityByUUID(UUID uuid)
+    {
+        return ecs().findEntitiesWith(UUID.class).stream().filter(e -> e.comp().equals(uuid)).findAny().map(Results.With1::entity);
     }
 }

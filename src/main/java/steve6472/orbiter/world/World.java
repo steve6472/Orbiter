@@ -8,10 +8,15 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Plane;
 import dev.dominion.ecs.api.Dominion;
 import org.joml.Vector3f;
+import steve6472.core.util.RandomUtil;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
-import steve6472.orbiter.world.ecs.core.ECSystem;
-import steve6472.orbiter.world.ecs.core.Systems;
+import steve6472.orbiter.steam.SteamMain;
+import steve6472.orbiter.world.ecs.components.Position;
+import steve6472.orbiter.world.ecs.components.Tag;
+import steve6472.orbiter.world.ecs.core.ComponentSystem;
+import steve6472.orbiter.world.ecs.core.ComponentSystems;
+import steve6472.orbiter.world.ecs.systems.NetworkSync;
 import steve6472.orbiter.world.ecs.systems.UpdateECSPositions;
 import steve6472.orbiter.world.ecs.systems.UpdatePhysicsPositions;
 
@@ -26,16 +31,18 @@ import static steve6472.volkaniums.render.debug.DebugRender.*;
  */
 public class World implements EntityControl
 {
+    public SteamMain steam;
     PhysicsSpace physics;
     Dominion ecs;
-    Systems<ECSystem> systems;
+    // TODO: split to client & host ?
+    ComponentSystems<ComponentSystem> systems;
     public final Map<UUID, PhysicsRigidBody> bodyMap = new HashMap<>();
 
     public World()
     {
         physics = new PhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
         ecs = Dominion.create("space");
-        systems = new Systems<>(system -> system.tick(ecs, this));
+        systems = new ComponentSystems<>(system -> system.tick(ecs, this));
     }
 
     public void init()
@@ -48,8 +55,16 @@ public class World implements EntityControl
     {
         // First
         systems.registerSystem(new UpdateECSPositions(), "Update ECS Positions", "Updates ECS Positions with data from last tick of Physics Simulation");
+        systems.registerSystem((dominion, _) ->
+        {
+            if (!steam.isHost())
+                return;
+
+            dominion.findEntitiesWith(Tag.FireflyAI.class, Position.class).forEach(e -> e.comp2().add(RandomUtil.randomDouble(-0.01, 0.01), RandomUtil.randomDouble(-0.01, 0.01), RandomUtil.randomDouble(-0.01, 0.01)));
+        }, "Firefly AI", "Test firefly entity");
 
         // Last
+        systems.registerSystem(new NetworkSync(steam), "Network Sync", "");
         systems.registerSystem(new UpdatePhysicsPositions(), "Update Physics Positions", "Updates Physics Positions with data from last tick ECS Systems");
     }
 

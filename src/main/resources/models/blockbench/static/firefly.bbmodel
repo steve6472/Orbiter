@@ -1,0 +1,93 @@
+{
+    "meta": {
+        "format_version": "4.10",
+        "model_format": "free",
+        "box_uv": false
+    },
+    "name": "firefly",
+    "model_identifier": "",
+    "visible_box": [1, 1, 0],
+    "variable_placeholders": "",
+    "variable_placeholder_buttons": [],
+    "timeline_setups": [],
+    "unhandled_root_fields": {},
+    "resolution": {
+        "width": 16,
+        "height": 16
+    },
+    "elements": [
+        {
+            "name": "cube",
+            "box_uv": false,
+            "rescale": false,
+            "locked": false,
+            "light_emission": 0,
+            "render_order": "default",
+            "allow_mirror_modeling": true,
+            "from": [-0.5, -0.5, -1],
+            "to": [0.5, 0.5, 1],
+            "autouv": 0,
+            "color": 9,
+            "origin": [-0.5, -0.5, 0],
+            "faces": {
+                "north": {
+                    "uv": [1, 2, 2, 3],
+                    "texture": 0
+                },
+                "east": {
+                    "uv": [0, 0, 2, 1],
+                    "texture": 0
+                },
+                "south": {
+                    "uv": [2, 2, 3, 3],
+                    "texture": 0
+                },
+                "west": {
+                    "uv": [0, 1, 2, 2],
+                    "texture": 0
+                },
+                "up": {
+                    "uv": [1, 4, 0, 2],
+                    "texture": 0
+                },
+                "down": {
+                    "uv": [3, 0, 2, 2],
+                    "texture": 0
+                }
+            },
+            "type": "cube",
+            "uuid": "bc0ccbea-fbb4-31fe-ecb9-fbdad48e879a"
+        }
+    ],
+    "outliner": ["bc0ccbea-fbb4-31fe-ecb9-fbdad48e879a"],
+    "textures": [
+        {
+            "path": "C:\\storage\\Orbiter\\src\\main\\resources\\textures\\firefly.png",
+            "name": "firefly.png",
+            "folder": "block",
+            "namespace": "",
+            "id": "0",
+            "group": "",
+            "width": 16,
+            "height": 16,
+            "uv_width": 16,
+            "uv_height": 16,
+            "particle": false,
+            "use_as_default": false,
+            "layers_enabled": false,
+            "sync_to_project": "",
+            "render_mode": "default",
+            "render_sides": "auto",
+            "frame_time": 1,
+            "frame_order_type": "loop",
+            "frame_order": "",
+            "frame_interpolate": false,
+            "visible": true,
+            "internal": true,
+            "saved": true,
+            "uuid": "1be1bfb5-a0df-1baa-93dd-f7a3f002f8de",
+            "relative_path": "../../../textures/firefly.png",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAEJJREFUOE9j/HNd4b+c82+GR3tZGVg0HzAykAgYpaSk/4M0gwx59uwp6QZQxQXk2AzzKclORg+iUQMYGEbDYFiEAQCl/BkRh2H+NAAAAABJRU5ErkJggg=="
+        }
+    ]
+}

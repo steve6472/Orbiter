@@ -281,6 +281,7 @@ public class Lobby
         return List.copyOf(connectedUsers);
     }
 
+    @Deprecated(forRemoval = true)
     public SteamID getLobbyOwner()
     {
         return matchmaking.getLobbyOwner(lobbyID);

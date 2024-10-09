@@ -6,7 +6,6 @@ import java.nio.ByteBuffer;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.function.Consumer;
