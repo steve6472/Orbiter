@@ -12,10 +12,10 @@ import steve6472.orbiter.network.ExtraBufferCodecs;
  * Date: 10/7/2024
  * Project: Orbiter <br>
  */
-public record KickUser(SteamID toKick) implements Packet<KickUser, LobbyListener>
+public record LobbyKickUser(SteamID toKick) implements Packet<LobbyKickUser, LobbyListener>
 {
-    public static final Key KEY = Key.defaultNamespace("kick_user");
-    public static final BufferCodec<ByteBuf, KickUser> BUFFER_CODEC = BufferCodec.of(ExtraBufferCodecs.STEAM_ID, KickUser::toKick, KickUser::new);
+    public static final Key KEY = Key.defaultNamespace("lobby_kick_user");
+    public static final BufferCodec<ByteBuf, LobbyKickUser> BUFFER_CODEC = BufferCodec.of(ExtraBufferCodecs.STEAM_ID, LobbyKickUser::toKick, LobbyKickUser::new);
 
     @Override
     public Key key()
@@ -24,7 +24,7 @@ public record KickUser(SteamID toKick) implements Packet<KickUser, LobbyListener
     }
 
     @Override
-    public BufferCodec<ByteBuf, KickUser> codec()
+    public BufferCodec<ByteBuf, LobbyKickUser> codec()
     {
         return BUFFER_CODEC;
     }

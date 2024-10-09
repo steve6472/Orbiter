@@ -36,7 +36,12 @@ public class SteamFriendNameCache
 
     public String getUserName(SteamID user)
     {
-        return names.get(user);
+        String name = names.get(user);
+        if (name == null)
+            return "*null*";
+        else if (name.isBlank())
+            return "*blank_name*";
+        return name;
     }
 
     void updateName(SteamID user, String newName)

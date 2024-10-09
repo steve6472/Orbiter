@@ -10,7 +10,6 @@ import steve6472.core.network.PacketListener;
 import steve6472.orbiter.Registries;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -85,15 +84,24 @@ public class PacketManager
         ByteBuf buffer = Unpooled.wrappedBuffer(bytes);
         int packetId = buffer.readInt();
 
-        T packetListener = (T) listeners.get(listenerClass);
-        if (packetListener == null)
+        try
         {
-            throw new RuntimeException("Packet Listener for " + listenerClass + " not found!");
-        }
+            //noinspection unchecked
+            T packetListener = (T) listeners.get(listenerClass);
+            if (packetListener == null)
+            {
+                throw new RuntimeException("Packet Listener for " + listenerClass + " not found!");
+            }
 
-        var packetCodec = Registries.PACKET.getPacketFromIntKey(packetId);
-        Packet<?, T> decode = (Packet<?, T>) packetCodec.decode(buffer);
-        decode.handlePacket(packetListener);
+            var packetCodec = Registries.PACKET.getPacketFromIntKey(packetId);
+            //noinspection unchecked but this may actually throw an error
+            Packet<?, T> decode = (Packet<?, T>) packetCodec.decode(buffer);
+            decode.handlePacket(packetListener);
+        } catch (Exception e)
+        {
+            LOGGER.severe("Exception caught when processing packet id " + packetId + " (" + Registries.PACKET.getPacketKeyByIntKey(packetId) + ")");
+            throw e;
+        }
     }
 
     public void registerListener(PacketListener packetListener)

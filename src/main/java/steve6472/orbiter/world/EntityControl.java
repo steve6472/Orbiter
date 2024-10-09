@@ -53,6 +53,11 @@ public interface EntityControl
         physics().add(body);
         bodyMap().put(uuid, body);
 
+        if (objects.stream().anyMatch(o -> o instanceof MPControlled))
+        {
+            body.setGravity(Convert.jomlToPhys(new Vector3f(0, 0, 0)));
+        }
+
         return entity;
     }
 
@@ -61,5 +66,15 @@ public interface EntityControl
         PhysicsRigidBody body = new PhysicsRigidBody(new CapsuleCollisionShape(PCPlayer.RADIUS, PCPlayer.HEIGHT / 2f));
         body.setAngularFactor(Convert.jomlToPhys(new Vector3f(0, 1, 0)));
         return addPhysicsEntity(body, VolkaniumsRegistries.STATIC_MODEL.get(Key.defaultNamespace("blockbench/static/player_capsule")), new MPControlled(steamID));
+    }
+
+    default void removeEntity(UUID uuid)
+    {
+        PhysicsRigidBody body = bodyMap().get(uuid);
+        if (body != null)
+        {
+            physics().remove(body);
+        }
+        ecs().findEntitiesWith(UUID.class).forEach(e -> ecs().deleteEntity(e.entity()));
     }
 }

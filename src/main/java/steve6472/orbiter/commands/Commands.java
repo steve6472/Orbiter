@@ -1,6 +1,7 @@
 package steve6472.orbiter.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
+import steve6472.orbiter.commands.impl.CountPhysicsBodies;
 import steve6472.orbiter.commands.impl.TpCommand;
 import steve6472.orbiter.commands.impl.steam.ChatCommand;
 
@@ -22,6 +23,7 @@ public class Commands
     public void init()
     {
         new TpCommand(dispatcher);
+        new CountPhysicsBodies(dispatcher);
 
         new ChatCommand(dispatcher);
     }

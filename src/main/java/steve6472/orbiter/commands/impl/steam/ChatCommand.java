@@ -5,11 +5,8 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.commands.Command;
 import steve6472.orbiter.commands.CommandSource;
-import steve6472.orbiter.debug.Console;
 import steve6472.orbiter.network.packets.lobby.LobbyChatMessage;
 import steve6472.orbiter.steam.lobby.LobbyManager;
-
-import java.awt.*;
 
 public class ChatCommand extends Command
 {
@@ -25,7 +22,7 @@ public class ChatCommand extends Command
 			LobbyManager lobbyManager = OrbiterApp.getInstance().getSteam().lobbyManager;
 			if (lobbyManager.currentLobby() != null)
 			{
-				lobbyManager.currentLobby().broadcastPacket(new LobbyChatMessage(getString(c, "text")));
+				lobbyManager.currentLobby().broadcastLobbyPacket(new LobbyChatMessage(getString(c, "text")));
 			}
 
 			return 0;

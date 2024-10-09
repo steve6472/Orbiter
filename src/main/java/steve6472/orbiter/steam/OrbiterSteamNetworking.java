@@ -4,6 +4,7 @@ import com.codedisaster.steamworks.SteamID;
 import com.codedisaster.steamworks.SteamNetworking;
 import com.codedisaster.steamworks.SteamNetworkingCallback;
 import steve6472.core.log.Log;
+import steve6472.orbiter.network.packets.game.AcceptedPeerConnection;
 import steve6472.orbiter.steam.lobby.Lobby;
 
 import java.util.logging.Logger;
@@ -29,6 +30,11 @@ public class OrbiterSteamNetworking implements SteamNetworkingCallback
         LOGGER.severe("Connect Fail from " + steamIDRemote.getAccountID() + " error: " + sessionError);
     }
 
+    /*
+     * Accept request ONLY from a lobby owner
+     * This means that the user first has to join a lobby
+     * Only the lobby owner may send session requests
+     */
     @Override
     public void onP2PSessionRequest(SteamID steamIDRemote)
     {
@@ -50,10 +56,10 @@ public class OrbiterSteamNetworking implements SteamNetworkingCallback
         if (!steamMain.steamNetworking.acceptP2PSessionWithUser(steamIDRemote))
         {
             LOGGER.severe("Session with " + steamMain.friendNames.getUserName(steamIDRemote) + " not accepted?");
+            return;
         }
-        // TODO: finish
-        steamMain.peer = steamIDRemote;
-        steamMain.orbiterApp.getWorld().spawnDebugPlayer(steamIDRemote);
-        LOGGER.info("Peer set!");
+
+        steamMain.connections.addPeer(new SteamPeer(steamIDRemote));
+        steamMain.connections.broadcastMessage(AcceptedPeerConnection.instance());
     }
 }

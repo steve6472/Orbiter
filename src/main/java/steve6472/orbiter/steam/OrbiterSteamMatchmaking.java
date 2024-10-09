@@ -4,13 +4,17 @@ import com.codedisaster.steamworks.*;
 import steve6472.core.log.Log;
 import steve6472.orbiter.OrbiterMain;
 import steve6472.orbiter.debug.Console;
+import steve6472.orbiter.network.packets.game.HelloGame;
+import steve6472.orbiter.network.packets.game.PlayerDisconnected;
 import steve6472.orbiter.network.packets.lobby.LobbyListener;
 import steve6472.orbiter.steam.lobby.Lobby;
+import steve6472.orbiter.world.ecs.components.MPControlled;
 
 import javax.swing.*;
 import java.awt.*;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
@@ -133,11 +137,30 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
         {
             LOGGER.info("User entered lobby " + steamMain.friendNames.getUserName(steamIDUserChanged));
             steamMain.lobbyManager.currentLobby()._addUser(steamIDUserChanged);
+
+            if (steamMain.lobbyManager.currentLobby().hasGameStarted())
+            {
+                steamMain.connections.addPeer(new SteamPeer(steamIDUserChanged));
+                steamMain.connections.broadcastMessage(HelloGame.instance());
+            }
         }
         else if (stateChange == SteamMatchmaking.ChatMemberStateChange.Left)
         {
             LOGGER.info("User left lobby " + steamMain.friendNames.getUserName(steamIDUserChanged));
             steamMain.lobbyManager.currentLobby()._removeUser(steamIDUserChanged);
+
+            if (steamMain.lobbyManager.currentLobby().hasGameStarted())
+            {
+                steamMain.connections.removePeer(new SteamPeer(steamIDUserChanged));
+                steamMain.connections.broadcastMessage(new PlayerDisconnected(steamIDUserChanged));
+
+                steamMain.orbiterApp.getWorld()
+                    .ecs()
+                    .findEntitiesWith(MPControlled.class, UUID.class)
+                    .stream()
+                    .filter(e -> e.comp1().controller().equals(steamIDUserChanged))
+                    .forEach(e -> steamMain.orbiterApp.getWorld().removeEntity(e.comp2()));
+            }
         }
         else
         {

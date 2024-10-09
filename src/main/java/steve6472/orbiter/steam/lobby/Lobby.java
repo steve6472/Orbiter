@@ -4,12 +4,13 @@ import com.codedisaster.steamworks.*;
 import steve6472.core.log.Log;
 import steve6472.core.network.Packet;
 import steve6472.orbiter.network.PacketManager;
+import steve6472.orbiter.network.PeerConnections;
 import steve6472.orbiter.network.packets.game.HelloGame;
-import steve6472.orbiter.network.packets.lobby.KickUser;
+import steve6472.orbiter.network.packets.lobby.LobbyKickUser;
 import steve6472.orbiter.network.packets.lobby.LobbyClosing;
 import steve6472.orbiter.steam.SteamMain;
+import steve6472.orbiter.steam.SteamPeer;
 
-import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -27,7 +28,7 @@ public class Lobby
     private final SteamMain steamMain;
     private final SteamMatchmaking matchmaking;
     private final PacketManager packetManager;
-    private final SteamNetworking networking;
+    private final PeerConnections<SteamPeer> connections;
 
     /*
      * Lobby data
@@ -43,6 +44,7 @@ public class Lobby
     private int maxMembers;
     private SteamID lobbyOwner;
     public boolean isClosing;
+    private boolean gameStarted;
 
     public Lobby(SteamID lobbyID, SteamMain steamMain)
     {
@@ -50,7 +52,7 @@ public class Lobby
         this.steamMain = steamMain;
         this.matchmaking = steamMain.steamMatchmaking;
         this.packetManager = steamMain.packetManager;
-        this.networking = steamMain.steamNetworking;
+        this.connections = steamMain.connections;
     }
 
     public Lobby(SteamID lobbyID, SteamMain steamMain, SteamMatchmaking.LobbyType lobbyType, int maxMembers, SteamID lobbyOwner)
@@ -59,7 +61,7 @@ public class Lobby
         this.steamMain = steamMain;
         this.matchmaking = steamMain.steamMatchmaking;
         this.packetManager = steamMain.packetManager;
-        this.networking = steamMain.steamNetworking;
+        this.connections = steamMain.connections;
         this.lobbyType = lobbyType;
         this.maxMembers = maxMembers;
         this.lobbyOwner = lobbyOwner;
@@ -145,12 +147,12 @@ public class Lobby
 
     public void close()
     {
-        broadcastPacket(LobbyClosing.instance());
+        broadcastLobbyPacket(LobbyClosing.instance());
     }
 
     /// Broadcast packet to everyone (including sender)
     /// @param packet Packet to be broadcasted
-    public <T extends Packet<T, ?>> void broadcastPacket(T packet)
+    public <T extends Packet<T, ?>> void broadcastLobbyPacket(T packet)
     {
         try
         {
@@ -163,24 +165,17 @@ public class Lobby
 
     public void startGame()
     {
+        gameStarted = true;
         for (SteamID connectedUser : connectedUsers)
         {
             // Probably no need to establish P2P connection with yourself
             if (connectedUser.equals(lobbyOwner))
                 continue;
 
-            try
-            {
-                networking.sendP2PPacket(connectedUser, packetManager.createDataPacket(HelloGame.instance()), SteamNetworking.P2PSend.Reliable, 0);
-            } catch (SteamException e)
-            {
-                throw new RuntimeException(e);
-            }
-
-            LOGGER.info("Set peer to " + steamMain.friendNames.getUserName(connectedUser));
-            steamMain.peer = connectedUser;
-            steamMain.orbiterApp.getWorld().spawnDebugPlayer(connectedUser);
+            connections.addPeer(new SteamPeer(connectedUser));
         }
+
+        connections.broadcastMessage(HelloGame.instance());
     }
 
     /*
@@ -243,12 +238,12 @@ public class Lobby
             return;
         }
 
-        broadcastPacket(new KickUser(steamID));
+        broadcastLobbyPacket(new LobbyKickUser(steamID));
     }
 
     public void kickOwner()
     {
-        broadcastPacket(new KickUser(lobbyOwner));
+        broadcastLobbyPacket(new LobbyKickUser(lobbyOwner));
         lobbyOwner = null;
     }
 
@@ -289,6 +284,11 @@ public class Lobby
     public SteamID getLobbyOwner()
     {
         return matchmaking.getLobbyOwner(lobbyID);
+    }
+
+    public boolean hasGameStarted()
+    {
+        return gameStarted;
     }
 
     @Override

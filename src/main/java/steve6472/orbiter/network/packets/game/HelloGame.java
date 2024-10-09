@@ -1,9 +1,12 @@
 package steve6472.orbiter.network.packets.game;
 
 import io.netty.buffer.ByteBuf;
+import steve6472.core.log.Log;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.Packet;
 import steve6472.core.registry.Key;
+
+import java.util.logging.Logger;
 
 /**
  * Created by steve6472
@@ -12,6 +15,8 @@ import steve6472.core.registry.Key;
  */
 public class HelloGame implements Packet<HelloGame, GameListener>
 {
+    public static final Logger LOGGER = Log.getLogger(HelloGame.class);
+
     private static final HelloGame INSTANCE = new HelloGame();
     public static final Key KEY = Key.defaultNamespace("hello_game");
     public static final BufferCodec<ByteBuf, HelloGame> BUFFER_CODEC = BufferCodec.unit(INSTANCE);
@@ -38,7 +43,6 @@ public class HelloGame implements Packet<HelloGame, GameListener>
     @Override
     public void handlePacket(GameListener listener)
     {
-        System.out.println("Hello Game!");
-//        listener.helloWorld();
+        LOGGER.info("Accepted connection! (hello_game packet)");
     }
 }

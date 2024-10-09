@@ -19,11 +19,16 @@ public class Packets
     {
         // Lobby packets
         registerPacket(LobbyClosing.KEY, LobbyClosing.BUFFER_CODEC);
-        registerPacket(KickUser.KEY, KickUser.BUFFER_CODEC);
+        registerPacket(LobbyKickUser.KEY, LobbyKickUser.BUFFER_CODEC);
         registerPacket(LobbyChatMessage.KEY, LobbyChatMessage.BUFFER_CODEC);
 
         // Game packets
         registerPacket(HelloGame.KEY, HelloGame.BUFFER_CODEC);
+        registerPacket(Heartbeat.KEY, Heartbeat.BUFFER_CODEC);
+
+        registerPacket(AcceptedPeerConnection.KEY, AcceptedPeerConnection.BUFFER_CODEC);
+        registerPacket(SpawnPlayerCharacter.KEY, SpawnPlayerCharacter.BUFFER_CODEC);
+        registerPacket(PlayerDisconnected.KEY, PlayerDisconnected.BUFFER_CODEC);
         registerPacket(TeleportToPosition.KEY, TeleportToPosition.BUFFER_CODEC);
 
         return new Object();

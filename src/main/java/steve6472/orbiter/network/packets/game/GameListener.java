@@ -1,10 +1,12 @@
 package steve6472.orbiter.network.packets.game;
 
+import com.codedisaster.steamworks.SteamID;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.steam.SteamMain;
+import steve6472.orbiter.steam.SteamPeer;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.MPControlled;
 import steve6472.orbiter.world.ecs.components.Tag;
@@ -43,5 +45,41 @@ public class GameListener extends OrbiterPacketListener
 
             world.bodyMap.get(uuid).setPhysicsLocation(Convert.jomlToPhys(destination));
         }
+    }
+
+    public void acceptedPeerConnection()
+    {
+        LOGGER.info(steamMain.friendNames.getUserName(sender()) + " accepted peer connection!");
+        connections.broadcastMessageExclude(new SpawnPlayerCharacter(sender()), peer());
+        sendExistingData();
+        world.spawnDebugPlayer(sender());
+    }
+
+    private void sendExistingData()
+    {
+        connections.sendMessage(peer(), new SpawnPlayerCharacter(steamMain.userID));
+
+        for (SteamPeer listPeer : connections.listPeers())
+        {
+            if (listPeer.equals(peer()))
+                continue;
+
+            connections.sendMessage(peer(), new SpawnPlayerCharacter(listPeer.steamID()));
+        }
+    }
+
+    public void spawnPlayer(SteamID player)
+    {
+        world.spawnDebugPlayer(player);
+    }
+
+    public void disconnectPlayer(SteamID disconnectedPlayer)
+    {
+        world
+            .ecs()
+            .findEntitiesWith(MPControlled.class, UUID.class)
+            .stream()
+            .filter(e -> e.comp1().controller().equals(disconnectedPlayer))
+            .forEach(e -> world.removeEntity(e.comp2()));
     }
 }
