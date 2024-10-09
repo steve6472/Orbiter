@@ -1,31 +1,19 @@
 package steve6472.orbiter.world;
 
-import com.codedisaster.steamworks.SteamID;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
 import com.jme3.bullet.objects.PhysicsBody;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Plane;
 import dev.dominion.ecs.api.Dominion;
-import dev.dominion.ecs.api.Entity;
-import dev.dominion.ecs.engine.IntEntity;
 import org.joml.Vector3f;
-import steve6472.core.registry.Key;
-import steve6472.core.util.RandomUtil;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
-import steve6472.orbiter.player.PCPlayer;
-import steve6472.orbiter.world.ecs.components.IndexModel;
-import steve6472.orbiter.world.ecs.components.Position;
-import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.core.ECSystem;
 import steve6472.orbiter.world.ecs.core.Systems;
 import steve6472.orbiter.world.ecs.systems.UpdateECSPositions;
 import steve6472.orbiter.world.ecs.systems.UpdatePhysicsPositions;
-import steve6472.volkaniums.assets.model.Model;
-import steve6472.volkaniums.registry.VolkaniumsRegistries;
 
 import java.util.*;
 

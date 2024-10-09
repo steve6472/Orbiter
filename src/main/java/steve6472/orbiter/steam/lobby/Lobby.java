@@ -4,12 +4,12 @@ import com.codedisaster.steamworks.*;
 import steve6472.core.log.Log;
 import steve6472.core.network.Packet;
 import steve6472.orbiter.network.PacketManager;
-import steve6472.orbiter.network.packets.game.GameListener;
 import steve6472.orbiter.network.packets.game.HelloGame;
 import steve6472.orbiter.network.packets.lobby.KickUser;
 import steve6472.orbiter.network.packets.lobby.LobbyClosing;
 import steve6472.orbiter.steam.SteamMain;
 
+import java.nio.ByteBuffer;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -26,7 +26,6 @@ public class Lobby
 
     private final SteamMain steamMain;
     private final SteamMatchmaking matchmaking;
-    private final SteamFriends friends;
     private final PacketManager packetManager;
     private final SteamNetworking networking;
 
@@ -50,7 +49,6 @@ public class Lobby
         this.lobbyID = lobbyID;
         this.steamMain = steamMain;
         this.matchmaking = steamMain.steamMatchmaking;
-        this.friends = steamMain.steamFriends;
         this.packetManager = steamMain.packetManager;
         this.networking = steamMain.steamNetworking;
     }
@@ -60,7 +58,6 @@ public class Lobby
         this.lobbyID = lobbyID;
         this.steamMain = steamMain;
         this.matchmaking = steamMain.steamMatchmaking;
-        this.friends = steamMain.steamFriends;
         this.packetManager = steamMain.packetManager;
         this.networking = steamMain.steamNetworking;
         this.lobbyType = lobbyType;
@@ -148,7 +145,6 @@ public class Lobby
 
     public void close()
     {
-        LOGGER.info("Closing lobby!");
         broadcastPacket(LobbyClosing.instance());
     }
 
@@ -158,7 +154,6 @@ public class Lobby
     {
         try
         {
-            LOGGER.fine("Sending packet " + packet.key());
             matchmaking.sendLobbyChatMsg(lobbyID, packetManager.createDataPacket(packet));
         } catch (SteamException e)
         {
@@ -182,6 +177,7 @@ public class Lobby
                 throw new RuntimeException(e);
             }
 
+            LOGGER.info("Set peer to " + steamMain.friendNames.getUserName(connectedUser));
             steamMain.peer = connectedUser;
             steamMain.orbiterApp.getWorld().spawnDebugPlayer(connectedUser);
         }
@@ -243,13 +239,11 @@ public class Lobby
     {
         if (!connectedUsers.contains(steamID))
         {
-            LOGGER.warning("Tried to kick user that is not in lobby " + steamID + "(" + friends.getFriendPersonaName(steamID) + ")");
+            LOGGER.warning("Tried to kick user that is not in lobby " + steamID + "(" + steamMain.friendNames.getUserName(steamID) + ")");
             return;
         }
 
-        // TODO: send special kick packet
         broadcastPacket(new KickUser(steamID));
-//        connectedUsers.remove(steamID);
     }
 
     public void kickOwner()

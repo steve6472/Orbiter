@@ -165,7 +165,7 @@ public class LobbyTab
 
                 for (LobbyInvite lobbyInvite : steam.lobbyManager.lobbyInvites)
                 {
-                    inviteListModel.addElement(steam.steamFriends.getFriendPersonaName(lobbyInvite.invitee()));
+                    inviteListModel.addElement(steam.friendNames.getUserName(lobbyInvite.invitee()));
                 }
             }
         });
@@ -183,7 +183,7 @@ public class LobbyTab
 
                 for (LobbyInvite lobbyInvite : steam.lobbyManager.lobbyInvites)
                 {
-                    inviteListModel.addElement(steam.steamFriends.getFriendPersonaName(lobbyInvite.invitee()));
+                    inviteListModel.addElement(steam.friendNames.getUserName(lobbyInvite.invitee()));
                 }
             }
         });
@@ -196,7 +196,7 @@ public class LobbyTab
 
             for (LobbyInvite lobbyInvite : steam.lobbyManager.lobbyInvites)
             {
-                inviteListModel.addElement(steam.steamFriends.getFriendPersonaName(lobbyInvite.invitee()));
+                inviteListModel.addElement(steam.friendNames.getUserName(lobbyInvite.invitee()));
             }
         });
 
@@ -302,7 +302,7 @@ public class LobbyTab
             for (int i = 0; i < friendCount; i++)
             {
                 SteamID friendByIndex = steam.steamFriends.getFriendByIndex(i, SteamFriends.FriendFlags.All);
-                String friendPersonaName = steam.steamFriends.getFriendPersonaName(friendByIndex);
+                String friendPersonaName = steam.friendNames.getUserName(friendByIndex);
                 availablePlayersModel.addElement(friendPersonaName);
             }
         });
@@ -346,7 +346,7 @@ public class LobbyTab
 
             for (SteamID connectedUser : steam.lobbyManager.currentLobby().updateUsers())
             {
-                String name = steam.steamFriends.getFriendPersonaName(connectedUser);
+                String name = steam.friendNames.getUserName(connectedUser);
                 currentLobbyModel.addElement(name);
             }
         });

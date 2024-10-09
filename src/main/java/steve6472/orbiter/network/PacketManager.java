@@ -5,7 +5,6 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import steve6472.core.log.Log;
-import steve6472.core.network.BufferCodec;
 import steve6472.core.network.Packet;
 import steve6472.core.network.PacketListener;
 import steve6472.orbiter.Registries;
@@ -57,13 +56,11 @@ public class PacketManager
             buffer.writeInt(packetId);
             packet.codec().encode(buffer, packet);
 
-//            ByteBuffer byteBuffer = buffer.nioBuffer();
-
-//            LOGGER.fine("Creating packet: " + Registries.PACKET.getPacketKeyByIntKey(packetId) + " " + Arrays.toString());
-            byte[] byteArray = getByteArrayWithoutAffecting(buffer);
-            ByteBuffer directBuffer = ByteBuffer.allocateDirect(byteArray.length);
-            directBuffer.put(byteArray);
-//            LOGGER.fine("Creating packet: " + Registries.PACKET.getPacketKeyByIntKey(packetId) + " " + Arrays.toString(byteArray));
+            byte[] bytes = new byte[buffer.readableBytes()];
+            buffer.getBytes(0, bytes);
+            ByteBuffer directBuffer = ByteBuffer.allocateDirect(bytes.length);
+            directBuffer.put(bytes);
+            directBuffer.flip();
             return directBuffer;
         } finally
         {
@@ -71,41 +68,11 @@ public class PacketManager
         }
     }
 
-    public static byte[] getByteArrayWithoutAffecting(ByteBuffer byteBuffer)
+    public <T extends PacketListener> void handlePacket(ByteBuffer buffer, Class<T> listenerClass, SteamID lastSender)
     {
-        // Save the current position and limit
-        int position = byteBuffer.position();
-        int limit = byteBuffer.limit();
-
-        // Create a new byte array with the remaining bytes' length
-        byte[] bytes = new byte[byteBuffer.remaining()];
-
-        // Copy the buffer's content into the array
-        byteBuffer.get(bytes);
-
-        // Restore the original position and limit to avoid affecting the buffer's state
-        byteBuffer.position(position);
-        byteBuffer.limit(limit);
-
-        return bytes;
-    }
-
-    public static byte[] getByteArrayWithoutAffecting(ByteBuf byteBuf)
-    {
-        // Create a new byte array with the readable bytes' length
-        byte[] bytes = new byte[byteBuf.readableBytes()];
-
-        // Store current reader and writer indices
-        int readerIndex = byteBuf.readerIndex();
-        int writerIndex = byteBuf.writerIndex();
-
-        // Copy the data into the new array
-        byteBuf.getBytes(readerIndex, bytes);
-
-        // Restore the original indices to avoid affecting the buffer state
-        byteBuf.setIndex(readerIndex, writerIndex);
-
-        return bytes;
+        byte[] bytes = new byte[buffer.remaining()];
+        buffer.get(bytes);
+        handleRawPacket(bytes, listenerClass, lastSender);
     }
 
     public <T extends PacketListener> void handleRawPacket(byte[] bytes, Class<T> listenerClass, SteamID lastSender)
@@ -117,10 +84,6 @@ public class PacketManager
 
         ByteBuf buffer = Unpooled.wrappedBuffer(bytes);
         int packetId = buffer.readInt();
-//        LOGGER.fine("Handling packet: " + Registries.PACKET.getPacketKeyByIntKey(packetId));
-
-        if (packetId == 0)
-            return;
 
         T packetListener = (T) listeners.get(listenerClass);
         if (packetListener == null)

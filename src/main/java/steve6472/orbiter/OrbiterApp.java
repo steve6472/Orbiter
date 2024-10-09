@@ -11,7 +11,6 @@ import steve6472.core.registry.Key;
 import steve6472.core.setting.SettingsLoader;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.debug.DebugWindow;
-import steve6472.orbiter.network.test.PacketTest;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.settings.Settings;
@@ -37,7 +36,6 @@ import java.util.logging.Level;
 public class OrbiterApp extends VolkaniumsApp
 {
     private static final boolean ENABLE_STEAM = true;
-    private static final boolean ENABLE_TEST_ECHO = false;
 
     private static OrbiterApp instance;
 
@@ -45,7 +43,6 @@ public class OrbiterApp extends VolkaniumsApp
     private Client client;
     private World world;
     private Commands commands;
-    private PacketTest packetTest;
 
     OrbiterApp()
     {
@@ -68,11 +65,6 @@ public class OrbiterApp extends VolkaniumsApp
         steam = new SteamMain(this);
         if (ENABLE_STEAM)
             steam.setup();
-
-        if (ENABLE_TEST_ECHO && !ENABLE_STEAM)
-        {
-            packetTest = new PacketTest();
-        }
     }
 
     @Override
@@ -112,10 +104,6 @@ public class OrbiterApp extends VolkaniumsApp
 
         commands = new Commands();
         DebugWindow.openDebugWindow(commands, client, world, steam);
-
-
-        PhysicsRigidBody body = new PhysicsRigidBody(new CapsuleCollisionShape(PCPlayer.RADIUS, PCPlayer.HEIGHT / 2f));
-        world.addPhysicsEntity(body, VolkaniumsRegistries.STATIC_MODEL.get(Key.defaultNamespace("blockbench/static/player_capsule")));
     }
 
     private float timeToNextTick = 0;
@@ -151,9 +139,6 @@ public class OrbiterApp extends VolkaniumsApp
 
         world.tick();
         client.tickClient();
-
-        if (packetTest != null)
-            packetTest.tick();
     }
 
     public World getWorld()

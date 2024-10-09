@@ -5,11 +5,8 @@ import steve6472.core.network.BufferCodec;
 import steve6472.core.network.Packet;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.network.packets.DummyPacket;
-import steve6472.orbiter.network.packets.game.HelloGame;
-import steve6472.orbiter.network.packets.game.TeleportToPosition;
-import steve6472.orbiter.network.packets.lobby.KickUser;
-import steve6472.orbiter.network.packets.lobby.LobbyClosing;
+import steve6472.orbiter.network.packets.game.*;
+import steve6472.orbiter.network.packets.lobby.*;
 
 /**
  * Created by steve6472
@@ -20,11 +17,12 @@ public class Packets
 {
     public static Object init()
     {
-        registerPacket(DummyPacket.KEY, DummyPacket.BUFFER_CODEC);
-
+        // Lobby packets
         registerPacket(LobbyClosing.KEY, LobbyClosing.BUFFER_CODEC);
         registerPacket(KickUser.KEY, KickUser.BUFFER_CODEC);
+        registerPacket(LobbyChatMessage.KEY, LobbyChatMessage.BUFFER_CODEC);
 
+        // Game packets
         registerPacket(HelloGame.KEY, HelloGame.BUFFER_CODEC);
         registerPacket(TeleportToPosition.KEY, TeleportToPosition.BUFFER_CODEC);
 

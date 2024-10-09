@@ -13,9 +13,6 @@ import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.steam.lobby.LobbyManager;
 
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,9 +35,7 @@ public class SteamMain
     public SteamID userID;
     public LobbyManager lobbyManager;
     public PacketManager packetManager;
-
-    @Deprecated(forRemoval = true)
-    public List<LobbyInvite> invites = new ArrayList<>();
+    public SteamFriendNameCache friendNames;
 
     public SteamMain(OrbiterApp orbiterApp)
     {
@@ -67,6 +62,7 @@ public class SteamMain
         steamUser = new SteamUser(new OrbiterSteamUserCallback());
         userID = steamUser.getSteamID();
         steamFriends = new SteamFriends(new OrbiterSteamFriends(this));
+        friendNames = new SteamFriendNameCache(steamFriends, userID);
         steamNetworking = new SteamNetworking(new OrbiterSteamNetworking(this));
         steamMatchmaking = new SteamMatchmaking(new OrbiterSteamMatchmaking(this));
         lobbyManager = new LobbyManager(this);
@@ -107,14 +103,11 @@ public class SteamMain
         if (peer == null)
             return;
 
-        ByteBuffer dataPacket = packetManager.createDataPacket(packet);
-        dataPacket.flip();
-        if (!steamNetworking.sendP2PPacket(peer, dataPacket, SteamNetworking.P2PSend.Reliable, 0))
+        if (!steamNetworking.sendP2PPacket(peer, packetManager.createDataPacket(packet), SteamNetworking.P2PSend.Reliable, 0))
         {
             LOGGER.warning("Packet was not sent!");
         }
     }
-
 
     public void receiveMessage() throws SteamException
     {
@@ -132,24 +125,15 @@ public class SteamMain
             if (i != messageSize[0])
                 LOGGER.warning("Packet size mismatch");
 
-            //            if (messageSize[0] == 0)
-//                continue;
-
-            byte[] bytes = PacketManager.getByteArrayWithoutAffecting(buffer);
-
-            // TODO: update for max P2P packet size
-            packetManager.handleRawPacket(bytes, GameListener.class, remoteID);
+            packetManager.handlePacket(buffer, GameListener.class, remoteID);
         }
     }
 
     private void runCallbacks()
     {
-        if (tick % 30 == 0)
+        if (SteamAPI.isSteamRunning())
         {
-            if (SteamAPI.isSteamRunning())
-            {
-                SteamAPI.runCallbacks();
-            }
+            SteamAPI.runCallbacks();
         }
         if (tick == 0)
             tick = 60;

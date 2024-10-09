@@ -2,10 +2,12 @@ package steve6472.orbiter.network.packets.lobby;
 
 import com.codedisaster.steamworks.SteamID;
 import steve6472.core.log.Log;
+import steve6472.orbiter.debug.Console;
 import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.steam.lobby.Lobby;
 
+import java.awt.*;
 import java.util.logging.Logger;
 
 /**
@@ -29,11 +31,11 @@ public class LobbyListener extends OrbiterPacketListener
 
     public void kickUser(SteamID toKick)
     {
-        LOGGER.finest("Recieved kickUser " + steamMain.steamFriends.getFriendPersonaName(toKick));
+        LOGGER.finest("Recieved kickUser " + steamMain.friendNames.getUserName(toKick));
 
         if (!lobby.getLobbyOwner().equals(sender()))
         {
-            LOGGER.warning(steamMain.steamFriends.getFriendPersonaName(sender()) + " tried to kick someone but they are not the owner");
+            LOGGER.warning(steamMain.friendNames.getUserName(sender()) + " tried to kick someone but they are not the owner");
             return;
         }
 
@@ -47,9 +49,8 @@ public class LobbyListener extends OrbiterPacketListener
 
         if (toKick.equals(steamMain.userID))
         {
-            steamMain.steamMatchmaking.leaveLobby(lobby.lobbyID());
+            steamMain.steamMatchmaking.leaveLobby(steamMain.lobbyManager.currentLobby().lobbyID());
             steamMain.lobbyManager.resetCurrentLobby();
-            // TODO: kick callback
         }
 
         if (lobby.isClosing)
@@ -63,16 +64,23 @@ public class LobbyListener extends OrbiterPacketListener
         LOGGER.finest("Recieved lobbyClosing");
         if (!lobby.getLobbyOwner().equals(sender()))
         {
-            LOGGER.warning(steamMain.steamFriends.getFriendPersonaName(sender()) + " tried to send lobby_closing packet but they are not the owner");
+            LOGGER.warning(steamMain.friendNames.getUserName(sender()) + " tried to send lobby_closing packet but they are not the owner");
             return;
         }
 
         lobby.isClosing = true;
+        steamMain.steamMatchmaking.leaveLobby(steamMain.lobbyManager.currentLobby().lobbyID());
         steamMain.lobbyManager.resetCurrentLobby();
     }
 
     public void helloWorld()
     {
-        LOGGER.info("Got hello world from " + steamMain.steamFriends.getFriendPersonaName(sender()));
+        LOGGER.info("Got hello world from " + steamMain.friendNames.getUserName(sender()));
+    }
+
+    public void chatMessage(String message)
+    {
+        String friendPersonaName = steamMain.friendNames.getUserName(sender());
+        Console.log(friendPersonaName + "> " + message, Color.BLACK);
     }
 }

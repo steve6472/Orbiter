@@ -41,7 +41,19 @@ public class OrbiterSteamFriends implements SteamFriendsCallback
         {
             SteamFriends.FriendGameInfo friendGameInfo = new SteamFriends.FriendGameInfo();
             steamMain.steamFriends.getFriendGamePlayed(steamID, friendGameInfo);
-            LOGGER.finest(steamMain.steamFriends.getFriendPersonaName(steamID) + " GamePlayed: " + friendGameInfo.getGameID() + ", " + friendGameInfo.getGameIP() + ", " + friendGameInfo.getSteamIDLobby() + ", " + friendGameInfo.getGamePort() + ", " + friendGameInfo.getQueryPort());
+            LOGGER.finest(steamMain.friendNames.getUserName(steamID) + " GamePlayed: " + friendGameInfo.getGameID() + ", " + friendGameInfo.getGameIP() + ", " + friendGameInfo.getSteamIDLobby() + ", " + friendGameInfo.getGamePort() + ", " + friendGameInfo.getQueryPort());
+        }
+        else if (change == SteamFriends.PersonaChange.Name)
+        {
+            String name = steamMain.steamFriends.getFriendPersonaName(steamID);
+            LOGGER.info(name + " changed their name!");
+            steamMain.friendNames.updateName(steamID, name);
+        }
+        else if (change == SteamFriends.PersonaChange.Nickname)
+        {
+            String name = steamMain.steamFriends.getFriendPersonaName(steamID);
+            LOGGER.info(name + " changed their nickname!");
+            steamMain.friendNames.updateName(steamID, name);
         }
     }
 
@@ -64,7 +76,7 @@ public class OrbiterSteamFriends implements SteamFriendsCallback
 
         steamMain.lobbyManager.setCurrentLobby(new Lobby(steamIDLobby, steamMain));
 
-        Console.log("Joining lobby " + steamIDLobby + ", requested by " + steamMain.steamFriends.getFriendPersonaName(steamIDFriend), new Color(0xFF056B42, true));
+        Console.log("Joining lobby " + steamIDLobby + ", requested by " + steamMain.friendNames.getUserName(steamIDFriend), new Color(0xFF056B42, true));
         steamMain.steamMatchmaking.joinLobby(steamIDLobby);
     }
 
@@ -84,6 +96,7 @@ public class OrbiterSteamFriends implements SteamFriendsCallback
     public void onGameRichPresenceJoinRequested(SteamID steamIDFriend, String connect)
     {
         LOGGER.finest("onGameRichPresenceJoinRequested: %s, %s".formatted(steamIDFriend, connect));
+        LOGGER.info(steamMain.friendNames.getUserName(steamIDFriend) + " requested rich join via rich presence (" + connect + ")");
     }
 
     @Override

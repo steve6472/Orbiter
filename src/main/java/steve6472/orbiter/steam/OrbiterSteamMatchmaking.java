@@ -2,10 +2,12 @@ package steve6472.orbiter.steam;
 
 import com.codedisaster.steamworks.*;
 import steve6472.core.log.Log;
+import steve6472.orbiter.OrbiterMain;
 import steve6472.orbiter.debug.Console;
 import steve6472.orbiter.network.packets.lobby.LobbyListener;
 import steve6472.orbiter.steam.lobby.Lobby;
 
+import javax.swing.*;
 import java.awt.*;
 import java.nio.ByteBuffer;
 import java.util.List;
@@ -39,7 +41,28 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
         LOGGER.finest("onLobbyInvite: %s, %s, %s".formatted(steamIDUser, steamIDLobby, gameID));
         Lobby lobby = new Lobby(steamIDLobby, steamMain);
         steamMain.lobbyManager.lobbyInvites.add(new LobbyInvite(steamIDUser, lobby));
-        Console.log("You've been invited to lobby " + steamIDLobby + " by " + steamMain.steamFriends.getFriendPersonaName(steamIDUser), Color.BLACK);
+        String inviteeName = steamMain.friendNames.getUserName(steamIDUser);
+        Console.log("You've been invited to lobby " + steamIDLobby + " by " + inviteeName, Color.BLACK);
+        if (OrbiterMain.STEAM_TEST)
+        {
+            int res = JOptionPane.showOptionDialog(
+                null,
+                "Invite from " + inviteeName,
+                "Do you wish to accept the invite from " + inviteeName + "?",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new String[] {"Yes", "No"},
+                "Yes");
+
+            if (res == JOptionPane.YES_OPTION)
+            {
+                steamMain.steamMatchmaking.joinLobby(steamIDLobby);
+            } else
+            {
+                steamMain.lobbyManager.lobbyInvites.removeFirst();
+            }
+        }
     }
 
     @Override
@@ -94,24 +117,32 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
         // A lobby chat room state has changed, this is usually sent when a user has joined or left the lobby.
         LOGGER.finest("onLobbyChatUpdate: %s, %s, %s, %s".formatted(steamIDLobby, steamIDUserChanged, steamIDMakingChange, stateChange));
 
+        if (steamMain.lobbyManager.currentLobby() == null)
+        {
+            LOGGER.warning("Someone " + stateChange + " lobby... What lobby tho ?");
+            return;
+        }
+
+        if (!steamMain.lobbyManager.currentLobby().lobbyID().equals(steamIDLobby))
+        {
+            LOGGER.warning("Someone " + stateChange + " lobby... Not our current lobby tho ?");
+            return;
+        }
+
         if (stateChange == SteamMatchmaking.ChatMemberStateChange.Entered)
         {
-            if (steamMain.lobbyManager.currentLobby() == null)
-            {
-                LOGGER.warning("Someone changed lobby... What lobby tho ?");
-                return;
-            }
-
-            if (!steamMain.lobbyManager.currentLobby().lobbyID().equals(steamIDLobby))
-            {
-                LOGGER.warning("Someone changed lobby... Not our current lobby tho ?");
-                return;
-            }
-
-            LOGGER.info("User entered lobby " + steamMain.steamFriends.getFriendPersonaName(steamIDUserChanged));
+            LOGGER.info("User entered lobby " + steamMain.friendNames.getUserName(steamIDUserChanged));
             steamMain.lobbyManager.currentLobby()._addUser(steamIDUserChanged);
         }
-//        steamMain.invites.add(new LobbyInvite(steamIDUserChanged, steamIDLobby));
+        else if (stateChange == SteamMatchmaking.ChatMemberStateChange.Left)
+        {
+            LOGGER.info("User left lobby " + steamMain.friendNames.getUserName(steamIDUserChanged));
+            steamMain.lobbyManager.currentLobby()._removeUser(steamIDUserChanged);
+        }
+        else
+        {
+            LOGGER.warning("Unhandled state change " + stateChange);
+        }
     }
 
     @Override
@@ -126,10 +157,10 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
             SteamMatchmaking.ChatEntry chatEntry = new SteamMatchmaking.ChatEntry();
             try
             {
-                int readBytes = steamMain.steamMatchmaking.getLobbyChatEntry(steamIDLobby, chatID, chatEntry, byteBuffer);
-                byte[] bytes = new byte[readBytes];
-                byteBuffer.get(bytes);
-                steamMain.packetManager.handleRawPacket(bytes, LobbyListener.class, steamIDUser);
+                int read = steamMain.steamMatchmaking.getLobbyChatEntry(steamIDLobby, chatID, chatEntry, byteBuffer);
+
+                byteBuffer.limit(read);
+                steamMain.packetManager.handlePacket(byteBuffer, LobbyListener.class, steamIDUser);
 
             } catch (SteamException e)
             {

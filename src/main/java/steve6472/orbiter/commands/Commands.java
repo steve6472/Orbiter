@@ -2,9 +2,7 @@ package steve6472.orbiter.commands;
 
 import com.mojang.brigadier.CommandDispatcher;
 import steve6472.orbiter.commands.impl.TpCommand;
-import steve6472.orbiter.commands.impl.steam.InviteCommand;
-import steve6472.orbiter.commands.impl.steam.ListInvitesCommand;
-import steve6472.orbiter.commands.impl.steam.LobbyCommand;
+import steve6472.orbiter.commands.impl.steam.ChatCommand;
 
 /**
  * Created by steve6472
@@ -24,7 +22,7 @@ public class Commands
     public void init()
     {
         new TpCommand(dispatcher);
-        new InviteCommand(dispatcher);
-        new ListInvitesCommand(dispatcher);
+
+        new ChatCommand(dispatcher);
     }
 }
