@@ -103,7 +103,7 @@ public interface EntityControl
         {
             physics().remove(body);
         }
-        ecs().findEntitiesWith(UUID.class).forEach(e -> ecs().deleteEntity(e.entity()));
+        ecs().findEntitiesWith(UUID.class).stream().filter(e -> e.comp().equals(uuid)).forEach(e -> ecs().deleteEntity(e.entity()));
     }
 
     default Optional<Entity> getEntityByUUID(UUID uuid)
