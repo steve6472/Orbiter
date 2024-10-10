@@ -4,12 +4,16 @@ import com.codedisaster.steamworks.SteamID;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.mojang.datafixers.util.Pair;
 import dev.dominion.ecs.api.Dominion;
 import dev.dominion.ecs.api.Entity;
 import dev.dominion.ecs.api.Results;
+import io.netty.buffer.ByteBuf;
 import org.joml.Vector3f;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Convert;
+import steve6472.orbiter.network.PeerConnections;
+import steve6472.orbiter.network.packets.game.CreateEntity;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.components.MPControlled;
@@ -30,6 +34,7 @@ public interface EntityControl
     PhysicsSpace physics();
     Dominion ecs();
     Map<UUID, PhysicsRigidBody> bodyMap();
+    PeerConnections<?> connections();
 
     default Entity addPhysicsEntity(PhysicsRigidBody body, Model model, Object... extraComponents)
     {
@@ -56,6 +61,10 @@ public interface EntityControl
             body.setGravity(Convert.jomlToPhys(new Vector3f(0, 0, 0)));
         }
 
+        // Broadcast new entity to peers
+        // TODO: physics entities
+//        connections().broadcastMessage(new CreateEntity(entity));
+
         return entity;
     }
 
@@ -67,7 +76,12 @@ public interface EntityControl
 
         Collections.addAll(objects, extraComponents);
 
-        return ecs().createEntity(objects.toArray());
+        Entity entity = ecs().createEntity(objects.toArray());
+
+        // Broadcast new entity to peers
+        connections().broadcastMessage(new CreateEntity(entity));
+
+        return entity;
     }
 
     default Entity addEntity(Model model, Object... extraComponents)

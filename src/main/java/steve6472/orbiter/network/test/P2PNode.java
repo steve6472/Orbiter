@@ -52,28 +52,22 @@ public class P2PNode
     // Non-blocking listen method (to be called from your tick method)
     public void listen() throws IOException
     {
-        // Non-blocking selectNow() to check for ready channels
-        int readyChannels = selector.selectNow(); // Returns immediately
-
-        if (readyChannels == 0)
+        while (selector.selectNow() != 0)
         {
-            // No channels are ready, return immediately
-            return;
-        }
+            Set<SelectionKey> selectedKeys = selector.selectedKeys();
+            Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
 
-        Set<SelectionKey> selectedKeys = selector.selectedKeys();
-        Iterator<SelectionKey> keyIterator = selectedKeys.iterator();
-
-        while (keyIterator.hasNext())
-        {
-            SelectionKey key = keyIterator.next();
-
-            if (key.isReadable())
+            while (keyIterator.hasNext())
             {
-                receiveData();
-            }
+                SelectionKey key = keyIterator.next();
 
-            keyIterator.remove(); // Remove the key after handling it
+                if (key.isReadable())
+                {
+                    receiveData();
+                }
+
+                keyIterator.remove(); // Remove the key after handling it
+            }
         }
     }
 

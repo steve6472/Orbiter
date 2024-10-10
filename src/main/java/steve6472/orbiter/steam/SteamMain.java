@@ -98,7 +98,7 @@ public class SteamMain
 
     public boolean isHost()
     {
-        return lobbyManager.currentLobby() != null && lobbyManager.currentLobby().lobbyOwner() == userID;
+        return lobbyManager.currentLobby() == null || lobbyManager.currentLobby().lobbyOwner() == userID;
     }
 
     private void createListeners()

@@ -1,26 +1,24 @@
 package steve6472.orbiter.world.ecs.systems;
 
 import com.codedisaster.steamworks.SteamID;
+import com.mojang.datafixers.util.Pair;
 import dev.dominion.ecs.api.Dominion;
 import dev.dominion.ecs.api.Entity;
-import dev.dominion.ecs.engine.IntEntity;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
-import steve6472.core.network.BufferCodec;
-import steve6472.core.network.BufferCodecs;
-import steve6472.orbiter.OrbiterMain;
-import steve6472.orbiter.Registries;
-import steve6472.orbiter.network.Peer;
+import steve6472.orbiter.network.packets.game.AddEntityComponents;
+import steve6472.orbiter.network.packets.game.RemoveEntityComponents;
 import steve6472.orbiter.network.packets.game.UpdateEntityComponents;
-import steve6472.orbiter.network.test.FakeP2PConstants;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.steam.SteamPeer;
+import steve6472.orbiter.world.NetworkSerialization;
 import steve6472.orbiter.world.World;
+import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.MPControlled;
-import steve6472.orbiter.world.ecs.core.Component;
+import steve6472.orbiter.world.ecs.components.NetworkAdd;
+import steve6472.orbiter.world.ecs.components.NetworkRemove;
+import steve6472.orbiter.world.ecs.components.NetworkUpdates;
 import steve6472.orbiter.world.ecs.core.ComponentSystem;
 
-import java.util.Arrays;
 import java.util.Set;
 import java.util.UUID;
 
@@ -31,9 +29,6 @@ import java.util.UUID;
  */
 public class NetworkSync implements ComponentSystem
 {
-    private static final int INITIAL_BYTES = 128;
-
-    private final PooledByteBufAllocator allocator = PooledByteBufAllocator.DEFAULT;
     private final SteamMain steam;
 
     public NetworkSync(SteamMain steam)
@@ -44,20 +39,20 @@ public class NetworkSync implements ComponentSystem
     @Override
     public void tick(Dominion dominion, World world)
     {
-        var found = dominion.findEntitiesWith(UUID.class);
-
-        SteamPeer clientExclude = new SteamPeer(steam.userID);
-
         if (!steam.isHost())
             return;
 
-        for (var entityComps : found)
+        for (var entityComps : dominion.findEntitiesWith(UUID.class, NetworkUpdates.class))
         {
-            UUID uuid = entityComps.comp();
+            UUID uuid = entityComps.comp1();
+            NetworkUpdates updates = entityComps.comp2();
+
+            if (updates.components().isEmpty())
+                continue;
+
             Entity entity = entityComps.entity();
 
             SteamPeer extraExclude = null;
-
             if (entity.has(MPControlled.class))
             {
                 MPControlled mpControlled = entity.get(MPControlled.class);
@@ -65,37 +60,81 @@ public class NetworkSync implements ComponentSystem
                 extraExclude = new SteamPeer(controller);
             }
 
-            Object[] componentArray = ((IntEntity) entity).getComponentArray();
+            Pair<Integer, ByteBuf> serialized = NetworkSerialization.entityComponentsToBuffer(entity, updates.test());
+            if (serialized.getFirst() == 0)
+                continue;
 
-            ByteBuf buffer = allocator.buffer(INITIAL_BYTES + componentArray.length * 16);
-            int encoded = 0;
+            updates.clear();
 
-            for (Object component : componentArray)
+            Set<SteamPeer> toExclude = extraExclude == null ? Set.of() : Set.of(extraExclude);
+
+            steam.connections.broadcastMessageExclude(new UpdateEntityComponents(uuid, serialized.getFirst(), serialized.getSecond()), toExclude);
+        }
+
+        for (var entityComps : dominion.findEntitiesWith(UUID.class, NetworkAdd.class))
+        {
+            UUID uuid = entityComps.comp1();
+            NetworkAdd updates = entityComps.comp2();
+
+            if (updates.components().isEmpty())
+                continue;
+
+            Entity entity = entityComps.entity();
+
+            SteamPeer extraExclude = null;
+            if (entity.has(MPControlled.class))
             {
-                // Never changes
-                if (component.getClass().equals(UUID.class))
-                    continue;
-
-                for (Component<?> componentType : Registries.COMPONENT.getMap().values())
-                {
-                    //noinspection unchecked
-                    BufferCodec<ByteBuf, Object> networkCodec = (BufferCodec<ByteBuf, Object>) componentType.getNetworkCodec();
-                    if (networkCodec == null)
-                        continue;
-
-                    if (componentType.componentClass().equals(component.getClass()))
-                    {
-                        BufferCodecs.KEY.encode(buffer, componentType.key());
-                        networkCodec.encode(buffer, component);
-                        encoded++;
-                    }
-                }
+                MPControlled mpControlled = entity.get(MPControlled.class);
+                SteamID controller = mpControlled.controller();
+                extraExclude = new SteamPeer(controller);
             }
 
-            Set<SteamPeer> toExclude = extraExclude == null ? Set.of(clientExclude) : Set.of(extraExclude, clientExclude);
+            Pair<Integer, ByteBuf> serialized = NetworkSerialization.entityComponentsToBuffer(entity, updates.test());
+            if (serialized.getFirst() == 0)
+                continue;
 
-            steam.connections.broadcastMessageExclude(new UpdateEntityComponents(uuid, encoded, buffer), toExclude);
-            buffer.release();
+            updates.clear();
+
+            Set<SteamPeer> toExclude = extraExclude == null ? Set.of() : Set.of(extraExclude);
+
+            steam.connections.broadcastMessageExclude(new AddEntityComponents(uuid, serialized.getFirst(), serialized.getSecond()), toExclude);
+        }
+
+        for (var entityComps : dominion.findEntitiesWith(UUID.class, NetworkRemove.class))
+        {
+            UUID uuid = entityComps.comp1();
+            NetworkRemove updates = entityComps.comp2();
+
+            Entity entity = entityComps.entity();
+
+            SteamPeer extraExclude = null;
+            if (entity.has(MPControlled.class))
+            {
+                MPControlled mpControlled = entity.get(MPControlled.class);
+                SteamID controller = mpControlled.controller();
+                extraExclude = new SteamPeer(controller);
+            }
+
+            StringBuilder componentKeys = new StringBuilder();
+
+            for (Class<?> component : updates.components())
+            {
+                Components.getComponentByClass(component).ifPresent(c ->
+                {
+                    if (c.getNetworkCodec() != null)
+                    {
+                        componentKeys.append(c.key().toString());
+                        componentKeys.append(";");
+                    }
+                });
+            }
+            componentKeys.setLength(componentKeys.length() - 1);
+
+            updates.clear();
+
+            Set<SteamPeer> toExclude = extraExclude == null ? Set.of() : Set.of(extraExclude);
+
+            steam.connections.broadcastMessageExclude(new RemoveEntityComponents(uuid, componentKeys.toString()), toExclude);
         }
     }
 }

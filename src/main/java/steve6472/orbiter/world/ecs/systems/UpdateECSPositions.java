@@ -37,7 +37,7 @@ public class UpdateECSPositions implements ComponentSystem
 
             Convert.physGetToJoml(body::getPhysicsLocation, store);
 
-            position.set(store.x, store.y, store.z);
+            modifyComponent(entityComps.entity(), position, p -> p.set(store.x, store.y, store.z));
             position.resetModified();
         }
     }

@@ -31,12 +31,16 @@ public class Packets
         registerPacket(PlayerDisconnected.KEY, PlayerDisconnected.BUFFER_CODEC);
         registerPacket(TeleportToPosition.KEY, TeleportToPosition.BUFFER_CODEC); // TODO: change this packet
         registerPacket(UpdateEntityComponents.KEY, UpdateEntityComponents.BUFFER_CODEC);
+        registerPacket(CreateEntity.KEY, CreateEntity.BUFFER_CODEC);
+        registerPacket(RequestEntity.KEY, RequestEntity.BUFFER_CODEC);
 
         return new Object();
     }
 
     private static void registerPacket(Key key, BufferCodec<ByteBuf, ? extends Packet<?, ?>> codec)
     {
+        if (Registries.PACKET.get(key) != null)
+            throw new RuntimeException("Packet with key " + key + " already exists!");
         //noinspection unchecked
         Registries.PACKET.register(key, (BufferCodec<ByteBuf, Packet<?, ?>>) codec);
     }

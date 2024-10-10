@@ -20,7 +20,7 @@ public class SpawnFirefly extends Command
 	{
 		dispatcher.register(literal("firefly").executes(c ->
 		{
-			c.getSource().getWorld().addEntity(VolkaniumsRegistries.STATIC_MODEL.get(Key.defaultNamespace("blockbench/static/firefly")), new Position(0, 1.5, 0), Tag.FIREFLY_AI);
+			c.getSource().getWorld().addEntity(VolkaniumsRegistries.STATIC_MODEL.get(Key.defaultNamespace("blockbench/static/firefly")), new Position(0, 0.8, 0), Tag.FIREFLY_AI);
 
 			return 1;
 		}));

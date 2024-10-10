@@ -11,6 +11,7 @@ import org.joml.Vector3f;
 import steve6472.core.util.RandomUtil;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
+import steve6472.orbiter.network.PeerConnections;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.world.ecs.components.Position;
 import steve6472.orbiter.world.ecs.components.Tag;
@@ -55,12 +56,20 @@ public class World implements EntityControl
     {
         // First
         systems.registerSystem(new UpdateECSPositions(), "Update ECS Positions", "Updates ECS Positions with data from last tick of Physics Simulation");
-        systems.registerSystem((dominion, _) ->
+        systems.registerSystem(new ComponentSystem()
         {
-            if (!steam.isHost())
-                return;
+            @Override
+            public void tick(Dominion dominion, World world)
+            {
+                if (!steam.isHost())
+                    return;
 
-            dominion.findEntitiesWith(Tag.FireflyAI.class, Position.class).forEach(e -> e.comp2().add(RandomUtil.randomDouble(-0.01, 0.01), RandomUtil.randomDouble(-0.01, 0.01), RandomUtil.randomDouble(-0.01, 0.01)));
+                dominion.findEntitiesWith(Tag.FireflyAI.class, Position.class).forEach(e ->
+                {
+                    Position position = e.comp2();
+                    modifyComponent(e.entity(), position, p -> p.add(RandomUtil.randomDouble(-0.01, 0.01), RandomUtil.randomDouble(-0.01, 0.01), RandomUtil.randomDouble(-0.01, 0.01)));
+                });
+            }
         }, "Firefly AI", "Test firefly entity");
 
         // Last
@@ -84,6 +93,12 @@ public class World implements EntityControl
     public Map<UUID, PhysicsRigidBody> bodyMap()
     {
         return bodyMap;
+    }
+
+    @Override
+    public PeerConnections<?> connections()
+    {
+        return steam.connections;
     }
 
     public void tick()

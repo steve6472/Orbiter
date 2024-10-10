@@ -1,18 +1,26 @@
 package steve6472.orbiter.network.packets.game;
 
 import com.codedisaster.steamworks.SteamID;
+import com.mojang.datafixers.util.Pair;
+import dev.dominion.ecs.api.Entity;
+import io.netty.buffer.ByteBuf;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
+import steve6472.core.registry.Key;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.OrbiterMain;
+import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.steam.SteamPeer;
+import steve6472.orbiter.world.NetworkSerialization;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.MPControlled;
 import steve6472.orbiter.world.ecs.components.Tag;
+import steve6472.orbiter.world.ecs.core.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -96,9 +104,44 @@ public class GameListener extends OrbiterPacketListener
                 entity.removeType(component.getClass());
                 entity.add(component);
             }
-        }, () -> {
-            components.add(uuid);
-            world.ecs().createEntity(components.toArray());
+        }, () -> connections.sendMessage(peer(), new RequestEntity(uuid)));
+    }
+
+    public void addEntityComponents(UUID uuid, List<Object> components)
+    {
+        world.getEntityByUUID(uuid).ifPresentOrElse(entity -> {
+            for (Object component : components)
+            {
+                entity.add(component);
+            }
+        }, () -> connections.sendMessage(peer(), new RequestEntity(uuid)));
+    }
+
+    public void removeEntityComponents(UUID uuid, List<Key> components)
+    {
+        world.getEntityByUUID(uuid).ifPresent(entity -> {
+            for (Key component : components)
+            {
+                Component<?> cmpnnt = Registries.COMPONENT.get(component);
+                entity.removeType(cmpnnt.componentClass());
+            }
         });
+    }
+
+    public void entityRequested(UUID entity)
+    {
+        Optional<Entity> entityByUUID = world.getEntityByUUID(entity);
+        entityByUUID.ifPresent(e -> {
+            Pair<Integer, ByteBuf> serialized = NetworkSerialization.entityComponentsToBuffer(e);
+            connections.sendMessage(peer(), new CreateEntity(entity, serialized.getFirst(), serialized.getSecond()));
+        });
+    }
+
+    public void createEntity(UUID uuid, List<Object> components)
+    {
+        if (world.getEntityByUUID(uuid).isEmpty())
+        {
+            world.ecs().createEntity(components.toArray());
+        }
     }
 }

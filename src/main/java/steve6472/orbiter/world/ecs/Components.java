@@ -2,12 +2,10 @@ package steve6472.orbiter.world.ecs;
 
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.world.ecs.components.IndexModel;
-import steve6472.orbiter.world.ecs.components.MPControlled;
-import steve6472.orbiter.world.ecs.components.Position;
-import steve6472.orbiter.world.ecs.components.Tag;
+import steve6472.orbiter.world.ecs.components.*;
 import steve6472.orbiter.world.ecs.core.Component;
 
+import java.util.Optional;
 import java.util.function.UnaryOperator;
 
 /**
@@ -39,6 +37,13 @@ public class Components
     public static final Component<Tag.FireflyAI> TAG_FIREFLY_AI = register("tag_firefly_ai", Tag.FireflyAI.class, builder -> builder.persistent(Tag.FIREFLY_AI.codec()).network(Tag.FIREFLY_AI.networkCodec()));
 
     /*
+     * Internal
+     */
+    public static final Component<NetworkUpdates> NETWORK_UPDATES = register("network_updates", NetworkUpdates.class, builder -> builder);
+    public static final Component<NetworkRemove> NETWORK_REMOVE = register("network_remove", NetworkRemove.class, builder -> builder);
+    public static final Component<NetworkAdd> NETWORK_ADD = register("network_add", NetworkAdd.class, builder -> builder);
+
+    /*
      * Register functions
      */
 
@@ -52,7 +57,19 @@ public class Components
         var builder_ = builder.apply(Component.builder())._key(key);
         builder_.clazz(clazz);
         Component<T> build = builder_.build();
+        if (Registries.COMPONENT.get(key) != null)
+            throw new RuntimeException("Compoent with key " + key + " already exists!");
         Registries.COMPONENT.register(key, build);
         return build;
+    }
+
+    public static <T> Optional<Component<T>> getComponentByClass(Class<T> clazz)
+    {
+        for (Component<?> value : Registries.COMPONENT.getMap().values())
+        {
+            if (value.componentClass().equals(clazz))
+                return Optional.of((Component<T>) value);
+        }
+        return Optional.empty();
     }
 }

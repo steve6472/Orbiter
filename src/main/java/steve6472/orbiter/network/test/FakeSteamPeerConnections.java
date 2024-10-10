@@ -46,6 +46,12 @@ public class FakeSteamPeerConnections extends PeerConnections<SteamPeer>
     }
 
     @Override
+    protected boolean disableTimeoutCheck()
+    {
+        return true;
+    }
+
+    @Override
     protected boolean sendPacket(SteamPeer peer, ByteBuffer packetBuffer) throws Exception
     {
         node.sendPacket(packetBuffer);
@@ -55,10 +61,7 @@ public class FakeSteamPeerConnections extends PeerConnections<SteamPeer>
     @Override
     protected boolean readPackets() throws Exception
     {
-        for (int i = 0; i < 4; i++)
-        {
-            node.listen();
-        }
+        node.listen();
         return true;
     }
 }

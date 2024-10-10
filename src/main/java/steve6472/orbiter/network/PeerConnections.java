@@ -3,7 +3,6 @@ package steve6472.orbiter.network;
 import steve6472.core.log.Log;
 import steve6472.core.network.Packet;
 import steve6472.core.network.PacketListener;
-import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.steam.SteamMain;
 
 import java.nio.ByteBuffer;
@@ -40,8 +39,17 @@ public abstract class PeerConnections<P extends Peer>
         checkForTimeouts();
     }
 
+    /// Used by [steve6472.orbiter.network.test.FakeSteamPeerConnections], use only for testing!
+    protected boolean disableTimeoutCheck()
+    {
+        return false;
+    }
+
     private void checkForTimeouts()
     {
+        if (disableTimeoutCheck())
+            return;
+
         for (Iterator<ConnectedPeer> iterator = peers.iterator(); iterator.hasNext(); )
         {
             ConnectedPeer peer = iterator.next();
@@ -114,17 +122,6 @@ public abstract class PeerConnections<P extends Peer>
 
     public final <T extends Packet<T, ?>> void broadcastMessage(T packet)
     {
-        // TODO: Figure out which one works.
-        // Reasoning: bytebuffer could be read and its position modified, multiple reading may not be possible from one buffer
-        if (!Settings.PEER_BROADCAST_SINGLE_BUFFER.get())
-        {
-            for (ConnectedPeer connectedPeer : peers)
-            {
-                sendMessage(connectedPeer.peer, packet);
-            }
-            return;
-        }
-
         try
         {
             ByteBuffer dataPacket = packetManager.createDataPacket(packet);

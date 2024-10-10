@@ -17,9 +17,11 @@ public interface ExtraBufferCodecs
     BufferCodec<ByteBuf, Vector3f> VEC3F = BufferCodec.of(BufferCodecs.FLOAT, Vector3f::x, BufferCodecs.FLOAT, Vector3f::y, BufferCodecs.FLOAT, Vector3f::z, Vector3f::new);
     BufferCodec<ByteBuf, SteamID> STEAM_ID = BufferCodec.of(BufferCodecs.LONG, SteamID::getNativeHandle, SteamID::createFromNativeHandle);
 
+    /// Must manually release the buffer after decoding!
     BufferCodec<ByteBuf, ByteBuf> BUFFER = BufferCodec.of((networkBuff, passBuff) -> {
         networkBuff.writeInt(passBuff.writerIndex());
         networkBuff.writeBytes(passBuff);
+        passBuff.release();
     }, (buff) -> {
         int size = buff.readInt();
         ByteBuf retBuf = PooledByteBufAllocator.DEFAULT.buffer(size);
