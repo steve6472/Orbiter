@@ -129,6 +129,7 @@ public class SteamMain
 
         } catch (Exception e)
         {
+            e.printStackTrace();
             throw new RuntimeException(e);
         }
         runCallbacks();

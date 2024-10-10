@@ -48,7 +48,7 @@ public class World implements EntityControl
 
     public void init()
     {
-        addPlane(new Vector3f(0, 1, 0), -1);
+        addPlane(new Vector3f(0, 0.0001f, 0), -1);
         initSystems();
     }
 
@@ -110,9 +110,9 @@ public class World implements EntityControl
     public void debugRender()
     {
         // Debug render of plane
-        float density = 1f;
+        float density = 0.5f;
         int range = 64;
-        float y = -1;
+        float y = 0;
         for (int i = -range; i < range; i++)
         {
             addDebugObjectForFrame(line(new Vector3f(i * density, y, -range * density), new Vector3f(i * density, y, range * density), DARK_GRAY));

@@ -23,11 +23,16 @@ public class PCPlayer implements Player
     public static final float RADIUS = 0.4f;
     public static final float HEIGHT = 1.8f;
     public static final float EYE_HEIGHT = 1.6f;
-    public static final float STEP_HEIGHT = 0.6f;
+    public static final float STEP_HEIGHT = 0.4f;
     public static final int JUMP_COOLDOWN = 4;
 
     public final PhysicsCharacter character = new PhysicsCharacter(new CapsuleCollisionShape(RADIUS, HEIGHT / 2f), STEP_HEIGHT);
     private float jumpCooldown = 0;
+
+    public PCPlayer()
+    {
+        character.setJumpSpeed(7f);
+    }
 
     @Override
     public void teleport(Vector3f position)
@@ -64,7 +69,12 @@ public class PCPlayer implements Player
     {
         character.setWalkDirection(jomlToPhys(new Vector3f()));
 
-        double speed = 0.1;
+        double speed = 0.025;
+
+        if (Keybinds.SPRINT.isActive())
+        {
+            speed *= 2.5d;
+        }
 
         double x = 0;
         double z = 0;

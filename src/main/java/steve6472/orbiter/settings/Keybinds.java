@@ -18,6 +18,7 @@ public class Keybinds
     public static final Keybind LEFT = registerRepeat("left", GLFW.GLFW_KEY_A);
     public static final Keybind RIGHT = registerRepeat("right", GLFW.GLFW_KEY_D);
     public static final Keybind JUMP = registerRepeat("jump", GLFW.GLFW_KEY_SPACE);
+    public static final Keybind SPRINT = registerRepeat("sprint", GLFW.GLFW_KEY_LEFT_SHIFT);
 
     public static final Keybind TOGGLE_GRAB_MOUSE = registerOnce("toggle_grab_mouse", GLFW.GLFW_KEY_RIGHT_CONTROL);
     public static final Keybind DISABLE_GRAB_MOUSE = registerOnce("disable_grab_mouse", GLFW.GLFW_KEY_ESCAPE);

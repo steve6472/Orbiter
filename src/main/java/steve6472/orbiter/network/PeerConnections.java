@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  */
 public abstract class PeerConnections<P extends Peer>
 {
-    private static final int TIMEOUT_MS = 15_000;
+    private static final int TIMEOUT_MS = 10_000;
 
     private static final Logger LOGGER = Log.getLogger(PeerConnections.class);
 

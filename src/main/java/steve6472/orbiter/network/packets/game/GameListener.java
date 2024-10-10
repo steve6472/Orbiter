@@ -132,6 +132,7 @@ public class GameListener extends OrbiterPacketListener
     {
         Optional<Entity> entityByUUID = world.getEntityByUUID(entity);
         entityByUUID.ifPresent(e -> {
+
             Pair<Integer, ByteBuf> serialized = NetworkSerialization.entityComponentsToBuffer(e);
             connections.sendMessage(peer(), new CreateEntity(entity, serialized.getFirst(), serialized.getSecond()));
         });
