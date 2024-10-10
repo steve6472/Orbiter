@@ -3,7 +3,7 @@ package steve6472.orbiter.commands;
 import com.mojang.brigadier.CommandDispatcher;
 import steve6472.orbiter.commands.impl.CountPhysicsBodies;
 import steve6472.orbiter.commands.impl.DebugECS;
-import steve6472.orbiter.commands.impl.SpawnFirefly;
+import steve6472.orbiter.commands.impl.Spawn;
 import steve6472.orbiter.commands.impl.TpCommand;
 import steve6472.orbiter.commands.impl.steam.ChatCommand;
 
@@ -26,7 +26,7 @@ public class Commands
     {
         new TpCommand(dispatcher);
         new CountPhysicsBodies(dispatcher);
-        new SpawnFirefly(dispatcher);
+        new Spawn(dispatcher);
         new DebugECS(dispatcher);
 
         new ChatCommand(dispatcher);

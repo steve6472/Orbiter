@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class HelloGame implements Packet<HelloGame, GameListener>
 {
-    public static final Logger LOGGER = Log.getLogger(HelloGame.class);
+    private static final Logger LOGGER = Log.getLogger(HelloGame.class);
 
     private static final HelloGame INSTANCE = new HelloGame();
     public static final Key KEY = Key.defaultNamespace("hello_game");

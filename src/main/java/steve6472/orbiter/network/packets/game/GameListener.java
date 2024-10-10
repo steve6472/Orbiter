@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  */
 public class GameListener extends OrbiterPacketListener
 {
-    public static final Logger LOGGER = Log.getLogger(GameListener.class);
+    private static final Logger LOGGER = Log.getLogger(GameListener.class);
 
     private final World world;
 

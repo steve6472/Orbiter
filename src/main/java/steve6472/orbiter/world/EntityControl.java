@@ -4,14 +4,13 @@ import com.codedisaster.steamworks.SteamID;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.mojang.datafixers.util.Pair;
 import dev.dominion.ecs.api.Dominion;
 import dev.dominion.ecs.api.Entity;
 import dev.dominion.ecs.api.Results;
-import io.netty.buffer.ByteBuf;
 import org.joml.Vector3f;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Convert;
+import steve6472.orbiter.commands.arguments.EntityBlueprintArgument;
 import steve6472.orbiter.network.PeerConnections;
 import steve6472.orbiter.network.packets.game.CreateEntity;
 import steve6472.orbiter.player.PCPlayer;
@@ -19,6 +18,7 @@ import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.components.MPControlled;
 import steve6472.orbiter.world.ecs.components.Position;
 import steve6472.orbiter.world.ecs.components.Tag;
+import steve6472.orbiter.world.ecs.core.EntityBlueprint;
 import steve6472.volkaniums.assets.model.Model;
 import steve6472.volkaniums.registry.VolkaniumsRegistries;
 
@@ -82,6 +82,25 @@ public interface EntityControl
         connections().broadcastMessage(new CreateEntity(entity));
 
         return entity;
+    }
+
+    // TODO: possibly a packet for this instead of generic create entity, could save bandwidth
+    default Entity addEntity(EntityBlueprint entityBlueprint, UUID uuid)
+    {
+        Set<Object> components = entityBlueprint.createComponents();
+        components.add(uuid);
+
+        Entity entity = ecs().createEntity(components.toArray());
+
+        // Broadcast new entity to peers
+        connections().broadcastMessage(new CreateEntity(entity));
+
+        return entity;
+    }
+
+    default Entity addEntity(EntityBlueprint entityBlueprint)
+    {
+        return addEntity(entityBlueprint, UUID.randomUUID());
     }
 
     default Entity addEntity(Model model, Object... extraComponents)

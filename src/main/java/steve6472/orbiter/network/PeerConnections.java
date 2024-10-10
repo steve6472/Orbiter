@@ -18,7 +18,7 @@ public abstract class PeerConnections<P extends Peer>
 {
     private static final int TIMEOUT_MS = 15_000;
 
-    public static final Logger LOGGER = Log.getLogger(PeerConnections.class);
+    private static final Logger LOGGER = Log.getLogger(PeerConnections.class);
 
     private final List<ConnectedPeer> peers = new ArrayList<>();
     protected final PacketManager packetManager;

@@ -6,7 +6,9 @@ import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by steve6472
@@ -15,7 +17,8 @@ import java.util.List;
  */
 public final class Tag
 {
-    private static final List<TagClass<?>> CLASSES = new ArrayList<>();
+    private static final List<TagClass<?>> TAGS = new ArrayList<>();
+    private static final Map<Class<?>, TagClass<?>> CLASSES = new HashMap<>();
     private static int COUNTER = 0;
 
     public static final Physics PHYSICS = new Physics();
@@ -35,6 +38,11 @@ public final class Tag
         return COUNTER - 1;
     }
 
+    public static Object getTagInstance(Class<?> clazz)
+    {
+        return CLASSES.get(clazz);
+    }
+
     private static abstract class TagClass<T extends TagClass<?>>
     {
         int id;
@@ -44,9 +52,10 @@ public final class Tag
         protected TagClass(int id)
         {
             this.id = id;
-            CLASSES.add(this);
-            codec = Codec.INT.xmap(i -> (T) CLASSES.get(i), (T c) -> c.id);
-            networkCodec = BufferCodec.of(BufferCodecs.INT, a -> a.id, i -> (T) CLASSES.get(i));
+            TAGS.add(this);
+            codec = Codec.INT.xmap(i -> (T) TAGS.get(i), (T c) -> c.id);
+            networkCodec = BufferCodec.of(BufferCodecs.INT, a -> a.id, i -> (T) TAGS.get(i));
+            CLASSES.put(getClass(), this);
         }
 
         public Codec<T> codec()

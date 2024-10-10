@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  */
 public class LobbyListener extends OrbiterPacketListener
 {
-    public static final Logger LOGGER = Log.getLogger(LobbyListener.class);
+    private static final Logger LOGGER = Log.getLogger(LobbyListener.class);
 
     private final Lobby lobby;
     private final SteamMain steamMain;

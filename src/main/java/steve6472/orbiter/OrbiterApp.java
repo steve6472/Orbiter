@@ -145,16 +145,10 @@ public class OrbiterApp extends VolkaniumsApp
         world.tick();
         client.tickClient();
 
-        if (Keybinds.TOGGLE_GRAB_MOUSE.isActive())
+        if (Keybinds.TOGGLE_GRAB_MOUSE.isActive() || Keybinds.DISABLE_GRAB_MOUSE.isActive())
         {
             isMouseGrabbed = !isMouseGrabbed;
             GLFW.glfwSetInputMode(window().window(), GLFW.GLFW_CURSOR, isMouseGrabbed ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
-        }
-
-        if (Keybinds.DISABLE_GRAB_MOUSE.isActive())
-        {
-            isMouseGrabbed = false;
-            GLFW.glfwSetInputMode(window().window(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
         }
     }
 

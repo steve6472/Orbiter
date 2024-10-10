@@ -9,8 +9,11 @@ import steve6472.core.setting.Setting;
 import steve6472.orbiter.network.Packets;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.world.ecs.Blueprints;
 import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.core.BlueprintEntry;
 import steve6472.orbiter.world.ecs.core.Component;
+import steve6472.orbiter.world.ecs.core.EntityBlueprint;
 import steve6472.volkaniums.input.Keybind;
 import steve6472.volkaniums.registry.RegistryCreators;
 
@@ -31,6 +34,8 @@ public class Registries extends RegistryCreators
     public static final Registry<Rarity> RARITY = createRegistry("rarity", () -> Rarities.COMMON);
     public static final PacketRegistry PACKET = createPacketRegistry("packet", Packets::init);
     public static final Registry<Component<?>> COMPONENT = createRegistry("component", () -> Components.POSITION);
+    public static final Registry<BlueprintEntry<?>> BLUEPRINT = createRegistry("blueprint", () -> Blueprints.POSITION);
+    public static final ObjectRegistry<EntityBlueprint> ENTITY_BLUEPRINT = createObjectRegistry("entity_blueprint", EntityBlueprint::load);
 
     // TODO: add to volkaniums
     private static PacketRegistry createPacketRegistry(String id, Supplier<?> bootstrap)

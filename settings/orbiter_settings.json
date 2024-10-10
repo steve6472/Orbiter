@@ -1,5 +1,4 @@
 {
   "orbiter:fov": 90.0,
-  "orbiter:peer_broadcast_single_buffer": true,
-  "orbiter:sensitivity": 0.3
+  "orbiter:sensitivity": 0.15
 }

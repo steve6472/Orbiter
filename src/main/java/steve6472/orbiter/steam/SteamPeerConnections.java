@@ -3,9 +3,11 @@ package steve6472.orbiter.steam;
 import com.codedisaster.steamworks.SteamID;
 import com.codedisaster.steamworks.SteamNetworking;
 import org.lwjgl.BufferUtils;
+import steve6472.core.log.Log;
 import steve6472.orbiter.network.PeerConnections;
 
 import java.nio.ByteBuffer;
+import java.util.logging.Logger;
 
 /**
  * Created by steve6472
@@ -14,6 +16,7 @@ import java.nio.ByteBuffer;
  */
 public class SteamPeerConnections extends PeerConnections<SteamPeer>
 {
+    private static final Logger LOGGER = Log.getLogger(SteamPeerConnections.class);
     private final SteamNetworking networking;
 
     public SteamPeerConnections(SteamMain steamMain)
