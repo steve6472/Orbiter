@@ -34,8 +34,10 @@ public class StaticWorldRender extends StaticModelRenderImpl
     @Override
     protected void init(SBOTransfromArray<Model> sboTransfromArray)
     {
-        sboTransfromArray.addArea(VolkaniumsRegistries.STATIC_MODEL.get(Key.defaultNamespace("blockbench/static/player_capsule")));
-        sboTransfromArray.addArea(VolkaniumsRegistries.STATIC_MODEL.get(Key.defaultNamespace("blockbench/static/firefly")));
+        for (Key key : VolkaniumsRegistries.STATIC_MODEL.keys())
+        {
+            sboTransfromArray.addArea(VolkaniumsRegistries.STATIC_MODEL.get(key));
+        }
     }
 
     @Override

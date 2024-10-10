@@ -19,7 +19,8 @@ public class Keybinds
     public static final Keybind RIGHT = registerRepeat("right", GLFW.GLFW_KEY_D);
     public static final Keybind JUMP = registerRepeat("jump", GLFW.GLFW_KEY_SPACE);
 
-    public static final Keybind TEST = registerOnce("test", GLFW.GLFW_KEY_G);
+    public static final Keybind TOGGLE_GRAB_MOUSE = registerOnce("toggle_grab_mouse", GLFW.GLFW_KEY_RIGHT_CONTROL);
+    public static final Keybind DISABLE_GRAB_MOUSE = registerOnce("disable_grab_mouse", GLFW.GLFW_KEY_ESCAPE);
 
     private static Keybind registerRepeat(String id, int key)
     {

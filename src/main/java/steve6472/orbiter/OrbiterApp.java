@@ -5,11 +5,13 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.util.NativeLibrary;
 import com.jme3.system.NativeLibraryLoader;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.setting.SettingsLoader;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.debug.DebugWindow;
 import steve6472.orbiter.network.packets.game.AcceptedPeerConnection;
+import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.settings.Settings;
@@ -39,6 +41,7 @@ public class OrbiterApp extends VolkaniumsApp
     private Client client;
     private World world;
     private Commands commands;
+    private boolean isMouseGrabbed = false;
 
     OrbiterApp()
     {
@@ -118,7 +121,7 @@ public class OrbiterApp extends VolkaniumsApp
 
         float frameTime = frameInfo == null ? (1f / Constants.TICKS_IN_SECOND) : frameInfo.frameTime();
 
-        if (!OrbiterMain.STEAM_TEST)
+        if (!OrbiterMain.STEAM_TEST && isMouseGrabbed)
             client.handleInput(input(), vrInput(), frameTime);
 
         timeToNextTick -= frameTime;
@@ -141,6 +144,23 @@ public class OrbiterApp extends VolkaniumsApp
 
         world.tick();
         client.tickClient();
+
+        if (Keybinds.TOGGLE_GRAB_MOUSE.isActive())
+        {
+            isMouseGrabbed = !isMouseGrabbed;
+            GLFW.glfwSetInputMode(window().window(), GLFW.GLFW_CURSOR, isMouseGrabbed ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
+        }
+
+        if (Keybinds.DISABLE_GRAB_MOUSE.isActive())
+        {
+            isMouseGrabbed = false;
+            GLFW.glfwSetInputMode(window().window(), GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_NORMAL);
+        }
+    }
+
+    public boolean isMouseGrabbed()
+    {
+        return isMouseGrabbed;
     }
 
     public World getWorld()
