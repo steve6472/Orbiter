@@ -40,7 +40,6 @@ public class P2PNode
         try
         {
             channel.send(buffer, peerAddress);
-//            System.out.println("Sent packet to " + peerAddress);
         } catch (IOException e)
         {
             e.printStackTrace();
@@ -81,7 +80,6 @@ public class P2PNode
         byte[] receivedData = new byte[buffer.remaining()];
         buffer.get(receivedData);
 
-//        System.out.println("Received data from " + senderAddress + " from " + localPort + " " + Arrays.toString(receivedData));
         // Here you can call your readPacket() method and handle the data
         readPacket.accept(receivedData); // Implement this to process the received data
     }

@@ -134,7 +134,6 @@ public class OrbiterApp extends VolkaniumsApp
         if (!OrbiterMain.STEAM_TEST)
         {
             world.debugRender();
-            DebugRender.addDebugObjectForFrame(DebugRender.lineCube(new Vector3f(client.player().getFeetPos()).sub(0.4f, 0, 0.4f), new Vector3f(client.player().getFeetPos()).add(0.4f, 1.8f, 0.4f), DebugRender.WHITE));
         }
     }
 

@@ -98,7 +98,7 @@ public class SteamMain
 
     public boolean isHost()
     {
-        return lobbyManager.currentLobby() == null || lobbyManager.currentLobby().lobbyOwner() == userID;
+        return lobbyManager == null || lobbyManager.currentLobby() == null || lobbyManager.currentLobby().lobbyOwner() == userID;
     }
 
     private void createListeners()
@@ -153,5 +153,10 @@ public class SteamMain
 
         if (!OrbiterMain.FAKE_P2P)
             SteamAPI.shutdown();
+    }
+
+    public boolean disabled()
+    {
+        return !enabled;
     }
 }

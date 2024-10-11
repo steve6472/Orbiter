@@ -39,8 +39,10 @@ public class NetworkSync implements ComponentSystem
     @Override
     public void tick(Dominion dominion, World world)
     {
-        if (!steam.isHost())
+        if (!steam.isHost() || steam.disabled())
             return;
+
+        // TODO: disable if no peers exist
 
         for (var entityComps : dominion.findEntitiesWith(UUID.class, NetworkUpdates.class))
         {

@@ -1,8 +1,11 @@
 package steve6472.orbiter;
 
+import com.jme3.bullet.objects.PhysicsCharacter;
+import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Transform;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.function.Function;
@@ -19,6 +22,11 @@ public class Convert
         return store.set(vec.x, vec.y, vec.z);
     }
 
+    public static Quaternionf physToJoml(com.jme3.math.Quaternion quat, Quaternionf store)
+    {
+        return store.set(quat.getX(), quat.getY(), quat.getZ(), quat.getW());
+    }
+
     public static Vector3f physToJoml(com.jme3.math.Vector3f vec)
     {
         return physToJoml(vec, new Vector3f());
@@ -27,6 +35,12 @@ public class Convert
     public static Vector3f physGetToJoml(Function<com.jme3.math.Vector3f, com.jme3.math.Vector3f> getter, Vector3f store)
     {
         com.jme3.math.Vector3f apply = getter.apply(new com.jme3.math.Vector3f());
+        return physToJoml(apply, store);
+    }
+
+    public static Quaternionf physGetToJoml(Function<com.jme3.math.Quaternion, com.jme3.math.Quaternion> getter, Quaternionf store)
+    {
+        com.jme3.math.Quaternion apply = getter.apply(new com.jme3.math.Quaternion());
         return physToJoml(apply, store);
     }
 
@@ -54,6 +68,20 @@ public class Convert
         return physToJoml(transform.toTransformMatrix(), store);
     }
 
+    public static Matrix4f physGetTransformToJoml(PhysicsGhostObject body, Matrix4f store)
+    {
+        Transform transform = new Transform();
+        body.getTransform(transform);
+        return physToJoml(transform.toTransformMatrix(), store);
+    }
+
+    public static Matrix4f physGetTransformToJoml(PhysicsCharacter character, Matrix4f store)
+    {
+        Transform transform = new Transform();
+        character.getTransform(transform);
+        return physToJoml(transform.toTransformMatrix(), store);
+    }
+
     /*
      * JOML to Physics
      */
@@ -63,8 +91,18 @@ public class Convert
         return store.set(vec.x, vec.y, vec.z);
     }
 
+    public static com.jme3.math.Quaternion jomlToPhys(Quaternionf quat, com.jme3.math.Quaternion store)
+    {
+        return store.set(quat.x, quat.y, quat.z, quat.w);
+    }
+
     public static com.jme3.math.Vector3f jomlToPhys(Vector3f vec)
     {
         return jomlToPhys(vec, new com.jme3.math.Vector3f());
+    }
+
+    public static com.jme3.math.Quaternion jomlToPhys(Quaternionf quat)
+    {
+        return jomlToPhys(quat, new com.jme3.math.Quaternion());
     }
 }

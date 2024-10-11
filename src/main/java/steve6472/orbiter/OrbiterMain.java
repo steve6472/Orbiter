@@ -22,7 +22,7 @@ public class OrbiterMain
 {
     private static final Logger LOGGER = Log.getLogger(OrbiterMain.class);
 
-    public static boolean ENABLE_STEAM = true;
+    public static boolean ENABLE_STEAM = false;
 
     public static boolean FAKE_P2P = false;
     public static boolean STEAM_TEST = false;

@@ -1,14 +1,10 @@
 package steve6472.orbiter.commands.impl;
 
 import com.mojang.brigadier.CommandDispatcher;
-import steve6472.core.registry.Key;
 import steve6472.orbiter.commands.Command;
 import steve6472.orbiter.commands.CommandSource;
 import steve6472.orbiter.commands.arguments.EntityBlueprintArgument;
-import steve6472.orbiter.world.ecs.components.Position;
-import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
-import steve6472.volkaniums.registry.VolkaniumsRegistries;
 
 public class Spawn extends Command
 {

@@ -1,6 +1,7 @@
 package steve6472.orbiter.network.packets.game;
 
 import com.codedisaster.steamworks.SteamID;
+import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.mojang.datafixers.util.Pair;
 import dev.dominion.ecs.api.Entity;
 import io.netty.buffer.ByteBuf;
@@ -12,11 +13,13 @@ import steve6472.orbiter.OrbiterMain;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.steam.SteamMain;
-import steve6472.orbiter.steam.SteamPeer;
 import steve6472.orbiter.world.NetworkSerialization;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.MPControlled;
+import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.components.Tag;
+import steve6472.orbiter.world.ecs.components.physics.Collision;
+import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
 import steve6472.orbiter.world.ecs.core.Component;
 
 import java.util.List;
@@ -53,7 +56,7 @@ public class GameListener extends OrbiterPacketListener
 
             UUID uuid = entityData.comp2();
 
-            world.bodyMap.get(uuid).setPhysicsLocation(Convert.jomlToPhys(destination));
+            world.bodyMap().get(uuid).setPhysicsLocation(Convert.jomlToPhys(destination));
         }
     }
 
@@ -63,26 +66,25 @@ public class GameListener extends OrbiterPacketListener
             LOGGER.info(steamMain.friendNames.getUserName(sender()) + " accepted peer connection!");
         else
             LOGGER.info("Fake P2P accepted");
-        connections.broadcastMessageExclude(new SpawnPlayerCharacter(sender()), peer());
         sendExistingData();
         world.spawnDebugPlayer(sender());
     }
 
     private void sendExistingData()
     {
+        LOGGER.info("Sending existing data!");
         connections.sendMessage(peer(), new SpawnPlayerCharacter(steamMain.userID));
 
-        for (SteamPeer listPeer : connections.listPeers())
-        {
-            if (listPeer.equals(peer()))
-                continue;
-
-            connections.sendMessage(peer(), new SpawnPlayerCharacter(listPeer.steamID()));
-        }
+        world.ecs().findEntitiesWith(UUID.class).forEach(ent -> {
+//            LOGGER.info("Sending " + System.currentTimeMillis() + " " + ent);
+            Pair<Integer, ByteBuf> serialized = NetworkSerialization.entityComponentsToBuffer(ent.entity());
+            connections.sendMessage(peer(), new CreateEntity(ent.comp(), serialized.getFirst(), serialized.getSecond()));
+        });
     }
 
     public void spawnPlayer(SteamID player)
     {
+        LOGGER.info("Spawn player " + player);
         world.spawnDebugPlayer(player);
     }
 
@@ -98,13 +100,29 @@ public class GameListener extends OrbiterPacketListener
 
     public void updateEntity(UUID uuid, List<Object> components)
     {
+//        LOGGER.info("Update components " + uuid + " " + components);
         world.getEntityByUUID(uuid).ifPresentOrElse(entity -> {
             for (Object component : components)
             {
                 entity.removeType(component.getClass());
                 entity.add(component);
+
+                if (component instanceof PhysicsProperty pp)
+                {
+                    PhysicsRigidBody body = world.bodyMap().get(uuid);
+                    if (body == null)
+                    {
+                        LOGGER.warning("Body does not exist for entity " + uuid);
+                        continue;
+                    }
+                    pp.modifyBody(body);
+                }
             }
-        }, () -> connections.sendMessage(peer(), new RequestEntity(uuid)));
+        }, () ->
+        {
+//            LOGGER.info("Requesting entity (update) " + System.currentTimeMillis() + " " + uuid);
+            connections.sendMessage(peer(), new RequestEntity(uuid));
+        });
     }
 
     public void addEntityComponents(UUID uuid, List<Object> components)
@@ -114,7 +132,11 @@ public class GameListener extends OrbiterPacketListener
             {
                 entity.add(component);
             }
-        }, () -> connections.sendMessage(peer(), new RequestEntity(uuid)));
+        }, () ->
+        {
+//            LOGGER.info("Requesting entity (add) " + System.currentTimeMillis() + " " + uuid);
+            connections.sendMessage(peer(), new RequestEntity(uuid));
+        });
     }
 
     public void removeEntityComponents(UUID uuid, List<Key> components)
@@ -132,7 +154,6 @@ public class GameListener extends OrbiterPacketListener
     {
         Optional<Entity> entityByUUID = world.getEntityByUUID(entity);
         entityByUUID.ifPresent(e -> {
-
             Pair<Integer, ByteBuf> serialized = NetworkSerialization.entityComponentsToBuffer(e);
             connections.sendMessage(peer(), new CreateEntity(entity, serialized.getFirst(), serialized.getSecond()));
         });
@@ -140,9 +161,27 @@ public class GameListener extends OrbiterPacketListener
 
     public void createEntity(UUID uuid, List<Object> components)
     {
+//        LOGGER.info("Create entity " + uuid + " " + components);
         if (world.getEntityByUUID(uuid).isEmpty())
         {
-            world.ecs().createEntity(components.toArray());
+            Entity entity = world.ecs().createEntity(components.toArray());
+            if (entity.has(Tag.Physics.class))
+            {
+                Collision collision = entity.get(Collision.class);
+                if (collision == null)
+                {
+                    LOGGER.severe("Physics entity has no collision!");
+                    return;
+                }
+
+                PhysicsRigidBody body = new PhysicsRigidBody(collision.shape());
+                world.bodyMap().put(uuid, body);
+                world.physics().add(body);
+
+                var position = entity.get(Position.class);
+                if (position != null)
+                    body.setPhysicsLocation(Convert.jomlToPhys(position.toVec3f()));
+            }
         }
     }
 }

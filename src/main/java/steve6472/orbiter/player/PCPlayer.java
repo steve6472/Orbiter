@@ -1,9 +1,13 @@
 package steve6472.orbiter.player;
 
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.ConvexShape;
 import com.jme3.bullet.objects.PhysicsCharacter;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
+import steve6472.core.registry.Key;
+import steve6472.orbiter.Convert;
+import steve6472.orbiter.Registries;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
 import steve6472.volkaniums.Camera;
@@ -20,17 +24,28 @@ import static steve6472.orbiter.Convert.physGetToJoml;
  */
 public class PCPlayer implements Player
 {
-    public static final float RADIUS = 0.4f;
+    public static final float RADIUS = 0.5f;
     public static final float HEIGHT = 1.8f;
     public static final float EYE_HEIGHT = 1.6f;
     public static final float STEP_HEIGHT = 0.4f;
     public static final int JUMP_COOLDOWN = 4;
 
-    public final PhysicsCharacter character = new PhysicsCharacter(new CapsuleCollisionShape(RADIUS, HEIGHT / 2f), STEP_HEIGHT);
+    public final PhysicsCharacter character;
     private float jumpCooldown = 0;
 
     public PCPlayer()
     {
+//        character = new PhysicsCharacter(new CapsuleCollisionShape(RADIUS, HEIGHT / 2f), STEP_HEIGHT);
+        CollisionShape shape = Registries.COLLISION
+            .get(Key.defaultNamespace("blockbench/static/player_capsule"))
+            .collisionShape();
+
+        if (!(shape instanceof ConvexShape convex))
+            throw new RuntimeException("Player capsule collision is not convex!");
+
+        character = new PhysicsCharacter(convex, STEP_HEIGHT);
+        character.warp(Convert.jomlToPhys(new Vector3f(0, 1, 0)));
+
         character.setJumpSpeed(7f);
     }
 

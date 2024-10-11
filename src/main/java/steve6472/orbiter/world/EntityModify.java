@@ -14,9 +14,8 @@ import java.util.function.Consumer;
  */
 public interface EntityModify
 {
-    default <T> void modifyComponent(Entity entity, T component, Consumer<T> update)
+    default void markModified(Entity entity, Class<?> type)
     {
-        update.accept(component);
         NetworkUpdates networkUpdates = entity.get(NetworkUpdates.class);
         if (networkUpdates == null)
         {
@@ -24,7 +23,13 @@ public interface EntityModify
             entity.add(networkUpdates);
         }
 
-        networkUpdates.add(component.getClass());
+        networkUpdates.add(type);
+    }
+
+    default <T> void modifyComponent(Entity entity, T component, Consumer<T> update)
+    {
+        update.accept(component);
+        markModified(entity, component.getClass());
     }
 
     default <T> void addComponent(Entity entity, T component)

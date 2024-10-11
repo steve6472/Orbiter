@@ -1,6 +1,7 @@
 package steve6472.orbiter.world.ecs.blueprints;
 
 import com.mojang.serialization.Codec;
+import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.world.ecs.components.IndexModel;
@@ -12,6 +13,7 @@ import steve6472.volkaniums.registry.VolkaniumsRegistries;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by steve6472
@@ -20,6 +22,8 @@ import java.util.List;
  */
 public record TagsBlueprint(List<Key> tagKeys) implements Blueprint<TagsBlueprint>
 {
+    private static final Logger LOGGER = Log.getLogger(TagsBlueprint.class);
+
     public static final Key KEY = Key.defaultNamespace("tags");
     public static final Codec<TagsBlueprint> CODEC = Key.CODEC.listOf().xmap(TagsBlueprint::new, TagsBlueprint::tagKeys);
 
@@ -30,6 +34,12 @@ public record TagsBlueprint(List<Key> tagKeys) implements Blueprint<TagsBlueprin
         for (Key tagKey : tagKeys)
         {
             Component<?> component = Registries.COMPONENT.get(tagKey);
+            if (component == null)
+            {
+                LOGGER.severe("Tag \"" + tagKey + "\" not found!");
+                return List.of();
+            }
+
             components.add(Tag.getTagInstance(component.componentClass()));
         }
         return components;

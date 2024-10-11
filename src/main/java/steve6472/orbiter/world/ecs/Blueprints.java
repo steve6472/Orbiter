@@ -3,11 +3,9 @@ package steve6472.orbiter.world.ecs;
 import com.mojang.serialization.Codec;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.world.ecs.blueprints.TagsBlueprint;
+import steve6472.orbiter.world.ecs.blueprints.*;
 import steve6472.orbiter.world.ecs.core.Blueprint;
 import steve6472.orbiter.world.ecs.core.BlueprintEntry;
-import steve6472.orbiter.world.ecs.blueprints.IndexModelBlueprint;
-import steve6472.orbiter.world.ecs.blueprints.PositionBlueprint;
 
 /**
  * Created by steve6472
@@ -16,7 +14,10 @@ import steve6472.orbiter.world.ecs.blueprints.PositionBlueprint;
  */
 public class Blueprints
 {
+    public static final BlueprintEntry<PhysicsBodyBlueprint> PHYSICS_BODY = register(PhysicsBodyBlueprint.KEY, PhysicsBodyBlueprint.CODEC);
     public static final BlueprintEntry<PositionBlueprint> POSITION = register(PositionBlueprint.KEY, PositionBlueprint.CODEC);
+    public static final BlueprintEntry<RotationBlueprint> ROTATION = register(RotationBlueprint.KEY, RotationBlueprint.CODEC);
+    public static final BlueprintEntry<CollisionBlueprint> COLLISION = register(CollisionBlueprint.KEY, CollisionBlueprint.CODEC);
     public static final BlueprintEntry<IndexModelBlueprint> MODEL = register(IndexModelBlueprint.KEY, IndexModelBlueprint.CODEC);
     public static final BlueprintEntry<TagsBlueprint> TAGS = register(TagsBlueprint.KEY, TagsBlueprint.CODEC);
 

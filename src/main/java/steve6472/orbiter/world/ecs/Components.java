@@ -3,6 +3,7 @@ package steve6472.orbiter.world.ecs;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.world.ecs.components.*;
+import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.core.Component;
 
 import java.util.Optional;
@@ -19,6 +20,16 @@ public class Components
      * Physics/position
      */
     public static final Component<Position> POSITION = register("position", Position.class, builder -> builder.persistent(Position.CODEC).network(Position.BUFFER_CODEC));
+    public static final Component<Rotation> ROTATION = register("rotation", Rotation.class, builder -> builder.persistent(Rotation.CODEC).network(Rotation.BUFFER_CODEC));
+    public static final Component<AngularVelocity> ANGULAR_VELOCITY = register("angular_velocity", AngularVelocity.class, builder -> builder.persistent(AngularVelocity.CODEC).network(AngularVelocity.BUFFER_CODEC));
+    public static final Component<LinearVelocity> LINEAR_VELOCITY = register("linear_velocity", LinearVelocity.class, builder -> builder.persistent(LinearVelocity.CODEC).network(LinearVelocity.BUFFER_CODEC));
+    public static final Component<AngularFactor> ANGULAR_FACTOR = register("angular_factor", AngularFactor.class, builder -> builder.persistent(AngularFactor.CODEC).network(AngularFactor.BUFFER_CODEC));
+    public static final Component<LinearFactor> LINEAR_FACTOR = register("linear_factor", LinearFactor.class, builder -> builder.persistent(LinearFactor.CODEC).network(LinearFactor.BUFFER_CODEC));
+    public static final Component<AngularDamping> ANGULAR_DAMPING = register("angular_damping", AngularDamping.class, builder -> builder.persistent(AngularDamping.CODEC).network(AngularDamping.BUFFER_CODEC));
+    public static final Component<LinearDamping> LINEAR_DAMPING = register("linear_damping", LinearDamping.class, builder -> builder.persistent(LinearDamping.CODEC).network(LinearDamping.BUFFER_CODEC));
+    public static final Component<Friction> FRICTION = register("friction", Friction.class, builder -> builder.persistent(Friction.CODEC).network(Friction.BUFFER_CODEC));
+    public static final Component<Mass> MASS = register("mass", Mass.class, builder -> builder.persistent(Mass.CODEC).network(Mass.BUFFER_CODEC));
+    public static final Component<Collision> COLLISION = register("collision", Collision.class, builder -> builder.persistent(Collision.CODEC).network(Collision.BUFFER_CODEC));
 
     /*
      * Rendering

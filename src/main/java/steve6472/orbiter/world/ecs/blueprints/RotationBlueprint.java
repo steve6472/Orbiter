@@ -2,7 +2,7 @@ package steve6472.orbiter.world.ecs.blueprints;
 
 import com.mojang.serialization.Codec;
 import steve6472.core.registry.Key;
-import steve6472.orbiter.world.ecs.components.physics.Position;
+import steve6472.orbiter.world.ecs.components.physics.Rotation;
 import steve6472.orbiter.world.ecs.core.Blueprint;
 
 import java.util.Collection;
@@ -13,22 +13,22 @@ import java.util.List;
  * Date: 10/10/2024
  * Project: Orbiter <br>
  */
-public class PositionBlueprint implements Blueprint<PositionBlueprint>
+public class RotationBlueprint implements Blueprint<RotationBlueprint>
 {
-    public static final Key KEY = Key.defaultNamespace("position");
-    private static final PositionBlueprint INSTANCE = new PositionBlueprint();
-    public static final Codec<PositionBlueprint> CODEC = Codec.unit(INSTANCE);
+    public static final Key KEY = Key.defaultNamespace("rotation");
+    private static final RotationBlueprint INSTANCE = new RotationBlueprint();
+    public static final Codec<RotationBlueprint> CODEC = Codec.unit(INSTANCE);
 
-    private PositionBlueprint() {}
+    private RotationBlueprint() {}
 
     @Override
     public Collection<?> createComponents()
     {
-        return List.of(new Position());
+        return List.of(new Rotation());
     }
 
     @Override
-    public Codec<PositionBlueprint> codec()
+    public Codec<RotationBlueprint> codec()
     {
         return CODEC;
     }

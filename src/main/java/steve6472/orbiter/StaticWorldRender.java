@@ -6,7 +6,7 @@ import org.joml.Matrix4f;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.IndexModel;
-import steve6472.orbiter.world.ecs.components.Position;
+import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.volkaniums.assets.model.Model;
 import steve6472.volkaniums.core.FrameInfo;
 import steve6472.volkaniums.registry.VolkaniumsRegistries;
@@ -61,7 +61,7 @@ public class StaticWorldRender extends StaticModelRenderImpl
                 lastModel = entity.comp1().model();
             }
 
-            PhysicsRigidBody body = world.bodyMap.get(entity.comp2());
+            PhysicsRigidBody body = world.bodyMap().get(entity.comp2());
             if (body != null)
             {
                 Matrix4f jomlMat = Convert.physGetTransformToJoml(body, new Matrix4f());

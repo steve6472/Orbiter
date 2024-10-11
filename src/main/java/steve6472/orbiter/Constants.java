@@ -12,4 +12,6 @@ public class Constants
     public static final File SETTINGS = new File("settings/orbiter_settings.json");
 
     public static final float TICKS_IN_SECOND = 60f;
+
+    public static final int PLAYER_MAGIC_CONSTANT = 42;
 }

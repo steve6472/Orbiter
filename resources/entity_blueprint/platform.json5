@@ -1,5 +1,7 @@
 {
     position: {},
+    rotation: {},
     model: "blockbench/static/platform",
-    tags: ["tag_firefly_ai"]
+    collision: "blockbench/static/platform",
+    tags: ["tag_physics"]
 }

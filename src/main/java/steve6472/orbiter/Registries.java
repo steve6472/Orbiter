@@ -9,6 +9,7 @@ import steve6472.core.setting.Setting;
 import steve6472.orbiter.network.Packets;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.world.OrbiterCollisionShape;
 import steve6472.orbiter.world.ecs.Blueprints;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.core.BlueprintEntry;
@@ -36,6 +37,7 @@ public class Registries extends RegistryCreators
     public static final Registry<Component<?>> COMPONENT = createRegistry("component", () -> Components.POSITION);
     public static final Registry<BlueprintEntry<?>> BLUEPRINT = createRegistry("blueprint", () -> Blueprints.POSITION);
     public static final ObjectRegistry<EntityBlueprint> ENTITY_BLUEPRINT = createObjectRegistry("entity_blueprint", EntityBlueprint::load);
+    public static final ObjectRegistry<OrbiterCollisionShape> COLLISION = createObjectRegistry("collision", OrbiterCollisionShape::load);
 
     // TODO: add to volkaniums
     private static PacketRegistry createPacketRegistry(String id, Supplier<?> bootstrap)
