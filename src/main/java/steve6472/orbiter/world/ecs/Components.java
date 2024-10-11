@@ -21,6 +21,7 @@ public class Components
      */
     public static final Component<Position> POSITION = register("position", Position.class, builder -> builder.persistent(Position.CODEC).network(Position.BUFFER_CODEC));
     public static final Component<Rotation> ROTATION = register("rotation", Rotation.class, builder -> builder.persistent(Rotation.CODEC).network(Rotation.BUFFER_CODEC));
+    public static final Component<Gravity> GRAVITY = register("gravity", Gravity.class, builder -> builder.persistent(Gravity.CODEC).network(Gravity.BUFFER_CODEC));
     public static final Component<AngularVelocity> ANGULAR_VELOCITY = register("angular_velocity", AngularVelocity.class, builder -> builder.persistent(AngularVelocity.CODEC).network(AngularVelocity.BUFFER_CODEC));
     public static final Component<LinearVelocity> LINEAR_VELOCITY = register("linear_velocity", LinearVelocity.class, builder -> builder.persistent(LinearVelocity.CODEC).network(LinearVelocity.BUFFER_CODEC));
     public static final Component<AngularFactor> ANGULAR_FACTOR = register("angular_factor", AngularFactor.class, builder -> builder.persistent(AngularFactor.CODEC).network(AngularFactor.BUFFER_CODEC));

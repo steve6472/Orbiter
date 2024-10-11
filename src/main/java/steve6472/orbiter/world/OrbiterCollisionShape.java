@@ -3,6 +3,7 @@ package steve6472.orbiter.world;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import org.joml.Vector3f;
 import steve6472.core.registry.Key;
@@ -85,6 +86,16 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape) impl
                     float height = Float.parseFloat(split[1]);
 
                     return new CapsuleCollisionShape(radius * 0.5f, height * 0.5f);
+                }
+
+                if (s.equals("sphere"))
+                {
+                    String type = map.get("type");
+                    String properties = type.substring(s.length() + 1, type.lastIndexOf(")"));
+                    String[] split = properties.split(",");
+                    float radius = Float.parseFloat(split[0]);
+
+                    return new SphereCollisionShape(radius * 0.5f);
                 }
             }
 
