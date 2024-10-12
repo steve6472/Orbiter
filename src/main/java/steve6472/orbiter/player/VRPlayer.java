@@ -1,11 +1,43 @@
 package steve6472.orbiter.player;
 
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
+import com.jme3.bullet.collision.PhysicsCollisionObject;
+import com.jme3.bullet.collision.PhysicsRayTestResult;
+import com.jme3.bullet.joints.PhysicsJoint;
+import com.jme3.bullet.joints.SixDofSpringJoint;
+import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.math.Matrix3f;
+import com.jme3.math.Transform;
+import com.mojang.datafixers.util.Pair;
+import dev.dominion.ecs.api.Entity;
+import jme3utilities.math.MyMath;
+import org.joml.*;
+import org.lwjgl.openvr.*;
+import org.lwjgl.system.MemoryStack;
+import steve6472.core.log.Log;
+import steve6472.core.registry.Key;
+import steve6472.orbiter.Convert;
+import steve6472.orbiter.OrbiterApp;
+import steve6472.orbiter.network.PeerConnections;
+import steve6472.orbiter.network.packets.game.AddJoint;
+import steve6472.orbiter.network.packets.game.ClearJoints;
+import steve6472.orbiter.steam.SteamPeer;
+import steve6472.orbiter.world.EntityModify;
+import steve6472.orbiter.world.World;
+import steve6472.orbiter.world.ecs.components.Tag;
+import steve6472.orbiter.world.ecs.components.physics.*;
+import steve6472.orbiter.world.ecs.systems.NetworkSync;
 import steve6472.volkaniums.Camera;
 import steve6472.volkaniums.input.UserInput;
+import steve6472.volkaniums.registry.VolkaniumsRegistries;
+import steve6472.volkaniums.render.debug.DebugRender;
 import steve6472.volkaniums.vr.DeviceType;
 import steve6472.volkaniums.vr.VrInput;
+
+import java.nio.LongBuffer;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.logging.Logger;
 
 /**
  * Created by steve6472
@@ -14,7 +46,42 @@ import steve6472.volkaniums.vr.VrInput;
  */
 public class VRPlayer implements Player
 {
+    private static final Logger LOGGER = Log.getLogger(VRPlayer.class);
+    private final World world;
+
     private Vector3f eyePos = new Vector3f();
+
+    private long leftTriggerPosition;
+    private long leftTriggerTouch;
+    private long leftTriggerClick;
+
+    private long actionSet;
+
+    public VRPlayer(World world)
+    {
+        this.world = world;
+        try (MemoryStack stack = MemoryStack.stackPush())
+        {
+            leftTriggerPosition = getHandle("/actions/default/in/TriggerPosition", stack.mallocLong(1));
+            leftTriggerTouch = getHandle("/actions/default/in/TriggerTouch", stack.mallocLong(1));
+            leftTriggerClick = getHandle("/actions/default/in/TriggerClick", stack.mallocLong(1));
+
+            LongBuffer pHandle = stack.mallocLong(1);
+            int i = VRInput.VRInput_GetActionSetHandle("/actions/default", pHandle);
+            if (i != VR.EVRInputError_VRInputError_None)
+                LOGGER.severe("GetActionSetHandle returned " + i);
+            actionSet = pHandle.get(0);
+        }
+    }
+
+    private long getHandle(String actionName, LongBuffer pointer)
+    {
+        int i = VRInput.VRInput_GetActionHandle(actionName, pointer);
+        if (i != VR.EVRInputError_VRInputError_None)
+            LOGGER.severe("GetActionHandle for " + actionName + " returned " + i);
+
+        return pointer.get(0);
+    }
 
     @Override
     public void teleport(Vector3f position)
@@ -53,5 +120,236 @@ public class VRPlayer implements Player
             Matrix4f transform = pair.getSecond();
             eyePos = transform.transformPosition(new Vector3f());
         });
+
+        handleHand(vrInput);
+
+        try (MemoryStack stack = MemoryStack.stackPush())
+        {
+            VRActiveActionSet.Buffer calloc = VRActiveActionSet.calloc(1, stack);
+            VRActiveActionSet vrActiveActionSet = calloc.get(0);
+            vrActiveActionSet.ulActionSet(actionSet);
+            int err;
+            if ((err = VRInput.VRInput_UpdateActionState(calloc, calloc.sizeof())) != VR.EVRInputError_VRInputError_None)
+            {
+                LOGGER.severe("UpdateActionState error: " + err);
+            }
+
+//            InputDigitalActionData inputDigital = InputDigitalActionData.calloc(stack);
+//            if ((err = VRInput.VRInput_GetDigitalActionData(leftTriggerClick, inputDigital, VR.k_ulInvalidInputValueHandle)) != VR.EVRInputError_VRInputError_None)
+//            {
+//                LOGGER.severe("GetDigitalActionData error: " + err);
+//            }
+//            System.out.println(inputDigital.bChanged() + " " + inputDigital.bState() + " ");
+
+            InputAnalogActionData inputAnalog = InputAnalogActionData.calloc(stack);
+            if ((err = VRInput.VRInput_GetAnalogActionData(leftTriggerPosition, inputAnalog, 0)) != VR.EVRInputError_VRInputError_None)
+                LOGGER.severe("GetAnalogActionData error: " + err);
+
+            handleTrigger(inputAnalog.x(), vrInput);
+        }
+    }
+
+    private Entity handEntity;
+
+    private Entity createHandEntity(float x, float y, float z)
+    {
+        Key model = Key.defaultNamespace("blockbench/static/controller");
+        return world.addEntity(
+            VolkaniumsRegistries.STATIC_MODEL.get(model),
+            new Collision(model),
+            new Position(x, y, z),
+            new Rotation(),
+            new Mass(5),
+            new Gravity(0, 0, 0),
+            new AngularDamping(1),
+            new LinearDamping(1),
+            new LinearVelocity(),
+            Tag.PHYSICS,
+            Tag.CLIENT_HANDLED
+            );
+    }
+
+    private void handleHand(VrInput vrInput)
+    {
+        Optional<Pair<DeviceType, Matrix4f>> controller = vrInput
+            .getPoses()
+            .stream()
+            .filter(a -> a.getFirst() == DeviceType.CONTROLLER)
+            .findFirst();
+
+        controller.ifPresentOrElse(pair -> {
+            Matrix4f transform = pair.getSecond();
+            Vector3f position = transform.transformPosition(new Vector3f());
+            AxisAngle4f axisRot = transform.getRotation(new AxisAngle4f());
+            Quaternionf rotation = new Quaternionf(axisRot);
+
+            if (handEntity == null)
+            {
+                handEntity = createHandEntity(position.x, position.y, position.z);
+                LOGGER.info("Created hand entity");
+            }
+
+            PhysicsRigidBody body = world.bodyMap().get(handEntity.get(UUID.class));
+            body.activate(true);
+
+            Position posComp = handEntity.get(Position.class);
+            posComp.set(position.x, position.y, position.z);
+            posComp.modifyBody(body);
+            EntityModify._markModified(handEntity, Position.class);
+
+            Rotation rotComp = handEntity.get(Rotation.class);
+            rotComp.set(rotation.x, rotation.y, rotation.z, rotation.w);
+            rotComp.modifyBody(body);
+            EntityModify._markModified(handEntity, Rotation.class);
+
+            if (OrbiterApp.getInstance().getSteam().connections != null)
+                NetworkSync.syncEntity(handEntity, OrbiterApp.getInstance().getSteam().connections);
+
+        }, () -> {
+            if (handEntity != null)
+            {
+                world.removeEntity(handEntity.get(UUID.class));
+                handEntity = null;
+                LOGGER.info("Deleted hand entity");
+            }
+        });
+    }
+
+    boolean jointsExist = false;
+
+    private void handleTrigger(float triggerValue, VrInput vrInput)
+    {
+        if (triggerValue < 0.8f)
+            removeJoints();
+        else
+            createJoints(vrInput);
+    }
+
+    private void createJoints(VrInput vrInput)
+    {
+        if (jointsExist || handEntity == null)
+            return;
+
+        Optional<Pair<DeviceType, Matrix4f>> controller = vrInput
+            .getPoses()
+            .stream()
+            .filter(a -> a.getFirst() == DeviceType.CONTROLLER)
+            .findFirst();
+
+        controller.ifPresent(pair ->
+        {
+            Matrix4f transform = pair.getSecond();
+            Vector3f position = transform.transformPosition(new Vector3f());
+            AxisAngle4f axisRot = transform.getRotation(new AxisAngle4f());
+            Quaternionf rotation = new Quaternionf(axisRot);
+
+            float reach = 1.5f;
+            final float span = 0.025f;
+
+            Vector3f[] offsets = new Vector3f[]
+                {
+                    new Vector3f(span, -span, -0.08f),
+                    new Vector3f(-span, -span, -0.08f),
+                    new Vector3f(span, span, -0.08f),
+                    new Vector3f(-span, span, -0.08f)
+                };
+
+            PhysicsCollisionObject firstHit = null;
+
+            for (Vector3f offset : offsets)
+            {
+                Vector3f jointPos = new Vector3f(position);
+
+                jointPos.add(new Vector3f(offset).rotate(rotation));
+
+                Vector3f direction = new Vector3f(0, 0, -1);
+                direction.rotate(rotation);
+                direction.mul(reach);
+                Vector3f endPoint = new Vector3f(jointPos);
+                endPoint.add(direction);
+
+                if (jointPos.equals(endPoint))
+                {
+                    LOGGER.warning("Can not create joint, start and end ray pos are the same!");
+                    continue;
+                }
+                DebugRender.addDebugObjectForMs(DebugRender.line(jointPos, endPoint, DebugRender.GOLD), 1);
+
+                List<PhysicsRayTestResult> physicsRayTestResults = world
+                    .physics()
+                    .rayTest(Convert.jomlToPhys(jointPos), Convert.jomlToPhys(endPoint));
+
+                if (physicsRayTestResults.isEmpty())
+                    continue;
+
+                PhysicsRayTestResult collision = physicsRayTestResults.getFirst();
+                PhysicsCollisionObject collisionObject = collision.getCollisionObject();
+
+                // You can only grab one object at a time
+                if (firstHit == null)
+                    firstHit = collisionObject;
+                else
+                    if (firstHit != collisionObject)
+                        continue;
+
+                if (!(collisionObject instanceof PhysicsRigidBody grabbedObject))
+                    continue;
+
+                // Don't grab static objects
+                if (grabbedObject.getMass() <= 0)
+                    continue;
+
+                PhysicsRigidBody body = world.bodyMap().get(handEntity.get(UUID.class));
+
+                // Don't grab itself
+                if (body == grabbedObject)
+                    continue;
+
+//                PhysicsJoint joint = new Point2PointJoint(body, grabbedObject, Convert.jomlToPhys(offset), collision.getHitNormalLocal(null));
+
+                Vector3f intersection = new Vector3f(jointPos).add(new Vector3f(direction).normalize().mul(collision.getHitFraction() * reach));
+                DebugRender.addDebugObjectForS(DebugRender.lineCube(intersection, 0.01f, DebugRender.ROYAL_BLUE), 1);
+
+                com.jme3.math.Vector3f pivot = MyMath.transform(grabbedObject
+                    .getTransform(new Transform())
+                    .invert(), Convert.jomlToPhys(intersection), new com.jme3.math.Vector3f());
+
+                Matrix3f rotInA = grabbedObject.getPhysicsRotationMatrix(new Matrix3f());
+                Matrix3f rotInB = body.getPhysicsRotationMatrix(new Matrix3f());
+                PhysicsJoint joint = new SixDofSpringJoint(grabbedObject, body, pivot, Convert.jomlToPhys(offset), rotInA, rotInB, false);
+                world.physics().addJoint(joint);
+
+                PeerConnections<SteamPeer> connections = OrbiterApp.getInstance().getSteam().connections;
+                if (connections != null)
+                    connections.broadcastMessage(new AddJoint(
+                        ((UUID) grabbedObject.getUserObject()),
+                        ((UUID) body.getUserObject()),
+                        Convert.physToJoml(pivot),
+                        offset,
+                        Convert.physToJoml(rotInA, new org.joml.Matrix3f()),
+                        Convert.physToJoml(rotInB, new org.joml.Matrix3f())));
+
+                jointsExist = true;
+                DebugRender.addDebugObjectForS(DebugRender.line(jointPos, endPoint, DebugRender.RED), 3);
+            }
+        });
+    }
+
+    private void removeJoints()
+    {
+        if (!jointsExist || handEntity == null)
+            return;
+
+        PhysicsRigidBody body = world.bodyMap().get(handEntity.get(UUID.class));
+        for (PhysicsJoint physicsJoint : body.listJoints())
+        {
+            world.physics().removeJoint(physicsJoint);
+            body.removeJoint(physicsJoint);
+        }
+        jointsExist = false;
+
+        PeerConnections<SteamPeer> connections = OrbiterApp.getInstance().getSteam().connections;
+        if (connections != null)
+            connections.broadcastMessage(new ClearJoints(((UUID) body.getUserObject())));
     }
 }

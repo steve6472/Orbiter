@@ -1,5 +1,5 @@
 {
-  "orbiter:debug_line_single_buffer": false,
+  "orbiter:debug_line_single_buffer": true,
   "orbiter:enable_wide_lines": true,
   "orbiter:global_camera_count": 3,
   "orbiter:line_width": 2.0,
@@ -8,5 +8,6 @@
   "orbiter:title_fps": true,
   "orbiter:username": "Steve",
   "orbiter:validation_level": "Warning",
-  "orbiter:vr": false
+  "orbiter:vr": true,
+  "orbiter:vr_action_manifest_path": "settings/vr_actions.json"
 }

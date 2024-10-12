@@ -1,5 +1,6 @@
 package steve6472.orbiter;
 
+import org.joml.Matrix3f;
 import steve6472.core.SteveCore;
 import steve6472.core.log.Log;
 import steve6472.core.setting.SettingsLoader;
@@ -22,7 +23,7 @@ public class OrbiterMain
 {
     private static final Logger LOGGER = Log.getLogger(OrbiterMain.class);
 
-    public static boolean ENABLE_STEAM = false;
+    public static boolean ENABLE_STEAM = true;
 
     public static boolean FAKE_P2P = false;
     public static boolean STEAM_TEST = false;
@@ -32,6 +33,9 @@ public class OrbiterMain
     {
         System.setProperty("joml.format", "false");
         System.setProperty("dominion.show-banner", "false");
+
+        if (test())
+            return;
 
         List<String> list = Arrays.asList(args);
         STEAM_TEST = list.contains("steamTest");
@@ -97,5 +101,10 @@ public class OrbiterMain
                 LOGGER.severe("\t" + stackTraceElement.toString());
             }
         }
+    }
+
+    private static boolean test()
+    {
+        return false;
     }
 }

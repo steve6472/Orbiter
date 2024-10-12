@@ -4,24 +4,19 @@ import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.SphereCollisionShape;
-import com.jme3.bullet.objects.PhysicsRigidBody;
 import org.joml.Vector3f;
 import steve6472.core.registry.Key;
 import steve6472.core.registry.Keyable;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
-import steve6472.volkaniums.Constants;
 import steve6472.volkaniums.assets.model.blockbench.Element;
 import steve6472.volkaniums.assets.model.blockbench.LoadedModel;
 import steve6472.volkaniums.assets.model.blockbench.element.CubeElement;
-import steve6472.volkaniums.assets.model.blockbench.element.LocatorElement;
 import steve6472.volkaniums.assets.model.blockbench.element.MeshElement;
 import steve6472.volkaniums.assets.model.blockbench.element.NullObjectElement;
 import steve6472.volkaniums.registry.VolkaniumsRegistries;
 
 import java.util.*;
-
-import static steve6472.orbiter.Convert.jomlToPhys;
 
 /**
  * Created by steve6472
@@ -38,7 +33,7 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape) impl
 
             List<CollisionShape> shapes = new ArrayList<>();
 
-            model.elements().stream().filter(e -> e.name().contains("collision")).forEach(e ->
+            model.elements().stream().filter(e -> e.name().startsWith("collision")).forEach(e ->
             {
                 CollisionShape shape = createCollisionShape(e);
                 if (shape != null)
@@ -62,9 +57,6 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape) impl
             // Offsets, rotations, scaling..., also this from outliner ........
             return shape;
         } else if (element instanceof MeshElement elm)
-        {
-            return null;
-        } else if (element instanceof LocatorElement elm)
         {
             return null;
         } else if (element instanceof NullObjectElement)
@@ -101,7 +93,8 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape) impl
 
             return null;
         }
-        throw new RuntimeException("Unknown Element type");
+
+        return null;
     }
 
     private static Map<String, String> extractProperties(String text)

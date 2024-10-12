@@ -7,6 +7,7 @@ import com.jme3.system.NativeLibraryLoader;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
+import steve6472.core.registry.Key;
 import steve6472.core.setting.SettingsLoader;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.debug.DebugWindow;
@@ -23,6 +24,7 @@ import steve6472.volkaniums.input.KeybindUpdater;
 import steve6472.volkaniums.pipeline.Pipelines;
 import steve6472.volkaniums.render.StaticModelRenderSystem;
 import steve6472.volkaniums.render.debug.DebugRender;
+import steve6472.volkaniums.settings.VisualSettings;
 import steve6472.volkaniums.vr.VrData;
 
 import java.io.File;
@@ -83,6 +85,14 @@ public class OrbiterApp extends VolkaniumsApp
     public void loadSettings()
     {
         SettingsLoader.loadFromJsonFile(Registries.SETTINGS, Constants.SETTINGS);
+
+        if (OrbiterMain.FAKE_P2P)
+        {
+            if (OrbiterMain.FAKE_PEER)
+                VisualSettings.VR.set(true);
+            else
+                VisualSettings.VR.set(false);
+        }
     }
 
     @Override
@@ -96,8 +106,8 @@ public class OrbiterApp extends VolkaniumsApp
     {
         KeybindUpdater.updateKeybinds(Registries.KEYBINDS, input());
 
-        client = new Client(camera());
         world.init();
+        client = new Client(camera(), world);
 
         if (!VrData.VR_ON)
             world.physics().add(((PCPlayer) client.player()).character);
@@ -107,7 +117,7 @@ public class OrbiterApp extends VolkaniumsApp
 
         if (OrbiterMain.FAKE_P2P)
         {
-            steam.connections.broadcastMessage(AcceptedPeerConnection.instance());
+            steam.connections.broadcastMessage(new AcceptedPeerConnection(VrData.VR_ON));
         }
     }
 
@@ -121,7 +131,7 @@ public class OrbiterApp extends VolkaniumsApp
 
         float frameTime = frameInfo == null ? (1f / Constants.TICKS_IN_SECOND) : frameInfo.frameTime();
 
-        if (!OrbiterMain.STEAM_TEST && isMouseGrabbed)
+        if ((!OrbiterMain.STEAM_TEST && isMouseGrabbed) || VrData.VR_ON)
             client.handleInput(input(), vrInput(), frameTime);
 
         timeToNextTick -= frameTime;
@@ -141,8 +151,8 @@ public class OrbiterApp extends VolkaniumsApp
     {
         steam.tick();
 
-        world.tick();
         client.tickClient();
+        world.tick();
 
         if (Keybinds.TOGGLE_GRAB_MOUSE.isActive() || Keybinds.DISABLE_GRAB_MOUSE.isActive())
         {

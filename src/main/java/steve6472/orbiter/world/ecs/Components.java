@@ -47,6 +47,7 @@ public class Components
      */
     public static final Component<Tag.Physics> TAG_PHYSICS = register("tag_physics", Tag.Physics.class, builder -> builder.persistent(Tag.PHYSICS.codec()).network(Tag.PHYSICS.networkCodec()));
     public static final Component<Tag.FireflyAI> TAG_FIREFLY_AI = register("tag_firefly_ai", Tag.FireflyAI.class, builder -> builder.persistent(Tag.FIREFLY_AI.codec()).network(Tag.FIREFLY_AI.networkCodec()));
+    public static final Component<Tag.ClientHandled> TAG_CLIENT_HANDLED = register("tag_client_handled", Tag.ClientHandled.class, builder -> builder.persistent(Tag.CLIENT_HANDLED.codec()).network(Tag.CLIENT_HANDLED.networkCodec()));
 
     /*
      * Internal

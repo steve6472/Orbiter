@@ -14,6 +14,7 @@ import steve6472.orbiter.network.test.FakeP2PConstants;
 import steve6472.orbiter.network.test.FakeSteamPeerConnections;
 import steve6472.orbiter.steam.lobby.Lobby;
 import steve6472.orbiter.steam.lobby.LobbyManager;
+import steve6472.volkaniums.vr.VrData;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -118,7 +119,11 @@ public class SteamMain
         {
             connections.tick();
 
-            Vector3f vector3f = orbiterApp.getClient().player().getCenterPos();
+            Vector3f vector3f;
+            if (VrData.VR_ON)
+                vector3f = orbiterApp.getClient().player().getEyePos();
+            else
+                vector3f = orbiterApp.getClient().player().getCenterPos();
             connections.broadcastMessage(new TeleportToPosition(vector3f));
 
             // Every second send heartbeat

@@ -23,9 +23,11 @@ public final class Tag
 
     public static final Physics PHYSICS = new Physics();
     public static final FireflyAI FIREFLY_AI = new FireflyAI();
+    public static final ClientHandled CLIENT_HANDLED = new ClientHandled();
 
     public static final class Physics extends TagClass<Physics> { private Physics() {super(nextId());} }
     public static final class FireflyAI extends TagClass<FireflyAI> { private FireflyAI() {super(nextId());} }
+    public static final class ClientHandled extends TagClass<ClientHandled> { private ClientHandled() {super(nextId());} }
 
     /*
      * Serialization stuff
@@ -66,6 +68,12 @@ public final class Tag
         public BufferCodec<ByteBuf, T> networkCodec()
         {
             return networkCodec;
+        }
+
+        @Override
+        public String toString()
+        {
+            return getClass().getSimpleName();
         }
     }
 }

@@ -3,24 +3,19 @@ package steve6472.orbiter.world;
 import com.codedisaster.steamworks.SteamID;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.ConvexShape;
-import com.jme3.bullet.objects.PhysicsCharacter;
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.math.Vector3f;
 import dev.dominion.ecs.api.Dominion;
 import dev.dominion.ecs.api.Entity;
 import dev.dominion.ecs.api.Results;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
-import steve6472.orbiter.Convert;
 import steve6472.orbiter.network.PeerConnections;
 import steve6472.orbiter.network.packets.game.CreateEntity;
+import steve6472.orbiter.network.packets.game.RemoveEntity;
 import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.components.MPControlled;
-import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
-import steve6472.orbiter.world.ecs.components.physics.Position;
+import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.components.Tag;
-import steve6472.orbiter.world.ecs.components.physics.Collision;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
 import steve6472.volkaniums.assets.model.Model;
 import steve6472.volkaniums.registry.VolkaniumsRegistries;
@@ -49,6 +44,9 @@ public interface EntityControl
 
         Entity entity = ecs().createEntity(objects.toArray());
 
+        // Special physics tag handling
+        handlePhysics(entity, objects);
+
         // Broadcast new entity to peers
         if (connections() != null)
             connections().broadcastMessage(new CreateEntity(entity));
@@ -65,24 +63,7 @@ public interface EntityControl
         Entity entity = ecs().createEntity(components.toArray());
 
         // Special physics tag handling
-        if (entity.has(Tag.Physics.class))
-        {
-            Collision collision = entity.get(Collision.class);
-            if (collision == null)
-                throw new RuntimeException("Entity blueprint needs Collision if Physics tag is specified!");
-
-            PhysicsRigidBody body = new PhysicsRigidBody(collision.shape());
-            bodyMap().put(uuid, body);
-            physics().add(body);
-
-            for (Object component : components)
-            {
-                if (component instanceof PhysicsProperty pp)
-                {
-                    pp.modifyBody(body);
-                }
-            }
-        }
+        handlePhysics(entity, components);
 
         // Broadcast new entity to peers
         if (connections() != null)
@@ -101,11 +82,23 @@ public interface EntityControl
         return addEntity(model, UUID.randomUUID(), extraComponents);
     }
 
-    default Entity spawnDebugPlayer(SteamID steamID)
+    /// Does not call CreateEntity
+    default Entity addEntity(Object... components)
+    {
+        Entity entity = ecs().createEntity(components);
+
+        // Special physics tag handling
+        handlePhysics(entity, Set.of(components));
+
+        return entity;
+    }
+
+    default Entity spawnDebugPlayer(SteamID steamID, boolean VR)
     {
         ArrayList<Object> objects = new ArrayList<>();
-        Model model = VolkaniumsRegistries.STATIC_MODEL.get(Key.defaultNamespace("blockbench/static/player_capsule"));
-        Collision collision = new Collision(Key.defaultNamespace("blockbench/static/player_capsule"));
+        Key key = Key.defaultNamespace(VR ? "blockbench/static/vr_player" : "blockbench/static/player_capsule");
+        Model model = VolkaniumsRegistries.STATIC_MODEL.get(key);
+        Collision collision = new Collision(key);
         UUID uuid = UUID.randomUUID();
 
         objects.add(new IndexModel(model));
@@ -115,38 +108,64 @@ public interface EntityControl
         objects.add(new Position());
         objects.add(collision);
 
+        if (VR)
+        {
+            objects.add(new Gravity(0, 0, 0));
+        }
+
         Entity entity = ecs().createEntity(objects.toArray());
 
-        CollisionShape shape = collision.shape();
-//        if (!(shape instanceof ConvexShape convexShape))
-//        {
-//            throw new RuntimeException("Player character collision needs to be convex shape!");
-//        }
-
-        PhysicsRigidBody body = new PhysicsRigidBody(collision.shape());
+        PhysicsRigidBody body = handlePhysics(entity, objects);
+        Objects.requireNonNull(body, "Player entity missing physics!");
         body.setUserIndex(Constants.PLAYER_MAGIC_CONSTANT);
         body.setAngularFactor(0f);
-//        PhysicsCharacter body = new PhysicsCharacter(convexShape, 0);
-        body.setUserObject(uuid);
-        physics().add(body);
-        bodyMap().put(uuid, body);
-
-//        if (objects.stream().anyMatch(o -> o instanceof MPControlled))
-//        {
-//            body.setGravity(Convert.jomlToPhys(new Vector3f(0, 0, 0)));
-//        }
 
         return entity;
     }
 
+    private PhysicsRigidBody handlePhysics(Entity entity, Collection<Object> components)
+    {
+        UUID uuid = entity.get(UUID.class);
+        Objects.requireNonNull(uuid);
+
+        if (entity.has(Tag.Physics.class))
+        {
+            Collision collision_ = entity.get(Collision.class);
+            if (collision_ == null)
+                throw new RuntimeException("Entity blueprint needs Collision if Physics tag is specified!");
+
+            PhysicsRigidBody body = new PhysicsRigidBody(collision_.shape());
+            body.setUserObject(uuid);
+            bodyMap().put(uuid, body);
+            physics().add(body);
+
+            for (Object component : components)
+            {
+                if (component instanceof PhysicsProperty pp)
+                {
+                    pp.modifyBody(body);
+                }
+            }
+
+            return body;
+        }
+
+        return null;
+    }
+
+    /// Sends the RemoveEntity packet
     default void removeEntity(UUID uuid)
     {
         PhysicsRigidBody body = bodyMap().get(uuid);
         if (body != null)
         {
             physics().remove(body);
+            bodyMap().remove(uuid);
         }
         ecs().findEntitiesWith(UUID.class).stream().filter(e -> e.comp().equals(uuid)).forEach(e -> ecs().deleteEntity(e.entity()));
+
+        if (connections() != null)
+            connections().broadcastMessage(new RemoveEntity(uuid));
     }
 
     default Optional<Entity> getEntityByUUID(UUID uuid)

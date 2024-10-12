@@ -1,7 +1,10 @@
 package steve6472.orbiter.network.packets.game;
 
 import com.codedisaster.steamworks.SteamID;
+import com.jme3.bullet.joints.PhysicsJoint;
+import com.jme3.bullet.joints.SixDofSpringJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.math.Matrix3f;
 import com.mojang.datafixers.util.Pair;
 import dev.dominion.ecs.api.Entity;
 import io.netty.buffer.ByteBuf;
@@ -21,6 +24,7 @@ import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
 import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
 import steve6472.orbiter.world.ecs.core.Component;
+import steve6472.volkaniums.vr.VrData;
 
 import java.util.List;
 import java.util.Optional;
@@ -60,20 +64,20 @@ public class GameListener extends OrbiterPacketListener
         }
     }
 
-    public void acceptedPeerConnection()
+    public void acceptedPeerConnection(boolean VR)
     {
         if (!OrbiterMain.FAKE_P2P)
             LOGGER.info(steamMain.friendNames.getUserName(sender()) + " accepted peer connection!");
         else
             LOGGER.info("Fake P2P accepted");
         sendExistingData();
-        world.spawnDebugPlayer(sender());
+        world.spawnDebugPlayer(sender(), VR);
     }
 
     private void sendExistingData()
     {
         LOGGER.info("Sending existing data!");
-        connections.sendMessage(peer(), new SpawnPlayerCharacter(steamMain.userID));
+        connections.sendMessage(peer(), new SpawnPlayerCharacter(steamMain.userID, VrData.VR_ON));
 
         world.ecs().findEntitiesWith(UUID.class).forEach(ent -> {
 //            LOGGER.info("Sending " + System.currentTimeMillis() + " " + ent);
@@ -82,10 +86,10 @@ public class GameListener extends OrbiterPacketListener
         });
     }
 
-    public void spawnPlayer(SteamID player)
+    public void spawnPlayer(SteamID player, boolean VR)
     {
-        LOGGER.info("Spawn player " + player);
-        world.spawnDebugPlayer(player);
+        LOGGER.info("Spawn player " + player + " VR: " + VR);
+        world.spawnDebugPlayer(player, VR);
     }
 
     public void disconnectPlayer(SteamID disconnectedPlayer)
@@ -152,6 +156,7 @@ public class GameListener extends OrbiterPacketListener
 
     public void entityRequested(UUID entity)
     {
+        LOGGER.info("Requested entity " + System.currentTimeMillis() + " " + entity);
         Optional<Entity> entityByUUID = world.getEntityByUUID(entity);
         entityByUUID.ifPresent(e -> {
             Pair<Integer, ByteBuf> serialized = NetworkSerialization.entityComponentsToBuffer(e);
@@ -161,27 +166,74 @@ public class GameListener extends OrbiterPacketListener
 
     public void createEntity(UUID uuid, List<Object> components)
     {
-//        LOGGER.info("Create entity " + uuid + " " + components);
+        LOGGER.info("Create entity " + uuid + " " + components);
         if (world.getEntityByUUID(uuid).isEmpty())
         {
-            Entity entity = world.ecs().createEntity(components.toArray());
-            if (entity.has(Tag.Physics.class))
-            {
-                Collision collision = entity.get(Collision.class);
-                if (collision == null)
-                {
-                    LOGGER.severe("Physics entity has no collision!");
-                    return;
-                }
-
-                PhysicsRigidBody body = new PhysicsRigidBody(collision.shape());
-                world.bodyMap().put(uuid, body);
-                world.physics().add(body);
-
-                var position = entity.get(Position.class);
-                if (position != null)
-                    body.setPhysicsLocation(Convert.jomlToPhys(position.toVec3f()));
-            }
+            Entity entity = world.addEntity(components.toArray());
+//            if (entity.has(Tag.Physics.class))
+//            {
+//                Collision collision = entity.get(Collision.class);
+//                if (collision == null)
+//                {
+//                    LOGGER.severe("Physics entity has no collision!");
+//                    return;
+//                }
+//
+//                PhysicsRigidBody body = new PhysicsRigidBody(collision.shape());
+//                world.bodyMap().put(uuid, body);
+//                world.physics().add(body);
+//
+//                var position = entity.get(Position.class);
+//                if (position != null)
+//                    body.setPhysicsLocation(Convert.jomlToPhys(position.toVec3f()));
+//            }
         }
+    }
+
+    public void removeEntity(UUID uuid)
+    {
+        LOGGER.info("Remove entity " + uuid);
+        world.getEntityByUUID(uuid).ifPresent(e -> world.ecs().deleteEntity(e));
+        PhysicsRigidBody body = world.bodyMap().get(uuid);
+        if (body != null)
+        {
+            world.bodyMap().remove(uuid);
+            world.physics().remove(body);
+        }
+    }
+
+    public void clearJoints(UUID uuid)
+    {
+        PhysicsRigidBody body = world.bodyMap().get(uuid);
+        if (body != null)
+        {
+            for (PhysicsJoint physicsJoint : body.listJoints())
+            {
+                world.physics().removeJoint(physicsJoint);
+                body.removeJoint(physicsJoint);
+            }
+        } else
+        {
+            LOGGER.warning("No body for " + uuid + " can not clear joints!");
+        }
+
+        connections.broadcastMessageExclude(new ClearJoints(uuid), peer());
+    }
+
+    public void addJoints(AddJoint addJoint)
+    {
+        PhysicsRigidBody bodyA = world.bodyMap().get(addJoint.bodyA());
+        PhysicsRigidBody bodyB = world.bodyMap().get(addJoint.bodyB());
+
+        PhysicsJoint joint = new SixDofSpringJoint(
+            bodyA,
+            bodyB,
+            Convert.jomlToPhys(addJoint.pivotA()),
+            Convert.jomlToPhys(addJoint.pivotB()),
+            Convert.jomlToPhys(addJoint.rotA(), new Matrix3f()),
+            Convert.jomlToPhys(addJoint.rotB(), new Matrix3f()),
+            false);
+        world.physics().addJoint(joint);
+        connections.broadcastMessageExclude(addJoint, peer());
     }
 }

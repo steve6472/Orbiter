@@ -3,6 +3,8 @@ package steve6472.orbiter.world.ecs.systems;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import dev.dominion.ecs.api.Dominion;
 import steve6472.core.log.Log;
+import steve6472.orbiter.OrbiterApp;
+import steve6472.orbiter.OrbiterMain;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
@@ -23,7 +25,7 @@ public class UpdatePhysics implements ComponentSystem
     @Override
     public void tick(Dominion dominion, World world)
     {
-        var found = dominion.findEntitiesWith(UUID.class).withAlso(Tag.PHYSICS.getClass());
+        var found = dominion.findEntitiesWith(UUID.class).withAlso(Tag.Physics.class);
 
         for (var entityComps : found)
         {

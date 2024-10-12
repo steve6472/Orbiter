@@ -160,7 +160,7 @@ public class World implements EntityControl
             }
         }
 
-        CollisionRenderer.render(physics());
+        PhysicsRenderer.render(physics());
     }
 
     private void addPlane(Vector3f normal, float constant)

@@ -33,6 +33,9 @@ public class Packets
         registerPacket(UpdateEntityComponents.KEY, UpdateEntityComponents.BUFFER_CODEC);
         registerPacket(CreateEntity.KEY, CreateEntity.BUFFER_CODEC);
         registerPacket(RequestEntity.KEY, RequestEntity.BUFFER_CODEC);
+        registerPacket(RemoveEntity.KEY, RemoveEntity.BUFFER_CODEC);
+        registerPacket(ClearJoints.KEY, ClearJoints.BUFFER_CODEC);
+        registerPacket(AddJoint.KEY, AddJoint.BUFFER_CODEC);
 
         return new Object();
     }

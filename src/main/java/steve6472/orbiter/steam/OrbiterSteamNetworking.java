@@ -6,6 +6,7 @@ import com.codedisaster.steamworks.SteamNetworkingCallback;
 import steve6472.core.log.Log;
 import steve6472.orbiter.network.packets.game.AcceptedPeerConnection;
 import steve6472.orbiter.steam.lobby.Lobby;
+import steve6472.volkaniums.vr.VrData;
 
 import java.util.logging.Logger;
 
@@ -60,6 +61,6 @@ public class OrbiterSteamNetworking implements SteamNetworkingCallback
         }
 
         steamMain.connections.addPeer(new SteamPeer(steamIDRemote));
-        steamMain.connections.broadcastMessage(AcceptedPeerConnection.instance());
+        steamMain.connections.broadcastMessage(new AcceptedPeerConnection(VrData.VR_ON));
     }
 }

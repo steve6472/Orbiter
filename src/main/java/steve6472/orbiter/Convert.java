@@ -4,6 +4,7 @@ import com.jme3.bullet.objects.PhysicsCharacter;
 import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Transform;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -49,6 +50,11 @@ public class Convert
         return physGetToJoml(getter, new Vector3f());
     }
 
+    public static Quaternionf physGetToJomlQuat(Function<com.jme3.math.Quaternion, com.jme3.math.Quaternion> getter)
+    {
+        return physGetToJoml(getter, new Quaternionf());
+    }
+
     public static Matrix4f physToJoml(com.jme3.math.Matrix4f mat, Matrix4f store)
     {
         store.set(
@@ -56,6 +62,17 @@ public class Convert
             mat.m01, mat.m11, mat.m21, mat.m31,   // Second row
             mat.m02, mat.m12, mat.m22, mat.m32,   // Third row
             mat.m03, mat.m13, mat.m23, mat.m33    // Fourth row
+        );
+
+        return store;
+    }
+
+    public static Matrix3f physToJoml(com.jme3.math.Matrix3f mat, Matrix3f store)
+    {
+        store.set(
+            mat.get(0, 0), mat.get(0, 1), mat.get(0, 2),   // First row
+            mat.get(1, 0), mat.get(1, 1), mat.get(1, 2),   // Second row
+            mat.get(2, 0), mat.get(2, 1), mat.get(2, 2)   // Third row
         );
 
         return store;
@@ -104,5 +121,20 @@ public class Convert
     public static com.jme3.math.Quaternion jomlToPhys(Quaternionf quat)
     {
         return jomlToPhys(quat, new com.jme3.math.Quaternion());
+    }
+
+    public static com.jme3.math.Matrix3f jomlToPhys(Matrix3f mat, com.jme3.math.Matrix3f store)
+    {
+        store.set(0, 0, mat.m00);
+        store.set(1, 0, mat.m10);
+        store.set(2, 0, mat.m20);
+        store.set(0, 1, mat.m01);
+        store.set(1, 1, mat.m11);
+        store.set(2, 1, mat.m21);
+        store.set(0, 2, mat.m02);
+        store.set(1, 2, mat.m12);
+        store.set(2, 2, mat.m22);
+
+        return store;
     }
 }
