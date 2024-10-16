@@ -42,7 +42,7 @@ public class UpdateECS implements ComponentSystem
 
             for (Class<? extends PhysicsProperty> physicsComponent : PhysicsProperty.PHYSICS_COMPONENTS)
             {
-                PhysicsProperty physicsProperty = entityComps.entity().get(physicsComponent);
+                PhysicsProperty physicsProperty = entity.get(physicsComponent);
                 if (physicsProperty == null)
                     continue;
 
@@ -52,7 +52,7 @@ public class UpdateECS implements ComponentSystem
                 {
                     entity.removeType(physicsComponent);
                     entity.add(modified.getComponent());
-                    markModified(entityComps.entity(), physicsComponent);
+                    markModified(entity, physicsComponent);
                 } else if(modified.hasModifiedComponent())
                 {
                     markModified(entityComps.entity(), physicsComponent);

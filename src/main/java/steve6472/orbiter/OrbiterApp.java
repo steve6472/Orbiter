@@ -12,6 +12,7 @@ import steve6472.core.setting.SettingsLoader;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.debug.DebugWindow;
 import steve6472.orbiter.network.packets.game.AcceptedPeerConnection;
+import steve6472.orbiter.scheduler.Scheduler;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.player.PCPlayer;
@@ -141,14 +142,13 @@ public class OrbiterApp extends VolkaniumsApp
             timeToNextTick += 1f / Constants.TICKS_IN_SECOND;
         }
 
-        if (!OrbiterMain.STEAM_TEST)
-        {
-            world.debugRender();
-        }
+        world.debugRender();
     }
 
     private void tick(float frameTime)
     {
+        //noinspection deprecation
+        Scheduler.instance().tick();
         steam.tick();
 
         client.tickClient();

@@ -6,6 +6,7 @@ import steve6472.core.log.Log;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.commands.CommandSource;
 import steve6472.orbiter.commands.Commands;
+import steve6472.orbiter.scheduler.Scheduler;
 import steve6472.orbiter.world.World;
 
 import javax.swing.*;
@@ -63,13 +64,16 @@ public class Console
             if (commandInput.getText().isEmpty())
                 return;
 
-            try
+            Scheduler.runTaskLater(() ->
             {
-                commands.dispatcher.execute(commandInput.getText(), createSource());
-            } catch (CommandSyntaxException ex)
-            {
-                appendToLog(ex.getMessage(), Color.RED);
-            }
+                try
+                {
+                    commands.dispatcher.execute(commandInput.getText(), createSource());
+                } catch (CommandSyntaxException ex)
+                {
+                    appendToLog(ex.getMessage(), Color.RED);
+                }
+            });
         }, mainPanel::repaint));
 
         mainPanel.add(commandInput, BorderLayout.SOUTH);

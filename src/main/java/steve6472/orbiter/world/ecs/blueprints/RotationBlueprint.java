@@ -22,7 +22,7 @@ public class RotationBlueprint implements Blueprint<RotationBlueprint>
     private RotationBlueprint() {}
 
     @Override
-    public Collection<?> createComponents()
+    public List<?> createComponents()
     {
         return List.of(new Rotation());
     }

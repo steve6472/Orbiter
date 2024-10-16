@@ -22,7 +22,7 @@ public record CollisionBlueprint(Key key) implements Blueprint<CollisionBlueprin
     public static final Codec<CollisionBlueprint> CODEC = Key.CODEC.xmap(CollisionBlueprint::new, CollisionBlueprint::key);
 
     @Override
-    public Collection<?> createComponents()
+    public List<?> createComponents()
     {
         return List.of(new Collision(key));
     }

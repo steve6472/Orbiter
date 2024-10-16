@@ -48,8 +48,7 @@ public class StaticWorldRender extends StaticModelRenderImpl
         if (list.isEmpty())
             return;
 
-//        sboTransfromArray.sort(list, obj -> sboTransfromArray.addArea(obj.comp1().model()).index());
-        sboTransfromArray.sort(list, obj -> sboTransfromArray.getAreaByType(obj.comp1().model()).index());
+        sboTransfromArray.sort(list, obj -> sboTransfromArray.addArea(obj.comp1().model()).index());
 
         var lastArea = sboTransfromArray.getAreaByIndex(0);
         Model lastModel = list.getFirst().comp1().model();

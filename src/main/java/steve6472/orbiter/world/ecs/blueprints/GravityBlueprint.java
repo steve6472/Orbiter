@@ -25,7 +25,7 @@ public record GravityBlueprint(float x, float y, float z) implements Blueprint<G
     ).apply(instance, GravityBlueprint::new));
 
     @Override
-    public Collection<?> createComponents()
+    public List<?> createComponents()
     {
         return List.of(new Gravity(x, y, z));
     }

@@ -1,9 +1,9 @@
 package steve6472.orbiter;
 
-import org.joml.Matrix3f;
 import steve6472.core.SteveCore;
 import steve6472.core.log.Log;
 import steve6472.core.setting.SettingsLoader;
+import steve6472.orbiter.debug.PrimitiveLineWindow;
 import steve6472.volkaniums.Constants;
 import steve6472.volkaniums.core.Volkaniums;
 import steve6472.volkaniums.registry.RegistryCreators;
@@ -23,7 +23,7 @@ public class OrbiterMain
 {
     private static final Logger LOGGER = Log.getLogger(OrbiterMain.class);
 
-    public static boolean ENABLE_STEAM = true;
+    public static boolean ENABLE_STEAM = false;
 
     public static boolean FAKE_P2P = false;
     public static boolean STEAM_TEST = false;
@@ -32,6 +32,8 @@ public class OrbiterMain
     public static void main(String[] args)
     {
         System.setProperty("joml.format", "false");
+
+        System.setProperty("dominion.world.size", "LARGE");
         System.setProperty("dominion.show-banner", "false");
 
         if (test())
@@ -74,6 +76,8 @@ public class OrbiterMain
         {
             if (STEAM_TEST)
             {
+                PrimitiveLineWindow lineWindow = new PrimitiveLineWindow();
+
                 OrbiterApp orbiterApp = new OrbiterApp();
                 SteveCore.DEFAULT_KEY_NAMESPACE = orbiterApp.defaultNamespace();
                 orbiterApp.preInit();
@@ -84,11 +88,17 @@ public class OrbiterMain
                 orbiterApp.loadSettings();
                 orbiterApp.postInit();
 
-                while (true)
+                lineWindow.run();
+
+                while (!lineWindow.shouldClose())
                 {
                     orbiterApp.render(null, null);
+                    lineWindow.runFrame();
                     Thread.sleep(16);
                 }
+
+                lineWindow.cleanup();
+
             } else
             {
                 Volkaniums.start(new OrbiterApp());

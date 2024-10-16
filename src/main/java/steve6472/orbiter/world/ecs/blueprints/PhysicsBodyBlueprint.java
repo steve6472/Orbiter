@@ -30,7 +30,7 @@ public record PhysicsBodyBlueprint(Key model, Key collision, float mass) impleme
     ).apply(instance, PhysicsBodyBlueprint::new));
 
     @Override
-    public Collection<?> createComponents()
+    public List<?> createComponents()
     {
         return List.of(
             new Position(),

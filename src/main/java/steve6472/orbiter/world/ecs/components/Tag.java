@@ -73,7 +73,7 @@ public final class Tag
         @Override
         public String toString()
         {
-            return getClass().getSimpleName();
+            return "Tag=" + getClass().getSimpleName();
         }
     }
 }

@@ -3,7 +3,7 @@ package steve6472.orbiter.world.ecs.core;
 import steve6472.core.registry.Keyable;
 import steve6472.core.registry.Serializable;
 
-import java.util.Collection;
+import java.util.List;
 
 /**
  * Created by steve6472
@@ -12,5 +12,5 @@ import java.util.Collection;
  */
 public interface Blueprint<SELF> extends Serializable<SELF>, Keyable
 {
-    Collection<?> createComponents();
+    List<?> createComponents();
 }

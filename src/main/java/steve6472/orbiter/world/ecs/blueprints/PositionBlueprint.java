@@ -22,7 +22,7 @@ public class PositionBlueprint implements Blueprint<PositionBlueprint>
     private PositionBlueprint() {}
 
     @Override
-    public Collection<?> createComponents()
+    public List<?> createComponents()
     {
         return List.of(new Position());
     }

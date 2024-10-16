@@ -4,9 +4,9 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.joints.Constraint;
 import com.jme3.bullet.joints.PhysicsJoint;
-import com.jme3.bullet.joints.Point2PointJoint;
 import com.jme3.bullet.objects.PhysicsCharacter;
 import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -14,7 +14,6 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import steve6472.orbiter.Convert;
-import steve6472.volkaniums.render.debug.objects.Capsule;
 
 import static steve6472.volkaniums.render.debug.DebugRender.*;
 
@@ -91,9 +90,12 @@ public class PhysicsRenderer
         if (shape instanceof BoxCollisionShape box)
         {
             renderBox(box, bodyTransform);
-        } else if (shape instanceof CapsuleCollisionShape capsule)
+        } else if (shape instanceof CapsuleCollisionShape shap)
         {
-            renderCapsule(capsule, bodyTransform);
+            renderCapsule(shap, bodyTransform);
+        } else if (shape instanceof SphereCollisionShape shap)
+        {
+            renderSphere(shap, bodyTransform);
         }
     }
 
@@ -110,6 +112,14 @@ public class PhysicsRenderer
         float height = shape.getHeight();
         int quality = 13;
 
-        addDebugObjectForFrame(new Capsule(radius, height, quality, KHAKI), bodyTransform);
+        addDebugObjectForFrame(lineCapsule(height, radius, quality, KHAKI), bodyTransform);
+    }
+
+    private static void renderSphere(SphereCollisionShape shape, Matrix4f bodyTransform)
+    {
+        float radius = shape.getRadius();
+        int quality = 13;
+
+        addDebugObjectForFrame(lineSphere(radius, quality, KHAKI), bodyTransform);
     }
 }

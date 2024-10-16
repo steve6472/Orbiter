@@ -20,7 +20,7 @@ public record IndexModelBlueprint(Key modelKey) implements Blueprint<IndexModelB
     public static final Codec<IndexModelBlueprint> CODEC = Key.CODEC.xmap(IndexModelBlueprint::new, IndexModelBlueprint::modelKey);
 
     @Override
-    public Collection<?> createComponents()
+    public List<?> createComponents()
     {
         return List.of(new IndexModel(VolkaniumsRegistries.STATIC_MODEL.get(modelKey)));
     }

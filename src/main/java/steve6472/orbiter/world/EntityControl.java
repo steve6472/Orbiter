@@ -7,6 +7,7 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import dev.dominion.ecs.api.Dominion;
 import dev.dominion.ecs.api.Entity;
 import dev.dominion.ecs.api.Results;
+import dev.dominion.ecs.engine.IntEntity;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.network.PeerConnections;
@@ -57,7 +58,7 @@ public interface EntityControl
     // TODO: possibly a packet for this instead of generic create entity, could save bandwidth
     default Entity addEntity(EntityBlueprint entityBlueprint, UUID uuid)
     {
-        Set<Object> components = entityBlueprint.createComponents();
+        List<Object> components = entityBlueprint.createComponents();
         components.add(uuid);
 
         Entity entity = ecs().createEntity(components.toArray());

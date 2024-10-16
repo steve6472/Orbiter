@@ -3,8 +3,6 @@ package steve6472.orbiter.world.ecs.systems;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import dev.dominion.ecs.api.Dominion;
 import steve6472.core.log.Log;
-import steve6472.orbiter.OrbiterApp;
-import steve6472.orbiter.OrbiterMain;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;

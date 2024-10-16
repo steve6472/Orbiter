@@ -34,9 +34,9 @@ public class EntityBlueprint implements Keyable
         this.blueprints = blueprints;
     }
 
-    public Set<Object> createComponents()
+    public List<Object> createComponents()
     {
-        Set<Object> components = new HashSet<>(blueprints.size());
+        List<Object> components = new ArrayList<>(blueprints.size());
         blueprints.forEach(blueprint -> components.addAll(blueprint.createComponents()));
         return components;
     }

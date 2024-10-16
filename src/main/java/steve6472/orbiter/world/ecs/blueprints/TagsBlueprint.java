@@ -28,7 +28,7 @@ public record TagsBlueprint(List<Key> tagKeys) implements Blueprint<TagsBlueprin
     public static final Codec<TagsBlueprint> CODEC = Key.CODEC.listOf().xmap(TagsBlueprint::new, TagsBlueprint::tagKeys);
 
     @Override
-    public Collection<?> createComponents()
+    public List<?> createComponents()
     {
         List<Object> components = new ArrayList<>(tagKeys.size());
         for (Key tagKey : tagKeys)
