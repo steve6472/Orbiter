@@ -12,7 +12,6 @@ import dev.dominion.ecs.api.Entity;
 import jme3utilities.math.MyMath;
 import org.joml.*;
 import org.lwjgl.openvr.*;
-import org.lwjgl.system.MemoryStack;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Convert;
@@ -32,8 +31,10 @@ import steve6472.volkaniums.registry.VolkaniumsRegistries;
 import steve6472.volkaniums.render.debug.DebugRender;
 import steve6472.volkaniums.vr.DeviceType;
 import steve6472.volkaniums.vr.VrInput;
+import steve6472.volkaniums.vr.input.InputType;
+import steve6472.volkaniums.vr.input.VrAction;
+import steve6472.volkaniums.vr.input.VrActionSet;
 
-import java.nio.LongBuffer;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -51,36 +52,19 @@ public class VRPlayer implements Player
 
     private Vector3f eyePos = new Vector3f();
 
-    private long leftTriggerPosition;
-    private long leftTriggerTouch;
-    private long leftTriggerClick;
-
-    private long actionSet;
+    private final VrActionSet actionSet;
+    private final VrAction<InputAnalogActionData> leftTriggerPosition;
+    private final VrAction<InputDigitalActionData> leftTriggerTouch;
+    private final VrAction<InputDigitalActionData> leftTriggerClick;
 
     public VRPlayer(World world)
     {
         this.world = world;
-        try (MemoryStack stack = MemoryStack.stackPush())
-        {
-            leftTriggerPosition = getHandle("/actions/default/in/TriggerPosition", stack.mallocLong(1));
-            leftTriggerTouch = getHandle("/actions/default/in/TriggerTouch", stack.mallocLong(1));
-            leftTriggerClick = getHandle("/actions/default/in/TriggerClick", stack.mallocLong(1));
 
-            LongBuffer pHandle = stack.mallocLong(1);
-            int i = VRInput.VRInput_GetActionSetHandle("/actions/default", pHandle);
-            if (i != VR.EVRInputError_VRInputError_None)
-                LOGGER.severe("GetActionSetHandle returned " + i);
-            actionSet = pHandle.get(0);
-        }
-    }
-
-    private long getHandle(String actionName, LongBuffer pointer)
-    {
-        int i = VRInput.VRInput_GetActionHandle(actionName, pointer);
-        if (i != VR.EVRInputError_VRInputError_None)
-            LOGGER.severe("GetActionHandle for " + actionName + " returned " + i);
-
-        return pointer.get(0);
+        actionSet = new VrActionSet("/actions/default");
+        leftTriggerPosition = actionSet.addAction("/actions/default/in/TriggerPosition", InputType.ANALOG);
+        leftTriggerTouch = actionSet.addAction("/actions/default/in/TriggerTouch", InputType.DIGITAL);
+        leftTriggerClick = actionSet.addAction("/actions/default/in/TriggerClick", InputType.DIGITAL);
     }
 
     @Override
@@ -123,30 +107,8 @@ public class VRPlayer implements Player
 
         handleHand(vrInput);
 
-        try (MemoryStack stack = MemoryStack.stackPush())
-        {
-            VRActiveActionSet.Buffer calloc = VRActiveActionSet.calloc(1, stack);
-            VRActiveActionSet vrActiveActionSet = calloc.get(0);
-            vrActiveActionSet.ulActionSet(actionSet);
-            int err;
-            if ((err = VRInput.VRInput_UpdateActionState(calloc, calloc.sizeof())) != VR.EVRInputError_VRInputError_None)
-            {
-                LOGGER.severe("UpdateActionState error: " + err);
-            }
-
-//            InputDigitalActionData inputDigital = InputDigitalActionData.calloc(stack);
-//            if ((err = VRInput.VRInput_GetDigitalActionData(leftTriggerClick, inputDigital, VR.k_ulInvalidInputValueHandle)) != VR.EVRInputError_VRInputError_None)
-//            {
-//                LOGGER.severe("GetDigitalActionData error: " + err);
-//            }
-//            System.out.println(inputDigital.bChanged() + " " + inputDigital.bState() + " ");
-
-            InputAnalogActionData inputAnalog = InputAnalogActionData.calloc(stack);
-            if ((err = VRInput.VRInput_GetAnalogActionData(leftTriggerPosition, inputAnalog, 0)) != VR.EVRInputError_VRInputError_None)
-                LOGGER.severe("GetAnalogActionData error: " + err);
-
-            handleTrigger(inputAnalog.x(), vrInput);
-        }
+        actionSet.updateAll();
+        handleTrigger(leftTriggerPosition.get().x(), vrInput);
     }
 
     private Entity handEntity;

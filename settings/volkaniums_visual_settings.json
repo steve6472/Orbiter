@@ -8,6 +8,6 @@
   "orbiter:title_fps": true,
   "orbiter:username": "Steve",
   "orbiter:validation_level": "Warning",
-  "orbiter:vr": true,
+  "orbiter:vr": false,
   "orbiter:vr_action_manifest_path": "settings/vr_actions.json"
 }

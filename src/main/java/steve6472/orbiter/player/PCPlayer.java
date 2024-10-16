@@ -25,9 +25,10 @@ import static steve6472.orbiter.Convert.physGetToJoml;
 public class PCPlayer implements Player
 {
     public static final float RADIUS = 0.5f;
-    public static final float HEIGHT = 1.8f;
-    public static final float EYE_HEIGHT = 1.6f;
+    public static final float HEIGHT = 1.6f;
+    public static final float EYE_HEIGHT = 1.5f;
     public static final float STEP_HEIGHT = 0.4f;
+    public static final float PENETRATION_CONSTANT = 0.19f;
     public static final int JUMP_COOLDOWN = 4;
 
     public final PhysicsCharacter character;
@@ -35,7 +36,6 @@ public class PCPlayer implements Player
 
     public PCPlayer()
     {
-//        character = new PhysicsCharacter(new CapsuleCollisionShape(RADIUS, HEIGHT / 2f), STEP_HEIGHT);
         CollisionShape shape = Registries.COLLISION
             .get(Key.defaultNamespace("blockbench/static/player_capsule"))
             .collisionShape();
@@ -47,6 +47,7 @@ public class PCPlayer implements Player
         character.warp(Convert.jomlToPhys(new Vector3f(0, 1, 0)));
 
         character.setJumpSpeed(7f);
+        character.setMaxPenetrationDepth(0.2f);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class PCPlayer implements Player
     @Override
     public Vector3f getCenterPos()
     {
-        return physGetToJoml(character::getPhysicsLocation);
+        return physGetToJoml(character::getPhysicsLocation).add(0, PENETRATION_CONSTANT, 0);
     }
 
     @Override
