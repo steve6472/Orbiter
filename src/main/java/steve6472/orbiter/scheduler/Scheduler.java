@@ -52,6 +52,12 @@ public class Scheduler
             DelayTask task = iterator.next();
             task.delayTicks--;
 
+            if (task.task.isCancelled())
+            {
+                iterator.remove();
+                continue;
+            }
+
             if (task.delayTicks <= 0)
             {
                 if (task.task.isRepeating())

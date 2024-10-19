@@ -9,7 +9,7 @@ import steve6472.core.setting.Setting;
 import steve6472.orbiter.network.Packets;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
-import steve6472.orbiter.world.OrbiterCollisionShape;
+import steve6472.orbiter.world.collision.OrbiterCollisionShape;
 import steve6472.orbiter.world.ecs.Blueprints;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.core.BlueprintEntry;

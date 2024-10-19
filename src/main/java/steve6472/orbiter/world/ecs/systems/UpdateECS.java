@@ -53,7 +53,7 @@ public class UpdateECS implements ComponentSystem
                     entity.removeType(physicsComponent);
                     entity.add(modified.getComponent());
                     markModified(entity, physicsComponent);
-                } else if(modified.hasModifiedComponent())
+                } else if (modified.hasModifiedComponent())
                 {
                     markModified(entityComps.entity(), physicsComponent);
                 }

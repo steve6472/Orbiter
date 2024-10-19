@@ -7,11 +7,12 @@ package steve6472.orbiter.scheduler;
  */
 public class ScheduledTask implements Task
 {
-    final Runnable runnable;
-    private boolean cancelled;
+    private final boolean repeating;
+    private final int repeatInterval;
 
-    private boolean repeating;
-    private int repeatInterval;
+    final Runnable runnable;
+
+    private boolean cancelled;
 
     ScheduledTask(Runnable runnable, boolean repeating, int repeatInterval)
     {

@@ -2,12 +2,10 @@ package steve6472.orbiter.world;
 
 import com.codedisaster.steamworks.SteamID;
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import dev.dominion.ecs.api.Dominion;
 import dev.dominion.ecs.api.Entity;
 import dev.dominion.ecs.api.Results;
-import dev.dominion.ecs.engine.IntEntity;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.network.PeerConnections;

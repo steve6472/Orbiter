@@ -310,7 +310,7 @@
             "uuid": "895255d7-9be6-449a-ee5c-9db728d995ba"
         },
         {
-            "name": "collision; type:sphere(0.4)",
+            "name": "collision{sphere(0.4)}",
             "position": [0, 0, 0],
             "ik_target": "",
             "ik_source": "",

@@ -1,10 +1,8 @@
 package steve6472.orbiter.world;
 
 import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.SphereCollisionShape;
+import com.jme3.bullet.collision.shapes.*;
+import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
 import com.jme3.bullet.joints.Constraint;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.objects.PhysicsCharacter;
@@ -25,12 +23,16 @@ import static steve6472.volkaniums.render.debug.DebugRender.*;
 public class PhysicsRenderer
 {
     public static final boolean ENABLE_CHARACTERS = false;
+    public static final boolean ENABLE_RIGIDBODY = true;
     public static final boolean ENABLE_GHOSTS = false;
     public static final boolean ENABLE_JOINTS = true;
 
+    public static final boolean ENABLE_CENTER = true;
+
     public static void render(PhysicsSpace space)
     {
-        space.getRigidBodyList().forEach(PhysicsRenderer::renderBody);
+        if (ENABLE_RIGIDBODY)
+            space.getRigidBodyList().forEach(PhysicsRenderer::renderBody);
 
         if (ENABLE_GHOSTS)
             space.getGhostObjectList().forEach(PhysicsRenderer::renderGhost);
@@ -47,6 +49,9 @@ public class PhysicsRenderer
         CollisionShape collisionShape = body.getCollisionShape();
         Matrix4f matrix4f = Convert.physGetTransformToJoml(body, new Matrix4f());
 
+        if (ENABLE_CENTER)
+            renderCenter(matrix4f);
+
         renderShape(collisionShape, matrix4f);
     }
 
@@ -57,6 +62,9 @@ public class PhysicsRenderer
 
         matrix4f.scale(Convert.physGetToJoml(collisionShape::getScale));
 
+        if (ENABLE_CENTER)
+            renderCenter(matrix4f);
+
         renderShape(collisionShape, matrix4f);
     }
 
@@ -64,6 +72,9 @@ public class PhysicsRenderer
     {
         CollisionShape collisionShape = body.getCollisionShape();
         Matrix4f matrix4f = Convert.physGetTransformToJoml(body, new Matrix4f());
+
+        if (ENABLE_CENTER)
+            renderCenter(matrix4f);
 
         renderShape(collisionShape, matrix4f);
     }
@@ -96,6 +107,15 @@ public class PhysicsRenderer
         } else if (shape instanceof SphereCollisionShape shap)
         {
             renderSphere(shap, bodyTransform);
+        } else if (shape instanceof CompoundCollisionShape shap)
+        {
+            for (ChildCollisionShape childCollisionShape : shap.listChildren())
+            {
+                CollisionShape shape1 = childCollisionShape.getShape();
+                var offset = Convert.jomlToPhys(new Vector3f());
+                childCollisionShape.copyOffset(offset);
+                renderShape(shape1, new Matrix4f(bodyTransform).translate(offset.x, offset.y, offset.z));
+            }
         }
     }
 
@@ -121,5 +141,10 @@ public class PhysicsRenderer
         int quality = 13;
 
         addDebugObjectForFrame(lineSphere(radius, quality, KHAKI), bodyTransform);
+    }
+
+    private static void renderCenter(Matrix4f bodyTransform)
+    {
+        addDebugObjectForFrame(lineCube(new Vector3f(), 0.05f, DARK_VIOLET), bodyTransform);
     }
 }
