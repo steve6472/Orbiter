@@ -5,17 +5,17 @@ import org.joml.Vector3f;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
 import steve6472.core.registry.Keyable;
+import steve6472.flare.assets.model.blockbench.Element;
+import steve6472.flare.assets.model.blockbench.LoadedModel;
+import steve6472.flare.assets.model.blockbench.element.CubeElement;
+import steve6472.flare.assets.model.blockbench.element.MeshElement;
+import steve6472.flare.assets.model.blockbench.element.NullObjectElement;
+import steve6472.flare.registry.FlareRegistries;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.world.collision.expression.CollisionExp;
 import steve6472.orbiter.world.collision.expression.GroupExp;
 import steve6472.orbiter.world.collision.expression.ObjectExp;
-import steve6472.volkaniums.assets.model.blockbench.Element;
-import steve6472.volkaniums.assets.model.blockbench.LoadedModel;
-import steve6472.volkaniums.assets.model.blockbench.element.CubeElement;
-import steve6472.volkaniums.assets.model.blockbench.element.MeshElement;
-import steve6472.volkaniums.assets.model.blockbench.element.NullObjectElement;
-import steve6472.volkaniums.registry.VolkaniumsRegistries;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -58,17 +58,16 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape) impl
         PROPERTIES.put("offset", (obj, transform) -> transform.offset(obj.params()[0], obj.params()[1], obj.params()[2]));
     }
 
-    public static OrbiterCollisionShape load()
+    public static void load()
     {
-        for (Key key : VolkaniumsRegistries.STATIC_LOADED_MODEL.keys())
+        for (Key key : FlareRegistries.STATIC_LOADED_MODEL.keys())
         {
-            LoadedModel model = VolkaniumsRegistries.STATIC_LOADED_MODEL.get(key);
+            LoadedModel model = FlareRegistries.STATIC_LOADED_MODEL.get(key);
 
             CollisionShape compound = loadCollisionShape(model);
             if (compound != null)
                 Registries.COLLISION.register(new OrbiterCollisionShape(key, compound));
         }
-        return new OrbiterCollisionShape(null, null);
     }
 
     private static CollisionShape loadCollisionShape(LoadedModel model)

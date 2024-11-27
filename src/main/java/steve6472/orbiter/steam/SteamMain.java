@@ -3,6 +3,7 @@ package steve6472.orbiter.steam;
 import com.codedisaster.steamworks.*;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
+import steve6472.flare.vr.VrData;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.OrbiterMain;
 import steve6472.orbiter.network.PacketManager;
@@ -14,7 +15,6 @@ import steve6472.orbiter.network.test.FakeP2PConstants;
 import steve6472.orbiter.network.test.FakeSteamPeerConnections;
 import steve6472.orbiter.steam.lobby.Lobby;
 import steve6472.orbiter.steam.lobby.LobbyManager;
-import steve6472.volkaniums.vr.VrData;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

@@ -11,6 +11,7 @@ import dev.dominion.ecs.api.Dominion;
 import org.joml.Vector3f;
 import steve6472.core.registry.Key;
 import steve6472.core.util.RandomUtil;
+import steve6472.flare.MasterRenderer;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
@@ -18,15 +19,17 @@ import steve6472.orbiter.network.PeerConnections;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.components.Tag;
+import steve6472.orbiter.world.ecs.core.ComponentRenderSystem;
 import steve6472.orbiter.world.ecs.core.ComponentSystem;
 import steve6472.orbiter.world.ecs.core.ComponentSystems;
 import steve6472.orbiter.world.ecs.systems.NetworkSync;
+import steve6472.orbiter.world.ecs.systems.RenderNametag;
 import steve6472.orbiter.world.ecs.systems.UpdateECS;
 import steve6472.orbiter.world.ecs.systems.UpdatePhysics;
 
 import java.util.*;
 
-import static steve6472.volkaniums.render.debug.DebugRender.*;
+import static steve6472.flare.render.debug.DebugRender.*;
 
 /**
  * Created by steve6472
@@ -40,6 +43,7 @@ public class World implements EntityControl
     Dominion ecs;
     // TODO: split to client & host ?
     ComponentSystems<ComponentSystem> systems;
+    ComponentSystems<ComponentRenderSystem> renderSystems;
     private final Map<UUID, PhysicsRigidBody> bodyMap = new HashMap<>();
     private final Map<UUID, PhysicsGhostObject> ghostMap = new HashMap<>();
 
@@ -53,8 +57,9 @@ public class World implements EntityControl
         systems = new ComponentSystems<>(system -> system.tick(ecs, this));
     }
 
-    public void init()
+    public void init(MasterRenderer renderer)
     {
+        renderSystems = new ComponentSystems<>(system -> system.tick(renderer, ecs, this));
         addPlane(new Vector3f(0, 1f, 0), 0);
         initSystems();
     }
@@ -82,6 +87,12 @@ public class World implements EntityControl
         // Last
         systems.registerSystem(new NetworkSync(steam), "Network Sync", "");
         systems.registerSystem(new UpdatePhysics(), "Update Physics Positions", "Updates Physics Positions with data from last tick ECS Systems");
+
+
+        /*
+         * Render
+         */
+        renderSystems.registerSystem(new RenderNametag(), "Render Nametag");
     }
 
     @Override
@@ -159,6 +170,8 @@ public class World implements EntityControl
                 addDebugObjectForFrame(line(new Vector3f(x, -range * density, i * density), new Vector3f(x, range * density, i * density), RED));
             }
         }
+
+        renderSystems.run();
 
         PhysicsRenderer.render(physics());
     }

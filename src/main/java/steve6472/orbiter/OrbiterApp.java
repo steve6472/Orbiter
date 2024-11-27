@@ -4,11 +4,17 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.util.NativeLibrary;
 import com.jme3.system.NativeLibraryLoader;
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
-import steve6472.core.registry.Key;
 import steve6472.core.setting.SettingsLoader;
+import steve6472.flare.Camera;
+import steve6472.flare.core.FlareApp;
+import steve6472.flare.core.FrameInfo;
+import steve6472.flare.input.KeybindUpdater;
+import steve6472.flare.pipeline.Pipelines;
+import steve6472.flare.render.StaticModelRenderSystem;
+import steve6472.flare.settings.VisualSettings;
+import steve6472.flare.vr.VrData;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.debug.DebugWindow;
 import steve6472.orbiter.network.packets.game.AcceptedPeerConnection;
@@ -18,15 +24,6 @@ import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.world.World;
-import steve6472.volkaniums.Camera;
-import steve6472.volkaniums.core.FrameInfo;
-import steve6472.volkaniums.core.VolkaniumsApp;
-import steve6472.volkaniums.input.KeybindUpdater;
-import steve6472.volkaniums.pipeline.Pipelines;
-import steve6472.volkaniums.render.StaticModelRenderSystem;
-import steve6472.volkaniums.render.debug.DebugRender;
-import steve6472.volkaniums.settings.VisualSettings;
-import steve6472.volkaniums.vr.VrData;
 
 import java.io.File;
 import java.util.logging.Level;
@@ -36,7 +33,7 @@ import java.util.logging.Level;
  * Date: 10/1/2024
  * Project: Orbiter <br>
  */
-public class OrbiterApp extends VolkaniumsApp
+public class OrbiterApp extends FlareApp
 {
     private static OrbiterApp instance;
 
@@ -59,7 +56,7 @@ public class OrbiterApp extends VolkaniumsApp
         PhysicsSpace.logger.setLevel(Level.WARNING);
         PhysicsRigidBody.logger2.setLevel(Level.WARNING);
         NativeLibraryLoader.logger.setLevel(Level.WARNING);
-        NativeLibraryLoader.loadLibbulletjme(true, new File("dep"), "Debug", "Sp");
+        NativeLibraryLoader.loadLibbulletjme(true, new File("generated/flare"), "Debug", "Sp");
         NativeLibrary.setStartupMessageEnabled(false);
 
         world = new World();
@@ -107,7 +104,7 @@ public class OrbiterApp extends VolkaniumsApp
     {
         KeybindUpdater.updateKeybinds(Registries.KEYBINDS, input());
 
-        world.init();
+        world.init(masterRenderer());
         client = new Client(camera(), world);
 
         if (!VrData.VR_ON)

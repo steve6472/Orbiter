@@ -2,11 +2,10 @@ package steve6472.orbiter.world.ecs.blueprints;
 
 import com.mojang.serialization.Codec;
 import steve6472.core.registry.Key;
+import steve6472.flare.registry.FlareRegistries;
 import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.core.Blueprint;
-import steve6472.volkaniums.registry.VolkaniumsRegistries;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -22,7 +21,7 @@ public record IndexModelBlueprint(Key modelKey) implements Blueprint<IndexModelB
     @Override
     public List<?> createComponents()
     {
-        return List.of(new IndexModel(VolkaniumsRegistries.STATIC_MODEL.get(modelKey)));
+        return List.of(new IndexModel(FlareRegistries.STATIC_MODEL.get(modelKey)));
     }
 
     @Override

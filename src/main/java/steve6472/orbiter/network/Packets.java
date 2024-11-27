@@ -15,7 +15,7 @@ import steve6472.orbiter.network.packets.lobby.*;
  */
 public class Packets
 {
-    public static Object init()
+    public static void init()
     {
         // Lobby packets
         registerPacket(LobbyClosing.KEY, LobbyClosing.BUFFER_CODEC);
@@ -36,8 +36,6 @@ public class Packets
         registerPacket(RemoveEntity.KEY, RemoveEntity.BUFFER_CODEC);
         registerPacket(ClearJoints.KEY, ClearJoints.BUFFER_CODEC);
         registerPacket(AddJoint.KEY, AddJoint.BUFFER_CODEC);
-
-        return new Object();
     }
 
     private static void registerPacket(Key key, BufferCodec<ByteBuf, ? extends Packet<?, ?>> codec)

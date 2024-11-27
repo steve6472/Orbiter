@@ -1,9 +1,9 @@
 package steve6472.orbiter.player;
 
 import org.joml.Vector3f;
-import steve6472.volkaniums.Camera;
-import steve6472.volkaniums.input.UserInput;
-import steve6472.volkaniums.vr.VrInput;
+import steve6472.flare.Camera;
+import steve6472.flare.input.UserInput;
+import steve6472.flare.vr.VrInput;
 
 /**
  * Created by steve6472

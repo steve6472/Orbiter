@@ -13,7 +13,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import steve6472.orbiter.Convert;
 
-import static steve6472.volkaniums.render.debug.DebugRender.*;
+import static steve6472.flare.render.debug.DebugRender.*;
 
 /**
  * Created by steve6472

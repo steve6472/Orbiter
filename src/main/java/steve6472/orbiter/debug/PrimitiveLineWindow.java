@@ -3,8 +3,8 @@ package steve6472.orbiter.debug;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.opengl.GL;
-import steve6472.volkaniums.render.debug.DebugRender;
-import steve6472.volkaniums.struct.Struct;
+import steve6472.flare.render.debug.DebugRender;
+import steve6472.flare.struct.Struct;
 
 import java.util.List;
 

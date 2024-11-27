@@ -3,14 +3,12 @@ package steve6472.orbiter.world.ecs.blueprints;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import steve6472.core.registry.Key;
-import steve6472.orbiter.Registries;
+import steve6472.flare.registry.FlareRegistries;
 import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.core.Blueprint;
-import steve6472.volkaniums.registry.VolkaniumsRegistries;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -43,7 +41,7 @@ public record PhysicsBodyBlueprint(Key model, Key collision, float mass) impleme
             new LinearDamping(0.2f),
             new Friction(),
             new Mass(mass),
-            new IndexModel(VolkaniumsRegistries.STATIC_MODEL.get(model)),
+            new IndexModel(FlareRegistries.STATIC_MODEL.get(model)),
             new Collision(collision.equals(FROM_MODEL) ? model : collision),
             Tag.PHYSICS
         );

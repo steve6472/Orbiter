@@ -2,9 +2,9 @@ package steve6472.orbiter.settings;
 
 import org.lwjgl.glfw.GLFW;
 import steve6472.core.registry.Key;
+import steve6472.flare.input.Keybind;
+import steve6472.flare.input.KeybindType;
 import steve6472.orbiter.Registries;
-import steve6472.volkaniums.input.Keybind;
-import steve6472.volkaniums.input.KeybindType;
 
 /**
  * Created by steve6472

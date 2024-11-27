@@ -2,13 +2,9 @@ package steve6472.orbiter.world.ecs.blueprints;
 
 import com.mojang.serialization.Codec;
 import steve6472.core.registry.Key;
-import steve6472.orbiter.Registries;
-import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
 import steve6472.orbiter.world.ecs.core.Blueprint;
-import steve6472.volkaniums.registry.VolkaniumsRegistries;
 
-import java.util.Collection;
 import java.util.List;
 
 /**

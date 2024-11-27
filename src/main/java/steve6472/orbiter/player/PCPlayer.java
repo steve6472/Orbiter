@@ -6,13 +6,13 @@ import com.jme3.bullet.objects.PhysicsCharacter;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import steve6472.core.registry.Key;
+import steve6472.flare.Camera;
+import steve6472.flare.input.UserInput;
+import steve6472.flare.vr.VrInput;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
-import steve6472.volkaniums.Camera;
-import steve6472.volkaniums.input.UserInput;
-import steve6472.volkaniums.vr.VrInput;
 
 import static steve6472.orbiter.Convert.jomlToPhys;
 import static steve6472.orbiter.Convert.physGetToJoml;

@@ -1,13 +1,15 @@
 {
-  "orbiter:debug_line_single_buffer": true,
+  "orbiter:debug_line_single_buffer": false,
   "orbiter:enable_wide_lines": true,
+  "orbiter:font_gen_logs": false,
+  "orbiter:font_generate_timeout": 15,
   "orbiter:global_camera_count": 3,
-  "orbiter:line_width": 2.0,
+  "orbiter:line_width": 4.0,
   "orbiter:present_mode": "Mailbox",
   "orbiter:render_center_point": true,
   "orbiter:title_fps": true,
   "orbiter:username": "Steve",
   "orbiter:validation_level": "Warning",
-  "orbiter:vr": true,
+  "orbiter:vr": false,
   "orbiter:vr_action_manifest_path": "settings/vr_actions.json"
 }

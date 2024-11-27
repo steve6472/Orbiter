@@ -4,9 +4,9 @@ import com.codedisaster.steamworks.SteamID;
 import com.codedisaster.steamworks.SteamNetworking;
 import com.codedisaster.steamworks.SteamNetworkingCallback;
 import steve6472.core.log.Log;
+import steve6472.flare.vr.VrData;
 import steve6472.orbiter.network.packets.game.AcceptedPeerConnection;
 import steve6472.orbiter.steam.lobby.Lobby;
-import steve6472.volkaniums.vr.VrData;
 
 import java.util.logging.Logger;
 

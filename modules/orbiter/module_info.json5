@@ -1,0 +1,7 @@
+{
+    name: "Orbiter",
+    description: [
+        "Built-in Orbiter resources"
+    ],
+    authors: "steve6472"
+}

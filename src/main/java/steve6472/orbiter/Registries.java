@@ -6,6 +6,8 @@ import steve6472.core.registry.ObjectRegistry;
 import steve6472.core.registry.PacketRegistry;
 import steve6472.core.registry.Registry;
 import steve6472.core.setting.Setting;
+import steve6472.flare.input.Keybind;
+import steve6472.flare.registry.RegistryCreators;
 import steve6472.orbiter.network.Packets;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
@@ -15,10 +17,7 @@ import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.core.BlueprintEntry;
 import steve6472.orbiter.world.ecs.core.Component;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
-import steve6472.volkaniums.input.Keybind;
-import steve6472.volkaniums.registry.RegistryCreators;
 
-import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**
@@ -39,8 +38,8 @@ public class Registries extends RegistryCreators
     public static final ObjectRegistry<EntityBlueprint> ENTITY_BLUEPRINT = createObjectRegistry("entity_blueprint", EntityBlueprint::load);
     public static final ObjectRegistry<OrbiterCollisionShape> COLLISION = createObjectRegistry("collision", OrbiterCollisionShape::load);
 
-    // TODO: add to volkaniums
-    private static PacketRegistry createPacketRegistry(String id, Supplier<?> bootstrap)
+    // TODO: add to flare
+    private static PacketRegistry createPacketRegistry(String id, Runnable bootstrap)
     {
         Key key = Key.defaultNamespace(id);
         LOGGER.finest("Creating Registry " + key);

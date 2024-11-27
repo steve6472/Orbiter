@@ -7,6 +7,7 @@ import dev.dominion.ecs.api.Dominion;
 import dev.dominion.ecs.api.Entity;
 import dev.dominion.ecs.api.Results;
 import steve6472.core.registry.Key;
+import steve6472.flare.registry.FlareRegistries;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.network.PeerConnections;
 import steve6472.orbiter.network.packets.game.CreateEntity;
@@ -16,8 +17,7 @@ import steve6472.orbiter.world.ecs.components.MPControlled;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
-import steve6472.volkaniums.assets.model.Model;
-import steve6472.volkaniums.registry.VolkaniumsRegistries;
+import steve6472.flare.assets.model.Model;
 
 import java.util.*;
 
@@ -96,7 +96,7 @@ public interface EntityControl
     {
         ArrayList<Object> objects = new ArrayList<>();
         Key key = Key.defaultNamespace(VR ? "blockbench/static/vr_player" : "blockbench/static/player_capsule");
-        Model model = VolkaniumsRegistries.STATIC_MODEL.get(key);
+        Model model = FlareRegistries.STATIC_MODEL.get(key);
         Collision collision = new Collision(key);
         UUID uuid = UUID.randomUUID();
 
@@ -105,6 +105,7 @@ public interface EntityControl
         objects.add(new MPControlled(steamID));
         objects.add(Tag.PHYSICS);
         objects.add(new Position());
+        objects.add(new Gravity(0, 0, 0));
         objects.add(collision);
 
         if (VR)

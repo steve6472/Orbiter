@@ -1,6 +1,6 @@
 package steve6472.orbiter;
 
-import steve6472.volkaniums.render.debug.DebugRender;
+import steve6472.flare.render.debug.DebugRender;
 
 public class Rarities
 {

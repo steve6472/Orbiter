@@ -3,11 +3,11 @@ package steve6472.orbiter;
 import steve6472.core.SteveCore;
 import steve6472.core.log.Log;
 import steve6472.core.setting.SettingsLoader;
+import steve6472.flare.FlareConstants;
 import steve6472.orbiter.debug.PrimitiveLineWindow;
-import steve6472.volkaniums.Constants;
-import steve6472.volkaniums.core.Volkaniums;
-import steve6472.volkaniums.registry.RegistryCreators;
-import steve6472.volkaniums.registry.VolkaniumsRegistries;
+import steve6472.flare.core.Flare;
+import steve6472.flare.registry.RegistryCreators;
+import steve6472.flare.registry.FlareRegistries;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -81,10 +81,10 @@ public class OrbiterMain
                 OrbiterApp orbiterApp = new OrbiterApp();
                 SteveCore.DEFAULT_KEY_NAMESPACE = orbiterApp.defaultNamespace();
                 orbiterApp.preInit();
-                RegistryCreators.init(VolkaniumsRegistries.VISUAL_SETTINGS);
+                RegistryCreators.init(FlareRegistries.VISUAL_SETTINGS);
                 orbiterApp.initRegistries();
                 RegistryCreators.createContents();
-                SettingsLoader.loadFromJsonFile(VolkaniumsRegistries.VISUAL_SETTINGS, Constants.VISUAL_SETTINGS_FILE);
+                SettingsLoader.loadFromJsonFile(FlareRegistries.VISUAL_SETTINGS, FlareConstants.VISUAL_SETTINGS_FILE);
                 orbiterApp.loadSettings();
                 orbiterApp.postInit();
 
@@ -101,15 +101,11 @@ public class OrbiterMain
 
             } else
             {
-                Volkaniums.start(new OrbiterApp());
+                Flare.start(new OrbiterApp());
             }
         } catch (Exception ex)
         {
-            Log.exceptionSevere(LOGGER, ex);
-            for (StackTraceElement stackTraceElement : ex.getStackTrace())
-            {
-                LOGGER.severe("\t" + stackTraceElement.toString());
-            }
+            ex.printStackTrace();
         }
     }
 

@@ -14,6 +14,15 @@ import org.joml.*;
 import org.lwjgl.openvr.*;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
+import steve6472.flare.Camera;
+import steve6472.flare.input.UserInput;
+import steve6472.flare.registry.FlareRegistries;
+import steve6472.flare.render.debug.DebugRender;
+import steve6472.flare.vr.DeviceType;
+import steve6472.flare.vr.VrInput;
+import steve6472.flare.vr.input.InputType;
+import steve6472.flare.vr.input.VrAction;
+import steve6472.flare.vr.input.VrActionSet;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.network.PeerConnections;
@@ -25,15 +34,6 @@ import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.systems.NetworkSync;
-import steve6472.volkaniums.Camera;
-import steve6472.volkaniums.input.UserInput;
-import steve6472.volkaniums.registry.VolkaniumsRegistries;
-import steve6472.volkaniums.render.debug.DebugRender;
-import steve6472.volkaniums.vr.DeviceType;
-import steve6472.volkaniums.vr.VrInput;
-import steve6472.volkaniums.vr.input.InputType;
-import steve6472.volkaniums.vr.input.VrAction;
-import steve6472.volkaniums.vr.input.VrActionSet;
 
 import java.util.List;
 import java.util.Optional;
@@ -117,7 +117,7 @@ public class VRPlayer implements Player
     {
         Key model = Key.defaultNamespace("blockbench/static/controller");
         return world.addEntity(
-            VolkaniumsRegistries.STATIC_MODEL.get(model),
+            FlareRegistries.STATIC_MODEL.get(model),
             new Collision(model),
             new Position(x, y, z),
             new Rotation(),

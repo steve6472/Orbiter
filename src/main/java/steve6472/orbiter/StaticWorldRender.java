@@ -4,14 +4,14 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import dev.dominion.ecs.api.Results;
 import org.joml.Matrix4f;
 import steve6472.core.registry.Key;
+import steve6472.flare.assets.model.Model;
+import steve6472.flare.core.FrameInfo;
+import steve6472.flare.registry.FlareRegistries;
+import steve6472.flare.render.SBOTransfromArray;
+import steve6472.flare.render.StaticModelRenderImpl;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.components.physics.Position;
-import steve6472.volkaniums.assets.model.Model;
-import steve6472.volkaniums.core.FrameInfo;
-import steve6472.volkaniums.registry.VolkaniumsRegistries;
-import steve6472.volkaniums.render.SBOTransfromArray;
-import steve6472.volkaniums.render.StaticModelRenderImpl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,9 +34,9 @@ public class StaticWorldRender extends StaticModelRenderImpl
     @Override
     protected void init(SBOTransfromArray<Model> sboTransfromArray)
     {
-        for (Key key : VolkaniumsRegistries.STATIC_MODEL.keys())
+        for (Key key : FlareRegistries.STATIC_MODEL.keys())
         {
-            sboTransfromArray.addArea(VolkaniumsRegistries.STATIC_MODEL.get(key));
+            sboTransfromArray.addArea(FlareRegistries.STATIC_MODEL.get(key));
         }
     }
 

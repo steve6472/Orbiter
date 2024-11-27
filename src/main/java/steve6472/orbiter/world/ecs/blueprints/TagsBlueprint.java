@@ -4,14 +4,11 @@ import com.mojang.serialization.Codec;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.core.Blueprint;
 import steve6472.orbiter.world.ecs.core.Component;
-import steve6472.volkaniums.registry.VolkaniumsRegistries;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
