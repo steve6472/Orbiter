@@ -2,6 +2,7 @@ package steve6472.orbiter.network.packets.lobby;
 
 import com.codedisaster.steamworks.SteamID;
 import steve6472.core.log.Log;
+import steve6472.orbiter.commands.CommandSource;
 import steve6472.orbiter.debug.Console;
 import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.steam.SteamMain;
@@ -81,6 +82,6 @@ public class LobbyListener extends OrbiterPacketListener
     public void chatMessage(String message)
     {
         String friendPersonaName = steamMain.friendNames.getUserName(sender());
-        Console.log(friendPersonaName + "> " + message, Color.BLACK);
+        Console.log(friendPersonaName + "> " + message, CommandSource.ResponseStyle.BLACK);
     }
 }

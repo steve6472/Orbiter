@@ -1,0 +1,125 @@
+{
+    children: [
+        {
+            name: "titles",
+            bounds: ["100%-4", "100%-12"],
+            position: [2, 6],
+
+            text: {
+                text: {
+                    parts: [
+                        {
+                            text: "Debug Line Single Buffer:\n\nEnable Wide Lines:\n\nFont Gen Logs:\n\nGenerate Startup Atlas Data:\n\nRender Center Point:\n\nTitle FPS:\n\nLine Width:",
+                            style: "moondust:button/normal"
+                        }
+                    ],
+                    anchor: "top_left",
+                    align: "left",
+                    text_size: 6,
+                    vertical_anchor: "max_height",
+                    max_height: 200
+                },
+                position: {
+                    type: "anchored",
+                    anchor: "top_left",
+                    offset: [0, 0]
+                },
+                inherit_width: true
+            }
+        },
+        {
+            name: "container",
+            bounds: ["100% - 102", "100%"],
+            position: [100, 0],
+
+            children: [
+                {
+                    widget: "moondust:checkbox",
+                    name: "debug_line_single_buffer",
+                    position: [2, 5],
+
+                    checkbox: {
+                        label: "."
+                    }
+                },
+                {
+                    widget: "moondust:checkbox",
+                    name: "enable_wide_lines",
+                    position: {
+                        type: "relative",
+                        parent: "debug_line_single_buffer",
+                        offset: [0, 14]
+                    },
+
+                    checkbox: {
+                        label: "."
+                    }
+                },
+                {
+                    widget: "moondust:checkbox",
+                    name: "font_gen_logs",
+                    position: {
+                        type: "relative",
+                        parent: "enable_wide_lines",
+                        offset: [0, 14]
+                    },
+
+                    checkbox: {
+                        label: "."
+                    }
+                },
+                {
+                    widget: "moondust:checkbox",
+                    name: "generate_startup_atlas_data",
+                    position: {
+                        type: "relative",
+                        parent: "font_gen_logs",
+                        offset: [0, 14]
+                    },
+
+                    checkbox: {
+                        label: "."
+                    }
+                },
+                {
+                    widget: "moondust:checkbox",
+                    name: "render_center_point",
+                    position: {
+                        type: "relative",
+                        parent: "generate_startup_atlas_data",
+                        offset: [0, 14]
+                    },
+
+                    checkbox: {
+                        label: "."
+                    }
+                },
+                {
+                    widget: "moondust:checkbox",
+                    name: "title_fps",
+                    position: {
+                        type: "relative",
+                        parent: "render_center_point",
+                        offset: [0, 14]
+                    },
+
+                    checkbox: {
+                        label: "."
+                    }
+                },
+                {
+                    name: "line_width",
+                    bounds: ["100%", 13],
+                    position: {
+                        type: "relative",
+                        parent: "title_fps",
+                        offset: [0, 14]
+                    },
+
+                    text_field: {
+                        ghost_text: "Line Width"
+                    }
+                }
+            ]
+        }
+    ]}

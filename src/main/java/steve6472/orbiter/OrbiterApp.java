@@ -9,34 +9,46 @@ import org.lwjgl.system.MemoryStack;
 import steve6472.core.registry.Key;
 import steve6472.core.setting.SettingsLoader;
 import steve6472.flare.Camera;
+import steve6472.flare.core.Flare;
 import steve6472.flare.core.FlareApp;
 import steve6472.flare.core.FrameInfo;
 import steve6472.flare.input.KeybindUpdater;
 import steve6472.flare.pipeline.Pipelines;
 import steve6472.flare.render.StaticModelRenderSystem;
 import steve6472.flare.render.UIFontRender;
+import steve6472.flare.render.UILineRender;
 import steve6472.flare.render.UIRenderSystem;
 import steve6472.flare.settings.VisualSettings;
 import steve6472.flare.vr.VrData;
 import steve6472.moondust.*;
 import steve6472.moondust.builtin.BuiltinEventCalls;
 import steve6472.moondust.builtin.JavaFunctions;
+import steve6472.moondust.render.DebugWidgetUILines;
 import steve6472.moondust.render.MoonDustUIFontRender;
 import steve6472.moondust.render.MoonDustUIRender;
+import steve6472.moondust.view.Command;
 import steve6472.moondust.view.PanelViewEntry;
 import steve6472.moondust.widget.Panel;
+import steve6472.moondust.widget.Widget;
+import steve6472.moondust.widget.component.ViewController;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.debug.DebugWindow;
 import steve6472.orbiter.network.packets.game.AcceptedPeerConnection;
+import steve6472.orbiter.player.VRPlayer;
 import steve6472.orbiter.scheduler.Scheduler;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.settings.Settings;
-import steve6472.orbiter.ui.MainMenu;
+import steve6472.orbiter.ui.MDUtil;
+import steve6472.orbiter.ui.panel.InGameChat;
+import steve6472.orbiter.ui.panel.InGameMenu;
+import steve6472.orbiter.ui.panel.MainMenu;
+import steve6472.orbiter.ui.panel.SettingsMenu;
 import steve6472.orbiter.world.World;
+import steve6472.test.DebugUILines;
 
-import java.io.File;
+import java.util.Optional;
 import java.util.logging.Level;
 
 /**
@@ -50,7 +62,6 @@ public class OrbiterApp extends FlareApp
 
     private SteamMain steam;
     private Client client;
-    private World world;
     private Commands commands;
     private boolean isMouseGrabbed = false;
 
@@ -70,12 +81,11 @@ public class OrbiterApp extends FlareApp
         NativeLibraryLoader.loadLibbulletjme(true, Constants.GENERATED_ORBITER, "Debug", "Sp");
         NativeLibrary.setStartupMessageEnabled(false);
 
-        world = new World();
-
+        client = new Client();
         steam = new SteamMain(this);
+
         if (OrbiterMain.ENABLE_STEAM || OrbiterMain.FAKE_P2P)
             steam.setup();
-        world.steam = steam;
     }
 
     @Override
@@ -87,7 +97,10 @@ public class OrbiterApp extends FlareApp
     @Override
     protected void initRegistries()
     {
-        MoonDustViews.ENTRIES.add(new PanelViewEntry(Constants.key("main_menu"), MainMenu::new));
+        MoonDustRegs.VIEW_ENTRIES.add(new PanelViewEntry(Constants.key("main_menu"), MainMenu::new));
+        MoonDustRegs.VIEW_ENTRIES.add(new PanelViewEntry(Constants.key("in_game_menu"), InGameMenu::new));
+        MoonDustRegs.VIEW_ENTRIES.add(new PanelViewEntry(Constants.key("chat"), InGameChat::new));
+        MoonDustRegs.VIEW_ENTRIES.add(new PanelViewEntry(Constants.key("settings"), SettingsMenu::new));
 
         initRegistry(MoonDustRegistries.POSITION_BLUEPRINT_TYPE);
         JavaFunctions.init(this);
@@ -100,7 +113,7 @@ public class OrbiterApp extends FlareApp
     {
         SettingsLoader.loadFromJsonFile(Registries.SETTINGS, Constants.SETTINGS);
         SettingsLoader.loadFromJsonFile(MoonDustRegistries.SETTINGS, MoonDustConstants.SETTINGS_FILE);
-        MoonDust.getInstance().setPixelScale(2f);
+        MoonDust.getInstance().setPixelScale(Settings.UI_SCALE.get());
 
         if (OrbiterMain.FAKE_P2P)
         {
@@ -116,8 +129,11 @@ public class OrbiterApp extends FlareApp
     {
         addRenderSystem(new UIRenderSystem(masterRenderer(), new MoonDustUIRender(this), 256f));
         addRenderSystem(new UIFontRender(masterRenderer(), new MoonDustUIFontRender()));
+        // Debug
+        addRenderSystem(new UILineRender(masterRenderer(), new DebugWidgetUILines()));
+        addRenderSystem(new UILineRender(masterRenderer(), new DebugUILines()));
 
-        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticWorldRender(world), Pipelines.BLOCKBENCH_STATIC));
+        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticWorldRender(client), Pipelines.BLOCKBENCH_STATIC));
 
         new MoonDustCallbacks().init(window().callbacks(), input());
     }
@@ -128,24 +144,23 @@ public class OrbiterApp extends FlareApp
         MoonDust.getInstance().setWindow(window());
 
         KeybindUpdater.updateKeybinds(Registries.KEYBINDS, input());
+        KeybindUpdater.updateKeybinds(MoonDustRegistries.KEYBIND, input());
 
         Panel testPanel = Panel.create(Key.withNamespace(Constants.NAMESPACE, "panel/main_menu"));
         testPanel.clearFocus();
         MoonDust.getInstance().addPanel(testPanel);
 
-        world.init(masterRenderer());
-        client = new Client(camera(), world);
-
-        if (!VrData.VR_ON)
-            world.physics().add(((PCPlayer) client.player()).character);
+        client.setCamera(camera());
 
         commands = new Commands();
-        DebugWindow.openDebugWindow(commands, client, world, steam);
+        DebugWindow.openDebugWindow(commands, client, steam);
 
         if (OrbiterMain.FAKE_P2P)
         {
             steam.connections.broadcastMessage(new AcceptedPeerConnection(VrData.VR_ON));
         }
+
+        Flare.getModuleManager().clearPartsCache();
     }
 
     private float timeToNextTick = 0;
@@ -168,7 +183,7 @@ public class OrbiterApp extends FlareApp
             timeToNextTick += 1f / Constants.TICKS_IN_SECOND;
         }
 
-        world.debugRender();
+        client.render(frameInfo, memoryStack);
     }
 
     private void tick(float frameTime)
@@ -178,13 +193,86 @@ public class OrbiterApp extends FlareApp
         steam.tick();
 
         client.tickClient();
-        world.tick();
 
-        if (Keybinds.TOGGLE_GRAB_MOUSE.isActive() || Keybinds.DISABLE_GRAB_MOUSE.isActive())
+        if (Keybinds.ESCAPE.isActive()) processEscape();
+        if (Keybinds.CHAT.isActive() && !(MDUtil.isPanelOpen(Constants.UI.IN_GAME_MENU) && MDUtil.isPanelOpen(Constants.UI.SETTINGS))) processChat();
+
+        if (Keybinds.ENTER.isActive() || Keybinds.ENTER_KP.isActive() && MDUtil.isPanelOpen(Constants.UI.IN_GAME_CHAT))
         {
-            isMouseGrabbed = !isMouseGrabbed;
-            GLFW.glfwSetInputMode(window().window(), GLFW.GLFW_CURSOR, isMouseGrabbed ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
+            MDUtil.getPanel(Constants.UI.IN_GAME_CHAT).ifPresent(chat -> {
+                chat.getComponent(ViewController.class).ifPresent(controller -> {
+                    controller.panelView().sendCommand(new Command(Constants.key("execute_command")));
+                });
+            });
         }
+    }
+
+    private void processEscape()
+    {
+        if (client.getWorld() == null)
+        {
+            setMouseGrab(false);
+            return;
+        }
+
+        if (MDUtil.isPanelOpen(Constants.UI.IN_GAME_MENU))
+        {
+            // If open, close
+            MDUtil.removePanel(Constants.UI.IN_GAME_MENU);
+            setMouseGrab(true);
+        } else
+        {
+            if (MDUtil.isPanelOpen(Constants.UI.IN_GAME_CHAT))
+            {
+                MDUtil.removePanel(Constants.UI.IN_GAME_CHAT);
+                setMouseGrab(true);
+            } else
+            {
+                if (MDUtil.isPanelOpen(Constants.UI.SETTINGS))
+                {
+                    MDUtil.removePanel(Constants.UI.SETTINGS);
+                }
+
+                MDUtil.addPanel(Constants.UI.IN_GAME_MENU);
+                setMouseGrab(false);
+            }
+        }
+    }
+
+    private void processChat()
+    {
+        if (!MDUtil.isPanelOpen(Constants.UI.IN_GAME_CHAT))
+        {
+            Panel panel = MDUtil.addPanel(Constants.UI.IN_GAME_CHAT);
+            Optional<Widget> child = panel.getChild("chat_field");
+            child.ifPresent(w -> MoonDust.getInstance().focus(w));
+            setMouseGrab(false);
+        }
+    }
+
+    public void clearWorld()
+    {
+        steam.changeWorld(null);
+        client.setWorld(null);
+        client.setPlayer(null);
+    }
+
+    public void setCurrentWorld(World world)
+    {
+        if (world == null)
+        {
+            throw new IllegalStateException("Tried to navigate to null world, use clearWorld if you wish to clear the world instead.");
+        }
+
+        world.steam = steam;
+        world.init(masterRenderer());
+        this.client.setWorld(world);
+        steam.changeWorld(world);
+
+        client.setPlayer(VrData.VR_ON ? new VRPlayer(client) : new PCPlayer());
+
+        if (!VrData.VR_ON)
+            world.physics().add(((PCPlayer) client.player()).character);
     }
 
     public boolean isMouseGrabbed()
@@ -192,14 +280,25 @@ public class OrbiterApp extends FlareApp
         return isMouseGrabbed;
     }
 
-    public World getWorld()
+    public void setMouseGrab(boolean isMouseGrabbed)
     {
-        return world;
+        this.isMouseGrabbed = isMouseGrabbed;
+        GLFW.glfwSetInputMode(window().window(), GLFW.GLFW_CURSOR, isMouseGrabbed ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
     }
+
+//    public World getWorld()
+//    {
+//        return client;
+//    }
 
     public Client getClient()
     {
         return client;
+    }
+
+    public Commands getCommands()
+    {
+        return commands;
     }
 
     public SteamMain getSteam()

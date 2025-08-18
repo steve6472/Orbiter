@@ -286,8 +286,8 @@
     ],
     "textures": [
         {
-            "path": "C:\\storage\\Orbiter\\resources\\textures\\hand.png",
-            "name": "hand.png",
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\hand.png",
+            "name": "orbiter:hand",
             "folder": "block",
             "namespace": "",
             "id": "0",
@@ -302,6 +302,7 @@
             "sync_to_project": "",
             "render_mode": "default",
             "render_sides": "auto",
+            "pbr_channel": "color",
             "frame_time": 1,
             "frame_order_type": "loop",
             "frame_order": "",
@@ -310,7 +311,7 @@
             "internal": true,
             "saved": true,
             "uuid": "fff4c196-455b-09c9-97d5-48dcabd39ac3",
-            "relative_path": "../../../textures/hand.png",
+            "relative_path": "../../../textures/model/hand.png",
             "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAKpJREFUOE9jjN7z5T8DAwPDj6UNIIrhQ7skQ+GbEAYfHXlGsAABwPjjbhHYgOT7TQyREm8ZHDYtZUg3y2NY6sJDnAFbrjwEG9AvsgZsl0Dlc4alNf8YOJT7iDMA5II/K0UY4m+/Y1ioKsTgn8ROmhdAYTBXsY5hz/d8huUvhBlAbGJtB7mY8Utb23+Q7aDA2zjvJ9gla+f3EOV8sAGEQpmQ/KgBo4FIlYQEACjZPhH885gqAAAAAElFTkSuQmCC"
         }
     ]

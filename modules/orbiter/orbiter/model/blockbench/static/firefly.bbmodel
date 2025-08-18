@@ -62,8 +62,8 @@
     "outliner": ["bc0ccbea-fbb4-31fe-ecb9-fbdad48e879a"],
     "textures": [
         {
-            "path": "C:\\storage\\Orbiter\\src\\main\\resources\\textures\\firefly.png",
-            "name": "firefly.png",
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\firefly.png",
+            "name": "orbiter:firefly",
             "folder": "block",
             "namespace": "",
             "id": "0",
@@ -78,6 +78,7 @@
             "sync_to_project": "",
             "render_mode": "default",
             "render_sides": "auto",
+            "pbr_channel": "color",
             "frame_time": 1,
             "frame_order_type": "loop",
             "frame_order": "",
@@ -86,7 +87,7 @@
             "internal": true,
             "saved": true,
             "uuid": "1be1bfb5-a0df-1baa-93dd-f7a3f002f8de",
-            "relative_path": "../../../textures/firefly.png",
+            "relative_path": "../../../textures/model/firefly.png",
             "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAEJJREFUOE9j/HNd4b+c82+GR3tZGVg0HzAykAgYpaSk/4M0gwx59uwp6QZQxQXk2AzzKclORg+iUQMYGEbDYFiEAQCl/BkRh2H+NAAAAABJRU5ErkJggg=="
         }
     ]

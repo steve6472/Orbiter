@@ -1,0 +1,74 @@
+{
+    children: [
+        {
+            name: "titles",
+            bounds: ["100%-4", "100%-12"],
+            position: [2, 6],
+
+            text: {
+                text: {
+                    parts: [
+                        {
+                            text: "Fov:\n\nSensitivity:\n\nUI Scale:",
+                            style: "moondust:button/normal"
+                        }
+                    ],
+                    anchor: "top_left",
+                    align: "left",
+                    text_size: 6,
+                    vertical_anchor: "max_height",
+                    max_height: 200
+                },
+                position: {
+                    type: "anchored",
+                    anchor: "top_left",
+                    offset: [0, 0]
+                },
+                inherit_width: true
+            }
+        },
+        {
+            name: "container",
+            bounds: ["100% - 102", "100%"],
+            position: [100, 0],
+
+            children: [
+                {
+                    name: "fov",
+                    bounds: ["100%", 13],
+                    position: [2, 2],
+
+                    text_field: {
+                        ghost_text: "Fov"
+                    }
+                },
+                {
+                    name: "sensitivity",
+                    bounds: ["100%", 13],
+                    position: {
+                        type: "relative",
+                        parent: "fov",
+                        offset: [0, 14]
+                    },
+
+                    text_field: {
+                        ghost_text: "Sensitivity"
+                    }
+                },
+                {
+                    name: "ui_scale",
+                    bounds: ["100%", 13],
+                    position: {
+                        type: "relative",
+                        parent: "sensitivity",
+                        offset: [0, 14]
+                    },
+
+                    text_field: {
+                        ghost_text: "UI Scale"
+                    }
+                }
+            ]
+        }
+    ]
+}

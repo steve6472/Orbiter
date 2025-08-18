@@ -1,5 +1,5 @@
 {
-    view_controller: "orbiter:main_menu",
+    view_controller: "orbiter:in_game_menu",
 
     children: [
         {
@@ -57,8 +57,9 @@
                 inherit_width: true
             }
         },
+
         {
-            name: "enter_world",
+            name: "resume",
             bounds: [200, 26],
             position: {
                 type: "anchored",
@@ -69,10 +70,29 @@
                 on_press: {
                     script: "moondust:button_send_command",
                     input: {
-                        key: "orbiter:enter_world"
+                        key: "orbiter:resume"
                     }
                 },
-                label: "Enter World"
+                label: "Resume"
+            }
+        },
+        {
+            name: "main_menu",
+            bounds: [200, 26],
+            position: {
+                type: "relative",
+                parent: "resume",
+                offset: [0, 30]
+            },
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:main_menu"
+                    }
+                },
+                label: "Main Menu"
             }
         },
         {
@@ -80,7 +100,7 @@
             bounds: [200, 26],
             position: {
                 type: "relative",
-                parent: "enter_world",
+                parent: "main_menu",
                 offset: [0, 30]
             },
 

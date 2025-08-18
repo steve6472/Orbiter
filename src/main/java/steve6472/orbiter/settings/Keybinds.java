@@ -21,8 +21,11 @@ public class Keybinds
     public static final Keybind JUMP = registerRepeat("jump", GLFW.GLFW_KEY_SPACE);
     public static final Keybind SPRINT = registerRepeat("sprint", GLFW.GLFW_KEY_LEFT_SHIFT);
 
-    public static final Keybind TOGGLE_GRAB_MOUSE = registerOnce("toggle_grab_mouse", GLFW.GLFW_KEY_RIGHT_CONTROL);
-    public static final Keybind DISABLE_GRAB_MOUSE = registerOnce("disable_grab_mouse", GLFW.GLFW_KEY_ESCAPE);
+    public static final Keybind ESCAPE = registerOnce("escape", GLFW.GLFW_KEY_ESCAPE);
+    public static final Keybind CHAT = registerOnce("chat", GLFW.GLFW_KEY_GRAVE_ACCENT);
+    public static final Keybind KEEP_CHAT_OPEN = registerRepeat("keep_chat_open", GLFW.GLFW_KEY_LEFT_SHIFT);
+    public static final Keybind ENTER = registerOnce("enter", GLFW.GLFW_KEY_ENTER);
+    public static final Keybind ENTER_KP = registerOnce("enter_kp", GLFW.GLFW_KEY_KP_ENTER);
 
     private static Keybind registerRepeat(String id, int key)
     {

@@ -24,11 +24,11 @@ import java.util.UUID;
  */
 public class StaticWorldRender extends StaticModelRenderImpl
 {
-    private final World world;
+    private final Client client;
 
-    public StaticWorldRender(World world)
+    public StaticWorldRender(Client client)
     {
-        this.world = world;
+        this.client = client;
     }
 
     @Override
@@ -43,6 +43,10 @@ public class StaticWorldRender extends StaticModelRenderImpl
     @Override
     public void updateTransformArray(SBOTransfromArray<Model> sboTransfromArray, FrameInfo frameInfo)
     {
+        World world = client.getWorld();
+        if (world == null)
+            return;
+
         var physicsModels = world.ecs().findEntitiesWith(IndexModel.class, UUID.class);
         List<Results.With2<IndexModel, UUID>> list = new ArrayList<>(physicsModels.stream().toList());
         if (list.isEmpty())

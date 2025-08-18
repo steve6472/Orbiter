@@ -28,17 +28,15 @@ public class Console
 
     private final Commands commands;
     private final Client client;
-    private final World world;
 
     private JTextPane logPane;
     private CommandInput commandInput;
     JPanel mainPanel;
 
-    Console(Commands commands, Client client, World world)
+    Console(Commands commands, Client client)
     {
         this.commands = commands;
         this.client = client;
-        this.world = world;
         start();
     }
 
@@ -71,7 +69,7 @@ public class Console
                     commands.dispatcher.execute(commandInput.getText(), createSource());
                 } catch (CommandSyntaxException ex)
                 {
-                    appendToLog(ex.getMessage(), Color.RED);
+                    appendToLog(ex.getMessage(), CommandSource.ResponseStyle.ERROR);
                 }
             });
         }, mainPanel::repaint));
@@ -79,12 +77,12 @@ public class Console
         mainPanel.add(commandInput, BorderLayout.SOUTH);
     }
 
-    private void appendToLog(String text, Color color)
+    private void appendToLog(String text, CommandSource.ResponseStyle color)
     {
         StyledDocument doc = logPane.getStyledDocument();
 
         Style style = logPane.addStyle("ColorStyle", null);
-        StyleConstants.setForeground(style, color);
+        StyleConstants.setForeground(style, color == CommandSource.ResponseStyle.ERROR ? Color.RED : Color.GRAY);
 
         try
         {
@@ -100,14 +98,14 @@ public class Console
 
     private CommandSource createSource()
     {
-        return new CommandSource(client.player(), world, this::appendToLog);
+        return new CommandSource(client.player(), client.getWorld(), this::appendToLog);
     }
 
-    public static void log(String text, Color color)
+    public static void log(String text, CommandSource.ResponseStyle style)
     {
         if (DebugWindow.instance() == null)
             return;
 
-        DebugWindow.instance().console.appendToLog(text, color);
+        DebugWindow.instance().console.appendToLog(text, style);
     }
 }

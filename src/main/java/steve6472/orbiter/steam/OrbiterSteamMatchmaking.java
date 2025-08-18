@@ -3,6 +3,7 @@ package steve6472.orbiter.steam;
 import com.codedisaster.steamworks.*;
 import steve6472.core.log.Log;
 import steve6472.orbiter.OrbiterMain;
+import steve6472.orbiter.commands.CommandSource;
 import steve6472.orbiter.debug.Console;
 import steve6472.orbiter.network.packets.game.HelloGame;
 import steve6472.orbiter.network.packets.game.PlayerDisconnected;
@@ -46,7 +47,7 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
         Lobby lobby = new Lobby(steamIDLobby, steamMain);
         steamMain.lobbyManager.lobbyInvites.add(new LobbyInvite(steamIDUser, lobby));
         String inviteeName = steamMain.friendNames.getUserName(steamIDUser);
-        Console.log("You've been invited to lobby " + steamIDLobby + " by " + inviteeName, Color.BLACK);
+        Console.log("You've been invited to lobby " + steamIDLobby + " by " + inviteeName, CommandSource.ResponseStyle.BLACK);
         if (OrbiterMain.STEAM_TEST)
         {
             int res = JOptionPane.showOptionDialog(
@@ -154,12 +155,15 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
                 steamMain.connections.removePeer(new SteamPeer(steamIDUserChanged));
                 steamMain.connections.broadcastMessage(new PlayerDisconnected(steamIDUserChanged));
 
-                steamMain.orbiterApp.getWorld()
-                    .ecs()
-                    .findEntitiesWith(MPControlled.class, UUID.class)
-                    .stream()
-                    .filter(e -> e.comp1().controller().equals(steamIDUserChanged))
-                    .forEach(e -> steamMain.orbiterApp.getWorld().removeEntity(e.comp2()));
+                if (steamMain.orbiterApp.getClient().getWorld() != null)
+                {
+                    steamMain.orbiterApp.getClient().getWorld()
+                        .ecs()
+                        .findEntitiesWith(MPControlled.class, UUID.class)
+                        .stream()
+                        .filter(e -> e.comp1().controller().equals(steamIDUserChanged))
+                        .forEach(e -> steamMain.orbiterApp.getClient().getWorld().removeEntity(e.comp2()));
+                }
             }
         }
         else
@@ -228,7 +232,7 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
             return;
         }
         steamMain.lobbyManager.lobbyCreated(steamIDLobby);
-        Console.log("Lobby created " + steamIDLobby + " result: " + result, Color.GREEN);
+        Console.log("Lobby created " + steamIDLobby + " result: " + result, CommandSource.ResponseStyle.SUCCESS);
     }
 
     @Override

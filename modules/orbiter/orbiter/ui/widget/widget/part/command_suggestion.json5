@@ -1,0 +1,40 @@
+{
+    sprites: {
+        normal: "orbiter:chat/suggestion_normal",
+        selected: "orbiter:chat/suggestion_selected"
+    },
+    current_sprite: "normal",
+
+    scripts: {
+        main: "orbiter:widget/command_suggestion"
+    },
+
+    states: {
+        clickable: true,
+        focusable: false
+    },
+
+    clickbox_size: ["100%", 8],
+
+    text: {
+        text: {
+            parts: [
+                {
+                    text: "This is a suggestion",
+                    style: "orbiter:chat/feedback"
+                }
+            ],
+            anchor: "top_left",
+            align: "left",
+            text_size: 6,
+            vertical_anchor: "max_height",
+            max_height: 11
+        },
+        position: {
+            type: "anchored",
+            anchor: "top_left",
+            offset: [2, 1]
+        },
+        inherit_width: true
+    }
+}

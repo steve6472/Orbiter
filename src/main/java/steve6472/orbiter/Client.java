@@ -1,6 +1,8 @@
 package steve6472.orbiter;
 
+import org.lwjgl.system.MemoryStack;
 import steve6472.flare.Camera;
+import steve6472.flare.core.FrameInfo;
 import steve6472.flare.input.UserInput;
 import steve6472.flare.vr.VrData;
 import steve6472.flare.vr.VrInput;
@@ -16,20 +18,39 @@ import steve6472.orbiter.world.World;
  */
 public class Client
 {
-    private final Player player;
-    private final Camera camera;
-    private final World world;
+    private Player player;
+    private Camera camera;
+    private World world;
 
-    public Client(Camera camera, World world)
+    public Client()
     {
-        this.camera = camera;
-        this.world = world;
-        player = VrData.VR_ON ? new VRPlayer(world) : new PCPlayer();
     }
 
     public void handleInput(UserInput userInput, VrInput vrInput, float frameTime)
     {
-        player.handleInput(userInput, vrInput, camera, frameTime);
+        if (world != null && player != null)
+            player.handleInput(userInput, vrInput, camera, frameTime);
+    }
+
+    public void render(FrameInfo frameInfo, MemoryStack memoryStack)
+    {
+        if (world != null)
+            world.debugRender();
+    }
+
+    public void setCamera(Camera camera)
+    {
+        this.camera = camera;
+    }
+
+    public void setWorld(World world)
+    {
+        this.world = world;
+    }
+
+    public void setPlayer(Player player)
+    {
+        this.player = player;
     }
 
     public Player player()
@@ -37,7 +58,14 @@ public class Client
         return player;
     }
 
+    public World getWorld()
+    {
+        return world;
+    }
+
     public void tickClient()
     {
+        if (world != null)
+            world.tick();
     }
 }

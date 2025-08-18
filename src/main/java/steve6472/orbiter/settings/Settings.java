@@ -1,6 +1,7 @@
 package steve6472.orbiter.settings;
 
 import steve6472.core.setting.FloatSetting;
+import steve6472.core.setting.IntSetting;
 import steve6472.core.setting.SettingRegister;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
@@ -19,4 +20,5 @@ public class Settings extends SettingRegister
 
     public static final FloatSetting FOV = registerFloat("fov", 90);
     public static final FloatSetting SENSITIVITY = registerFloat("sensitivity", 0.15f);
+    public static final IntSetting UI_SCALE = registerInt("ui_scale", 2);
 }

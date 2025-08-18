@@ -1,0 +1,13 @@
+{
+    children: [
+        {
+            widget: "moondust:debug/outlines",
+            name: "debug_outlines",
+            position: {
+                type: "anchored",
+                anchor: "top_left",
+                offset: [2, 2]
+            }
+        }
+    ]
+}

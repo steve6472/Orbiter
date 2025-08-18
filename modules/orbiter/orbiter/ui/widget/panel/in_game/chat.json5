@@ -1,0 +1,53 @@
+{
+    view_controller: "orbiter:chat",
+
+    children: [
+        {
+            name: "log",
+            bounds: ["100%-4", "100% - 24"],
+            position: {
+                type: "anchored",
+                anchor: "bottom_left",
+                offset: [2, -22]
+            },
+
+            text: {
+                text: {
+                    parts: [],
+                    anchor: "top_left",
+                    align: "left",
+                    text_size: 6,
+                    vertical_anchor: "max_height",
+                    max_height: 11
+                },
+                position: {
+                    type: "anchored",
+                    anchor: "top_left",
+                    offset: [0, 0]
+                },
+                inherit_width: true
+            }
+        },
+        {
+            name: "chat_field",
+            bounds: ["100% - 20", 13],
+            position: {
+                type: "anchored",
+                anchor: "bottom_left",
+                offset: [0, 0]
+            },
+
+            text_field: {}
+        },
+        {
+            widget: "orbiter:widget/command_suggestions",
+            name: "suggestions",
+            bounds: [200, 100],
+            position: {
+                type: "anchored",
+                anchor: "bottom_left",
+                offset: [0, -14]
+            }
+        }
+    ]
+}

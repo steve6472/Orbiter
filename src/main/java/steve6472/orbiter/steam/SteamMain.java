@@ -15,6 +15,7 @@ import steve6472.orbiter.network.test.FakeP2PConstants;
 import steve6472.orbiter.network.test.FakeSteamPeerConnections;
 import steve6472.orbiter.steam.lobby.Lobby;
 import steve6472.orbiter.steam.lobby.LobbyManager;
+import steve6472.orbiter.world.World;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -93,8 +94,6 @@ public class SteamMain
             lobbyManager = new LobbyManager(this);
             connections = new SteamPeerConnections(this);
         }
-
-        createListeners();
     }
 
     public boolean isHost()
@@ -102,9 +101,14 @@ public class SteamMain
         return lobbyManager == null || lobbyManager.currentLobby() == null || lobbyManager.currentLobby().lobbyOwner() == userID;
     }
 
-    private void createListeners()
+    public void changeWorld(World world)
     {
-        packetManager.registerListener(new GameListener(this, orbiterApp.getWorld()));
+        if (!enabled) return;
+
+        packetManager.unregisterListener(GameListener.class);
+
+        if (world != null)
+            packetManager.registerListener(new GameListener(this, world));
 
         connections.setListener(GameListener.class);
     }

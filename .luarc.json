@@ -1,0 +1,8 @@
+{
+    "diagnostics.disable": [
+        "undefined-global",
+        "trailing-space",
+        "undefined-field",
+        "lowercase-global"
+    ]
+}

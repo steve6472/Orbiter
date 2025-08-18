@@ -360,8 +360,8 @@
     ],
     "textures": [
         {
-            "path": "C:\\storage\\Orbiter\\resources\\textures\\platform.png",
-            "name": "platform.png",
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\platform.png",
+            "name": "orbiter:platform",
             "folder": "block",
             "namespace": "",
             "id": "0",
@@ -376,6 +376,7 @@
             "sync_to_project": "",
             "render_mode": "default",
             "render_sides": "auto",
+            "pbr_channel": "color",
             "frame_time": 1,
             "frame_order_type": "loop",
             "frame_order": "",
@@ -384,7 +385,7 @@
             "internal": true,
             "saved": true,
             "uuid": "3836c727-5304-1700-bc57-a6c8eb76bf6c",
-            "relative_path": "../../../textures/platform.png",
+            "relative_path": "../../../textures/model/platform.png",
             "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAY1JREFUWEfVljFOAzEQRdcSEgU0FBE3gCYVVZpI5DScKbdBookoqGjCDRAFTSiQkBb9SGPNev94Z71OCGliedee9/+MPRtu7hZt84e/UBPganbtkvL58R7fOxqADqopOwCpAlmk562NXNLJSxGgxL7SoNQBD0BOveWeDsacrO6AlS6ZhwiMRUy2BpjFB6sBBJuahpKaGO0AgqQujM2/gGKfqgBpfi1HdD1UAbACbS82vUe3X4vOXO8mPHYdmFfxIW8/MwUlVYw1qdWP35dxq/vzXRzDfh0cD6o2o5wAQKb5pwDWi2MKDQ5o5eGpCdb6ngNTAMR6HRxzq+fdMIDczwyAnQy5jNZnr1ScQOTUd1LAAHKBJSo76512m7E/AujK1A6UAEj+5b+qA2K7Vp0WXFoHLgCvA6wVowaQ7xQE9g4VID2G2PDhZ75Po6fLwQ3mAqCG1I8G0G1Uxm8vm9Aum9YTjB0XVy/IfRkBoPQKpw54uqH+KKkC4A1qpWCyAycFIJ9VTC1TWiUFUyz89wC/ieIqIICrVQMAAAAASUVORK5CYII="
         }
     ]

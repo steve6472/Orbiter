@@ -1,0 +1,42 @@
+{
+    view_controller: "orbiter:settings",
+
+    children: [
+        {
+            widget: "moondust:tab_view",
+            name: "tabs",
+            bounds: ["100% - 4", "100% - 18"],
+            position: {
+                type: "anchored",
+                anchor: "top_left",
+                offset: [2, 2]
+            },
+
+            tab_view: {
+                labels: ["Font", "Visual", "Orbiter"],
+                views: ["orbiter:panel/settings/font", "orbiter:panel/settings/visual", "orbiter:panel/settings/orbiter"],
+                default: 0,
+                side: "top"
+            }
+        },
+        {
+            name: "back",
+            bounds: [80, 13],
+            position: {
+                type: "anchored",
+                anchor: "bottom_left",
+                offset: [2, -2]
+            },
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:back"
+                    }
+                },
+                label: "Back"
+            }
+        }
+    ]
+}

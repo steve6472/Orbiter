@@ -10,7 +10,7 @@ import java.io.File;
  * Date: 10/1/2024
  * Project: Orbiter <br>
  */
-public class Constants
+public final class Constants
 {
     /// The main namespace of Orbiter
     public static final String NAMESPACE = "orbiter";
@@ -23,6 +23,19 @@ public class Constants
 
     /// Orbiter-generated resources
     public static final File GENERATED_ORBITER = new File(FlareConstants.GENERATED_FOLDER, NAMESPACE);
+
+    /*
+     * UI stuff
+     */
+
+    public interface UI
+    {
+        Key MAIN_MENU = key("panel/main_menu");
+        Key SETTINGS = key("panel/settings");
+
+        Key IN_GAME_MENU = key("panel/in_game/menu");
+        Key IN_GAME_CHAT = key("panel/in_game/chat");
+    }
 
     public static Key key(String id)
     {

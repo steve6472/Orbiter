@@ -1,0 +1,19 @@
+{
+    font: "moondust:tiny_pixie2",
+    base: {
+        color: [0.0, 0.0, 0.0, 1.0],
+        softness: 0.0,
+        thickness: 0.5
+    },
+    outline: {
+        color: [0.0, 0.0, 0.0, 0.0],
+        softness: 0.0,
+        thickness: 0.0
+    },
+    shadow: {
+        color: [0.0, 0.0, 0.0, 0.0],
+        softness: 0.0,
+        thickness: 0.0
+    },
+    shadow_offset: [0.0, 0.0]
+}

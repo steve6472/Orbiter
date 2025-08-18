@@ -30,17 +30,15 @@ public class DebugWindow
 
     private final Commands commands;
     private final Client client;
-    private final World world;
     private final SteamMain steamMain;
 
     public Console console;
     public LobbyTab lobbyTab;
 
-    private DebugWindow(Commands commands, Client client, World world, SteamMain steamMain)
+    private DebugWindow(Commands commands, Client client, SteamMain steamMain)
     {
         this.commands = commands;
         this.client = client;
-        this.world = world;
         this.steamMain = steamMain;
         this.frame = createFrame();
         this.tabbedPane = createTabbedPane();
@@ -72,7 +70,7 @@ public class DebugWindow
     private JTabbedPane createTabbedPane()
     {
         JTabbedPane tabbedPane = new JTabbedPane();
-        console = new Console(commands, client, world);
+        console = new Console(commands, client);
         lobbyTab = new LobbyTab(steamMain);
 
         tabbedPane.addTab("Console", console.mainPanel);
@@ -82,14 +80,14 @@ public class DebugWindow
         return tabbedPane;
     }
 
-    public static void openDebugWindow(Commands commands, Client client, World world, SteamMain steamMain)
+    public static void openDebugWindow(Commands commands, Client client, SteamMain steamMain)
     {
         if (debugWindow != null)
         {
             LOGGER.warning("Console is already open");
             return;
         }
-        debugWindow = new DebugWindow(commands, client, world, steamMain);
+        debugWindow = new DebugWindow(commands, client, steamMain);
     }
 
     public static void closeDebugWindow()

@@ -1,0 +1,9 @@
+{
+    properties: {
+        lines: "table"
+    },
+
+    scripts: {
+        main: "orbiter:widget/command_suggestions"
+    }
+}

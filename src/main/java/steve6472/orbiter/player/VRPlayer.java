@@ -23,6 +23,7 @@ import steve6472.flare.vr.VrInput;
 import steve6472.flare.vr.input.InputType;
 import steve6472.flare.vr.input.VrAction;
 import steve6472.flare.vr.input.VrActionSet;
+import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.network.PeerConnections;
@@ -30,7 +31,6 @@ import steve6472.orbiter.network.packets.game.AddJoint;
 import steve6472.orbiter.network.packets.game.ClearJoints;
 import steve6472.orbiter.steam.SteamPeer;
 import steve6472.orbiter.world.EntityModify;
-import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.systems.NetworkSync;
@@ -48,7 +48,7 @@ import java.util.logging.Logger;
 public class VRPlayer implements Player
 {
     private static final Logger LOGGER = Log.getLogger(VRPlayer.class);
-    private final World world;
+    private final Client client;
 
     private Vector3f eyePos = new Vector3f();
 
@@ -57,9 +57,9 @@ public class VRPlayer implements Player
     private final VrAction<InputDigitalActionData> leftTriggerTouch;
     private final VrAction<InputDigitalActionData> leftTriggerClick;
 
-    public VRPlayer(World world)
+    public VRPlayer(Client client)
     {
-        this.world = world;
+        this.client = client;
 
         actionSet = new VrActionSet("/actions/default");
         leftTriggerPosition = actionSet.addAction("/actions/default/in/TriggerPosition", InputType.ANALOG);
@@ -116,7 +116,7 @@ public class VRPlayer implements Player
     private Entity createHandEntity(float x, float y, float z)
     {
         Key model = Key.defaultNamespace("blockbench/static/controller");
-        return world.addEntity(
+        return client.getWorld().addEntity(
             FlareRegistries.STATIC_MODEL.get(model),
             new Collision(model),
             new Position(x, y, z),
@@ -151,7 +151,7 @@ public class VRPlayer implements Player
                 LOGGER.info("Created hand entity");
             }
 
-            PhysicsRigidBody body = world.bodyMap().get(handEntity.get(UUID.class));
+            PhysicsRigidBody body = client.getWorld().bodyMap().get(handEntity.get(UUID.class));
             body.activate(true);
 
             Position posComp = handEntity.get(Position.class);
@@ -170,7 +170,7 @@ public class VRPlayer implements Player
         }, () -> {
             if (handEntity != null)
             {
-                world.removeEntity(handEntity.get(UUID.class));
+                client.getWorld().removeEntity(handEntity.get(UUID.class));
                 handEntity = null;
                 LOGGER.info("Deleted hand entity");
             }
@@ -237,7 +237,7 @@ public class VRPlayer implements Player
                 }
                 DebugRender.addDebugObjectForMs(DebugRender.line(jointPos, endPoint, DebugRender.GOLD), 1);
 
-                List<PhysicsRayTestResult> physicsRayTestResults = world
+                List<PhysicsRayTestResult> physicsRayTestResults = client.getWorld()
                     .physics()
                     .rayTest(Convert.jomlToPhys(jointPos), Convert.jomlToPhys(endPoint));
 
@@ -261,7 +261,7 @@ public class VRPlayer implements Player
                 if (grabbedObject.getMass() <= 0)
                     continue;
 
-                PhysicsRigidBody body = world.bodyMap().get(handEntity.get(UUID.class));
+                PhysicsRigidBody body = client.getWorld().bodyMap().get(handEntity.get(UUID.class));
 
                 // Don't grab itself
                 if (body == grabbedObject)
@@ -279,7 +279,7 @@ public class VRPlayer implements Player
                 Matrix3f rotInA = grabbedObject.getPhysicsRotationMatrix(new Matrix3f());
                 Matrix3f rotInB = body.getPhysicsRotationMatrix(new Matrix3f());
                 PhysicsJoint joint = new SixDofSpringJoint(grabbedObject, body, pivot, Convert.jomlToPhys(offset), rotInA, rotInB, false);
-                world.physics().addJoint(joint);
+                client.getWorld().physics().addJoint(joint);
 
                 PeerConnections<SteamPeer> connections = OrbiterApp.getInstance().getSteam().connections;
                 if (connections != null)
@@ -302,10 +302,10 @@ public class VRPlayer implements Player
         if (!jointsExist || handEntity == null)
             return;
 
-        PhysicsRigidBody body = world.bodyMap().get(handEntity.get(UUID.class));
+        PhysicsRigidBody body = client.getWorld().bodyMap().get(handEntity.get(UUID.class));
         for (PhysicsJoint physicsJoint : body.listJoints())
         {
-            world.physics().removeJoint(physicsJoint);
+            client.getWorld().physics().removeJoint(physicsJoint);
             body.removeJoint(physicsJoint);
         }
         jointsExist = false;
