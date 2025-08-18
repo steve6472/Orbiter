@@ -4,6 +4,7 @@ import org.lwjgl.glfw.GLFW;
 import steve6472.core.registry.Key;
 import steve6472.flare.input.Keybind;
 import steve6472.flare.input.KeybindType;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
 
 /**
@@ -25,12 +26,12 @@ public class Keybinds
 
     private static Keybind registerRepeat(String id, int key)
     {
-        return register(new Keybind(Key.defaultNamespace(id), KeybindType.REPEAT, key));
+        return register(new Keybind(Key.withNamespace(Constants.NAMESPACE, id), KeybindType.REPEAT, key));
     }
 
     private static Keybind registerOnce(String id, int key)
     {
-        return register(new Keybind(Key.defaultNamespace(id), KeybindType.ONCE, key));
+        return register(new Keybind(Key.withNamespace(Constants.NAMESPACE, id), KeybindType.ONCE, key));
     }
 
     private static Keybind register(Keybind keybind)

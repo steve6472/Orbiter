@@ -12,7 +12,6 @@
         <maven.compiler.source>23</maven.compiler.source>
         <maven.compiler.target>23</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <imgui.java.version>1.87.0</imgui.java.version>
     </properties>
 
     <repositories>
@@ -32,6 +31,11 @@
         <dependency>
             <groupId>steve6472</groupId>
             <artifactId>Flare</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>steve6472</groupId>
+            <artifactId>MoonDust</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
@@ -78,6 +82,30 @@
                         </manifest>
                     </archive>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>transfer-jar</id>
+                        <phase>package</phase> <!-- This runs after the 'package' phase (after the .jar is built) -->
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>cmd</executable> <!-- For Windows command prompt -->
+                            <arguments>
+                                <argument>/c</argument>
+                                <argument>scp</argument>
+                                <argument>target/Orbiter-1.0-SNAPSHOT-jar-with-dependencies.jar</argument> <!-- Replace with your .jar file path -->
+                                <argument>stev@10.0.1.16:/home/stev/Desktop/Orbiter/</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

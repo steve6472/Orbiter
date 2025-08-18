@@ -1,0 +1,61 @@
+{
+    view_controller: "orbiter:main_menu",
+
+    children: [
+        {
+            name: "close_button",
+            bounds: [13, 13],
+            position: {
+                type: "anchored",
+                anchor: "top_right"
+            },
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:close"
+                    }
+                }
+            },
+
+            sprites: {
+                normal: "moondust:generic_dark_pixel/button/close_red/normal",
+                disabled: "moondust:generic_dark_pixel/button/close_red/disabled",
+                hover: "moondust:generic_dark_pixel/button/close_red/hover",
+                pressed: "moondust:generic_dark_pixel/button/close_red/pressed"
+            }
+        },
+        {
+            name: "title",
+            bounds: ["100%", 14],
+            position: {
+                type: "anchored",
+                anchor: "top_left",
+                offset: [0, 20]
+            },
+
+            text: {
+                text: {
+                    parts: [
+                        {
+                            text: "Access Denied!\nContacting local authorities...",
+                            style: "moondust:button/normal"
+                        }
+                    ],
+                    anchor: "top_left",
+                    align: "left",
+                    text_size: 6,
+                    vertical_anchor: "max_height",
+                    max_height: 11
+                },
+                position: {
+                    type: "anchored",
+                    anchor: "left",
+                    offset: [0, 0]
+                },
+                inherit_width: true
+            }
+        }
+    ]
+}

@@ -1,0 +1,13 @@
+package steve6472.orbiter;
+
+import steve6472.core.module.ModulePart;
+
+/**
+ * Created by steve6472
+ * Date: 8/18/2025
+ * Project: Orbiter <br>
+ */
+public final class OrbiterParts
+{
+    public static final ModulePart ENTITY_BLUEPRINT = new ModulePart("Entity Blueprint", "entity_blueprint");
+}

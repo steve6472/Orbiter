@@ -1,16 +1,12 @@
 package steve6472.orbiter.world.ecs.core;
 
-import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
 import steve6472.core.registry.Keyable;
 import steve6472.flare.core.Flare;
-import steve6472.flare.module.Module;
-import steve6472.flare.util.ResourceCrawl;
+import steve6472.orbiter.OrbiterParts;
 import steve6472.orbiter.Registries;
 
-import java.io.File;
 import java.util.*;
-import java.util.logging.Logger;
 
 /**
  * Created by steve6472
@@ -19,8 +15,6 @@ import java.util.logging.Logger;
  */
 public class EntityBlueprint implements Keyable
 {
-    private static final Logger LOGGER = Log.getLogger(EntityBlueprint.class);
-
     private final List<Blueprint<?>> blueprints;
     private final Key key;
 
@@ -47,32 +41,23 @@ public class EntityBlueprint implements Keyable
     {
         Map<Key, EntityBlueprint> blueprints = new LinkedHashMap<>();
 
-        for (Module module : Flare.getModuleManager().getModules())
-        {
-            module.iterateNamespaces((folder, namespace) ->
+        Flare.getModuleManager().loadParts(OrbiterParts.ENTITY_BLUEPRINT, Registries.BLUEPRINT.valueMapCodec(), (map, key) -> {
+
+            List<Blueprint<?>> objects = new ArrayList<>(map.size());
+
+            for (Object value : map.values())
             {
-                File file = new File(folder, "entity_blueprint");
-                ResourceCrawl.crawlAndLoadJsonCodec(file, Registries.BLUEPRINT.valueMapCodec(), (map, id) ->
+                if (!(value instanceof Blueprint<?> blueprint))
                 {
-                    List<Blueprint<?>> objects = new ArrayList<>(map.size());
+                    throw new RuntimeException("Not instance of blueprint!");
+                }
 
-                    for (Object value : map.values())
-                    {
-                        if (!(value instanceof Blueprint<?> blueprint))
-                        {
-                            throw new RuntimeException("Not instance of blueprint!");
-                        }
+                objects.add(blueprint);
+            }
 
-                        objects.add(blueprint);
-                    }
-
-                    Key key = Key.withNamespace(namespace, id);
-                    EntityBlueprint blueprint = new EntityBlueprint(key, objects);
-                    LOGGER.finest("Loaded entity blueprint " + key + " from " + module.name());
-                    blueprints.put(key, blueprint);
-                });
-            });
-        }
+            EntityBlueprint blueprint = new EntityBlueprint(key, objects);
+            blueprints.put(key, blueprint);
+        });
         blueprints.values().forEach(Registries.ENTITY_BLUEPRINT::register);
     }
 }

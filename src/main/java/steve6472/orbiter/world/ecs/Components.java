@@ -1,6 +1,7 @@
 package steve6472.orbiter.world.ecs;
 
 import steve6472.core.registry.Key;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.world.ecs.components.*;
 import steve6472.orbiter.world.ecs.components.physics.*;
@@ -62,7 +63,7 @@ public class Components
 
     private static <T> Component<T> register(String id, Class<T> clazz, UnaryOperator<Component.Builder<T>> builder)
     {
-        return register(Key.defaultNamespace(id), clazz, builder);
+        return register(Key.withNamespace(Constants.NAMESPACE, id), clazz, builder);
     }
 
     private static <T> Component<T> register(Key key, Class<T> clazz, UnaryOperator<Component.Builder<T>> builder)
@@ -71,7 +72,7 @@ public class Components
         builder_.clazz(clazz);
         Component<T> build = builder_.build();
         if (Registries.COMPONENT.get(key) != null)
-            throw new RuntimeException("Compoent with key " + key + " already exists!");
+            throw new RuntimeException("Component with key " + key + " already exists!");
         Registries.COMPONENT.register(key, build);
         return build;
     }

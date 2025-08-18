@@ -6,6 +6,7 @@ import com.jme3.bullet.util.NativeLibrary;
 import com.jme3.system.NativeLibraryLoader;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
+import steve6472.core.registry.Key;
 import steve6472.core.setting.SettingsLoader;
 import steve6472.flare.Camera;
 import steve6472.flare.core.FlareApp;
@@ -13,8 +14,17 @@ import steve6472.flare.core.FrameInfo;
 import steve6472.flare.input.KeybindUpdater;
 import steve6472.flare.pipeline.Pipelines;
 import steve6472.flare.render.StaticModelRenderSystem;
+import steve6472.flare.render.UIFontRender;
+import steve6472.flare.render.UIRenderSystem;
 import steve6472.flare.settings.VisualSettings;
 import steve6472.flare.vr.VrData;
+import steve6472.moondust.*;
+import steve6472.moondust.builtin.BuiltinEventCalls;
+import steve6472.moondust.builtin.JavaFunctions;
+import steve6472.moondust.render.MoonDustUIFontRender;
+import steve6472.moondust.render.MoonDustUIRender;
+import steve6472.moondust.view.PanelViewEntry;
+import steve6472.moondust.widget.Panel;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.debug.DebugWindow;
 import steve6472.orbiter.network.packets.game.AcceptedPeerConnection;
@@ -23,6 +33,7 @@ import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.ui.MainMenu;
 import steve6472.orbiter.world.World;
 
 import java.io.File;
@@ -56,7 +67,7 @@ public class OrbiterApp extends FlareApp
         PhysicsSpace.logger.setLevel(Level.WARNING);
         PhysicsRigidBody.logger2.setLevel(Level.WARNING);
         NativeLibraryLoader.logger.setLevel(Level.WARNING);
-        NativeLibraryLoader.loadLibbulletjme(true, new File("generated/flare"), "Debug", "Sp");
+        NativeLibraryLoader.loadLibbulletjme(true, Constants.GENERATED_ORBITER, "Debug", "Sp");
         NativeLibrary.setStartupMessageEnabled(false);
 
         world = new World();
@@ -76,6 +87,11 @@ public class OrbiterApp extends FlareApp
     @Override
     protected void initRegistries()
     {
+        MoonDustViews.ENTRIES.add(new PanelViewEntry(Constants.key("main_menu"), MainMenu::new));
+
+        initRegistry(MoonDustRegistries.POSITION_BLUEPRINT_TYPE);
+        JavaFunctions.init(this);
+        BuiltinEventCalls.init();
         initRegistry(Registries.SETTINGS);
     }
 
@@ -83,6 +99,8 @@ public class OrbiterApp extends FlareApp
     public void loadSettings()
     {
         SettingsLoader.loadFromJsonFile(Registries.SETTINGS, Constants.SETTINGS);
+        SettingsLoader.loadFromJsonFile(MoonDustRegistries.SETTINGS, MoonDustConstants.SETTINGS_FILE);
+        MoonDust.getInstance().setPixelScale(2f);
 
         if (OrbiterMain.FAKE_P2P)
         {
@@ -96,13 +114,24 @@ public class OrbiterApp extends FlareApp
     @Override
     protected void createRenderSystems()
     {
+        addRenderSystem(new UIRenderSystem(masterRenderer(), new MoonDustUIRender(this), 256f));
+        addRenderSystem(new UIFontRender(masterRenderer(), new MoonDustUIFontRender()));
+
         addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticWorldRender(world), Pipelines.BLOCKBENCH_STATIC));
+
+        new MoonDustCallbacks().init(window().callbacks(), input());
     }
 
     @Override
     public void postInit()
     {
+        MoonDust.getInstance().setWindow(window());
+
         KeybindUpdater.updateKeybinds(Registries.KEYBINDS, input());
+
+        Panel testPanel = Panel.create(Key.withNamespace(Constants.NAMESPACE, "panel/main_menu"));
+        testPanel.clearFocus();
+        MoonDust.getInstance().addPanel(testPanel);
 
         world.init(masterRenderer());
         client = new Client(camera(), world);
@@ -187,6 +216,7 @@ public class OrbiterApp extends FlareApp
     public void saveSettings()
     {
         SettingsLoader.saveToJsonFile(Registries.SETTINGS, Constants.SETTINGS);
+        SettingsLoader.saveToJsonFile(MoonDustRegistries.SETTINGS, MoonDustConstants.SETTINGS_FILE);
     }
 
     @Override

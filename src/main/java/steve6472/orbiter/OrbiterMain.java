@@ -1,18 +1,21 @@
 package steve6472.orbiter;
 
 import steve6472.core.SteveCore;
-import steve6472.core.log.Log;
 import steve6472.core.setting.SettingsLoader;
+import steve6472.core.util.JarExport;
 import steve6472.flare.FlareConstants;
+import steve6472.flare.util.PackerUtil;
+import steve6472.moondust.MoonDust;
 import steve6472.orbiter.debug.PrimitiveLineWindow;
 import steve6472.flare.core.Flare;
 import steve6472.flare.registry.RegistryCreators;
 import steve6472.flare.registry.FlareRegistries;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 /**
  * Created by steve6472
@@ -21,23 +24,27 @@ import java.util.logging.Logger;
  */
 public class OrbiterMain
 {
-    private static final Logger LOGGER = Log.getLogger(OrbiterMain.class);
-
     public static boolean ENABLE_STEAM = false;
 
     public static boolean FAKE_P2P = false;
     public static boolean STEAM_TEST = false;
     public static boolean FAKE_PEER = false;
 
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException, URISyntaxException
     {
+        PackerUtil.PADDING = 0;
+        PackerUtil.DUPLICATE_BORDER = false;
+
         System.setProperty("joml.format", "false");
 
         System.setProperty("dominion.world.size", "LARGE");
         System.setProperty("dominion.show-banner", "false");
+        JarExport.exportFolder("orbiter/export/bullet", Constants.GENERATED_ORBITER);
 
         if (test())
             return;
+
+        MoonDust.getInstance().init();
 
         List<String> list = Arrays.asList(args);
         STEAM_TEST = list.contains("steamTest");

@@ -29,11 +29,11 @@ public class Registries extends RegistryCreators
 {
     private static final Logger LOGGER = Log.getLogger(Registries.class);
 
-    public static final ObjectRegistry<Setting<?, ?>> SETTINGS = createObjectRegistry("setting", () -> Settings.FOV);
-    public static final Registry<Keybind> KEYBINDS = createRegistry("keybinds", () -> Keybinds.FORWARD);
+    public static final ObjectRegistry<Setting<?, ?>> SETTINGS = createNamespacedObjectRegistry(Constants.NAMESPACE, "setting", () -> Settings.FOV);
+    public static final Registry<Keybind> KEYBINDS = createNamespacedRegistry(Constants.NAMESPACE, "keybinds", () -> Keybinds.FORWARD);
     public static final Registry<Rarity> RARITY = createRegistry("rarity", () -> Rarities.COMMON);
     public static final PacketRegistry PACKET = createPacketRegistry("packet", Packets::init);
-    public static final Registry<Component<?>> COMPONENT = createRegistry("component", () -> Components.POSITION);
+    public static final Registry<Component<?>> COMPONENT = createNamespacedRegistry(Constants.NAMESPACE, "component", () -> Components.POSITION);
     public static final Registry<BlueprintEntry<?>> BLUEPRINT = createRegistry("blueprint", () -> Blueprints.POSITION);
     public static final ObjectRegistry<EntityBlueprint> ENTITY_BLUEPRINT = createObjectRegistry("entity_blueprint", EntityBlueprint::load);
     public static final ObjectRegistry<OrbiterCollisionShape> COLLISION = createObjectRegistry("collision", OrbiterCollisionShape::load);
@@ -41,7 +41,7 @@ public class Registries extends RegistryCreators
     // TODO: add to flare
     private static PacketRegistry createPacketRegistry(String id, Runnable bootstrap)
     {
-        Key key = Key.defaultNamespace(id);
+        Key key = Key.withNamespace(Constants.NAMESPACE, id);
         LOGGER.finest("Creating Registry " + key);
         LOADERS.put(key, bootstrap);
         return new PacketRegistry(key);

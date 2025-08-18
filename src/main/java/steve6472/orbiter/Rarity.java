@@ -18,7 +18,7 @@ public record Rarity(Key key, String name, Vector4f color) implements Keyable, S
 
     public Rarity(String id, String name, Vector4f color)
     {
-        this(Key.defaultNamespace(id), name, color);
+        this(Key.withNamespace(Constants.NAMESPACE, id), name, color);
     }
 
     @Override
