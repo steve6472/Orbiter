@@ -39,15 +39,7 @@ public class EntityBlueprintArgument implements ArgumentType<EntityBlueprint>
     {
 	    final String text = reader.getRemaining();
 	    reader.setCursor(reader.getTotalLength());
-		Key key;
-		if (text.contains(":"))
-		{
-			String[] split = text.split(":");
-			key = Key.withNamespace(split[0], split[1]);
-		} else
-		{
-			key = Key.defaultNamespace(text);
-		}
+		Key key = Key.parse(text);
 	    return Registries.ENTITY_BLUEPRINT.get(key);
 	}
 

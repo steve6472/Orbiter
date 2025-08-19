@@ -25,7 +25,6 @@ import steve6472.orbiter.ui.MDUtil;
 import steve6472.orbiter.world.World;
 import steve6472.radiant.LuauTable;
 
-import java.awt.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

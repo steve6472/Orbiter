@@ -20,7 +20,7 @@ import java.util.concurrent.CompletableFuture;
  */
 public class Vec3fArgument implements ArgumentType<Vector3f>
 {
-	private static Collection<String> EXAMPLES = List.of("0 0 0", "32 32 32");
+	private static final Collection<String> EXAMPLES = List.of("0 0 0", "32 32 32");
 
 	public static Vec3fArgument vec3()
 	{

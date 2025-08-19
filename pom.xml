@@ -23,6 +23,11 @@
     </repositories>
 
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>com.badlogicgames.ashley</groupId>-->
+<!--            <artifactId>ashley</artifactId>-->
+<!--            <version>1.7.4</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>dev.dominion.ecs</groupId>
             <artifactId>dominion-ecs-engine</artifactId>
