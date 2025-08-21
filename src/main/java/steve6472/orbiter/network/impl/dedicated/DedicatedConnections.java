@@ -3,6 +3,7 @@ package steve6472.orbiter.network.impl.dedicated;
 import steve6472.core.network.Packet;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.network.api.*;
+import steve6472.orbiter.settings.Settings;
 
 import java.io.IOException;
 import java.net.SocketAddress;
@@ -19,11 +20,13 @@ public class DedicatedConnections implements Connections
 {
     DedicatedLobby lobby;
     PacketManager packetManager;
+    BandwidthTracker tracker;
 
     public DedicatedConnections(DedicatedLobby lobby, PacketManager packetManager)
     {
         this.lobby = lobby;
         this.packetManager = packetManager;
+        this.tracker = new BandwidthTracker();
     }
 
     @Override
@@ -32,6 +35,7 @@ public class DedicatedConnections implements Connections
         if (!lobby.isLobbyOpen())
             return;
 
+        tracker.tick();
         readPackets();
         checkForTimeouts();
 
@@ -81,6 +85,8 @@ public class DedicatedConnections implements Connections
         byte[] receivedData = new byte[buffer.remaining()];
         buffer.get(receivedData);
 
+        tracker.addReadBytes(receivedData.length);
+
         for (ConnectedUser connectedUser : lobby.getConnectedUsers())
         {
             if (!(connectedUser.user() instanceof DedicatedUser dedUser)) throw new NotDedicatedUserException();
@@ -105,6 +111,9 @@ public class DedicatedConnections implements Connections
     public boolean sendPacket(User user, ByteBuffer packetBuffer)
     {
         if (!(user instanceof DedicatedUser dedUser)) throw new NotDedicatedUserException();
+        assert dedUser.userConnection != null : "User Connection is null somehow";
+
+        tracker.addSendBytes(packetBuffer.limit());
 
         dedUser.userConnection.sendPacket(packetBuffer);
 
@@ -152,6 +161,12 @@ public class DedicatedConnections implements Connections
                 LOGGER.severe("Packet failed to send to user " + connectedUser.user() + " packet: " + packet);
             }
         }
+    }
+
+    @Override
+    public BandwidthTracker bandwidthTracker()
+    {
+        return tracker;
     }
 
     /*

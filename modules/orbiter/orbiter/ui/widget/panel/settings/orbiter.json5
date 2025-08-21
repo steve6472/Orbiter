@@ -25,7 +25,11 @@
                             style: "moondust:button/normal"
                         },
                         {
-                            text: "Username:",
+                            text: "Username:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Track Bandwidth:",
                             style: "moondust:button/normal"
                         }
                     ],
@@ -109,6 +113,17 @@
                     text_field: {
                         ghost_text: "steve6472"
                     }
+                },
+                {
+                    widget: "moondust:checkbox",
+                    name: "track_bandwidth",
+                    position: [-98, 74],
+
+                    bounds: [107, 9],
+                    sprite_size: [7, 7],
+                    sprite_offset: [100, 1],
+
+                    checkbox: {}
                 }
             ]
         }

@@ -2,5 +2,6 @@
   "orbiter:fov": 80.0,
   "orbiter:multiplayer_beckend": "dedicated",
   "orbiter:sensitivity": 0.15,
+  "orbiter:track_bandwidth": true,
   "orbiter:ui_scale": 3
 }

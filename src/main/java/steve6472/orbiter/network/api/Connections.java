@@ -26,4 +26,6 @@ public interface Connections
     <T extends Packet<T, ?>> void sendPacket(User user, T packet);
     <T extends Packet<T, ?>> void broadcastPacket(T packet);
     <T extends Packet<T, ?>> void broadcastPacketExclude(T packet, Set<User> excludedUsers);
+
+    BandwidthTracker bandwidthTracker();
 }

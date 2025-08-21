@@ -40,6 +40,7 @@ import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.ui.MDUtil;
+import steve6472.orbiter.ui.OrbiterUIRender;
 import steve6472.orbiter.ui.panel.*;
 import steve6472.orbiter.util.RandomNameGenerator;
 import steve6472.orbiter.world.World;
@@ -117,6 +118,7 @@ public class OrbiterApp extends FlareApp
     {
         addRenderSystem(new UIRenderSystem(masterRenderer(), new MoonDustUIRender(this), 256f));
         addRenderSystem(new UIFontRender(masterRenderer(), new MoonDustUIFontRender()));
+        addRenderSystem(new UIRenderSystem(masterRenderer(), new OrbiterUIRender(this), 256f));
         // Debug
         addRenderSystem(new UILineRender(masterRenderer(), new DebugWidgetUILines()));
         addRenderSystem(new UILineRender(masterRenderer(), new DebugUILines()));

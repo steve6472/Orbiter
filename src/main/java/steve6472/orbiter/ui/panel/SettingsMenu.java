@@ -35,6 +35,7 @@ public class SettingsMenu extends PanelView
         bindTextSetting(Settings.FOV, findProperty("fov:text"));
         bindTextSetting(Settings.SENSITIVITY, findProperty("sensitivity:text"));
         bindSetting(VisualSettings.USERNAME, findProperty("username:text"));
+        bindSetting(Settings.TRACK_BANDWIDTH, findProperty("track_bandwidth:checked"));
 
         BooleanProperty multiplayerBackendEnabled = findProperty("multiplayer_beckend:enabled");
         multiplayerBackendEnabled.set(OrbiterApp.getInstance().getClient().getWorld() == null);
