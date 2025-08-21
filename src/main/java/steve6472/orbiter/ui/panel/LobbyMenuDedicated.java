@@ -17,6 +17,8 @@ import steve6472.orbiter.network.impl.dedicated.DedicatedUserConnection;
 import steve6472.orbiter.network.packets.login.hostbound.LoginStart;
 import steve6472.orbiter.ui.MDUtil;
 
+import java.io.IOException;
+
 /**
  * Created by steve6472
  * Date: 8/18/2025
@@ -37,16 +39,18 @@ public class LobbyMenuDedicated extends PanelView
     @Override
     protected void createProperties()
     {
+        OrbiterApp orbiter = OrbiterApp.getInstance();
+        DedicatedMain network = (DedicatedMain) orbiter.getNetwork();
+        lobbyOpen = new BooleanProperty(network.lobby().isLobbyOpen());
         setupCreate();
         setupJoin();
+        setupFind();
     }
 
     private void setupCreate()
     {
         OrbiterApp orbiter = OrbiterApp.getInstance();
         DedicatedMain network = (DedicatedMain) orbiter.getNetwork();
-
-        lobbyOpen = new BooleanProperty(network.lobby().isLobbyOpen());
 
         BooleanProperty ipFieldPassword = findProperty("create_ip_field:password");
         StringProperty ipFieldText = findProperty("create_ip_field:text");
@@ -69,6 +73,21 @@ public class LobbyMenuDedicated extends PanelView
         lobbyExistsMessageVisible.bind(lobbyOpen.copyFrom());
         ipVisibilityChecked.set(false);
         ipFieldPassword.bind(ipVisibilityChecked.copyFrom());
+
+        BooleanProperty broadcastServerChecked = findProperty("broadcast_server:checked");
+        BooleanProperty broadcastServerEnabled = findProperty("broadcast_server:enabled");
+        broadcastServerEnabled.bind(() -> lobbyOpen.get() && network.lobby().isHost(), lobbyOpen);
+        broadcastServerChecked.set(network.getBroadcaster().isRunning());
+        lobbyOpen.addListener((_, _, nVal) -> {
+            if (!nVal)
+                broadcastServerChecked.set(false);
+        });
+        broadcastServerChecked.addListener((_, _, nVal) -> {
+            if (nVal)
+                network.getBroadcaster().start();
+            else
+                network.getBroadcaster().shutdown();
+        });
     }
 
     private void setupJoin()
@@ -91,6 +110,27 @@ public class LobbyMenuDedicated extends PanelView
         invalidPortMessageVisible.bind(() -> !isValidPort(joinPortFieldText.get()), joinPortFieldText);
 
         lobbyExistsMessageVisible.bind(lobbyOpen.copyFrom());
+    }
+
+    private void setupFind()
+    {
+        OrbiterApp orbiter = OrbiterApp.getInstance();
+        DedicatedMain network = (DedicatedMain) orbiter.getNetwork();
+
+        BooleanProperty detectServerChecked = findProperty("detect_servers:checked");
+        BooleanProperty detectServerEnabled = findProperty("detect_servers:enabled");
+        detectServerEnabled.bind(() -> !lobbyOpen.get() && !network.lobby().isHost(), lobbyOpen);
+        detectServerChecked.set(network.getDetector().isRunning());
+        lobbyOpen.addListener((_, _, nVal) -> {
+            if (!nVal)
+                detectServerChecked.set(false);
+        });
+        detectServerChecked.addListener((_, _, nVal) -> {
+            if (nVal)
+                network.getDetector().start();
+            else
+                network.getDetector().shutdown();
+        });
     }
 
     private boolean isValidPort(String text)
@@ -132,7 +172,6 @@ public class LobbyMenuDedicated extends PanelView
             OrbiterApp orbiter = OrbiterApp.getInstance();
             DedicatedMain network = (DedicatedMain) orbiter.getNetwork();
             network.lobby().openLobby(Integer.parseInt(createPortFieldText.get()), true);
-            lobbyOpen.set(network.lobby().isLobbyOpen());
         });
 
         addCommandListener(Constants.key("close_lobby"), _ ->
@@ -140,7 +179,6 @@ public class LobbyMenuDedicated extends PanelView
             OrbiterApp orbiter = OrbiterApp.getInstance();
             DedicatedMain network = (DedicatedMain) orbiter.getNetwork();
             network.lobby().closeLobby();
-            lobbyOpen.set(network.lobby().isLobbyOpen());
         });
 
         /*
@@ -161,5 +199,9 @@ public class LobbyMenuDedicated extends PanelView
             user.changeUserStage(UserStage.LOGIN_CLIENTBOUND);
             network.connections().sendPacket(user, new LoginStart(VisualSettings.USERNAME.get()));
         });
+
+        /*
+         * Find
+         */
     }
 }

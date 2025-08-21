@@ -24,17 +24,18 @@ public class DedicatedMain implements NetworkMain
     public static final int MIN_PORT = 49152;
     public static final int MAX_PORT = 65535;
 
+    LanDetector detector;
+    LanBroadcaster broadcaster;
     PacketManager packetManager;
     Lobby lobby;
-//    private int port;
 
     @Override
     public void setup()
     {
         packetManager = new PacketManager(Registries.PACKET);
         lobby = new DedicatedLobby(this);
-//        port = RandomUtil.randomInt(MIN_PORT, MAX_PORT);
-//        port = 50000;
+        broadcaster = new LanBroadcaster(() -> "TEST");
+        detector = new LanDetector();
 
         packetManager.registerListener(new LoginHostboundListener());
         packetManager.registerListener(new LoginClientboundListener());
@@ -64,31 +65,6 @@ public class DedicatedMain implements NetworkMain
         tick++;
     }
 
-    /// Returns true if port was changed successfully, false otherwise
-//    public boolean setPort(int port)
-//    {
-//        if (lobby.isLobbyOpen())
-//        {
-//            LOGGER.severe("Can not change port when lobby is open!");
-//            return false;
-//        }
-//
-//        if (!(port >= DedicatedMain.MIN_PORT && port <= DedicatedMain.MAX_PORT))
-//        {
-//            LOGGER.severe("Port is out of bounds, [" + MIN_PORT + ", " + MAX_PORT + "]");
-//            return false;
-//        }
-//
-//        this.port = port;
-//
-//        return true;
-//    }
-//
-//    public int port()
-//    {
-//        return port;
-//    }
-
     @Override
     public void shutdown()
     {
@@ -100,7 +76,18 @@ public class DedicatedMain implements NetworkMain
 //
 //            dedUser.userConnection.close();
 //        }
+        broadcaster.shutdown();
         lobby.closeLobby();
+    }
+
+    public LanBroadcaster getBroadcaster()
+    {
+        return broadcaster;
+    }
+
+    public LanDetector getDetector()
+    {
+        return detector;
     }
 
     @Override

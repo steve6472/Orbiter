@@ -105,8 +105,20 @@ public class DedicatedLobby implements Lobby
             channel.register(selector, SelectionKey.OP_READ);
         } catch (IOException e)
         {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            try
+            {
+                if (channel != null)
+                    channel.close();
+                if (selector != null)
+                    selector.close();
+            } catch(IOException ex)
+            {
+                throw new RuntimeException(ex);
+            }
         }
+
+        LobbyMenuDedicated.lobbyOpen.set(isLobbyOpen());
     }
 
     @Override
@@ -128,7 +140,6 @@ public class DedicatedLobby implements Lobby
         isHost = false;
         getConnectedUsers().clear();
         shouldClose = false;
-        LobbyMenuDedicated.lobbyOpen.set(isLobbyOpen());
 
         try
         {
@@ -140,6 +151,7 @@ public class DedicatedLobby implements Lobby
         {
             throw new RuntimeException(e);
         }
+        LobbyMenuDedicated.lobbyOpen.set(isLobbyOpen());
     }
 
     /*

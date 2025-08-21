@@ -149,9 +149,17 @@
             }
         },
         {
+            name: "broadcast_server",
+            position: [2, 58],
+
+            checkbox: {
+                label: "Broadcast server"
+            }
+        },
+        {
             name: "create_instructions",
-            bounds: ["100%-4", "100%-60"],
-            position: [2, 60],
+            bounds: ["100%-4", "100%-80"],
+            position: [2, 80],
 
             text: {
                 text: {
