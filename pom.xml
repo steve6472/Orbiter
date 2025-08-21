@@ -12,6 +12,9 @@
         <maven.compiler.source>23</maven.compiler.source>
         <maven.compiler.target>23</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <bullet.classifier>SpDebug</bullet.classifier>
+        <bullet.version>22.0.1</bullet.version>
     </properties>
 
     <repositories>
@@ -45,8 +48,14 @@
         </dependency>
         <dependency>
             <groupId>com.github.stephengold</groupId>
-            <artifactId>Libbulletjme</artifactId>
-            <version>21.2.1</version>
+            <artifactId>Libbulletjme-Windows64</artifactId>
+            <version>${bullet.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.stephengold</groupId>
+            <artifactId>Libbulletjme-Windows64</artifactId>
+            <version>${bullet.version}</version>
+            <classifier>${bullet.classifier}</classifier>
         </dependency>
         <dependency>
             <groupId>com.code-disaster.steamworks4j</groupId>

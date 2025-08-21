@@ -9,7 +9,35 @@
                 text: {
                     parts: [
                         {
-                            text: "Debug Line Single Buffer:\n\nEnable Wide Lines:\n\nFont Gen Logs:\n\nGenerate Startup Atlas Data:\n\nRender Center Point:\n\nTitle FPS:\n\nLine Width:",
+                            text: "Debug Line Single Buffer:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Enable Wide Lines:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Font Gen Logs:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Generate Startup Atlas Data:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Render Center Point:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Title FPS:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Line Width:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Present Mode:",
                             style: "moondust:button/normal"
                         }
                     ],
@@ -36,88 +64,89 @@
                 {
                     widget: "moondust:checkbox",
                     name: "debug_line_single_buffer",
-                    position: [2, 5],
+                    position: [-98, 5],
 
-                    checkbox: {
-                        label: "."
-                    }
+                    bounds: [107, 9],
+                    sprite_size: [7, 7],
+                    sprite_offset: [100, 1],
+
+                    checkbox: {}
                 },
                 {
                     widget: "moondust:checkbox",
                     name: "enable_wide_lines",
-                    position: {
-                        type: "relative",
-                        parent: "debug_line_single_buffer",
-                        offset: [0, 14]
-                    },
+                    position: [-98, 19],
 
-                    checkbox: {
-                        label: "."
-                    }
+                    bounds: [107, 9],
+                    sprite_size: [7, 7],
+                    sprite_offset: [100, 1],
+
+                    checkbox: {}
                 },
                 {
                     widget: "moondust:checkbox",
                     name: "font_gen_logs",
-                    position: {
-                        type: "relative",
-                        parent: "enable_wide_lines",
-                        offset: [0, 14]
-                    },
+                    position: [-98, 33],
 
-                    checkbox: {
-                        label: "."
-                    }
+                    bounds: [107, 9],
+                    sprite_size: [7, 7],
+                    sprite_offset: [100, 1],
+
+                    checkbox: {}
                 },
                 {
                     widget: "moondust:checkbox",
                     name: "generate_startup_atlas_data",
-                    position: {
-                        type: "relative",
-                        parent: "font_gen_logs",
-                        offset: [0, 14]
-                    },
+                    position: [-98, 47],
 
-                    checkbox: {
-                        label: "."
-                    }
+                    bounds: [107, 9],
+                    sprite_size: [7, 7],
+                    sprite_offset: [100, 1],
+
+                    checkbox: {}
                 },
                 {
                     widget: "moondust:checkbox",
                     name: "render_center_point",
-                    position: {
-                        type: "relative",
-                        parent: "generate_startup_atlas_data",
-                        offset: [0, 14]
-                    },
+                    position: [-98, 61],
 
-                    checkbox: {
-                        label: "."
-                    }
+                    bounds: [107, 9],
+                    sprite_size: [7, 7],
+                    sprite_offset: [100, 1],
+
+                    checkbox: {}
                 },
                 {
                     widget: "moondust:checkbox",
                     name: "title_fps",
-                    position: {
-                        type: "relative",
-                        parent: "render_center_point",
-                        offset: [0, 14]
-                    },
+                    position: [-98, 75],
 
-                    checkbox: {
-                        label: "."
-                    }
+                    bounds: [107, 9],
+                    sprite_size: [7, 7],
+                    sprite_offset: [100, 1],
+
+                    checkbox: {}
                 },
                 {
                     name: "line_width",
                     bounds: ["100%", 13],
+                    position: [2, 89],
+
+                    text_field: {
+                        ghost_text: "Line Width"
+                    }
+                },
+                {
+                    name: "present_mode",
+                    bounds: ["100%", 13],
                     position: {
                         type: "relative",
-                        parent: "title_fps",
+                        parent: "line_width",
                         offset: [0, 14]
                     },
 
                     text_field: {
-                        ghost_text: "Line Width"
+                        ghost_text: "Mailbox/FIFO/Immediate/FIFO Relaxed"
                     }
                 }
             ]

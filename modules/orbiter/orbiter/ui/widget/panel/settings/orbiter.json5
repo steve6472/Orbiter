@@ -9,7 +9,23 @@
                 text: {
                     parts: [
                         {
-                            text: "Fov:\n\nSensitivity:\n\nUI Scale:",
+                            text: "Fov:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Sensitivity:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "UI Scale:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Multiplayer Backend:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Username:",
                             style: "moondust:button/normal"
                         }
                     ],
@@ -66,6 +82,32 @@
 
                     text_field: {
                         ghost_text: "UI Scale"
+                    }
+                },
+                {
+                    name: "multiplayer_beckend",
+                    bounds: ["100%", 13],
+                    position: {
+                        type: "relative",
+                        parent: "ui_scale",
+                        offset: [0, 14]
+                    },
+
+                    text_field: {
+                        ghost_text: "steam / dedicated"
+                    }
+                },
+                {
+                    name: "username",
+                    bounds: ["100%", 13],
+                    position: {
+                        type: "relative",
+                        parent: "multiplayer_beckend",
+                        offset: [0, 14]
+                    },
+
+                    text_field: {
+                        ghost_text: "steve6472"
                     }
                 }
             ]

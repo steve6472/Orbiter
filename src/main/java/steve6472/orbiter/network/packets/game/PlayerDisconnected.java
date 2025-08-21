@@ -15,7 +15,7 @@ import steve6472.orbiter.network.ExtraBufferCodecs;
 public record PlayerDisconnected(SteamID disconnectedPlayer) implements Packet<PlayerDisconnected, GameListener>
 {
     public static final Key KEY = Key.defaultNamespace("kick_user");
-    public static final BufferCodec<ByteBuf, PlayerDisconnected> BUFFER_CODEC = BufferCodec.of(ExtraBufferCodecs.STEAM_ID, PlayerDisconnected::disconnectedPlayer, PlayerDisconnected::new);
+    public static final BufferCodec<ByteBuf, PlayerDisconnected> BUFFER_CODEC = BufferCodec.of(ExtraBufferCodecs.STEAM_USER, PlayerDisconnected::disconnectedPlayer, PlayerDisconnected::new);
 
     @Override
     public Key key()

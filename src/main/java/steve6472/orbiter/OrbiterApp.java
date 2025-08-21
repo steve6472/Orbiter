@@ -32,19 +32,16 @@ import steve6472.moondust.widget.Panel;
 import steve6472.moondust.widget.Widget;
 import steve6472.moondust.widget.component.ViewController;
 import steve6472.orbiter.commands.Commands;
-import steve6472.orbiter.debug.DebugWindow;
-import steve6472.orbiter.network.packets.game.AcceptedPeerConnection;
+import steve6472.orbiter.network.api.NetworkMain;
+import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
 import steve6472.orbiter.player.VRPlayer;
 import steve6472.orbiter.scheduler.Scheduler;
 import steve6472.orbiter.settings.Keybinds;
-import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.ui.MDUtil;
-import steve6472.orbiter.ui.panel.InGameChat;
-import steve6472.orbiter.ui.panel.InGameMenu;
-import steve6472.orbiter.ui.panel.MainMenu;
-import steve6472.orbiter.ui.panel.SettingsMenu;
+import steve6472.orbiter.ui.panel.*;
+import steve6472.orbiter.util.RandomNameGenerator;
 import steve6472.orbiter.world.World;
 import steve6472.test.DebugUILines;
 
@@ -60,7 +57,7 @@ public class OrbiterApp extends FlareApp
 {
     private static OrbiterApp instance;
 
-    private SteamMain steam;
+    private NetworkMain networkMain;
     private Client client;
     private Commands commands;
     private boolean isMouseGrabbed = false;
@@ -78,14 +75,10 @@ public class OrbiterApp extends FlareApp
         PhysicsSpace.logger.setLevel(Level.WARNING);
         PhysicsRigidBody.logger2.setLevel(Level.WARNING);
         NativeLibraryLoader.logger.setLevel(Level.WARNING);
-        NativeLibraryLoader.loadLibbulletjme(true, Constants.GENERATED_ORBITER, "Debug", "Sp");
+        System.load(Constants.BULLET_NATIVE.getAbsolutePath());
         NativeLibrary.setStartupMessageEnabled(false);
 
         client = new Client();
-        steam = new SteamMain(this);
-
-        if (OrbiterMain.ENABLE_STEAM || OrbiterMain.FAKE_P2P)
-            steam.setup();
     }
 
     @Override
@@ -101,6 +94,7 @@ public class OrbiterApp extends FlareApp
         MoonDustRegs.VIEW_ENTRIES.add(new PanelViewEntry(Constants.key("in_game_menu"), InGameMenu::new));
         MoonDustRegs.VIEW_ENTRIES.add(new PanelViewEntry(Constants.key("chat"), InGameChat::new));
         MoonDustRegs.VIEW_ENTRIES.add(new PanelViewEntry(Constants.key("settings"), SettingsMenu::new));
+        MoonDustRegs.VIEW_ENTRIES.add(new PanelViewEntry(Constants.key("lobby_dedicated"), LobbyMenuDedicated::new));
 
         initRegistry(MoonDustRegistries.POSITION_BLUEPRINT_TYPE);
         JavaFunctions.init(this);
@@ -113,15 +107,9 @@ public class OrbiterApp extends FlareApp
     {
         SettingsLoader.loadFromJsonFile(Registries.SETTINGS, Constants.SETTINGS);
         SettingsLoader.loadFromJsonFile(MoonDustRegistries.SETTINGS, MoonDustConstants.SETTINGS_FILE);
-        MoonDust.getInstance().setPixelScale(Settings.UI_SCALE.get());
 
-        if (OrbiterMain.FAKE_P2P)
-        {
-            if (OrbiterMain.FAKE_PEER)
-                VisualSettings.VR.set(true);
-            else
-                VisualSettings.VR.set(false);
-        }
+        MoonDust.getInstance().setPixelScale(Settings.UI_SCALE.get());
+        VisualSettings.USERNAME.set(RandomNameGenerator.generateFullName());
     }
 
     @Override
@@ -153,12 +141,8 @@ public class OrbiterApp extends FlareApp
         client.setCamera(camera());
 
         commands = new Commands();
-        DebugWindow.openDebugWindow(commands, client, steam);
 
-        if (OrbiterMain.FAKE_P2P)
-        {
-            steam.connections.broadcastMessage(new AcceptedPeerConnection(VrData.VR_ON));
-        }
+        swapNetworkBackend(Settings.MULTIPLAYER_BACKEND.get());
 
         Flare.getModuleManager().clearPartsCache();
     }
@@ -168,12 +152,11 @@ public class OrbiterApp extends FlareApp
     @Override
     public void render(FrameInfo frameInfo, MemoryStack memoryStack)
     {
-        if (!OrbiterMain.STEAM_TEST)
-            frameInfo.camera().setPerspectiveProjection(Settings.FOV.get(), aspectRatio(), 0.1f, 1024f);
+        frameInfo.camera().setPerspectiveProjection(Settings.FOV.get(), aspectRatio(), 0.1f, 1024f);
 
-        float frameTime = frameInfo == null ? (1f / Constants.TICKS_IN_SECOND) : frameInfo.frameTime();
+        float frameTime = frameInfo.frameTime();
 
-        if ((!OrbiterMain.STEAM_TEST && isMouseGrabbed) || VrData.VR_ON)
+        if ((isMouseGrabbed) || VrData.VR_ON)
             client.handleInput(input(), vrInput(), frameTime);
 
         timeToNextTick -= frameTime;
@@ -190,7 +173,9 @@ public class OrbiterApp extends FlareApp
     {
         //noinspection deprecation
         Scheduler.instance().tick();
-        steam.tick();
+
+        if (networkMain != null)
+            networkMain.tick();
 
         client.tickClient();
 
@@ -250,9 +235,18 @@ public class OrbiterApp extends FlareApp
         }
     }
 
+    public void swapNetworkBackend(Settings.MultiplayerBackend backend)
+    {
+        if (backend == Settings.MultiplayerBackend.DEDICATED)
+            networkMain = new DedicatedMain();
+        else
+            throw new IllegalStateException("Steam backend not implemented yet!");
+
+        networkMain.setup();
+    }
+
     public void clearWorld()
     {
-        steam.changeWorld(null);
         client.setWorld(null);
         client.setPlayer(null);
     }
@@ -264,10 +258,10 @@ public class OrbiterApp extends FlareApp
             throw new IllegalStateException("Tried to navigate to null world, use clearWorld if you wish to clear the world instead.");
         }
 
-        world.steam = steam;
+//        world.steam = steam;
         world.init(masterRenderer());
         this.client.setWorld(world);
-        steam.changeWorld(world);
+//        steam.changeWorld(world);
 
         client.setPlayer(VrData.VR_ON ? new VRPlayer(client) : new PCPlayer());
 
@@ -286,11 +280,6 @@ public class OrbiterApp extends FlareApp
         GLFW.glfwSetInputMode(window().window(), GLFW.GLFW_CURSOR, isMouseGrabbed ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
     }
 
-//    public World getWorld()
-//    {
-//        return client;
-//    }
-
     public Client getClient()
     {
         return client;
@@ -301,9 +290,9 @@ public class OrbiterApp extends FlareApp
         return commands;
     }
 
-    public SteamMain getSteam()
+    public NetworkMain getNetwork()
     {
-        return steam;
+        return networkMain;
     }
 
     public static OrbiterApp getInstance()
@@ -321,8 +310,8 @@ public class OrbiterApp extends FlareApp
     @Override
     public void cleanup()
     {
-        DebugWindow.closeDebugWindow();
-        steam.shutdown();
+        if (networkMain != null)
+            networkMain.shutdown();
     }
 
     @Override

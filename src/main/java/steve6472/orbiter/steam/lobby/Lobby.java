@@ -4,12 +4,9 @@ import com.codedisaster.steamworks.*;
 import steve6472.core.log.Log;
 import steve6472.core.network.Packet;
 import steve6472.orbiter.network.PacketManager;
-import steve6472.orbiter.network.PeerConnections;
-import steve6472.orbiter.network.packets.game.HelloGame;
 import steve6472.orbiter.network.packets.lobby.LobbyKickUser;
 import steve6472.orbiter.network.packets.lobby.LobbyClosing;
 import steve6472.orbiter.steam.SteamMain;
-import steve6472.orbiter.steam.SteamPeer;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -28,7 +25,7 @@ public class Lobby
     private final SteamMain steamMain;
     private final SteamMatchmaking matchmaking;
     private final PacketManager packetManager;
-    private final PeerConnections<SteamPeer> connections;
+//    private final PeerConnections<User> connections;
 
     /*
      * Lobby data
@@ -52,7 +49,7 @@ public class Lobby
         this.steamMain = steamMain;
         this.matchmaking = steamMain.steamMatchmaking;
         this.packetManager = steamMain.packetManager;
-        this.connections = steamMain.connections;
+//        this.connections = steamMain.connections;
     }
 
     public Lobby(SteamID lobbyID, SteamMain steamMain, SteamMatchmaking.LobbyType lobbyType, int maxMembers, SteamID lobbyOwner)
@@ -61,7 +58,7 @@ public class Lobby
         this.steamMain = steamMain;
         this.matchmaking = steamMain.steamMatchmaking;
         this.packetManager = steamMain.packetManager;
-        this.connections = steamMain.connections;
+//        this.connections = steamMain.connections;
         this.lobbyType = lobbyType;
         this.maxMembers = maxMembers;
         this.lobbyOwner = lobbyOwner;
@@ -172,10 +169,10 @@ public class Lobby
             if (connectedUser.equals(lobbyOwner))
                 continue;
 
-            connections.addPeer(new SteamPeer(connectedUser));
+//            connections.addPeer(new SteamPeer(connectedUser));
         }
 
-        connections.broadcastMessage(HelloGame.instance());
+//        connections.broadcastMessage(HelloGame.instance());
     }
 
     /*

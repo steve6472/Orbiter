@@ -6,7 +6,6 @@ import com.codedisaster.steamworks.SteamID;
 import com.codedisaster.steamworks.SteamResult;
 import steve6472.core.log.Log;
 import steve6472.orbiter.commands.CommandSource;
-import steve6472.orbiter.debug.Console;
 import steve6472.orbiter.steam.lobby.Lobby;
 
 import java.util.logging.Logger;
@@ -76,7 +75,7 @@ public class OrbiterSteamFriends implements SteamFriendsCallback
 
         steamMain.lobbyManager.setCurrentLobby(new Lobby(steamIDLobby, steamMain));
 
-        Console.log("Joining lobby " + steamIDLobby + ", requested by " + steamMain.friendNames.getUserName(steamIDFriend), CommandSource.ResponseStyle.WEIRD_GREEN);
+//        Console.log("Joining lobby " + steamIDLobby + ", requested by " + steamMain.friendNames.getUserName(steamIDFriend), CommandSource.ResponseStyle.WEIRD_GREEN);
         steamMain.steamMatchmaking.joinLobby(steamIDLobby);
     }
 

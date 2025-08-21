@@ -1,6 +1,5 @@
 package steve6472.orbiter.world;
 
-import com.codedisaster.steamworks.SteamID;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import dev.dominion.ecs.api.Dominion;
@@ -9,7 +8,8 @@ import dev.dominion.ecs.api.Results;
 import steve6472.core.registry.Key;
 import steve6472.flare.registry.FlareRegistries;
 import steve6472.orbiter.Constants;
-import steve6472.orbiter.network.PeerConnections;
+import steve6472.orbiter.network.api.Connections;
+import steve6472.orbiter.network.api.User;
 import steve6472.orbiter.network.packets.game.CreateEntity;
 import steve6472.orbiter.network.packets.game.RemoveEntity;
 import steve6472.orbiter.world.ecs.components.IndexModel;
@@ -31,7 +31,7 @@ public interface EntityControl
     PhysicsSpace physics();
     Dominion ecs();
     Map<UUID, PhysicsRigidBody> bodyMap();
-    PeerConnections<?> connections();
+    Connections connections();
 
     default Entity addEntity(Model model, UUID uuid, Object... extraComponents)
     {
@@ -48,7 +48,7 @@ public interface EntityControl
 
         // Broadcast new entity to peers
         if (connections() != null)
-            connections().broadcastMessage(new CreateEntity(entity));
+            connections().broadcastPacket(new CreateEntity(entity));
 
         return entity;
     }
@@ -66,7 +66,7 @@ public interface EntityControl
 
         // Broadcast new entity to peers
         if (connections() != null)
-            connections().broadcastMessage(new CreateEntity(entity));
+            connections().broadcastPacket(new CreateEntity(entity));
 
         return entity;
     }
@@ -92,17 +92,17 @@ public interface EntityControl
         return entity;
     }
 
-    default Entity spawnDebugPlayer(SteamID steamID, boolean VR)
+    default Entity spawnDebugPlayer(User user, boolean VR)
     {
         ArrayList<Object> objects = new ArrayList<>();
-        Key key = Key.defaultNamespace(VR ? "blockbench/static/vr_player" : "blockbench/static/player_capsule");
+        Key key = Constants.key(VR ? "blockbench/static/vr_player" : "blockbench/static/player_capsule");
         Model model = FlareRegistries.STATIC_MODEL.get(key);
         Collision collision = new Collision(key);
         UUID uuid = UUID.randomUUID();
 
         objects.add(new IndexModel(model));
         objects.add(uuid);
-        objects.add(new MPControlled(steamID));
+        objects.add(new MPControlled(user));
         objects.add(Tag.PHYSICS);
         objects.add(new Position());
         objects.add(new Gravity(0, 0, 0));
@@ -165,7 +165,7 @@ public interface EntityControl
         ecs().findEntitiesWith(UUID.class).stream().filter(e -> e.comp().equals(uuid)).forEach(e -> ecs().deleteEntity(e.entity()));
 
         if (connections() != null)
-            connections().broadcastMessage(new RemoveEntity(uuid));
+            connections().broadcastPacket(new RemoveEntity(uuid));
     }
 
     default Optional<Entity> getEntityByUUID(UUID uuid)

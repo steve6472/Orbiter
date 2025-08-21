@@ -93,6 +93,25 @@
                 },
                 label: "Settings"
             }
+        },
+        {
+            name: "lobby_menu",
+            bounds: [200, 26],
+            position: {
+                type: "relative",
+                parent: "settings",
+                offset: [0, 30]
+            },
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:open_lobby_menu"
+                    }
+                },
+                label: "Lobby Menu"
+            }
         }
     ]
 }

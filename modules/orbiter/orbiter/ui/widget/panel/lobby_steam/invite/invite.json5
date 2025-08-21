@@ -1,0 +1,111 @@
+{
+    children: [
+        {
+            name: "titles",
+            bounds: [20, 64],
+            position: [2, 6],
+
+            text: {
+                text: {
+                    parts: [
+                        {
+                            text: "IP:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Port:\n\n",
+                            style: "moondust:button/normal"
+                        }
+                    ],
+                    anchor: "top_left",
+                    align: "left",
+                    text_size: 6,
+                    vertical_anchor: "max_height",
+                    max_height: 64
+                },
+                position: {
+                    type: "anchored",
+                    anchor: "top_left",
+                    offset: [0, 0]
+                },
+                inherit_width: true
+            }
+        },
+        {
+            name: "ip_field",
+            bounds: ["100% - 32", 13],
+            position: [22, 2],
+
+            text_field: {
+                password: true,
+                ghost_text: "easter egg hehe"
+            }
+        },
+        {
+            name: "ip_visibility",
+            bounds: [7, 7],
+            position: {
+                type: "anchored",
+                anchor: "top_right",
+                offset: [-1, 5]
+            },
+
+            checkbox: {}
+        },
+        {
+            name: "port_field",
+            bounds: ["100% - 32", 13],
+            position: [22, 16],
+
+            text_field: {
+                password: false,
+                ghost_text: "25001"
+            }
+        },
+        {
+            name: "port_visibility",
+            bounds: [7, 7],
+            position: {
+                type: "anchored",
+                anchor: "top_right",
+                offset: [-1, 19]
+            },
+
+            checkbox: {}
+        },
+        {
+            name: "expect_user_confirm",
+            bounds: [50, 13],
+            position: [0, 30],
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:expect_user"
+                    }
+                },
+                label: "Expect User"
+            }
+        },
+        {
+            name: "join_confirm",
+            bounds: [50, 13],
+            position: {
+                type: "anchored",
+                anchor: "top_right",
+                offset: [0, 30]
+            },
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:join"
+                    }
+                },
+                label: "Join"
+            }
+        }
+    ]
+}

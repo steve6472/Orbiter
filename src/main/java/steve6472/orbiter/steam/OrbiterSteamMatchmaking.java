@@ -3,16 +3,11 @@ package steve6472.orbiter.steam;
 import com.codedisaster.steamworks.*;
 import steve6472.core.log.Log;
 import steve6472.orbiter.OrbiterMain;
-import steve6472.orbiter.commands.CommandSource;
-import steve6472.orbiter.debug.Console;
-import steve6472.orbiter.network.packets.game.HelloGame;
-import steve6472.orbiter.network.packets.game.PlayerDisconnected;
 import steve6472.orbiter.network.packets.lobby.LobbyListener;
 import steve6472.orbiter.steam.lobby.Lobby;
 import steve6472.orbiter.world.ecs.components.MPControlled;
 
 import javax.swing.*;
-import java.awt.*;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.UUID;
@@ -47,27 +42,7 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
         Lobby lobby = new Lobby(steamIDLobby, steamMain);
         steamMain.lobbyManager.lobbyInvites.add(new LobbyInvite(steamIDUser, lobby));
         String inviteeName = steamMain.friendNames.getUserName(steamIDUser);
-        Console.log("You've been invited to lobby " + steamIDLobby + " by " + inviteeName, CommandSource.ResponseStyle.BLACK);
-        if (OrbiterMain.STEAM_TEST)
-        {
-            int res = JOptionPane.showOptionDialog(
-                null,
-                "Invite from " + inviteeName,
-                "Do you wish to accept the invite from " + inviteeName + "?",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                new String[] {"Yes", "No"},
-                "Yes");
-
-            if (res == JOptionPane.YES_OPTION)
-            {
-                steamMain.steamMatchmaking.joinLobby(steamIDLobby);
-            } else
-            {
-                steamMain.lobbyManager.lobbyInvites.removeFirst();
-            }
-        }
+//        Console.log("You've been invited to lobby " + steamIDLobby + " by " + inviteeName, CommandSource.ResponseStyle.BLACK);
     }
 
     @Override
@@ -141,8 +116,8 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
 
             if (steamMain.lobbyManager.currentLobby().hasGameStarted())
             {
-                steamMain.connections.addPeer(new SteamPeer(steamIDUserChanged));
-                steamMain.connections.broadcastMessage(HelloGame.instance());
+//                steamMain.connections.addPeer(new SteamPeer(steamIDUserChanged));
+//                steamMain.connections.broadcastMessage(HelloGame.instance());
             }
         }
         else if (stateChange == SteamMatchmaking.ChatMemberStateChange.Left)
@@ -152,8 +127,8 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
 
             if (steamMain.lobbyManager.currentLobby().hasGameStarted())
             {
-                steamMain.connections.removePeer(new SteamPeer(steamIDUserChanged));
-                steamMain.connections.broadcastMessage(new PlayerDisconnected(steamIDUserChanged));
+//                steamMain.connections.removePeer(new SteamPeer(steamIDUserChanged));
+//                steamMain.connections.broadcastMessage(new PlayerDisconnected(steamIDUserChanged));
 
                 if (steamMain.orbiterApp.getClient().getWorld() != null)
                 {
@@ -232,7 +207,7 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
             return;
         }
         steamMain.lobbyManager.lobbyCreated(steamIDLobby);
-        Console.log("Lobby created " + steamIDLobby + " result: " + result, CommandSource.ResponseStyle.SUCCESS);
+//        Console.log("Lobby created " + steamIDLobby + " result: " + result, CommandSource.ResponseStyle.SUCCESS);
     }
 
     @Override

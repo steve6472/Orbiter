@@ -7,6 +7,8 @@ import org.joml.Matrix3f;
 import org.joml.Vector3f;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
+import steve6472.orbiter.network.api.User;
+import steve6472.orbiter.network.impl.dedicated.DedicatedUser;
 
 /**
  * Created by steve6472
@@ -16,7 +18,37 @@ import steve6472.core.network.BufferCodecs;
 public interface ExtraBufferCodecs
 {
     BufferCodec<ByteBuf, Vector3f> VEC3F = BufferCodec.of(BufferCodecs.FLOAT, Vector3f::x, BufferCodecs.FLOAT, Vector3f::y, BufferCodecs.FLOAT, Vector3f::z, Vector3f::new);
-    BufferCodec<ByteBuf, SteamID> STEAM_ID = BufferCodec.of(BufferCodecs.LONG, SteamID::getNativeHandle, SteamID::createFromNativeHandle);
+    /// @deprecated WIP
+    @Deprecated
+    BufferCodec<ByteBuf, SteamID> STEAM_USER = BufferCodec.of(BufferCodecs.LONG, SteamID::getNativeHandle, SteamID::createFromNativeHandle);
+    BufferCodec<ByteBuf, DedicatedUser> DEDICATED_USER = BufferCodec.of(BufferCodecs.STRING, User::username, DedicatedUser::new);
+
+    BufferCodec<ByteBuf, User> USER = new BufferCodec<ByteBuf, User>()
+    {
+        @Override
+        public User decode(ByteBuf object)
+        {
+            boolean isDedicated = object.readBoolean();
+            if (isDedicated)
+            {
+                return DEDICATED_USER.decode(object);
+            } else
+            {
+                throw new IllegalStateException("Steam user decode not implemented yet!");
+//                return STEAM_USER.decode(object);
+            }
+        }
+
+        @Override
+        public void encode(ByteBuf left, User right)
+        {
+            if (right instanceof DedicatedUser dedUser)
+            {
+                left.writeBoolean(true);
+                DEDICATED_USER.encode(left, dedUser);
+            }
+        }
+    };
 
     BufferCodec<ByteBuf, Matrix3f> MAT3F = new BufferCodec<>()
     {

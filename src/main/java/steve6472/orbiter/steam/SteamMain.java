@@ -7,13 +7,7 @@ import steve6472.flare.vr.VrData;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.OrbiterMain;
 import steve6472.orbiter.network.PacketManager;
-import steve6472.orbiter.network.PeerConnections;
 import steve6472.orbiter.network.packets.game.GameListener;
-import steve6472.orbiter.network.packets.game.Heartbeat;
-import steve6472.orbiter.network.packets.game.TeleportToPosition;
-import steve6472.orbiter.network.test.FakeP2PConstants;
-import steve6472.orbiter.network.test.FakeSteamPeerConnections;
-import steve6472.orbiter.steam.lobby.Lobby;
 import steve6472.orbiter.steam.lobby.LobbyManager;
 import steve6472.orbiter.world.World;
 
@@ -39,7 +33,7 @@ public class SteamMain
     public LobbyManager lobbyManager;
     public PacketManager packetManager;
     public SteamFriendNameCache friendNames;
-    public PeerConnections<SteamPeer> connections;
+//    public PeerConnections<SteamPeer> connections;
 
     public SteamMain(OrbiterApp orbiterApp)
     {
@@ -48,7 +42,7 @@ public class SteamMain
 
     public void setup()
     {
-        if (!OrbiterMain.FAKE_P2P && OrbiterMain.ENABLE_STEAM)
+        if (OrbiterMain.ENABLE_STEAM)
         {
             try
             {
@@ -72,28 +66,14 @@ public class SteamMain
 
         packetManager = new PacketManager();
 
-        if (OrbiterMain.FAKE_P2P)
-        {
-            connections = new FakeSteamPeerConnections(this);
-            if (OrbiterMain.FAKE_PEER)
-                userID = FakeP2PConstants.FAKE_PEER;
-            else
-                userID = FakeP2PConstants.USER_ID;
-            lobbyManager = new LobbyManager(this);
-            Lobby lobby = new Lobby(FakeP2PConstants.LOBBY_ID, this);
-            lobbyManager.setCurrentLobby(lobby);
-            lobby._setLobbyOwner(FakeP2PConstants.USER_ID);
-        } else
-        {
-            steamUser = new SteamUser(new OrbiterSteamUserCallback());
-            userID = steamUser.getSteamID();
-            steamFriends = new SteamFriends(new OrbiterSteamFriends(this));
-            friendNames = new SteamFriendNameCache(steamFriends, userID);
-            steamNetworking = new SteamNetworking(new OrbiterSteamNetworking(this));
-            steamMatchmaking = new SteamMatchmaking(new OrbiterSteamMatchmaking(this));
-            lobbyManager = new LobbyManager(this);
-            connections = new SteamPeerConnections(this);
-        }
+        steamUser = new SteamUser(new OrbiterSteamUserCallback());
+        userID = steamUser.getSteamID();
+        steamFriends = new SteamFriends(new OrbiterSteamFriends(this));
+        friendNames = new SteamFriendNameCache(steamFriends, userID);
+        steamNetworking = new SteamNetworking(new OrbiterSteamNetworking(this));
+        steamMatchmaking = new SteamMatchmaking(new OrbiterSteamMatchmaking(this));
+        lobbyManager = new LobbyManager(this);
+//        connections = new SteamPeerConnections(this);
     }
 
     public boolean isHost()
@@ -107,10 +87,10 @@ public class SteamMain
 
         packetManager.unregisterListener(GameListener.class);
 
-        if (world != null)
-            packetManager.registerListener(new GameListener(this, world));
+//        if (world != null)
+//            packetManager.registerListener(new GameListener(this, world));
 
-        connections.setListener(GameListener.class);
+//        connections.setListener(GameListener.class);
     }
 
     int tick = 0;
@@ -121,19 +101,22 @@ public class SteamMain
 
         try
         {
-            connections.tick();
+//            connections.tick();
 
-            Vector3f vector3f;
-            if (VrData.VR_ON)
-                vector3f = orbiterApp.getClient().player().getEyePos();
-            else
-                vector3f = orbiterApp.getClient().player().getCenterPos();
-            connections.broadcastMessage(new TeleportToPosition(vector3f));
+            if (orbiterApp.getClient().player() != null)
+            {
+                Vector3f vector3f;
+                if (VrData.VR_ON)
+                    vector3f = orbiterApp.getClient().player().getEyePos();
+                else
+                    vector3f = orbiterApp.getClient().player().getCenterPos();
+//                connections.broadcastMessage(new TeleportToPosition(vector3f));
+            }
 
             // Every second send heartbeat
             if (tick == 30)
             {
-                connections.broadcastMessage(Heartbeat.instance());
+//                connections.broadcastMessage(Heartbeat.instance());
             }
 
         } catch (Exception e)
@@ -146,7 +129,7 @@ public class SteamMain
 
     private void runCallbacks()
     {
-        if (!OrbiterMain.FAKE_P2P && SteamAPI.isSteamRunning())
+        if (SteamAPI.isSteamRunning())
         {
             SteamAPI.runCallbacks();
         }
@@ -160,8 +143,7 @@ public class SteamMain
     {
         if (!enabled) return;
 
-        if (!OrbiterMain.FAKE_P2P)
-            SteamAPI.shutdown();
+        SteamAPI.shutdown();
     }
 
     public boolean disabled()

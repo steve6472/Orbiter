@@ -19,11 +19,11 @@ public class ChatCommand extends Command
 	{
 		dispatcher.register(literal("c").then(argument("text", StringArgumentType.greedyString()).executes(c -> {
 
-			LobbyManager lobbyManager = OrbiterApp.getInstance().getSteam().lobbyManager;
-			if (lobbyManager.currentLobby() != null)
-			{
-				lobbyManager.currentLobby().broadcastLobbyPacket(new LobbyChatMessage(getString(c, "text")));
-			}
+//			LobbyManager lobbyManager = OrbiterApp.getInstance().getSteam().lobbyManager;
+//			if (lobbyManager.currentLobby() != null)
+//			{
+//				lobbyManager.currentLobby().broadcastLobbyPacket(new LobbyChatMessage(getString(c, "text")));
+//			}
 
 			return 0;
 		})));

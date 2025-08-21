@@ -25,15 +25,9 @@ import steve6472.flare.vr.input.VrAction;
 import steve6472.flare.vr.input.VrActionSet;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
-import steve6472.orbiter.OrbiterApp;
-import steve6472.orbiter.network.PeerConnections;
-import steve6472.orbiter.network.packets.game.AddJoint;
-import steve6472.orbiter.network.packets.game.ClearJoints;
-import steve6472.orbiter.steam.SteamPeer;
 import steve6472.orbiter.world.EntityModify;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.*;
-import steve6472.orbiter.world.ecs.systems.NetworkSync;
 
 import java.util.List;
 import java.util.Optional;
@@ -164,8 +158,8 @@ public class VRPlayer implements Player
             rotComp.modifyBody(body);
             EntityModify._markModified(handEntity, Rotation.class);
 
-            if (OrbiterApp.getInstance().getSteam().connections != null)
-                NetworkSync.syncEntity(handEntity, OrbiterApp.getInstance().getSteam().connections);
+//            if (OrbiterApp.getInstance().getSteam().connections != null)
+//                NetworkSync.syncEntity(handEntity, OrbiterApp.getInstance().getSteam().connections);
 
         }, () -> {
             if (handEntity != null)
@@ -281,15 +275,15 @@ public class VRPlayer implements Player
                 PhysicsJoint joint = new SixDofSpringJoint(grabbedObject, body, pivot, Convert.jomlToPhys(offset), rotInA, rotInB, false);
                 client.getWorld().physics().addJoint(joint);
 
-                PeerConnections<SteamPeer> connections = OrbiterApp.getInstance().getSteam().connections;
-                if (connections != null)
-                    connections.broadcastMessage(new AddJoint(
-                        ((UUID) grabbedObject.getUserObject()),
-                        ((UUID) body.getUserObject()),
-                        Convert.physToJoml(pivot),
-                        offset,
-                        Convert.physToJoml(rotInA, new org.joml.Matrix3f()),
-                        Convert.physToJoml(rotInB, new org.joml.Matrix3f())));
+//                PeerConnections<SteamPeer> connections = OrbiterApp.getInstance().getSteam().connections;
+//                if (connections != null)
+//                    connections.broadcastMessage(new AddJoint(
+//                        ((UUID) grabbedObject.getUserObject()),
+//                        ((UUID) body.getUserObject()),
+//                        Convert.physToJoml(pivot),
+//                        offset,
+//                        Convert.physToJoml(rotInA, new org.joml.Matrix3f()),
+//                        Convert.physToJoml(rotInB, new org.joml.Matrix3f())));
 
                 jointsExist = true;
                 DebugRender.addDebugObjectForS(DebugRender.line(jointPos, endPoint, DebugRender.RED), 3);
@@ -310,8 +304,8 @@ public class VRPlayer implements Player
         }
         jointsExist = false;
 
-        PeerConnections<SteamPeer> connections = OrbiterApp.getInstance().getSteam().connections;
-        if (connections != null)
-            connections.broadcastMessage(new ClearJoints(((UUID) body.getUserObject())));
+//        PeerConnections<SteamPeer> connections = OrbiterApp.getInstance().getSteam().connections;
+//        if (connections != null)
+//            connections.broadcastMessage(new ClearJoints(((UUID) body.getUserObject())));
     }
 }

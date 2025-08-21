@@ -1,0 +1,42 @@
+{
+    view_controller: "orbiter:lobby_dedicated",
+
+    children: [
+        {
+            widget: "moondust:tab_view",
+            name: "tabs",
+            bounds: ["100% - 4", "100% - 18"],
+            position: {
+                type: "anchored",
+                anchor: "top_left",
+                offset: [2, 2]
+            },
+
+            tab_view: {
+                labels: ["Create", "Manage", "Join", "Find"],
+                views: ["orbiter:panel/lobby_dedicated/create", "orbiter:panel/lobby_dedicated/manage", "orbiter:panel/lobby_dedicated/join", "orbiter:panel/lobby_dedicated/find"],
+                default: 0,
+                side: "top"
+            }
+        },
+        {
+            name: "back",
+            bounds: [80, 13],
+            position: {
+                type: "anchored",
+                anchor: "bottom_left",
+                offset: [2, -2]
+            },
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:back"
+                    }
+                },
+                label: "Back"
+            }
+        }
+    ]
+}

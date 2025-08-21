@@ -1,0 +1,57 @@
+{
+    children: [
+        {
+            name: "bg_frame",
+            bounds: ["100%", "100% - 8"],
+            position: {
+                type: "anchored",
+                anchor: "bottom_left"
+            },
+
+            sprites: {
+                "main": "moondust:generic_dark_pixel/frame/flat/light_frame/light_inside/style_5"
+            },
+            current_sprite: "main"
+        },
+        {
+            name: "name_notch",
+            bounds: [70, 10],
+            position: {
+                type: "anchored",
+                anchor: "top_left",
+                offset: [5, 0]
+            },
+
+            sprites: {
+                "main": "moondust:generic_dark_pixel/frame/title_notch/light/normal/style_5"
+            },
+            current_sprite: "main",
+            text: {
+                text: {
+                    parts: [
+                        {
+                            text: "User Data",
+                            style: "moondust:tiny_pixie2_dark"
+                        }
+                    ],
+                    anchor: "top_left",
+                    align: "left",
+                    text_size: 6,
+                    vertical_anchor: "max_height",
+                    force_single_line: true
+                },
+                position: {
+                    type: "anchored",
+                    anchor: "top_left",
+                    offset: [4, 3]
+                }
+            }
+        },
+        {
+            widget: "orbiter:panel/lobby_steam/invite/invites",
+            name: "content",
+            bounds: ["100% - 11", "100% - 19"],
+            position: [5, 14]
+        }
+    ]
+}

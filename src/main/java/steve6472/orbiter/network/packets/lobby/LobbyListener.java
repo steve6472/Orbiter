@@ -3,7 +3,6 @@ package steve6472.orbiter.network.packets.lobby;
 import com.codedisaster.steamworks.SteamID;
 import steve6472.core.log.Log;
 import steve6472.orbiter.commands.CommandSource;
-import steve6472.orbiter.debug.Console;
 import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.steam.SteamMain;
 import steve6472.orbiter.steam.lobby.Lobby;
@@ -25,7 +24,6 @@ public class LobbyListener extends OrbiterPacketListener
 
     public LobbyListener(Lobby lobby, SteamMain steamMain)
     {
-        super(steamMain);
         this.lobby = lobby;
         this.steamMain = steamMain;
     }
@@ -36,7 +34,7 @@ public class LobbyListener extends OrbiterPacketListener
 
         if (!lobby.getLobbyOwner().equals(sender()))
         {
-            LOGGER.warning(steamMain.friendNames.getUserName(sender()) + " tried to kick someone but they are not the owner");
+            LOGGER.warning(sender() + " tried to kick someone but they are not the owner");
             return;
         }
 
@@ -65,7 +63,7 @@ public class LobbyListener extends OrbiterPacketListener
         LOGGER.finest("Recieved lobbyClosing");
         if (!lobby.getLobbyOwner().equals(sender()))
         {
-            LOGGER.warning(steamMain.friendNames.getUserName(sender()) + " tried to send lobby_closing packet but they are not the owner");
+            LOGGER.warning(sender() + " tried to send lobby_closing packet but they are not the owner");
             return;
         }
 
@@ -76,12 +74,12 @@ public class LobbyListener extends OrbiterPacketListener
 
     public void helloWorld()
     {
-        LOGGER.info("Got hello world from " + steamMain.friendNames.getUserName(sender()));
+        LOGGER.info("Got hello world from " + sender());
     }
 
     public void chatMessage(String message)
     {
-        String friendPersonaName = steamMain.friendNames.getUserName(sender());
-        Console.log(friendPersonaName + "> " + message, CommandSource.ResponseStyle.BLACK);
+        String friendPersonaName = sender().username();
+//        Console.log(friendPersonaName + "> " + message, CommandSource.ResponseStyle.BLACK);
     }
 }

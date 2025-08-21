@@ -15,7 +15,7 @@ import steve6472.orbiter.network.ExtraBufferCodecs;
 public record LobbyKickUser(SteamID toKick) implements Packet<LobbyKickUser, LobbyListener>
 {
     public static final Key KEY = Key.defaultNamespace("lobby_kick_user");
-    public static final BufferCodec<ByteBuf, LobbyKickUser> BUFFER_CODEC = BufferCodec.of(ExtraBufferCodecs.STEAM_ID, LobbyKickUser::toKick, LobbyKickUser::new);
+    public static final BufferCodec<ByteBuf, LobbyKickUser> BUFFER_CODEC = BufferCodec.of(ExtraBufferCodecs.STEAM_USER, LobbyKickUser::toKick, LobbyKickUser::new);
 
     @Override
     public Key key()

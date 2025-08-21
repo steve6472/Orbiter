@@ -1,0 +1,22 @@
+{
+    children: [
+        {
+            widget: "orbiter:panel/lobby_steam/invite/frame_invite",
+            name: "invite",
+            bounds: ["50% - 1", "100%"],
+            position: {
+                type: "anchored",
+                anchor: "top_left"
+            }
+        },
+        {
+            widget: "orbiter:panel/lobby_steam/invite/frame_invites",
+            name: "invites",
+            bounds: ["50% - 1", "100%"],
+            position: {
+                type: "anchored",
+                anchor: "top_right"
+            }
+        }
+    ]
+}

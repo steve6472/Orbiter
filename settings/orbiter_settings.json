@@ -1,5 +1,6 @@
 {
-  "orbiter:fov": 90.0,
+  "orbiter:fov": 80.0,
+  "orbiter:multiplayer_beckend": "dedicated",
   "orbiter:sensitivity": 0.15,
   "orbiter:ui_scale": 3
 }

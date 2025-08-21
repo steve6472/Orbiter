@@ -1,12 +1,15 @@
 package steve6472.orbiter.ui.panel;
 
 import steve6472.core.registry.Key;
+import steve6472.core.registry.StringValue;
+import steve6472.core.setting.EnumSetting;
 import steve6472.core.setting.FloatSetting;
 import steve6472.core.setting.IntSetting;
 import steve6472.core.util.MathUtil;
 import steve6472.flare.settings.VisualSettings;
 import steve6472.moondust.MoonDust;
 import steve6472.moondust.view.PanelView;
+import steve6472.moondust.view.property.BooleanProperty;
 import steve6472.moondust.view.property.StringProperty;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
@@ -31,6 +34,29 @@ public class SettingsMenu extends PanelView
         // ### Orbiter ### //
         bindTextSetting(Settings.FOV, findProperty("fov:text"));
         bindTextSetting(Settings.SENSITIVITY, findProperty("sensitivity:text"));
+        bindSetting(VisualSettings.USERNAME, findProperty("username:text"));
+
+        BooleanProperty multiplayerBackendEnabled = findProperty("multiplayer_beckend:enabled");
+        multiplayerBackendEnabled.set(OrbiterApp.getInstance().getClient().getWorld() == null);
+        StringProperty multiplayerBackend = findProperty("multiplayer_beckend:text");
+        bindTextSetting(Settings.MULTIPLAYER_BACKEND, multiplayerBackend);
+
+        multiplayerBackend.addListener((_, _, nVal) -> {
+
+            StringValue[] enumConstants = Settings.MULTIPLAYER_BACKEND.get().getDeclaringClass().getEnumConstants();
+
+            String trim = nVal.trim();
+
+            for (StringValue enumConstant : enumConstants)
+            {
+                if (trim.equals(enumConstant.stringValue()))
+                {
+                    OrbiterApp.getInstance().swapNetworkBackend((Settings.MultiplayerBackend) enumConstant);
+                    return;
+                }
+            }
+        });
+
         StringProperty uiScale = findProperty("ui_scale:text");
         bindTextSetting(Settings.UI_SCALE, uiScale);
 
@@ -50,6 +76,7 @@ public class SettingsMenu extends PanelView
         bindSetting(VisualSettings.RENDER_CENTER_POINT, findProperty("render_center_point:checked"));
         bindSetting(VisualSettings.TITLE_FPS, findProperty("title_fps:checked"));
         bindTextSetting(VisualSettings.LINE_WIDTH, findProperty("line_width:text"));
+        bindTextSetting(VisualSettings.PRESENT_MODE, findProperty("present_mode:text"));
     }
 
     @Override
@@ -70,6 +97,14 @@ public class SettingsMenu extends PanelView
         });
     }
 
+    protected void bindTextSetting(EnumSetting<?> setting, StringProperty dest)
+    {
+        StringProperty settingProperty = fromSetting(setting);
+        settingProperty.setDebugName("setting/" + setting.key().toString());
+        dest.set(settingProperty.get());
+        settingProperty.bind(dest.copyFrom());
+    }
+
     protected void bindTextSetting(FloatSetting setting, StringProperty dest)
     {
         StringProperty settingProperty = fromSetting(setting);
@@ -84,6 +119,28 @@ public class SettingsMenu extends PanelView
         settingProperty.setDebugName("setting/" + setting.key().toString());
         dest.set(settingProperty.get());
         settingProperty.bind(dest.copyFrom());
+    }
+
+    public static StringProperty fromSetting(EnumSetting<?> setting)
+    {
+        StringProperty property = new StringProperty(setting.get().stringValue());
+        property.addListener((_, _, nVal) ->
+        {
+            StringValue[] enumConstants = setting.get().getDeclaringClass().getEnumConstants();
+
+            String trim = nVal.trim();
+
+            for (StringValue enumConstant : enumConstants)
+            {
+                if (trim.equals(enumConstant.stringValue()))
+                {
+                    //noinspection rawtypes,unchecked
+                    ((EnumSetting) setting).set((Enum) enumConstant);
+                    return;
+                }
+            }
+        });
+        return property;
     }
 
     public static StringProperty fromSetting(FloatSetting setting)

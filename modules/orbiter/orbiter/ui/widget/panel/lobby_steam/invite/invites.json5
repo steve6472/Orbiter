@@ -1,0 +1,104 @@
+{
+    children: [
+        {
+            name: "titles",
+            bounds: [40, 64],
+            position: [2, 6],
+
+            text: {
+                text: {
+                    parts: [
+                        {
+                            text: "IP:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Port:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Valid Port:\n\n",
+                            style: "moondust:button/normal"
+                        }
+                    ],
+                    anchor: "top_left",
+                    align: "left",
+                    text_size: 6,
+                    vertical_anchor: "max_height",
+                    max_height: 64
+                },
+                position: {
+                    type: "anchored",
+                    anchor: "top_left",
+                    offset: [0, 0]
+                },
+                inherit_width: true
+            }
+        },
+        {
+            name: "user_ip_field",
+            bounds: ["100% - 32", 13],
+            position: [22, 2],
+
+            states: {
+                enabled: false
+            },
+
+            text_field: {
+                password: true,
+                ghost_text: "easter egg hehe"
+            }
+        },
+        {
+            name: "user_ip_visibility",
+            bounds: [7, 7],
+            position: {
+                type: "anchored",
+                anchor: "top_right",
+                offset: [-1, 5]
+            },
+
+            checkbox: {}
+        },
+        {
+            name: "user_port_field",
+            bounds: ["100% - 32", 13],
+            position: [22, 16],
+
+            text_field: {
+                password: false,
+                ghost_text: "25001"
+            }
+        },
+        {
+            name: "user_port_visibility",
+            bounds: [7, 7],
+            position: {
+                type: "anchored",
+                anchor: "top_right",
+                offset: [-1, 19]
+            },
+
+            checkbox: {}
+        },
+        {
+            name: "is_port_valid",
+            bounds: [10, 10],
+            position: [40, 31],
+            sprite_size: [10, 10],
+
+            states: {
+                enabled: false,
+                clickable: false,
+                focusable: false
+            },
+
+            sprites: {
+                unchecked_disabled: "moondust:generic_dark_pixel/sprite/cross",
+                checked_disabled: "moondust:generic_dark_pixel/sprite/check"
+            },
+
+            checkbox: {}
+        }
+    ]
+}

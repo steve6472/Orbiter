@@ -5,8 +5,12 @@ import steve6472.core.network.BufferCodec;
 import steve6472.core.network.Packet;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Registries;
+import steve6472.orbiter.network.packets.configuration.clientbound.HeartbeatClientbound;
+import steve6472.orbiter.network.packets.configuration.hostbound.HeartbeatHostbound;
 import steve6472.orbiter.network.packets.game.*;
 import steve6472.orbiter.network.packets.lobby.*;
+import steve6472.orbiter.network.packets.login.clientbound.LoginResponse;
+import steve6472.orbiter.network.packets.login.hostbound.LoginStart;
 
 /**
  * Created by steve6472
@@ -17,6 +21,14 @@ public class Packets
 {
     public static void init()
     {
+        // Login packets
+        registerPacket(LoginStart.KEY, LoginStart.BUFFER_CODEC);
+        registerPacket(LoginResponse.KEY, LoginResponse.BUFFER_CODEC);
+
+        // Configuration
+        registerPacket(HeartbeatClientbound.KEY, HeartbeatClientbound.BUFFER_CODEC);
+        registerPacket(HeartbeatHostbound.KEY, HeartbeatHostbound.BUFFER_CODEC);
+
         // Lobby packets
         registerPacket(LobbyClosing.KEY, LobbyClosing.BUFFER_CODEC);
         registerPacket(LobbyKickUser.KEY, LobbyKickUser.BUFFER_CODEC);

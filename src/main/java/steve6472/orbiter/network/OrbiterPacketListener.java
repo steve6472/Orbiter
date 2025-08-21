@@ -1,9 +1,10 @@
 package steve6472.orbiter.network;
 
-import com.codedisaster.steamworks.SteamID;
 import steve6472.core.network.PacketListener;
-import steve6472.orbiter.steam.SteamMain;
-import steve6472.orbiter.steam.SteamPeer;
+import steve6472.orbiter.OrbiterApp;
+import steve6472.orbiter.network.api.Connections;
+import steve6472.orbiter.network.api.NetworkMain;
+import steve6472.orbiter.network.api.User;
 
 /**
  * Created by steve6472
@@ -12,22 +13,19 @@ import steve6472.orbiter.steam.SteamPeer;
  */
 public abstract class OrbiterPacketListener implements PacketListener
 {
-    protected final SteamMain steamMain;
-    protected final PeerConnections<SteamPeer> connections;
-
-    public OrbiterPacketListener(SteamMain steamMain)
+    // TODO: use DI from DedicatedMain lol
+    protected NetworkMain network()
     {
-        this.steamMain = steamMain;
-        this.connections = steamMain.connections;
+        return OrbiterApp.getInstance().getNetwork();
     }
 
-    protected SteamID sender()
+    protected User sender()
     {
-        return steamMain.packetManager.lastSender();
+        return network().packetManager().lastSender();
     }
 
-    protected SteamPeer peer()
+    protected Connections connections()
     {
-        return new SteamPeer(sender());
+        return network().connections();
     }
 }

@@ -9,14 +9,12 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Plane;
 import dev.dominion.ecs.api.Dominion;
 import org.joml.Vector3f;
-import steve6472.core.registry.Key;
 import steve6472.core.util.RandomUtil;
 import steve6472.flare.MasterRenderer;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.network.PeerConnections;
-import steve6472.orbiter.steam.SteamMain;
+import steve6472.orbiter.network.api.Connections;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.core.ComponentRenderSystem;
@@ -38,7 +36,6 @@ import static steve6472.flare.render.debug.DebugRender.*;
  */
 public class World implements EntityControl
 {
-    public SteamMain steam;
     PhysicsSpace physics;
     Dominion ecs;
     // TODO: split to client & host ?
@@ -73,8 +70,8 @@ public class World implements EntityControl
             @Override
             public void tick(Dominion dominion, World world)
             {
-                if (!steam.isHost())
-                    return;
+//                if (!steam.isHost())
+//                    return;
 
                 dominion.findEntitiesWith(Tag.FireflyAI.class, Position.class).forEach(e ->
                 {
@@ -85,7 +82,7 @@ public class World implements EntityControl
         }, "Firefly AI", "Test firefly entity");
 
         // Last
-        systems.registerSystem(new NetworkSync(steam), "Network Sync", "");
+//        systems.registerSystem(new NetworkSync(steam), "Network Sync", "");
         systems.registerSystem(new UpdatePhysics(), "Update Physics Positions", "Updates Physics Positions with data from last tick ECS Systems");
 
 
@@ -114,9 +111,9 @@ public class World implements EntityControl
     }
 
     @Override
-    public PeerConnections<?> connections()
+    public Connections connections()
     {
-        return steam.connections;
+        return null;
     }
 
     public void tick()
@@ -132,7 +129,7 @@ public class World implements EntityControl
                 PhysicsGhostObject physicsGhostObject = ghostMap.computeIfAbsent(uuid, _ ->
                 {
                     CollisionShape shape = Registries.COLLISION
-                        .get(Key.defaultNamespace("blockbench/static/player_capsule"))
+                        .get(Constants.key("blockbench/static/player_capsule"))
                         .collisionShape();
                     shape.setScale(1.5f);
                     PhysicsGhostObject pgo = new PhysicsGhostObject(shape);

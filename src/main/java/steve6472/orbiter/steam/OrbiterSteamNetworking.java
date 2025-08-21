@@ -60,7 +60,7 @@ public class OrbiterSteamNetworking implements SteamNetworkingCallback
             return;
         }
 
-        steamMain.connections.addPeer(new SteamPeer(steamIDRemote));
-        steamMain.connections.broadcastMessage(new AcceptedPeerConnection(VrData.VR_ON));
+//        steamMain.connections.addPeer(new SteamPeer(steamIDRemote));
+//        steamMain.connections.broadcastMessage(new AcceptedPeerConnection(VrData.VR_ON));
     }
 }

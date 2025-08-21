@@ -1,0 +1,19 @@
+{
+    children: [
+        {
+            name: "send_test_message",
+            bounds: [80, 13],
+            position: [0, 0],
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:send_test_message"
+                    }
+                },
+                label: "Test Login Message"
+            }
+        }
+    ]
+}

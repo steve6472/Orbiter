@@ -1,0 +1,176 @@
+{
+    children: [
+        {
+            name: "create_titles",
+            bounds: [20, 64],
+            position: [2, 6],
+
+            text: {
+                text: {
+                    parts: [
+                        {
+                            text: "IP:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Port:",
+                            style: "moondust:button/normal"
+                        }
+                    ],
+                    anchor: "top_left",
+                    align: "left",
+                    text_size: 6,
+                    vertical_anchor: "max_height",
+                    max_height: 64
+                },
+                position: {
+                    type: "anchored",
+                    anchor: "top_left",
+                    offset: [0, 0]
+                },
+                inherit_width: true
+            }
+        },
+        {
+            name: "create_ip_field",
+            bounds: ["100% - 32", 13],
+            position: [22, 2],
+
+            states: {
+                enabled: false
+            },
+
+            text_field: {
+                ghost_text: "localhost"
+            }
+        },
+        {
+            name: "create_ip_visibility",
+            bounds: [7, 7],
+            position: {
+                type: "anchored",
+                anchor: "top_right",
+                offset: [-1, 5]
+            },
+
+            checkbox: {}
+        },
+        {
+            name: "create_port_field",
+            bounds: ["100% - 32", 13],
+            position: [22, 16],
+
+            text_field: {
+                ghost_text: "49152 - 65535"
+            }
+        },
+        {
+            name: "create_lobby",
+            bounds: [80, 13],
+            position: [0, 30],
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:create_lobby"
+                    }
+                },
+                label: "Create Lobby"
+            }
+        },
+        {
+            name: "create_invalid_port_message",
+            bounds: [140, 64], //TODO: min(140, "100%")
+            position: [84, 35],
+
+            text: {
+                text: {
+                    parts: [
+                        {
+                            text: "Port has to be between 49152 - 65535",
+                            style: "orbiter:chat/error"
+                        }
+                    ],
+                    anchor: "top_left",
+                    align: "left",
+                    text_size: 6,
+                    vertical_anchor: "max_height",
+                    max_height: 6
+                },
+                position: {
+                    type: "anchored",
+                    anchor: "top_left",
+                    offset: [0, 0]
+                },
+                inherit_width: true
+            }
+        },
+        {
+            name: "create_lobby_already_exists",
+            bounds: [140, 64], //TODO: min(140, "100%")
+            position: [84, 35],
+
+            text: {
+                text: {
+                    parts: [
+                        {
+                            text: "Lobby is already open or you are connected to a lobby",
+                            style: "orbiter:chat/feedback"
+                        }
+                    ],
+                    anchor: "top_left",
+                    align: "left",
+                    text_size: 6,
+                    vertical_anchor: "max_height",
+                    max_height: 6
+                },
+                position: {
+                    type: "anchored",
+                    anchor: "top_left",
+                    offset: [0, 0]
+                },
+                inherit_width: true
+            }
+        },
+        {
+            name: "close_lobby",
+            bounds: [80, 13],
+            position: [0, 44],
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:close_lobby"
+                    }
+                },
+                label: "Close Lobby"
+            }
+        },
+        {
+            name: "create_instructions",
+            bounds: ["100%-4", "100%-60"],
+            position: [2, 60],
+
+            text: {
+                text: {
+                    parts: [
+                        { text: "IP can be made visible by the checkbox to the right.\n" },
+                        { text: "Currently IP is forced to localhost. But connection from outside should still be possible.\n" }
+                    ],
+                    anchor: "top_left",
+                    align: "left",
+                    text_size: 8,
+                    vertical_anchor: "max_height"
+                },
+                position: {
+                    type: "anchored",
+                    anchor: "top_left",
+                    offset: [0, 0]
+                },
+                inherit_width: true
+            }
+        }
+    ]
+}

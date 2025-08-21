@@ -23,6 +23,7 @@ public final class Constants
 
     /// Orbiter-generated resources
     public static final File GENERATED_ORBITER = new File(FlareConstants.GENERATED_FOLDER, NAMESPACE);
+    public static final File BULLET_NATIVE = new File(GENERATED_ORBITER, "bulletjme.dll");
 
     /*
      * UI stuff
@@ -32,6 +33,8 @@ public final class Constants
     {
         Key MAIN_MENU = key("panel/main_menu");
         Key SETTINGS = key("panel/settings");
+        Key LOBBY_MENU_DEDICATED = key("panel/lobby_dedicated/menu");
+        Key LOBBY_MENU_STEAM = key("panel/lobby_steam/menu");
 
         Key IN_GAME_MENU = key("panel/in_game/menu");
         Key IN_GAME_CHAT = key("panel/in_game/chat");

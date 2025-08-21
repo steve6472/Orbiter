@@ -4,6 +4,7 @@ import steve6472.core.registry.Key;
 import steve6472.moondust.view.PanelView;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
+import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.ui.MDUtil;
 import steve6472.orbiter.world.World;
 
@@ -43,6 +44,12 @@ public class MainMenu extends PanelView
         {
             MDUtil.removePanel(Constants.UI.MAIN_MENU);
             MDUtil.addPanel(Constants.UI.SETTINGS);
+        });
+
+        addCommandListener(Constants.key("open_lobby_menu"), _ ->
+        {
+            MDUtil.removePanel(Constants.UI.MAIN_MENU);
+            MDUtil.addPanel(Settings.MULTIPLAYER_BACKEND.get() == Settings.MultiplayerBackend.DEDICATED ? Constants.UI.LOBBY_MENU_DEDICATED : Constants.UI.LOBBY_MENU_STEAM);
         });
     }
 }
