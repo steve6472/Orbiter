@@ -1,8 +1,7 @@
-package steve6472.orbiter.network.packets.configuration;
+package steve6472.orbiter.network.packets.play;
 
 import steve6472.core.log.Log;
 import steve6472.orbiter.network.OrbiterPacketListener;
-import steve6472.orbiter.network.api.UserStage;
 
 import java.util.logging.Logger;
 
@@ -11,9 +10,9 @@ import java.util.logging.Logger;
  * Date: 8/20/2025
  * Project: Orbiter <br>
  */
-public class ConfigurationHostboundListener extends OrbiterPacketListener
+public class GameHostboundListener extends OrbiterPacketListener
 {
-    private static final Logger LOGGER = Log.getLogger(ConfigurationHostboundListener.class);
+    private static final Logger LOGGER = Log.getLogger(GameHostboundListener.class);
 
     public void heartbeat()
     {

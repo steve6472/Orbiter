@@ -4,6 +4,7 @@ import steve6472.core.registry.Key;
 import steve6472.moondust.view.PanelView;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
+import steve6472.orbiter.network.packets.play.clientbound.EnterWorld;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.ui.MDUtil;
 import steve6472.orbiter.world.World;
@@ -38,6 +39,7 @@ public class MainMenu extends PanelView
             orbiter.setCurrentWorld(world);
             orbiter.setMouseGrab(true);
             MDUtil.removePanel(Constants.key("panel/main_menu"));
+            orbiter.getNetwork().connections().broadcastPacket(new EnterWorld());
         });
 
         addCommandListener(Constants.key("open_settings"), _ ->

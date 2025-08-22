@@ -2,6 +2,7 @@ package steve6472.orbiter.network.packets.configuration;
 
 import steve6472.core.log.Log;
 import steve6472.orbiter.network.OrbiterPacketListener;
+import steve6472.orbiter.network.api.UserStage;
 
 import java.util.logging.Logger;
 
@@ -17,5 +18,10 @@ public class ConfigurationClientboundListener extends OrbiterPacketListener
     public void heartbeat()
     {
 //        LOGGER.info("<3 from " + sender());
+    }
+
+    public void finishConfig()
+    {
+        sender().changeUserStage(UserStage.PLAY);
     }
 }

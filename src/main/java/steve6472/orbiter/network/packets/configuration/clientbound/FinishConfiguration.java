@@ -12,15 +12,15 @@ import steve6472.orbiter.network.packets.configuration.ConfigurationClientboundL
  * Date: 10/7/2024
  * Project: Orbiter <br>
  */
-public class HeartbeatClientbound implements Packet<HeartbeatClientbound, ConfigurationClientboundListener>
+public class FinishConfiguration implements Packet<FinishConfiguration, ConfigurationClientboundListener>
 {
-    private static final HeartbeatClientbound INSTANCE = new HeartbeatClientbound();
-    public static final Key KEY = Constants.key("configuration/cb/heartbeat");
-    public static final BufferCodec<ByteBuf, HeartbeatClientbound> BUFFER_CODEC = BufferCodec.unit(INSTANCE);
+    private static final FinishConfiguration INSTANCE = new FinishConfiguration();
+    public static final Key KEY = Constants.key("configuration/cb/finish");
+    public static final BufferCodec<ByteBuf, FinishConfiguration> BUFFER_CODEC = BufferCodec.unit(INSTANCE);
 
-    private HeartbeatClientbound() {}
+    private FinishConfiguration() {}
 
-    public static HeartbeatClientbound instance()
+    public static FinishConfiguration instance()
     {
         return INSTANCE;
     }
@@ -32,7 +32,7 @@ public class HeartbeatClientbound implements Packet<HeartbeatClientbound, Config
     }
 
     @Override
-    public BufferCodec<ByteBuf, HeartbeatClientbound> codec()
+    public BufferCodec<ByteBuf, FinishConfiguration> codec()
     {
         return BUFFER_CODEC;
     }
@@ -40,6 +40,6 @@ public class HeartbeatClientbound implements Packet<HeartbeatClientbound, Config
     @Override
     public void handlePacket(ConfigurationClientboundListener listener)
     {
-        listener.heartbeat();
+        listener.finishConfig();
     }
 }

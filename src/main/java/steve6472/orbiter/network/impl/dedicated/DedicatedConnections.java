@@ -3,7 +3,6 @@ package steve6472.orbiter.network.impl.dedicated;
 import steve6472.core.network.Packet;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.network.api.*;
-import steve6472.orbiter.settings.Settings;
 
 import java.io.IOException;
 import java.net.SocketAddress;
@@ -94,7 +93,7 @@ public class DedicatedConnections implements Connections
             if (dedUser.userConnection.getPeerAddress().equals(sender))
             {
                 connectedUser.updatePacketTime();
-                packetManager.handleRawPacket(receivedData, connectedUser.user().getUserStage().listener, connectedUser.user());
+                packetManager.handleRawPacket(receivedData, connectedUser.user().getUserStage().pickListener(lobby.isHost()), connectedUser.user());
                 return;
             }
         }
@@ -103,8 +102,8 @@ public class DedicatedConnections implements Connections
         LOGGER.info("Potential new connection from: " + sender);
 
         DedicatedUser user = new DedicatedUser(new DedicatedUserConnection(((DedicatedMain) OrbiterApp.getInstance().getNetwork()), sender));
-        user.changeUserStage(UserStage.LOGIN_HOSTBOUND);
-        packetManager.handleRawPacket(receivedData, user.getUserStage().listener, user);
+        user.changeUserStage(UserStage.LOGIN);
+        packetManager.handleRawPacket(receivedData, user.getUserStage().pickListener(lobby.isHost()), user);
     }
 
     @Override

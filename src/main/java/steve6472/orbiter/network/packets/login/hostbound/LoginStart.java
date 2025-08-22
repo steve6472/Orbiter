@@ -15,7 +15,7 @@ import steve6472.orbiter.network.packets.login.LoginHostboundListener;
  */
 public record LoginStart(String username) implements Packet<LoginStart, LoginHostboundListener>
 {
-    public static final Key KEY = Constants.key("login/login_start");
+    public static final Key KEY = Constants.key("login/hb/login_start");
     public static final BufferCodec<ByteBuf, LoginStart> BUFFER_CODEC = BufferCodec.of(BufferCodecs.STRING, LoginStart::username, LoginStart::new);
 
     @Override

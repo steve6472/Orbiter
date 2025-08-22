@@ -21,7 +21,7 @@ public class LoginClientboundListener extends OrbiterPacketListener
         {
             sender().updateUsername(hostUsername);
             LOGGER.info("Connected to host: " + hostUsername);
-            sender().changeUserStage(UserStage.CONFIGURATION_CLIENTBOUND);
+            sender().changeUserStage(UserStage.CONFIGURATION);
         } else
         {
             LOGGER.info("Connection refused, reason: " + hostUsername);

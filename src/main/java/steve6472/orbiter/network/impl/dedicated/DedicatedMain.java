@@ -1,7 +1,9 @@
 package steve6472.orbiter.network.impl.dedicated;
 
 import steve6472.core.log.Log;
+import steve6472.core.network.Packet;
 import steve6472.orbiter.Registries;
+import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.network.api.*;
 import steve6472.orbiter.network.packets.configuration.ConfigurationClientboundListener;
 import steve6472.orbiter.network.packets.configuration.ConfigurationHostboundListener;
@@ -9,6 +11,10 @@ import steve6472.orbiter.network.packets.configuration.clientbound.HeartbeatClie
 import steve6472.orbiter.network.packets.configuration.hostbound.HeartbeatHostbound;
 import steve6472.orbiter.network.packets.login.LoginClientboundListener;
 import steve6472.orbiter.network.packets.login.LoginHostboundListener;
+import steve6472.orbiter.network.packets.play.GameClientboundListener;
+import steve6472.orbiter.network.packets.play.GameHostboundListener;
+import steve6472.orbiter.network.packets.play.clientbound.GameHeartbeatClientbound;
+import steve6472.orbiter.network.packets.play.hostbound.GameHeartbeatHostbound;
 
 import java.util.logging.Logger;
 
@@ -41,6 +47,8 @@ public class DedicatedMain implements NetworkMain
         packetManager.registerListener(new LoginClientboundListener());
         packetManager.registerListener(new ConfigurationHostboundListener());
         packetManager.registerListener(new ConfigurationClientboundListener());
+        packetManager.registerListener(new GameHostboundListener());
+        packetManager.registerListener(new GameClientboundListener());
     }
 
     long tick;
@@ -54,15 +62,36 @@ public class DedicatedMain implements NetworkMain
         connections().tick();
 
         // Broadcast Heartbeat on a timer
-        if (tick % (60) == 0)
-        {
-            if (lobby.isHost())
-                connections().broadcastPacket(HeartbeatClientbound.instance());
-            else
-                connections().broadcastPacket(HeartbeatHostbound.instance());
-        }
+        sendHeartbeat();
 
         tick++;
+    }
+
+    private void sendHeartbeat()
+    {
+        if (tick % (60) != 0)
+            return;
+
+        for (ConnectedUser connectedUser : lobby().getConnectedUsers())
+        {
+            switch (connectedUser.user().getUserStage())
+            {
+                case CONFIGURATION ->
+                {
+                    if (lobby.isHost())
+                        connections().sendPacket(connectedUser.user(), HeartbeatClientbound.instance());
+                    else
+                        connections().sendPacket(connectedUser.user(), HeartbeatHostbound.instance());
+                }
+                case PLAY ->
+                {
+                    if (lobby.isHost())
+                        connections().sendPacket(connectedUser.user(), GameHeartbeatClientbound.instance());
+                    else
+                        connections().sendPacket(connectedUser.user(), GameHeartbeatHostbound.instance());
+                }
+            }
+        }
     }
 
     @Override

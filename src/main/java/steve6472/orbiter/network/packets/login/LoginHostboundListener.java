@@ -7,6 +7,7 @@ import steve6472.orbiter.network.api.ConnectedUser;
 import steve6472.orbiter.network.api.UserStage;
 import steve6472.orbiter.network.impl.dedicated.DedicatedLobby;
 import steve6472.orbiter.network.impl.dedicated.DedicatedUser;
+import steve6472.orbiter.network.packets.configuration.clientbound.FinishConfiguration;
 import steve6472.orbiter.network.packets.login.clientbound.LoginResponse;
 import steve6472.orbiter.network.packets.login.hostbound.LoginStart;
 
@@ -54,6 +55,11 @@ public class LoginHostboundListener extends OrbiterPacketListener
         LOGGER.info("Accepted connection from: " + username);
         network().lobby().joinUser(sender());
         network().connections().sendPacket(sender(), new LoginResponse(true, VisualSettings.USERNAME.get()));
-        sender().changeUserStage(UserStage.CONFIGURATION_HOSTBOUND);
+        sender().changeUserStage(UserStage.CONFIGURATION);
+
+        // TODO: because we currently do not have any configuration, switch right to play
+
+        network().connections().sendPacket(sender(), FinishConfiguration.instance());
+        sender().changeUserStage(UserStage.PLAY);
     }
 }

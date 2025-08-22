@@ -16,7 +16,7 @@ import steve6472.orbiter.network.packets.configuration.ConfigurationHostboundLis
 public class HeartbeatHostbound implements Packet<HeartbeatHostbound, ConfigurationHostboundListener>
 {
     private static final HeartbeatHostbound INSTANCE = new HeartbeatHostbound();
-    public static final Key KEY = Constants.key("configuration/hostbound/heartbeat");
+    public static final Key KEY = Constants.key("configuration/hb/heartbeat");
     public static final BufferCodec<ByteBuf, HeartbeatHostbound> BUFFER_CODEC = BufferCodec.unit(INSTANCE);
 
     private HeartbeatHostbound() {}

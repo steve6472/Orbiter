@@ -5,8 +5,6 @@ import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
 import steve6472.core.network.Packet;
 import steve6472.core.registry.Key;
-import steve6472.orbiter.Registries;
-import steve6472.orbiter.network.ExtraBufferCodecs;
 
 import java.util.ArrayList;
 import java.util.List;

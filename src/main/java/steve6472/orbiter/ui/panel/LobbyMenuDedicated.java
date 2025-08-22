@@ -15,9 +15,11 @@ import steve6472.orbiter.network.impl.dedicated.DedicatedLobby;
 import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
 import steve6472.orbiter.network.impl.dedicated.DedicatedUserConnection;
 import steve6472.orbiter.network.packets.login.hostbound.LoginStart;
+import steve6472.orbiter.network.packets.play.hostbound.JunkData;
 import steve6472.orbiter.ui.MDUtil;
 
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * Created by steve6472
@@ -185,6 +187,13 @@ public class LobbyMenuDedicated extends PanelView
          * Manage tab
          */
 
+        addCommandListener(Constants.key("send_test_message"), _ ->
+        {
+            OrbiterApp orbiter = OrbiterApp.getInstance();
+            DedicatedMain network = (DedicatedMain) orbiter.getNetwork();
+            network.connections().broadcastPacket(new JunkData(createRandomByteArray()));
+        });
+
         /*
          * Join tab
          */
@@ -196,12 +205,29 @@ public class LobbyMenuDedicated extends PanelView
             network.lobby().openLobby(RandomUtil.randomInt(DedicatedMain.MIN_PORT, DedicatedMain.MAX_PORT), false);
             lobbyOpen.set(network.lobby().isLobbyOpen());
             User user = ((DedicatedLobby) network.lobby()).expectConnection(new DedicatedUserConnection(network, joinIpFieldText.get(), Integer.parseInt(joinPortFieldText.get())));
-            user.changeUserStage(UserStage.LOGIN_CLIENTBOUND);
+            user.changeUserStage(UserStage.LOGIN);
             network.connections().sendPacket(user, new LoginStart(VisualSettings.USERNAME.get()));
         });
 
         /*
          * Find
          */
+    }
+
+    private static final int MIN_SIZE = 64;
+    private static final int MAX_SIZE = 4096;
+    private static final Random random = new Random();
+    public static byte[] createRandomByteArray()
+    {
+        // Generate a random size in [MIN_SIZE, MAX_SIZE]
+        int size = MIN_SIZE + random.nextInt(MAX_SIZE - MIN_SIZE + 1);
+
+        // Allocate array
+        byte[] array = new byte[size];
+
+        // Fill with random values
+        random.nextBytes(array);
+
+        return array;
     }
 }

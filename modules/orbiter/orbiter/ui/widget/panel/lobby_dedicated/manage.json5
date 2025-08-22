@@ -12,7 +12,7 @@
                         key: "orbiter:send_test_message"
                     }
                 },
-                label: "Test Login Message"
+                label: "Test Junk Data"
             }
         }
     ]

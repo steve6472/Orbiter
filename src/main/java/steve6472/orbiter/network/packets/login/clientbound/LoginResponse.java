@@ -15,7 +15,7 @@ import steve6472.orbiter.network.packets.login.LoginClientboundListener;
  */
 public record LoginResponse(boolean accepted, String hostUsername) implements Packet<LoginResponse, LoginClientboundListener>
 {
-    public static final Key KEY = Constants.key("login/login_response");
+    public static final Key KEY = Constants.key("login/cb/login_response");
     public static final BufferCodec<ByteBuf, LoginResponse> BUFFER_CODEC = BufferCodec.of(
         BufferCodecs.BOOL, LoginResponse::accepted,
         BufferCodecs.STRING, LoginResponse::hostUsername,

@@ -6,7 +6,6 @@ import steve6472.core.network.Packet;
 import steve6472.core.registry.Key;
 import io.netty.buffer.ByteBuf;
 import steve6472.orbiter.network.ExtraBufferCodecs;
-import steve6472.orbiter.network.OrbiterPacketListener;
 
 /**
  * Created by steve6472
