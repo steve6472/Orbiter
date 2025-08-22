@@ -1,9 +1,6 @@
 package steve6472.orbiter.network.impl.dedicated;
 
-import steve6472.core.log.Log;
-import steve6472.core.network.Packet;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.network.api.*;
 import steve6472.orbiter.network.packets.configuration.ConfigurationClientboundListener;
 import steve6472.orbiter.network.packets.configuration.ConfigurationHostboundListener;
@@ -18,8 +15,6 @@ import steve6472.orbiter.network.packets.play.clientbound.KickUser;
 import steve6472.orbiter.network.packets.play.hostbound.Disconnect;
 import steve6472.orbiter.network.packets.play.hostbound.GameHeartbeatHostbound;
 
-import java.util.logging.Logger;
-
 /**
  * Created by steve6472
  * Date: 8/20/2025
@@ -27,8 +22,6 @@ import java.util.logging.Logger;
  */
 public class DedicatedMain implements NetworkMain
 {
-    private static final Logger LOGGER = Log.getLogger(DedicatedMain.class);
-
     public static final int MIN_PORT = 49152;
     public static final int MAX_PORT = 65535;
 

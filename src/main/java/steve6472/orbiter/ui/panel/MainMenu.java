@@ -5,10 +5,9 @@ import steve6472.moondust.view.PanelView;
 import steve6472.moondust.view.property.BooleanProperty;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
-import steve6472.orbiter.network.api.Lobby;
-import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.packets.play.clientbound.EnterWorld;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.ui.GlobalProperties;
 import steve6472.orbiter.ui.MDUtil;
 import steve6472.orbiter.world.World;
 
@@ -27,13 +26,8 @@ public class MainMenu extends PanelView
     @Override
     protected void createProperties()
     {
-        NetworkMain network = OrbiterApp.getInstance().getNetwork();
-        if (network != null)
-        {
-            Lobby lobby = network.lobby();
-            BooleanProperty enterWorldEnabled = findProperty("enter_world:enabled");
-            enterWorldEnabled.set(lobby == null || (!lobby.isLobbyOpen() || lobby.isHost()));
-        }
+        BooleanProperty enterWorldEnabled = findProperty("enter_world:enabled");
+        enterWorldEnabled.bind(() -> (!GlobalProperties.LOBBY_OPEN.get() || GlobalProperties.IS_LOBBY_HOST.get()), GlobalProperties.LOBBY_OPEN, GlobalProperties.IS_LOBBY_HOST);
     }
 
     @Override

@@ -2,7 +2,7 @@ package steve6472.orbiter.network.impl.dedicated;
 
 import steve6472.orbiter.network.api.*;
 import steve6472.orbiter.network.packets.play.clientbound.KickUser;
-import steve6472.orbiter.ui.panel.LobbyMenuDedicated;
+import steve6472.orbiter.ui.GlobalProperties;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -119,7 +119,9 @@ public class DedicatedLobby implements Lobby
             }
         }
 
-        LobbyMenuDedicated.lobbyOpen.set(isLobbyOpen());
+        GlobalProperties.LOBBY_OPEN.clear();
+        GlobalProperties.LOBBY_OPEN.set(isLobbyOpen());
+        GlobalProperties.IS_LOBBY_HOST.set(isHost);
     }
 
     @Override
@@ -152,7 +154,9 @@ public class DedicatedLobby implements Lobby
         {
             throw new RuntimeException(e);
         }
-        LobbyMenuDedicated.lobbyOpen.set(isLobbyOpen());
+        GlobalProperties.LOBBY_OPEN.set(isLobbyOpen());
+        GlobalProperties.LOBBY_OPEN.clear();
+        GlobalProperties.IS_LOBBY_HOST.set(false);
     }
 
     /*

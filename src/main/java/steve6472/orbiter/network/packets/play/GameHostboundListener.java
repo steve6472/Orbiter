@@ -2,7 +2,6 @@ package steve6472.orbiter.network.packets.play;
 
 import steve6472.core.log.Log;
 import steve6472.orbiter.network.OrbiterPacketListener;
-import steve6472.orbiter.network.api.User;
 
 import java.util.logging.Logger;
 

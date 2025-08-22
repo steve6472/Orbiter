@@ -2,7 +2,6 @@ package steve6472.orbiter.network.packets.play.hostbound;
 
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
-import steve6472.core.network.BufferCodecs;
 import steve6472.core.network.Packet;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;

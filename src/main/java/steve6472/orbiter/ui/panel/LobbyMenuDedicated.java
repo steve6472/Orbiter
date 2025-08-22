@@ -16,9 +16,9 @@ import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
 import steve6472.orbiter.network.impl.dedicated.DedicatedUserConnection;
 import steve6472.orbiter.network.packets.login.hostbound.LoginStart;
 import steve6472.orbiter.network.packets.play.hostbound.JunkData;
+import steve6472.orbiter.ui.GlobalProperties;
 import steve6472.orbiter.ui.MDUtil;
 
-import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -36,14 +36,10 @@ public class LobbyMenuDedicated extends PanelView
     StringProperty joinIpFieldText;
     StringProperty joinPortFieldText;
     StringProperty createPortFieldText;
-    public static BooleanProperty lobbyOpen;
 
     @Override
     protected void createProperties()
     {
-        OrbiterApp orbiter = OrbiterApp.getInstance();
-        DedicatedMain network = (DedicatedMain) orbiter.getNetwork();
-        lobbyOpen = new BooleanProperty(network.lobby().isLobbyOpen());
         setupCreate();
         setupJoin();
         setupFind();
@@ -65,22 +61,22 @@ public class LobbyMenuDedicated extends PanelView
         BooleanProperty ipVisibilityChecked = findProperty("create_ip_visibility:checked");
 
         createPortFieldText.set(Integer.toString(50000));
-        createLobbyEnabled.bind(() -> isValidPort(createPortFieldText.get()) && !lobbyOpen.get(), createPortFieldText, lobbyOpen);
-        closeLobbyEnabled.bind(lobbyOpen.copyFrom());
+        createLobbyEnabled.bind(() -> isValidPort(createPortFieldText.get()) && !GlobalProperties.LOBBY_OPEN.get(), createPortFieldText, GlobalProperties.LOBBY_OPEN);
+        closeLobbyEnabled.bind(GlobalProperties.LOBBY_OPEN.copyFrom());
         invalidPortMessageVisible.bind(() -> !isValidPort(createPortFieldText.get()), createPortFieldText);
-        portFieldEnabled.bind(lobbyOpen.copyFromInverted());
+        portFieldEnabled.bind(GlobalProperties.LOBBY_OPEN.copyFromInverted());
 
         ipFieldText.set("localhost");
 
-        lobbyExistsMessageVisible.bind(lobbyOpen.copyFrom());
+        lobbyExistsMessageVisible.bind(GlobalProperties.LOBBY_OPEN.copyFrom());
         ipVisibilityChecked.set(false);
         ipFieldPassword.bind(ipVisibilityChecked.copyFrom());
 
         BooleanProperty broadcastServerChecked = findProperty("broadcast_server:checked");
         BooleanProperty broadcastServerEnabled = findProperty("broadcast_server:enabled");
-        broadcastServerEnabled.bind(() -> lobbyOpen.get() && network.lobby().isHost(), lobbyOpen);
+        broadcastServerEnabled.bind(() -> GlobalProperties.LOBBY_OPEN.get() && network.lobby().isHost(), GlobalProperties.LOBBY_OPEN);
         broadcastServerChecked.set(network.getBroadcaster().isRunning());
-        lobbyOpen.addListener((_, _, nVal) -> {
+        GlobalProperties.LOBBY_OPEN.addListener((_, _, nVal) -> {
             if (!nVal)
                 broadcastServerChecked.set(false);
         });
@@ -111,10 +107,10 @@ public class LobbyMenuDedicated extends PanelView
 
         BooleanProperty joinLobbyEnable = findProperty("join_lobby:enabled");
         // Also disables joining a host when already in world
-        joinLobbyEnable.bind(() -> isValidPort(joinPortFieldText.get()) && !lobbyOpen.get() && orbiter.getClient().getWorld() == null, joinPortFieldText, lobbyOpen);
+        joinLobbyEnable.bind(() -> isValidPort(joinPortFieldText.get()) && !GlobalProperties.LOBBY_OPEN.get() && orbiter.getClient().getWorld() == null, joinPortFieldText, GlobalProperties.LOBBY_OPEN);
         invalidPortMessageVisible.bind(() -> !isValidPort(joinPortFieldText.get()), joinPortFieldText);
 
-        lobbyExistsMessageVisible.bind(lobbyOpen.copyFrom());
+        lobbyExistsMessageVisible.bind(GlobalProperties.LOBBY_OPEN.copyFrom());
     }
 
     private void setupFind()
@@ -124,9 +120,9 @@ public class LobbyMenuDedicated extends PanelView
 
         BooleanProperty detectServerChecked = findProperty("detect_servers:checked");
         BooleanProperty detectServerEnabled = findProperty("detect_servers:enabled");
-        detectServerEnabled.bind(() -> !lobbyOpen.get() && !network.lobby().isHost(), lobbyOpen);
+        detectServerEnabled.bind(() -> !GlobalProperties.LOBBY_OPEN.get() && !network.lobby().isHost(), GlobalProperties.LOBBY_OPEN);
         detectServerChecked.set(network.getDetector().isRunning());
-        lobbyOpen.addListener((_, _, nVal) -> {
+        GlobalProperties.LOBBY_OPEN.addListener((_, _, nVal) -> {
             if (!nVal)
                 detectServerChecked.set(false);
         });
@@ -206,7 +202,6 @@ public class LobbyMenuDedicated extends PanelView
             OrbiterApp orbiter = OrbiterApp.getInstance();
             DedicatedMain network = (DedicatedMain) orbiter.getNetwork();
             network.lobby().openLobby(RandomUtil.randomInt(DedicatedMain.MIN_PORT, DedicatedMain.MAX_PORT), false);
-            lobbyOpen.set(network.lobby().isLobbyOpen());
             User user = ((DedicatedLobby) network.lobby()).expectConnection(new DedicatedUserConnection(network, joinIpFieldText.get(), Integer.parseInt(joinPortFieldText.get())));
             user.changeUserStage(UserStage.LOGIN);
             network.connections().sendPacket(user, new LoginStart(VisualSettings.USERNAME.get()));
