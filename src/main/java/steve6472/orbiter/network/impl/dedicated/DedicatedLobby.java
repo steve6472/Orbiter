@@ -1,6 +1,7 @@
 package steve6472.orbiter.network.impl.dedicated;
 
 import steve6472.orbiter.network.api.*;
+import steve6472.orbiter.network.packets.play.clientbound.KickUser;
 import steve6472.orbiter.ui.panel.LobbyMenuDedicated;
 
 import java.io.IOException;
@@ -62,11 +63,11 @@ public class DedicatedLobby implements Lobby
     }
 
     @Override
-    public void kickUser(User userToKick)
+    public void kickUser(User userToKick, String reason)
     {
+        connections().sendPacket(userToKick, new KickUser(userToKick, reason));
         connectedUsers.removeIf(c -> c.user().equals(userToKick));
-        // TODO: notify others about kick
-//        connections().broadcastPacket();
+        connections().broadcastPacket(new KickUser(userToKick, reason));
     }
 
     @Override

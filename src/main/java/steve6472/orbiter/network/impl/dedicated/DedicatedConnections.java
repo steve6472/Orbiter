@@ -205,7 +205,7 @@ public class DedicatedConnections implements Connections
         {
             for (ConnectedUser connectedUser : toKick)
             {
-                lobby.kickUser(connectedUser.user());
+                lobby.kickUser(connectedUser.user(), "Timed Out");
             }
         }
     }

@@ -59,7 +59,7 @@
         },
         {
             name: "enter_world",
-            bounds: [200, 26],
+            bounds: [100, 13],
             position: {
                 type: "anchored",
                 anchor: "center"
@@ -77,11 +77,11 @@
         },
         {
             name: "settings",
-            bounds: [200, 26],
+            bounds: [100, 13],
             position: {
                 type: "relative",
                 parent: "enter_world",
-                offset: [0, 30]
+                offset: [0, 15]
             },
 
             button: {
@@ -96,11 +96,11 @@
         },
         {
             name: "lobby_menu",
-            bounds: [200, 26],
+            bounds: [100, 13],
             position: {
                 type: "relative",
                 parent: "settings",
-                offset: [0, 30]
+                offset: [0, 15]
             },
 
             button: {

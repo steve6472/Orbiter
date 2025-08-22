@@ -2,6 +2,7 @@ package steve6472.orbiter.network.packets.login;
 
 import steve6472.core.log.Log;
 import steve6472.flare.settings.VisualSettings;
+import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.network.api.ConnectedUser;
 import steve6472.orbiter.network.api.UserStage;
@@ -10,6 +11,7 @@ import steve6472.orbiter.network.impl.dedicated.DedicatedUser;
 import steve6472.orbiter.network.packets.configuration.clientbound.FinishConfiguration;
 import steve6472.orbiter.network.packets.login.clientbound.LoginResponse;
 import steve6472.orbiter.network.packets.login.hostbound.LoginStart;
+import steve6472.orbiter.network.packets.play.clientbound.EnterWorld;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -61,5 +63,8 @@ public class LoginHostboundListener extends OrbiterPacketListener
 
         network().connections().sendPacket(sender(), FinishConfiguration.instance());
         sender().changeUserStage(UserStage.PLAY);
+
+        if (OrbiterApp.getInstance().getClient().getWorld() != null)
+            network().connections().sendPacket(sender(), new EnterWorld());
     }
 }

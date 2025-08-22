@@ -37,6 +37,8 @@ public class SettingsMenu extends PanelView
         bindSetting(VisualSettings.USERNAME, findProperty("username:text"));
         bindSetting(Settings.TRACK_BANDWIDTH, findProperty("track_bandwidth:checked"));
 
+        ((BooleanProperty) findProperty("username:enabled")).set(!OrbiterApp.getInstance().getNetwork().lobby().isLobbyOpen());
+
         BooleanProperty multiplayerBackendEnabled = findProperty("multiplayer_beckend:enabled");
         multiplayerBackendEnabled.set(OrbiterApp.getInstance().getClient().getWorld() == null);
         StringProperty multiplayerBackend = findProperty("multiplayer_beckend:text");

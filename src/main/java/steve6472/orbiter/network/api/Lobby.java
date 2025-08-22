@@ -15,7 +15,7 @@ public interface Lobby
 
     List<ConnectedUser> getConnectedUsers();
     void joinUser(User user);
-    void kickUser(User userToKick);
+    void kickUser(User userToKick, String reason);
 
     boolean isHost();
     boolean isLobbyOpen();

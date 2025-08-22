@@ -6,6 +6,7 @@ import steve6472.core.registry.Keyable;
 import steve6472.flare.core.Flare;
 import steve6472.orbiter.OrbiterParts;
 import steve6472.orbiter.Registries;
+import steve6472.orbiter.world.ecs.components.UUIDComp;
 
 import java.util.*;
 
@@ -25,10 +26,11 @@ public class EntityBlueprint implements Keyable
         this.blueprints = blueprints;
     }
 
-    public List<Component> createComponents()
+    public List<Component> createEntityComponents(UUID uuid)
     {
         List<Component> components = new ArrayList<>(blueprints.size());
         blueprints.forEach(blueprint -> components.addAll(blueprint.createComponents()));
+        components.add(new UUIDComp(uuid));
         return components;
     }
 

@@ -13,7 +13,7 @@ import steve6472.orbiter.network.packets.play.GameHostboundListener;
  * Date: 10/7/2024
  * Project: Orbiter <br>
  */
-public class GameHeartbeatHostbound implements Packet<GameHeartbeatHostbound, GameHostboundListener>
+public final class GameHeartbeatHostbound implements Packet<GameHeartbeatHostbound, GameHostboundListener>
 {
     private static final GameHeartbeatHostbound INSTANCE = new GameHeartbeatHostbound();
     public static final Key KEY = Constants.key("game/hb/heartbeat");

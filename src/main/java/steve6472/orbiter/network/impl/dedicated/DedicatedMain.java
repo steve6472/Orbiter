@@ -14,6 +14,8 @@ import steve6472.orbiter.network.packets.login.LoginHostboundListener;
 import steve6472.orbiter.network.packets.play.GameClientboundListener;
 import steve6472.orbiter.network.packets.play.GameHostboundListener;
 import steve6472.orbiter.network.packets.play.clientbound.GameHeartbeatClientbound;
+import steve6472.orbiter.network.packets.play.clientbound.KickUser;
+import steve6472.orbiter.network.packets.play.hostbound.Disconnect;
 import steve6472.orbiter.network.packets.play.hostbound.GameHeartbeatHostbound;
 
 import java.util.logging.Logger;
@@ -97,14 +99,20 @@ public class DedicatedMain implements NetworkMain
     @Override
     public void shutdown()
     {
-        // Broadcast kick packet, reason - shutdown
-//        connections().broadcastPacket();
-//        for (ConnectedUser connectedUser : lobby.getConnectedUsers())
-//        {
-//            if (!(connectedUser.user() instanceof DedicatedUser dedUser)) throw new NotDedicatedUserException();
-//
-//            dedUser.userConnection.close();
-//        }
+        if (lobby.isLobbyOpen())
+        {
+            if (lobby.isHost())
+            {
+                for (ConnectedUser connectedUser : lobby.getConnectedUsers())
+                {
+                    connections().sendPacket(connectedUser.user(), new KickUser(connectedUser.user(), "Host Shutdown"));
+                }
+            } else
+            {
+                connections().broadcastPacket(Disconnect.instance());
+            }
+        }
+
         broadcaster.shutdown();
         lobby.closeLobby();
     }

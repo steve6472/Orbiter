@@ -94,6 +94,8 @@ public class LobbyMenuDedicated extends PanelView
 
     private void setupJoin()
     {
+        OrbiterApp orbiter = OrbiterApp.getInstance();
+
         BooleanProperty ipFieldPassword = findProperty("join_ip_field:password");
         BooleanProperty ipVisibilityChecked = findProperty("join_ip_visibility:checked");
         BooleanProperty invalidPortMessageVisible = findProperty("join_invalid_port_message:visible");
@@ -108,7 +110,8 @@ public class LobbyMenuDedicated extends PanelView
         joinIpFieldText.set("localhost");
 
         BooleanProperty joinLobbyEnable = findProperty("join_lobby:enabled");
-        joinLobbyEnable.bind(() -> isValidPort(joinPortFieldText.get()) && !lobbyOpen.get(), joinPortFieldText, lobbyOpen);
+        // Also disables joining a host when already in world
+        joinLobbyEnable.bind(() -> isValidPort(joinPortFieldText.get()) && !lobbyOpen.get() && orbiter.getClient().getWorld() == null, joinPortFieldText, lobbyOpen);
         invalidPortMessageVisible.bind(() -> !isValidPort(joinPortFieldText.get()), joinPortFieldText);
 
         lobbyExistsMessageVisible.bind(lobbyOpen.copyFrom());

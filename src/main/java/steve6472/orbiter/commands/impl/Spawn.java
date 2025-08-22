@@ -6,6 +6,8 @@ import steve6472.orbiter.commands.CommandSource;
 import steve6472.orbiter.commands.arguments.EntityBlueprintArgument;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
 
+import java.util.UUID;
+
 public class Spawn extends Command
 {
 	public Spawn(CommandDispatcher<CommandSource> dispatcher)
@@ -19,7 +21,7 @@ public class Spawn extends Command
 		{
 			EntityBlueprint blueprint = EntityBlueprintArgument.getEntityBlueprint(c, "blueprint");
 
-			c.getSource().getWorld().addEntity(blueprint);
+			c.getSource().getWorld().addEntity(blueprint, UUID.randomUUID());
 
 			return 0;
 		})));

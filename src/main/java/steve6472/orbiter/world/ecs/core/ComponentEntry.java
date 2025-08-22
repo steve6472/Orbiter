@@ -17,16 +17,20 @@ import steve6472.core.registry.Serializable;
  */
 public class ComponentEntry<T extends Component> implements Keyable, Serializable<T>
 {
+    private static int networkCounter = 0;
+
     private final Key key;
     private final Codec<T> persistentCodec;
     private final BufferCodec<ByteBuf, T> networkCodec;
     // TODO: private final Supplier<T> blueprint
     private final Class<T> clazz;
     private final ComponentMapper<T> mapper;
+    private final int networkID;
 
-    private ComponentEntry(Key key, Class<T> clazz, Codec<T> persistentCodec, BufferCodec<ByteBuf, T> networkCodec)
+    private ComponentEntry(Key key, int networkID, Class<T> clazz, Codec<T> persistentCodec, BufferCodec<ByteBuf, T> networkCodec)
     {
         this.key = key;
+        this.networkID = networkID;
         this.clazz = clazz;
         this.persistentCodec = persistentCodec;
         this.networkCodec = networkCodec;
@@ -61,6 +65,11 @@ public class ComponentEntry<T extends Component> implements Keyable, Serializabl
     public Key key()
     {
         return key;
+    }
+
+    public int networkID()
+    {
+        return networkID;
     }
 
     public Class<T> componentClass()
@@ -117,7 +126,11 @@ public class ComponentEntry<T extends Component> implements Keyable, Serializabl
 
         public ComponentEntry<T> build()
         {
-            return new ComponentEntry<>(key, clazz, persistentCodec, networkCodec);
+            int networkId = -1;
+            if (networkCodec != null)
+                networkId = networkCounter++;
+
+            return new ComponentEntry<>(key, networkId, clazz, persistentCodec, networkCodec);
         }
     }
 }

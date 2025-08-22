@@ -60,7 +60,7 @@
 
         {
             name: "resume",
-            bounds: [200, 26],
+            bounds: [100, 13],
             position: {
                 type: "anchored",
                 anchor: "center"
@@ -77,12 +77,50 @@
             }
         },
         {
-            name: "main_menu",
-            bounds: [200, 26],
+            name: "settings",
+            bounds: [100, 13],
             position: {
                 type: "relative",
                 parent: "resume",
-                offset: [0, 30]
+                offset: [0, 15]
+            },
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:open_settings"
+                    }
+                },
+                label: "Settings"
+            }
+        },
+        {
+            name: "lobby_menu",
+            bounds: [100, 13],
+            position: {
+                type: "relative",
+                parent: "settings",
+                offset: [0, 15]
+            },
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:open_lobby_menu"
+                    }
+                },
+                label: "Lobby Menu"
+            }
+        },
+        {
+            name: "main_menu",
+            bounds: [100, 13],
+            position: {
+                type: "relative",
+                parent: "lobby_menu",
+                offset: [0, 15]
             },
 
             button: {
@@ -96,22 +134,26 @@
             }
         },
         {
-            name: "settings",
-            bounds: [200, 26],
+            name: "disconnect",
+            bounds: [100, 13],
             position: {
                 type: "relative",
-                parent: "main_menu",
-                offset: [0, 30]
+                parent: "lobby_menu",
+                offset: [0, 15]
+            },
+
+            states: {
+                visible: false
             },
 
             button: {
                 on_press: {
                     script: "moondust:button_send_command",
                     input: {
-                        key: "orbiter:open_settings"
+                        key: "orbiter:main_menu"
                     }
                 },
-                label: "Settings"
+                label: "Disconnect"
             }
         }
     ]

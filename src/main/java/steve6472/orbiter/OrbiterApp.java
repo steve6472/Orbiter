@@ -207,22 +207,23 @@ public class OrbiterApp extends FlareApp
             // If open, close
             MDUtil.removePanel(Constants.UI.IN_GAME_MENU);
             setMouseGrab(true);
+        } else if (MDUtil.isPanelOpen(Constants.UI.IN_GAME_CHAT))
+        {
+            MDUtil.removePanel(Constants.UI.IN_GAME_CHAT);
+            setMouseGrab(true);
+        } else if (MDUtil.isPanelOpen(Constants.UI.LOBBY_MENU_DEDICATED))
+        {
+            MDUtil.removePanel(Constants.UI.LOBBY_MENU_DEDICATED);
+            MDUtil.addPanel(Constants.UI.IN_GAME_MENU);
         } else
         {
-            if (MDUtil.isPanelOpen(Constants.UI.IN_GAME_CHAT))
+            if (MDUtil.isPanelOpen(Constants.UI.SETTINGS))
             {
-                MDUtil.removePanel(Constants.UI.IN_GAME_CHAT);
-                setMouseGrab(true);
-            } else
-            {
-                if (MDUtil.isPanelOpen(Constants.UI.SETTINGS))
-                {
-                    MDUtil.removePanel(Constants.UI.SETTINGS);
-                }
-
-                MDUtil.addPanel(Constants.UI.IN_GAME_MENU);
-                setMouseGrab(false);
+                MDUtil.removePanel(Constants.UI.SETTINGS);
             }
+
+            MDUtil.addPanel(Constants.UI.IN_GAME_MENU);
+            setMouseGrab(false);
         }
     }
 
@@ -251,6 +252,7 @@ public class OrbiterApp extends FlareApp
     {
         client.setWorld(null);
         client.setPlayer(null);
+        setMouseGrab(false);
     }
 
     public void setCurrentWorld(World world)
@@ -260,10 +262,9 @@ public class OrbiterApp extends FlareApp
             throw new IllegalStateException("Tried to navigate to null world, use clearWorld if you wish to clear the world instead.");
         }
 
-//        world.steam = steam;
         world.init(masterRenderer());
         this.client.setWorld(world);
-//        steam.changeWorld(world);
+        setMouseGrab(true);
 
         client.setPlayer(VrData.VR_ON ? new VRPlayer(client) : new PCPlayer());
 

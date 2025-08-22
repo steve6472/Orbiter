@@ -2,8 +2,11 @@ package steve6472.orbiter.ui.panel;
 
 import steve6472.core.registry.Key;
 import steve6472.moondust.view.PanelView;
+import steve6472.moondust.view.property.BooleanProperty;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
+import steve6472.orbiter.network.api.Lobby;
+import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.packets.play.clientbound.EnterWorld;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.ui.MDUtil;
@@ -24,7 +27,13 @@ public class MainMenu extends PanelView
     @Override
     protected void createProperties()
     {
-
+        NetworkMain network = OrbiterApp.getInstance().getNetwork();
+        if (network != null)
+        {
+            Lobby lobby = network.lobby();
+            BooleanProperty enterWorldEnabled = findProperty("enter_world:enabled");
+            enterWorldEnabled.set(lobby == null || (!lobby.isLobbyOpen() || lobby.isHost()));
+        }
     }
 
     @Override

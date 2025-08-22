@@ -110,7 +110,7 @@ public class VRPlayer implements Player
 
     private Entity createHandEntity(float x, float y, float z)
     {
-        Key model = Key.defaultNamespace("blockbench/static/controller");
+        /*Key model = Key.defaultNamespace("blockbench/static/controller");
         return client.getWorld().addEntity(
             FlareRegistries.STATIC_MODEL.get(model),
             new Collision(model),
@@ -123,7 +123,8 @@ public class VRPlayer implements Player
             new LinearVelocity(),
             Tag.PHYSICS,
             Tag.CLIENT_HANDLED
-            );
+            );*/
+        return null;
     }
 
     private void handleHand(VrInput vrInput)

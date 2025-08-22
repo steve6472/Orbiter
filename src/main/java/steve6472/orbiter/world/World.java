@@ -13,8 +13,10 @@ import org.joml.Vector3f;
 import steve6472.flare.MasterRenderer;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
+import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.api.Connections;
+import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.world.ecs.RenderECSSystem;
 import steve6472.orbiter.world.ecs.systems.RenderNametag;
 import steve6472.orbiter.world.ecs.systems.UpdateECS;
@@ -98,9 +100,9 @@ public class World implements EntityControl
     }
 
     @Override
-    public Connections connections()
+    public NetworkMain network()
     {
-        return null;
+        return OrbiterApp.getInstance().getNetwork();
     }
 
     public void tick()

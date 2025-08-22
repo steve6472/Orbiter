@@ -81,7 +81,7 @@ public class GameListener extends OrbiterPacketListener
     public void spawnPlayer(User player, boolean VR)
     {
         LOGGER.info("Spawn player " + player + " VR: " + VR);
-        client.getWorld().spawnDebugPlayer(player, VR);
+//        client.getWorld().spawnDebugPlayer(player, VR);
     }
 
     public void disconnectPlayer(SteamID disconnectedPlayer)
