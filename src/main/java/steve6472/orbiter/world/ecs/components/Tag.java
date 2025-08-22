@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.ecs.components;
 
+import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
@@ -40,12 +41,12 @@ public final class Tag
         return COUNTER - 1;
     }
 
-    public static Object getTagInstance(Class<?> clazz)
+    public static Component getTagInstance(Class<?> clazz)
     {
         return CLASSES.get(clazz);
     }
 
-    private static abstract class TagClass<T extends TagClass<?>>
+    private static abstract class TagClass<T extends TagClass<?>> implements Component
     {
         int id;
         private final Codec<T> codec;

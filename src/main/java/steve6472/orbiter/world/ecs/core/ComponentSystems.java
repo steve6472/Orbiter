@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.ecs.core;
 
+import com.badlogic.ashley.core.EntitySystem;
 import steve6472.orbiter.util.Profiler;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.Consumer;
 
-public class ComponentSystems<T>
+public class ComponentSystems<T extends EntitySystem>
 {
     public final List<ComponentSystemEntry<T>> systemEntries;
     public Consumer<T> systemRunFunction;

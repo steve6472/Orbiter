@@ -1,5 +1,6 @@
 package steve6472.orbiter.player;
 
+import com.badlogic.ashley.core.Entity;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.PhysicsRayTestResult;
 import com.jme3.bullet.joints.PhysicsJoint;
@@ -8,7 +9,6 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Transform;
 import com.mojang.datafixers.util.Pair;
-import dev.dominion.ecs.api.Entity;
 import jme3utilities.math.MyMath;
 import org.joml.*;
 import org.lwjgl.openvr.*;
@@ -26,6 +26,7 @@ import steve6472.flare.vr.input.VrActionSet;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.world.EntityModify;
+import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.*;
 
@@ -145,15 +146,15 @@ public class VRPlayer implements Player
                 LOGGER.info("Created hand entity");
             }
 
-            PhysicsRigidBody body = client.getWorld().bodyMap().get(handEntity.get(UUID.class));
+            PhysicsRigidBody body = client.getWorld().bodyMap().get(Components.UUID.get(handEntity).uuid());
             body.activate(true);
 
-            Position posComp = handEntity.get(Position.class);
+            Position posComp = Components.POSITION.get(handEntity);
             posComp.set(position.x, position.y, position.z);
             posComp.modifyBody(body);
             EntityModify._markModified(handEntity, Position.class);
 
-            Rotation rotComp = handEntity.get(Rotation.class);
+            Rotation rotComp = Components.ROTATION.get(handEntity);
             rotComp.set(rotation.x, rotation.y, rotation.z, rotation.w);
             rotComp.modifyBody(body);
             EntityModify._markModified(handEntity, Rotation.class);
@@ -164,7 +165,7 @@ public class VRPlayer implements Player
         }, () -> {
             if (handEntity != null)
             {
-                client.getWorld().removeEntity(handEntity.get(UUID.class));
+                client.getWorld().removeEntity(Components.UUID.get(handEntity).uuid());
                 handEntity = null;
                 LOGGER.info("Deleted hand entity");
             }
@@ -255,7 +256,7 @@ public class VRPlayer implements Player
                 if (grabbedObject.getMass() <= 0)
                     continue;
 
-                PhysicsRigidBody body = client.getWorld().bodyMap().get(handEntity.get(UUID.class));
+                PhysicsRigidBody body = client.getWorld().bodyMap().get(Components.UUID.get(handEntity).uuid());
 
                 // Don't grab itself
                 if (body == grabbedObject)
@@ -296,7 +297,7 @@ public class VRPlayer implements Player
         if (!jointsExist || handEntity == null)
             return;
 
-        PhysicsRigidBody body = client.getWorld().bodyMap().get(handEntity.get(UUID.class));
+        PhysicsRigidBody body = client.getWorld().bodyMap().get(Components.UUID.get(handEntity).uuid());
         for (PhysicsJoint physicsJoint : body.listJoints())
         {
             client.getWorld().physics().removeJoint(physicsJoint);

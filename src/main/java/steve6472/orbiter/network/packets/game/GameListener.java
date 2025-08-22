@@ -1,12 +1,12 @@
 package steve6472.orbiter.network.packets.game;
 
+import com.badlogic.ashley.core.Entity;
 import com.codedisaster.steamworks.SteamID;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.SixDofSpringJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Matrix3f;
 import com.mojang.datafixers.util.Pair;
-import dev.dominion.ecs.api.Entity;
 import io.netty.buffer.ByteBuf;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
@@ -20,7 +20,7 @@ import steve6472.orbiter.world.NetworkSerialization;
 import steve6472.orbiter.world.ecs.components.MPControlled;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
-import steve6472.orbiter.world.ecs.core.Component;
+import steve6472.orbiter.world.ecs.core.ComponentEntry;
 
 import java.util.List;
 import java.util.Optional;
@@ -44,7 +44,7 @@ public class GameListener extends OrbiterPacketListener
     }
 
     public void teleport(Vector3f destination)
-    {
+    {/*
         var entityList = client.getWorld().ecs().findEntitiesWith(MPControlled.class, UUID.class, Tag.Physics.class);
 
         for (var entityData : entityList)
@@ -56,7 +56,7 @@ public class GameListener extends OrbiterPacketListener
             UUID uuid = entityData.comp2();
 
             client.getWorld().bodyMap().get(uuid).setPhysicsLocation(Convert.jomlToPhys(destination));
-        }
+        }*/
     }
 
     public void acceptedPeerConnection(boolean VR)
@@ -70,12 +70,12 @@ public class GameListener extends OrbiterPacketListener
     {
         LOGGER.info("Sending existing data!");
 //        connections().sendPacket(sender(), new SpawnPlayerCharacter(steamMain.userID, VrData.VR_ON));
-
+/*
         client.getWorld().ecs().findEntitiesWith(UUID.class).forEach(ent -> {
 //            LOGGER.info("Sending " + System.currentTimeMillis() + " " + ent);
             Pair<Integer, ByteBuf> serialized = NetworkSerialization.entityComponentsToBuffer(ent.entity());
             connections().sendPacket(sender(), new CreateEntity(ent.comp(), serialized.getFirst(), serialized.getSecond()));
-        });
+        });*/
     }
 
     public void spawnPlayer(User player, boolean VR)
@@ -85,19 +85,19 @@ public class GameListener extends OrbiterPacketListener
     }
 
     public void disconnectPlayer(SteamID disconnectedPlayer)
-    {
+    {/*
         client.getWorld()
             .ecs()
             .findEntitiesWith(MPControlled.class, UUID.class)
             .stream()
             .filter(e -> e.comp1().controller().equals(disconnectedPlayer))
-            .forEach(e -> client.getWorld().removeEntity(e.comp2()));
+            .forEach(e -> client.getWorld().removeEntity(e.comp2()));*/
     }
 
     public void updateEntity(UUID uuid, List<Object> components)
     {
 //        LOGGER.info("Update components " + uuid + " " + components);
-        client.getWorld().getEntityByUUID(uuid).ifPresentOrElse(entity -> {
+        /*client.getWorld().getEntityByUUID(uuid).ifPresentOrElse(entity -> {
             for (Object component : components)
             {
                 entity.removeType(component.getClass());
@@ -118,11 +118,11 @@ public class GameListener extends OrbiterPacketListener
         {
 //            LOGGER.info("Requesting entity (update) " + System.currentTimeMillis() + " " + uuid);
             connections().sendPacket(sender(), new RequestEntity(uuid));
-        });
+        });*/
     }
 
     public void addEntityComponents(UUID uuid, List<Object> components)
-    {
+    {/*
         client.getWorld().getEntityByUUID(uuid).ifPresentOrElse(entity -> {
             for (Object component : components)
             {
@@ -132,32 +132,32 @@ public class GameListener extends OrbiterPacketListener
         {
 //            LOGGER.info("Requesting entity (add) " + System.currentTimeMillis() + " " + uuid);
             connections().sendPacket(sender(), new RequestEntity(uuid));
-        });
+        });*/
     }
 
     public void removeEntityComponents(UUID uuid, List<Key> components)
-    {
+    {/*
         client.getWorld().getEntityByUUID(uuid).ifPresent(entity -> {
             for (Key component : components)
             {
-                Component<?> cmpnnt = Registries.COMPONENT.get(component);
+                ComponentEntry<?> cmpnnt = Registries.COMPONENT.get(component);
                 entity.removeType(cmpnnt.componentClass());
             }
-        });
+        });*/
     }
 
     public void entityRequested(UUID entity)
-    {
+    {/*
         LOGGER.info("Requested entity " + System.currentTimeMillis() + " " + entity);
         Optional<Entity> entityByUUID = client.getWorld().getEntityByUUID(entity);
         entityByUUID.ifPresent(e -> {
             Pair<Integer, ByteBuf> serialized = NetworkSerialization.entityComponentsToBuffer(e);
             connections().sendPacket(sender(), new CreateEntity(entity, serialized.getFirst(), serialized.getSecond()));
-        });
+        });*/
     }
 
     public void createEntity(UUID uuid, List<Object> components)
-    {
+    {/*
         LOGGER.info("Create entity " + uuid + " " + components);
         if (client.getWorld().getEntityByUUID(uuid).isEmpty())
         {
@@ -179,11 +179,11 @@ public class GameListener extends OrbiterPacketListener
 //                if (position != null)
 //                    body.setPhysicsLocation(Convert.jomlToPhys(position.toVec3f()));
 //            }
-        }
+        }*/
     }
 
     public void removeEntity(UUID uuid)
-    {
+    {/*
         LOGGER.info("Remove entity " + uuid);
         client.getWorld().getEntityByUUID(uuid).ifPresent(e -> client.getWorld().ecs().deleteEntity(e));
         PhysicsRigidBody body = client.getWorld().bodyMap().get(uuid);
@@ -191,7 +191,7 @@ public class GameListener extends OrbiterPacketListener
         {
             client.getWorld().bodyMap().remove(uuid);
             client.getWorld().physics().remove(body);
-        }
+        }*/
     }
 
     public void clearJoints(UUID uuid)

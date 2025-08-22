@@ -1,11 +1,14 @@
 package steve6472.orbiter.network.packets.game;
 
-import dev.dominion.ecs.api.Entity;
+import com.badlogic.ashley.core.Entity;
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
 import steve6472.core.network.Packet;
 import steve6472.core.registry.Key;
+import steve6472.orbiter.Constants;
+import steve6472.orbiter.world.ecs.Components;
+
 import java.util.UUID;
 
 /**
@@ -15,14 +18,14 @@ import java.util.UUID;
  */
 public record RemoveEntity(UUID uuid) implements Packet<RemoveEntity, GameListener>
 {
-    public static final Key KEY = Key.defaultNamespace("remove_entity");
+    public static final Key KEY = Constants.key("remove_entity");
     public static final BufferCodec<ByteBuf, RemoveEntity> BUFFER_CODEC = BufferCodec.of(
         BufferCodecs.UUID, RemoveEntity::uuid,
         RemoveEntity::new);
 
     public RemoveEntity(Entity entity)
     {
-        this(entity.get(UUID.class));
+        this(Components.UUID.get(entity).uuid());
     }
 
     @Override

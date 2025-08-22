@@ -1,17 +1,16 @@
 package steve6472.orbiter.world.ecs.systems;
 
-import dev.dominion.ecs.api.Dominion;
-import dev.dominion.ecs.api.Entity;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
 import org.joml.Matrix4f;
-import steve6472.core.registry.Key;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.ui.font.render.Billboard;
 import steve6472.flare.ui.font.render.TextLine;
-import steve6472.orbiter.world.World;
-import steve6472.orbiter.world.ecs.components.Nametag;
-import steve6472.orbiter.world.ecs.components.physics.Collision;
+import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.RenderECSSystem;
+import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.Position;
-import steve6472.orbiter.world.ecs.core.ComponentRenderSystem;
 
 import java.util.UUID;
 
@@ -20,29 +19,30 @@ import java.util.UUID;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class RenderNametag implements ComponentRenderSystem
+public class RenderNametag extends IteratingSystem implements RenderECSSystem
 {
-    @Override
-    public void tick(MasterRenderer renderer, Dominion dominion, World world)
+    private final MasterRenderer renderer;
+
+    public RenderNametag(MasterRenderer renderer)
     {
-//        var found = dominion.findEntitiesWith(Position.class, Nametag.class);
-        var found = dominion.findEntitiesWith(Position.class, UUID.class);
+        super(Family.all(Position.class, UUIDComp.class).get());
+        this.renderer = renderer;
+    }
 
-        for (var entityComps : found)
+    @Override
+    protected void processEntity(Entity entity, float deltaTime)
+    {
+        Position position = Components.POSITION.get(entity);
+        UUID uuid = Components.UUID.get(entity).uuid();
+
+        TextLine text = TextLine.fromText(uuid.toString(), 1f / 4f, Billboard.FACE_CENTER);
+
+        float yOffset = 0;
+        if (Components.COLLISION.has(entity))
         {
-            Entity entity = entityComps.entity();
-            Position position = entityComps.comp1();
-//            TextLine text = entityComps.comp2().name();
-            TextLine text = TextLine.fromText(entityComps.comp2().toString(), 1f / 4f, Billboard.FACE_CENTER);
-
-            float yOffset = 0;
-            if (entity.has(Collision.class))
-            {
-                Collision collision = entity.get(Collision.class);
-                yOffset = collision.shape().maxRadius();
-            }
-
-            renderer.textRender().line(text, new Matrix4f().translate(position.x(), position.y() + yOffset, position.z()));
+            yOffset = Components.COLLISION.get(entity).shape().maxRadius();
         }
+
+        renderer.textRender().line(text, new Matrix4f().translate(position.x(), position.y() + yOffset, position.z()));
     }
 }

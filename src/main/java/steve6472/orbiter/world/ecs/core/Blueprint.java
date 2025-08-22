@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.ecs.core;
 
+import com.badlogic.ashley.core.Component;
 import steve6472.core.registry.Keyable;
 import steve6472.core.registry.Serializable;
 
@@ -12,5 +13,5 @@ import java.util.List;
  */
 public interface Blueprint<SELF> extends Serializable<SELF>, Keyable
 {
-    List<?> createComponents();
+    List<Component> createComponents();
 }

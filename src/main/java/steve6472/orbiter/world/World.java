@@ -1,5 +1,7 @@
 package steve6472.orbiter.world;
 
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.EntitySystem;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
@@ -7,20 +9,13 @@ import com.jme3.bullet.objects.PhysicsBody;
 import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Plane;
-import dev.dominion.ecs.api.Dominion;
 import org.joml.Vector3f;
-import steve6472.core.util.RandomUtil;
 import steve6472.flare.MasterRenderer;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.api.Connections;
-import steve6472.orbiter.world.ecs.components.physics.Position;
-import steve6472.orbiter.world.ecs.components.Tag;
-import steve6472.orbiter.world.ecs.core.ComponentRenderSystem;
-import steve6472.orbiter.world.ecs.core.ComponentSystem;
-import steve6472.orbiter.world.ecs.core.ComponentSystems;
-import steve6472.orbiter.world.ecs.systems.NetworkSync;
+import steve6472.orbiter.world.ecs.RenderECSSystem;
 import steve6472.orbiter.world.ecs.systems.RenderNametag;
 import steve6472.orbiter.world.ecs.systems.UpdateECS;
 import steve6472.orbiter.world.ecs.systems.UpdatePhysics;
@@ -37,10 +32,8 @@ import static steve6472.flare.render.debug.DebugRender.*;
 public class World implements EntityControl
 {
     PhysicsSpace physics;
-    Dominion ecs;
+    Engine ecsEngine;
     // TODO: split to client & host ?
-    ComponentSystems<ComponentSystem> systems;
-    ComponentSystems<ComponentRenderSystem> renderSystems;
     private final Map<UUID, PhysicsRigidBody> bodyMap = new HashMap<>();
     private final Map<UUID, PhysicsGhostObject> ghostMap = new HashMap<>();
 
@@ -50,22 +43,22 @@ public class World implements EntityControl
     {
         physics = new PhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
         physics.useDeterministicDispatch(true);
-        ecs = Dominion.create("space");
-        systems = new ComponentSystems<>(system -> system.tick(ecs, this));
+        ecsEngine = new Engine();
     }
 
     public void init(MasterRenderer renderer)
     {
-        renderSystems = new ComponentSystems<>(system -> system.tick(renderer, ecs, this));
         addPlane(new Vector3f(0, 1f, 0), 0);
         initSystems();
+
+        ecsEngine.addSystem(new RenderNametag(renderer)); // "Render Nametag"
     }
 
     private void initSystems()
     {
         // First
-        systems.registerSystem(new UpdateECS(), "Update ECS Positions", "Updates ECS Positions with data from last tick of Physics Simulation");
-        systems.registerSystem(new ComponentSystem()
+        ecsEngine.addSystem(new UpdateECS(this)); // "Update ECS Positions", "Updates ECS Positions with data from last tick of Physics Simulation"
+        /*systems.registerSystem(new ComponentSystem()
         {
             @Override
             public void tick(Dominion dominion, World world)
@@ -79,17 +72,11 @@ public class World implements EntityControl
                     modifyComponent(e.entity(), position, p -> p.add(RandomUtil.randomFloat(-0.01f, 0.01f), RandomUtil.randomFloat(-0.01f, 0.01f), RandomUtil.randomFloat(-0.01f, 0.01f)));
                 });
             }
-        }, "Firefly AI", "Test firefly entity");
+        }, "Firefly AI", "Test firefly entity");*/
 
         // Last
 //        systems.registerSystem(new NetworkSync(steam), "Network Sync", "");
-        systems.registerSystem(new UpdatePhysics(), "Update Physics Positions", "Updates Physics Positions with data from last tick ECS Systems");
-
-
-        /*
-         * Render
-         */
-        renderSystems.registerSystem(new RenderNametag(), "Render Nametag");
+        ecsEngine.addSystem(new UpdatePhysics(this)); // "Update Physics Positions", "Updates Physics Positions with data from last tick ECS Systems"
     }
 
     @Override
@@ -99,9 +86,9 @@ public class World implements EntityControl
     }
 
     @Override
-    public Dominion ecs()
+    public Engine ecsEngine()
     {
-        return ecs;
+        return ecsEngine;
     }
 
     @Override
@@ -146,7 +133,20 @@ public class World implements EntityControl
         ghostMap.keySet().removeIf(uuid -> !accessed.contains(uuid));
 
         physics.update(1f / Constants.TICKS_IN_SECOND, 8);
-        systems.run();
+
+        // Disable rendering systems, enable tick systems
+        for (EntitySystem system : ecsEngine.getSystems())
+        {
+            system.setProcessing(!(system instanceof RenderECSSystem));
+        }
+
+        ecsEngine.update(0);
+
+        // Enable rendering systems, disable tick systems
+        for (EntitySystem system : ecsEngine.getSystems())
+        {
+            system.setProcessing(system instanceof RenderECSSystem);
+        }
     }
 
     public void debugRender()
@@ -168,7 +168,8 @@ public class World implements EntityControl
             }
         }
 
-        renderSystems.run();
+//        renderSystems.run();
+        ecsEngine.update(0);
 
         PhysicsRenderer.render(physics());
     }

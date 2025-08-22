@@ -129,7 +129,7 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
             {
 //                steamMain.connections.removePeer(new SteamPeer(steamIDUserChanged));
 //                steamMain.connections.broadcastMessage(new PlayerDisconnected(steamIDUserChanged));
-
+/*
                 if (steamMain.orbiterApp.getClient().getWorld() != null)
                 {
                     steamMain.orbiterApp.getClient().getWorld()
@@ -138,7 +138,7 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
                         .stream()
                         .filter(e -> e.comp1().controller().equals(steamIDUserChanged))
                         .forEach(e -> steamMain.orbiterApp.getClient().getWorld().removeEntity(e.comp2()));
-                }
+                }*/
             }
         }
         else

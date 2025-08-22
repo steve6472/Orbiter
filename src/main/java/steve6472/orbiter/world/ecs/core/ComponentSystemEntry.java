@@ -1,8 +1,9 @@
 package steve6472.orbiter.world.ecs.core;
 
+import com.badlogic.ashley.core.EntitySystem;
 import steve6472.orbiter.util.Profiler;
 
-public class ComponentSystemEntry<T>
+public class ComponentSystemEntry<T extends EntitySystem>
 {
     public T system;
     public boolean enabled;

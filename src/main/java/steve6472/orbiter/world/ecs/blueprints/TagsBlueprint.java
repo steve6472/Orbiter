@@ -1,12 +1,14 @@
 package steve6472.orbiter.world.ecs.blueprints;
 
+import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.core.Blueprint;
-import steve6472.orbiter.world.ecs.core.Component;
+import steve6472.orbiter.world.ecs.core.ComponentEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,16 +23,16 @@ public record TagsBlueprint(List<Key> tagKeys) implements Blueprint<TagsBlueprin
 {
     private static final Logger LOGGER = Log.getLogger(TagsBlueprint.class);
 
-    public static final Key KEY = Key.defaultNamespace("tags");
+    public static final Key KEY = Constants.key("tags");
     public static final Codec<TagsBlueprint> CODEC = Key.CODEC.listOf().xmap(TagsBlueprint::new, TagsBlueprint::tagKeys);
 
     @Override
-    public List<?> createComponents()
+    public List<Component> createComponents()
     {
-        List<Object> components = new ArrayList<>(tagKeys.size());
+        List<Component> components = new ArrayList<>(tagKeys.size());
         for (Key tagKey : tagKeys)
         {
-            Component<?> component = Registries.COMPONENT.get(tagKey);
+            ComponentEntry<?> component = Registries.COMPONENT.get(tagKey);
             if (component == null)
             {
                 LOGGER.severe("Tag \"" + tagKey + "\" not found!");

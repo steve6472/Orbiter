@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.ecs.blueprints;
 
+import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import steve6472.core.registry.Key;
@@ -28,7 +29,7 @@ public record PhysicsBodyBlueprint(Key model, Key collision, float mass) impleme
     ).apply(instance, PhysicsBodyBlueprint::new));
 
     @Override
-    public List<?> createComponents()
+    public List<Component> createComponents()
     {
         return List.of(
             new Position(),

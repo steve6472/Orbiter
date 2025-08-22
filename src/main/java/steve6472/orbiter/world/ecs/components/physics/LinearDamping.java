@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
+import com.badlogic.ashley.core.Component;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
@@ -12,7 +13,7 @@ import java.util.function.Consumer;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class LinearDamping extends Valuef
+public class LinearDamping extends Valuef implements Component
 {
     public static final Codec<LinearDamping> CODEC = codec(LinearDamping::new);
     public static final BufferCodec<ByteBuf, LinearDamping> BUFFER_CODEC = bufferCodec(LinearDamping::new);

@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
+import com.badlogic.ashley.core.Component;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 
 import java.util.Set;
@@ -9,7 +10,7 @@ import java.util.Set;
  * Date: 10/11/2024
  * Project: Orbiter <br>
  */
-public interface PhysicsProperty
+public interface PhysicsProperty extends Component
 {
     Set<Class<? extends PhysicsProperty>> PHYSICS_COMPONENTS = Set.of(
         Position.class,

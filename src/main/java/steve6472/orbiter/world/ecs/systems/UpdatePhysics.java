@@ -1,12 +1,16 @@
 package steve6472.orbiter.world.ecs.systems;
 
+import com.badlogic.ashley.core.ComponentMapper;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import dev.dominion.ecs.api.Dominion;
 import steve6472.core.log.Log;
 import steve6472.orbiter.world.World;
+import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.Tag;
+import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
-import steve6472.orbiter.world.ecs.core.ComponentSystem;
 
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -16,35 +20,38 @@ import java.util.logging.Logger;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class UpdatePhysics implements ComponentSystem
+public class UpdatePhysics extends IteratingSystem
 {
     private static final Logger LOGGER = Log.getLogger(UpdatePhysics.class);
 
-    @Override
-    public void tick(Dominion dominion, World world)
+    private final World world;
+
+    public UpdatePhysics(World world)
     {
-        var found = dominion.findEntitiesWith(UUID.class).withAlso(Tag.Physics.class);
+        super(Family.all(UUIDComp.class, Tag.Physics.class).get());
+        this.world = world;
+    }
 
-        for (var entityComps : found)
+    @Override
+    protected void processEntity(Entity entity, float deltaTime)
+    {
+        UUID uuid = Components.UUID.get(entity).uuid();
+
+        PhysicsRigidBody body = world.bodyMap().get(uuid);
+
+        if (body == null)
         {
-            UUID uuid = entityComps.comp();
+            LOGGER.warning("Body does not exist for entity " + uuid);
+            return;
+        }
 
-            PhysicsRigidBody body = world.bodyMap().get(uuid);
-
-            if (body == null)
-            {
-                LOGGER.warning("Body does not exist for entity " + uuid);
+        for (Class<? extends PhysicsProperty> physicsComponent : PhysicsProperty.PHYSICS_COMPONENTS)
+        {
+            PhysicsProperty physicsProperty = ComponentMapper.getFor(physicsComponent).get(entity);
+            if (physicsProperty == null)
                 continue;
-            }
 
-            for (Class<? extends PhysicsProperty> physicsComponent : PhysicsProperty.PHYSICS_COMPONENTS)
-            {
-                PhysicsProperty physicsProperty = entityComps.entity().get(physicsComponent);
-                if (physicsProperty == null)
-                    continue;
-
-                physicsProperty.modifyBody(body);
-            }
+            physicsProperty.modifyBody(body);
         }
     }
 }

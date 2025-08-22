@@ -1,7 +1,9 @@
 package steve6472.orbiter;
 
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import dev.dominion.ecs.api.Results;
 import org.joml.Matrix4f;
 import steve6472.core.registry.Key;
 import steve6472.flare.assets.model.Model;
@@ -10,7 +12,9 @@ import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.render.SBOTransfromArray;
 import steve6472.flare.render.StaticModelRenderImpl;
 import steve6472.orbiter.world.World;
+import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.IndexModel;
+import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 
 import java.util.ArrayList;
@@ -40,6 +44,8 @@ public class StaticWorldRender extends StaticModelRenderImpl
         }
     }
 
+    private static final Family MODEL_FAMILY = Family.all(IndexModel.class, UUIDComp.class).get();
+
     @Override
     public void updateTransformArray(SBOTransfromArray<Model> sboTransfromArray, FrameInfo frameInfo)
     {
@@ -47,24 +53,32 @@ public class StaticWorldRender extends StaticModelRenderImpl
         if (world == null)
             return;
 
-        var physicsModels = world.ecs().findEntitiesWith(IndexModel.class, UUID.class);
-        List<Results.With2<IndexModel, UUID>> list = new ArrayList<>(physicsModels.stream().toList());
-        if (list.isEmpty())
+        ImmutableArray<Entity> physicsModels = world.ecsEngine().getEntitiesFor(MODEL_FAMILY);
+        if (physicsModels.size() == 0)
             return;
 
-        sboTransfromArray.sort(list, obj -> sboTransfromArray.addArea(obj.comp1().model()).index());
+        List<Entity> list = new ArrayList<>();
+        for (Entity entity : physicsModels)
+        {
+            list.add(entity);
+        }
+
+        sboTransfromArray.sort(list, entity -> sboTransfromArray.addArea(Components.MODEL.get(entity).model()).index());
 
         var lastArea = sboTransfromArray.getAreaByIndex(0);
-        Model lastModel = list.getFirst().comp1().model();
-        for (Results.With2<IndexModel, UUID> entity : list)
+        Model lastModel = Components.MODEL.get(list.getFirst()).model();
+        for (Entity entity : list)
         {
-            if (lastArea == null || lastModel != entity.comp1().model())
+            IndexModel model = Components.MODEL.get(entity);
+            UUID uuid = Components.UUID.get(entity).uuid();
+
+            if (lastArea == null || lastModel != model.model())
             {
-                lastArea = sboTransfromArray.getAreaByType(entity.comp1().model());
-                lastModel = entity.comp1().model();
+                lastArea = sboTransfromArray.getAreaByType(model.model());
+                lastModel = model.model();
             }
 
-            PhysicsRigidBody body = world.bodyMap().get(entity.comp2());
+            PhysicsRigidBody body = world.bodyMap().get(uuid);
             if (body != null)
             {
                 Matrix4f jomlMat = Convert.physGetTransformToJoml(body, new Matrix4f());
@@ -72,9 +86,9 @@ public class StaticWorldRender extends StaticModelRenderImpl
             } else
             {
                 Matrix4f primitiveTransform = new Matrix4f();
-                if (entity.entity().has(Position.class))
+                if (Components.POSITION.has(entity))
                 {
-                    Position position = entity.entity().get(Position.class);
+                    Position position = Components.POSITION.get(entity);
                     primitiveTransform.translate(position.toVec3f());
                 }
                 lastArea.updateTransform(primitiveTransform);

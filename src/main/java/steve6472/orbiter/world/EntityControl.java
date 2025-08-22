@@ -1,10 +1,11 @@
 package steve6472.orbiter.world;
 
+import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import dev.dominion.ecs.api.Dominion;
-import dev.dominion.ecs.api.Entity;
-import dev.dominion.ecs.api.Results;
 import steve6472.core.registry.Key;
 import steve6472.flare.registry.FlareRegistries;
 import steve6472.orbiter.Constants;
@@ -12,14 +13,17 @@ import steve6472.orbiter.network.api.Connections;
 import steve6472.orbiter.network.api.User;
 import steve6472.orbiter.network.packets.game.CreateEntity;
 import steve6472.orbiter.network.packets.game.RemoveEntity;
+import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.components.MPControlled;
+import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
 import steve6472.flare.assets.model.Model;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Created by steve6472
@@ -29,19 +33,19 @@ import java.util.*;
 public interface EntityControl
 {
     PhysicsSpace physics();
-    Dominion ecs();
+    Engine ecsEngine();
     Map<UUID, PhysicsRigidBody> bodyMap();
     Connections connections();
 
-    default Entity addEntity(Model model, UUID uuid, Object... extraComponents)
+    default Entity addEntity(Model model, UUID uuid, Component... extraComponents)
     {
-        ArrayList<Object> objects = new ArrayList<>();
+        ArrayList<Component> objects = new ArrayList<>();
         objects.add(new IndexModel(model));
-        objects.add(uuid);
+        objects.add(new UUIDComp(uuid));
 
         Collections.addAll(objects, extraComponents);
 
-        Entity entity = ecs().createEntity(objects.toArray());
+        Entity entity = createEntity(objects);
 
         // Special physics tag handling
         handlePhysics(entity, objects);
@@ -56,10 +60,10 @@ public interface EntityControl
     // TODO: possibly a packet for this instead of generic create entity, could save bandwidth
     default Entity addEntity(EntityBlueprint entityBlueprint, UUID uuid)
     {
-        List<Object> components = entityBlueprint.createComponents();
-        components.add(uuid);
+        List<Component> components = entityBlueprint.createComponents();
+        components.add(new UUIDComp(uuid));
 
-        Entity entity = ecs().createEntity(components.toArray());
+        Entity entity = createEntity(components);
 
         // Special physics tag handling
         handlePhysics(entity, components);
@@ -76,15 +80,15 @@ public interface EntityControl
         return addEntity(entityBlueprint, UUID.randomUUID());
     }
 
-    default Entity addEntity(Model model, Object... extraComponents)
+    default Entity addEntity(Model model, Component... extraComponents)
     {
         return addEntity(model, UUID.randomUUID(), extraComponents);
     }
 
     /// Does not call CreateEntity
-    default Entity addEntity(Object... components)
+    default Entity addEntity(Component... components)
     {
-        Entity entity = ecs().createEntity(components);
+        Entity entity = createEntity(components);
 
         // Special physics tag handling
         handlePhysics(entity, Set.of(components));
@@ -94,14 +98,14 @@ public interface EntityControl
 
     default Entity spawnDebugPlayer(User user, boolean VR)
     {
-        ArrayList<Object> objects = new ArrayList<>();
+        ArrayList<Component> objects = new ArrayList<>();
         Key key = Constants.key(VR ? "blockbench/static/vr_player" : "blockbench/static/player_capsule");
         Model model = FlareRegistries.STATIC_MODEL.get(key);
         Collision collision = new Collision(key);
         UUID uuid = UUID.randomUUID();
 
         objects.add(new IndexModel(model));
-        objects.add(uuid);
+        objects.add(new UUIDComp(uuid));
         objects.add(new MPControlled(user));
         objects.add(Tag.PHYSICS);
         objects.add(new Position());
@@ -113,7 +117,7 @@ public interface EntityControl
             objects.add(new Gravity(0, 0, 0));
         }
 
-        Entity entity = ecs().createEntity(objects.toArray());
+        Entity entity = createEntity(objects);
 
         PhysicsRigidBody body = handlePhysics(entity, objects);
         Objects.requireNonNull(body, "Player entity missing physics!");
@@ -123,14 +127,14 @@ public interface EntityControl
         return entity;
     }
 
-    private PhysicsRigidBody handlePhysics(Entity entity, Collection<Object> components)
+    private PhysicsRigidBody handlePhysics(Entity entity, Collection<Component> components)
     {
-        UUID uuid = entity.get(UUID.class);
+        UUID uuid = Components.UUID.get(entity).uuid();
         Objects.requireNonNull(uuid);
 
-        if (entity.has(Tag.Physics.class))
+        if (Components.TAG_PHYSICS.has(entity))
         {
-            Collision collision_ = entity.get(Collision.class);
+            Collision collision_ = Components.COLLISION.get(entity);
             if (collision_ == null)
                 throw new RuntimeException("Entity blueprint needs Collision if Physics tag is specified!");
 
@@ -162,7 +166,7 @@ public interface EntityControl
             physics().remove(body);
             bodyMap().remove(uuid);
         }
-        ecs().findEntitiesWith(UUID.class).stream().filter(e -> e.comp().equals(uuid)).forEach(e -> ecs().deleteEntity(e.entity()));
+        Stream.of(ecsEngine().getEntitiesFor(Family.all(UUIDComp.class).get()).toArray()).filter(e -> Components.UUID.get(e).uuid().equals(uuid)).forEach(e -> ecsEngine().removeEntity(e));
 
         if (connections() != null)
             connections().broadcastPacket(new RemoveEntity(uuid));
@@ -170,6 +174,28 @@ public interface EntityControl
 
     default Optional<Entity> getEntityByUUID(UUID uuid)
     {
-        return ecs().findEntitiesWith(UUID.class).stream().filter(e -> e.comp().equals(uuid)).findAny().map(Results.With1::entity);
+        return Stream.of(ecsEngine().getEntitiesFor(Family.all(UUIDComp.class).get()).toArray()).filter(e -> Components.UUID.get(e).uuid().equals(uuid)).findAny();
+    }
+
+    default Entity createEntity(Component... components)
+    {
+        Entity entity = ecsEngine().createEntity();
+        for (Component o : components)
+        {
+            entity.add(o);
+        }
+        ecsEngine().addEntity(entity);
+        return entity;
+    }
+
+    default Entity createEntity(Collection<Component> components)
+    {
+        Entity entity = ecsEngine().createEntity();
+        for (Component component : components)
+        {
+            entity.add(component);
+        }
+        ecsEngine().addEntity(entity);
+        return entity;
     }
 }

@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.ecs.components;
 
+import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -14,7 +15,7 @@ import steve6472.flare.registry.FlareRegistries;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class IndexModel
+public class IndexModel implements Component
 {
     public static final Codec<IndexModel> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Key.CODEC.fieldOf("key").forGetter(e -> e.model().key())

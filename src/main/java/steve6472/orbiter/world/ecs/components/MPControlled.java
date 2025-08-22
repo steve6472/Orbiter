@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.ecs.components;
 
+import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -13,7 +14,7 @@ import steve6472.orbiter.util.OrbiterCodecs;
  * Date: 10/3/2024
  * Project: Orbiter <br>
  */
-public record MPControlled(User controller)
+public record MPControlled(User controller) implements Component
 {
     public static final Codec<MPControlled> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         OrbiterCodecs.USER.fieldOf("user").forGetter(MPControlled::controller)

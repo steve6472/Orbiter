@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
+import com.badlogic.ashley.core.Component;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
 import com.mojang.serialization.Codec;
@@ -14,7 +15,7 @@ import java.util.function.Function;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class AngularDamping extends Valuef
+public class AngularDamping extends Valuef implements Component
 {
     public static final Codec<AngularDamping> CODEC = codec(AngularDamping::new);
     public static final BufferCodec<ByteBuf, AngularDamping> BUFFER_CODEC = bufferCodec(AngularDamping::new);

@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.ecs.core;
 
+import com.badlogic.ashley.core.Component;
 import steve6472.core.registry.Key;
 import steve6472.core.registry.Keyable;
 import steve6472.flare.core.Flare;
@@ -24,9 +25,9 @@ public class EntityBlueprint implements Keyable
         this.blueprints = blueprints;
     }
 
-    public List<Object> createComponents()
+    public List<Component> createComponents()
     {
-        List<Object> components = new ArrayList<>(blueprints.size());
+        List<Component> components = new ArrayList<>(blueprints.size());
         blueprints.forEach(blueprint -> components.addAll(blueprint.createComponents()));
         return components;
     }

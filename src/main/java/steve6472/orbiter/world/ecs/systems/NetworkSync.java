@@ -1,29 +1,13 @@
 package steve6472.orbiter.world.ecs.systems;
 
-import com.mojang.datafixers.util.Pair;
-import dev.dominion.ecs.api.Dominion;
-import dev.dominion.ecs.api.Entity;
-import io.netty.buffer.ByteBuf;
 import steve6472.orbiter.network.api.NetworkMain;
-import steve6472.orbiter.network.api.User;
-import steve6472.orbiter.network.packets.game.AddEntityComponents;
-import steve6472.orbiter.network.packets.game.RemoveEntityComponents;
-import steve6472.orbiter.network.packets.game.UpdateEntityComponents;
-import steve6472.orbiter.world.NetworkSerialization;
-import steve6472.orbiter.world.World;
-import steve6472.orbiter.world.ecs.Components;
-import steve6472.orbiter.world.ecs.components.*;
-import steve6472.orbiter.world.ecs.core.ComponentSystem;
-
-import java.util.Set;
-import java.util.UUID;
 
 /**
  * Created by steve6472
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class NetworkSync implements ComponentSystem
+public class NetworkSync
 {
     private final NetworkMain network;
 
@@ -31,7 +15,7 @@ public class NetworkSync implements ComponentSystem
     {
         this.network = network;
     }
-
+/*
     @Override
     public void tick(Dominion dominion, World world)
     {
@@ -140,5 +124,5 @@ public class NetworkSync implements ComponentSystem
 
             network.connections().broadcastPacketExclude(new RemoveEntityComponents(uuid, componentKeys.toString()), toExclude);
         }
-    }
+    }*/
 }

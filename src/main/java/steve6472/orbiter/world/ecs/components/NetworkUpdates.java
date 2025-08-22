@@ -1,7 +1,8 @@
 package steve6472.orbiter.world.ecs.components;
 
+import com.badlogic.ashley.core.Component;
+
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -10,7 +11,7 @@ import java.util.function.Predicate;
  * Date: 10/10/2024
  * Project: Orbiter <br>
  */
-public sealed class NetworkUpdates permits NetworkAdd, NetworkRemove
+public class NetworkUpdates implements Component
 {
     private final Set<Class<?>> components = new HashSet<>();
 

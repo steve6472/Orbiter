@@ -1,5 +1,7 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
+import com.badlogic.ashley.core.Component;
+
 /**
  * Created by steve6472
  * Date: 10/11/2024
@@ -10,16 +12,16 @@ public class ModifyState
     private static final ModifyState TRUE = new ModifyState(null, BooleanType.TRUE);
     private static final ModifyState FALSE = new ModifyState(null, BooleanType.FALSE);
 
-    private final Object newComponent;
+    private final Component newComponent;
     private final BooleanType booleanType;
 
-    private ModifyState(Object newComponent, BooleanType booleanType)
+    private ModifyState(Component newComponent, BooleanType booleanType)
     {
         this.newComponent = newComponent;
         this.booleanType = booleanType;
     }
 
-    public static ModifyState component(Object newComponent)
+    public static ModifyState component(Component newComponent)
     {
         return new ModifyState(newComponent, BooleanType.COMPONENT);
     }
@@ -49,7 +51,7 @@ public class ModifyState
         return booleanType == BooleanType.COMPONENT && newComponent != null;
     }
 
-    public Object getComponent()
+    public Component getComponent()
     {
         return newComponent;
     }

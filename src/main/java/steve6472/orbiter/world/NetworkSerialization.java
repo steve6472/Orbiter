@@ -1,14 +1,17 @@
 package steve6472.orbiter.world;
 
+import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.utils.ImmutableArray;
 import com.mojang.datafixers.util.Pair;
-import dev.dominion.ecs.api.Entity;
-import dev.dominion.ecs.engine.IntEntity;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.PooledByteBufAllocator;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.world.ecs.core.Component;
+import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.components.UUIDComp;
+import steve6472.orbiter.world.ecs.core.ComponentEntry;
 
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -24,26 +27,26 @@ public class NetworkSerialization
     {
         final int INITIAL_BYTES = 64;
 
-        UUID uuid = entity.get(UUID.class);
+        UUID uuid = Components.UUID.get(entity).uuid();
         if (uuid == null)
             throw new RuntimeException("Tried to network serialize an entity without UUID");
 
-        Object[] componentArray = ((IntEntity) entity).getComponentArray();
+        ImmutableArray<Component> components = entity.getComponents();
 
-        ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(INITIAL_BYTES + componentArray.length * 16);
+        ByteBuf buffer = PooledByteBufAllocator.DEFAULT.buffer(INITIAL_BYTES + components.size() * 16);
         int encoded = 0;
 
-        for (Object component : componentArray)
+        for (Component component : components)
         {
             // Never changes
             Class<?> componentClass = component.getClass();
-            if (componentClass.equals(UUID.class))
+            if (componentClass.equals(UUIDComp.class))
                 continue;
 
             if (!filter.test(componentClass))
                 continue;
 
-            for (Component<?> componentType : Registries.COMPONENT.getMap().values())
+            for (ComponentEntry<?> componentType : Registries.COMPONENT.getMap().values())
             {
                 //noinspection unchecked
                 BufferCodec<ByteBuf, Object> networkCodec = (BufferCodec<ByteBuf, Object>) componentType.getNetworkCodec();

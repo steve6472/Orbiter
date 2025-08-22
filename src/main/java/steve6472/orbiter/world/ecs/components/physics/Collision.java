@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
+import com.badlogic.ashley.core.Component;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.objects.PhysicsBody;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -15,7 +16,7 @@ import steve6472.orbiter.Registries;
  * Date: 10/3/2024
  * Project: Orbiter <br>
  */
-public record Collision(Key collisionKey, CollisionShape shape) implements PhysicsProperty
+public record Collision(Key collisionKey, CollisionShape shape) implements PhysicsProperty, Component
 {
     public static final Codec<Collision> CODEC = Key.CODEC.xmap(Collision::new, Collision::collisionKey);
 

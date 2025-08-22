@@ -1,5 +1,8 @@
 package steve6472.orbiter.world.ecs.core;
 
+import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.ComponentMapper;
+import com.badlogic.ashley.core.Entity;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
@@ -12,23 +15,38 @@ import steve6472.core.registry.Serializable;
  * Date: 5/3/2024
  * Project: Domin <br>
  */
-public class Component<T> implements Keyable, Serializable<T>
+public class ComponentEntry<T extends Component> implements Keyable, Serializable<T>
 {
     private final Key key;
     private final Codec<T> persistentCodec;
     private final BufferCodec<ByteBuf, T> networkCodec;
     // TODO: private final Supplier<T> blueprint
     private final Class<T> clazz;
+    private final ComponentMapper<T> mapper;
 
-    private Component(Key key, Class<T> clazz, Codec<T> persistentCodec, BufferCodec<ByteBuf, T> networkCodec)
+    private ComponentEntry(Key key, Class<T> clazz, Codec<T> persistentCodec, BufferCodec<ByteBuf, T> networkCodec)
     {
         this.key = key;
         this.clazz = clazz;
         this.persistentCodec = persistentCodec;
         this.networkCodec = networkCodec;
+        this.mapper = ComponentMapper.getFor(clazz);
     }
 
-    public static <T> Builder<T> builder()
+    /*
+     * Mapper delegates
+     */
+    public T get(Entity entity)
+    {
+        return mapper.get(entity);
+    }
+
+    public boolean has(Entity entity)
+    {
+        return mapper.has(entity);
+    }
+
+    public static <T extends Component> Builder<T> builder()
     {
         return new Builder<>();
     }
@@ -61,7 +79,7 @@ public class Component<T> implements Keyable, Serializable<T>
         return networkCodec;
     }
 
-    public static class Builder<T>
+    public static class Builder<T extends Component>
     {
         private Codec<T> persistentCodec;
         private BufferCodec<ByteBuf, T> networkCodec;
@@ -97,9 +115,9 @@ public class Component<T> implements Keyable, Serializable<T>
             return this;
         }
 
-        public Component<T> build()
+        public ComponentEntry<T> build()
         {
-            return new Component<>(key, clazz, persistentCodec, networkCodec);
+            return new ComponentEntry<>(key, clazz, persistentCodec, networkCodec);
         }
     }
 }

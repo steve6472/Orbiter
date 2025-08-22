@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.ecs.blueprints;
 
+import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import steve6472.core.registry.Key;
 import steve6472.flare.registry.FlareRegistries;
@@ -19,7 +20,7 @@ public record IndexModelBlueprint(Key modelKey) implements Blueprint<IndexModelB
     public static final Codec<IndexModelBlueprint> CODEC = Key.CODEC.xmap(IndexModelBlueprint::new, IndexModelBlueprint::modelKey);
 
     @Override
-    public List<?> createComponents()
+    public List<Component> createComponents()
     {
         return List.of(new IndexModel(FlareRegistries.STATIC_MODEL.get(modelKey)));
     }

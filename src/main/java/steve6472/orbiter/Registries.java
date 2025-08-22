@@ -15,7 +15,7 @@ import steve6472.orbiter.world.collision.OrbiterCollisionShape;
 import steve6472.orbiter.world.ecs.Blueprints;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.core.BlueprintEntry;
-import steve6472.orbiter.world.ecs.core.Component;
+import steve6472.orbiter.world.ecs.core.ComponentEntry;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
 
 import java.util.logging.Logger;
@@ -33,7 +33,7 @@ public class Registries extends RegistryCreators
     public static final Registry<Keybind> KEYBINDS = createNamespacedRegistry(Constants.NAMESPACE, "keybinds", () -> Keybinds.FORWARD);
     public static final Registry<Rarity> RARITY = createRegistry("rarity", () -> Rarities.COMMON);
     public static final PacketRegistry PACKET = createPacketRegistry("packet", Packets::init);
-    public static final Registry<Component<?>> COMPONENT = createNamespacedRegistry(Constants.NAMESPACE, "component", () -> Components.POSITION);
+    public static final Registry<ComponentEntry<?>> COMPONENT = createNamespacedRegistry(Constants.NAMESPACE, "component", () -> Components.POSITION);
     public static final Registry<BlueprintEntry<?>> BLUEPRINT = createRegistry("blueprint", () -> Blueprints.POSITION);
     public static final ObjectRegistry<EntityBlueprint> ENTITY_BLUEPRINT = createObjectRegistry("entity_blueprint", EntityBlueprint::load);
     public static final ObjectRegistry<OrbiterCollisionShape> COLLISION = createObjectRegistry("collision", OrbiterCollisionShape::load);
