@@ -16,7 +16,7 @@ import java.util.function.Consumer;
  */
 public interface EntityModify
 {
-    static void _markModified(Entity entity, Class<?> type)
+    static void _markModified(Entity entity, Class<? extends Component> type)
     {
         NetworkUpdates networkUpdates = Components.NETWORK_UPDATES.get(entity);
         if (networkUpdates == null)
@@ -28,7 +28,7 @@ public interface EntityModify
         networkUpdates.add(type);
     }
 
-    default void markModified(Entity entity, Class<?> type)
+    default void markModified(Entity entity, Class<? extends Component> type)
     {
         _markModified(entity, type);
     }

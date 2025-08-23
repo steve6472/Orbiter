@@ -16,6 +16,7 @@ import java.util.function.UnaryOperator;
  * Date: 10/9/2024
  * Project: Orbiter <br>
  */
+@SuppressWarnings("unused")
 public class Components
 {
     /*
@@ -83,7 +84,18 @@ public class Components
         for (ComponentEntry<?> value : Registries.COMPONENT.getMap().values())
         {
             if (value.componentClass().equals(clazz))
+                //noinspection unchecked - should be checked a line above
                 return Optional.of((ComponentEntry<T>) value);
+        }
+        return Optional.empty();
+    }
+
+    public static Optional<ComponentEntry<? extends Component>> getComponentByNetworkId(int networkId)
+    {
+        for (ComponentEntry<?> value : Registries.COMPONENT.getMap().values())
+        {
+            if (value.networkID() == networkId)
+                return Optional.of(value);
         }
         return Optional.empty();
     }

@@ -11,23 +11,18 @@ import java.util.function.Predicate;
  * Date: 10/10/2024
  * Project: Orbiter <br>
  */
-public class NetworkUpdates implements Component
+public sealed class NetworkUpdates implements Component permits NetworkAdd, NetworkRemove
 {
-    private final Set<Class<?>> components = new HashSet<>();
+    private final Set<Class<? extends Component>> components = new HashSet<>();
 
-    public Set<Class<?>> components()
+    public Set<Class<? extends Component>> components()
     {
         return components;
     }
 
-    public void add(Class<?> component)
+    public void add(Class<? extends Component> component)
     {
         components.add(component);
-    }
-
-    public void remove(Class<?> component)
-    {
-        components.remove(component);
     }
 
     public void clear()
@@ -35,7 +30,7 @@ public class NetworkUpdates implements Component
         components.clear();
     }
 
-    public Predicate<Class<?>> test()
+    public Predicate<Class<? extends Component>> test()
     {
         return components::contains;
     }

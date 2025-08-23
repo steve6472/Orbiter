@@ -41,6 +41,7 @@ build/
 generated/
 /modules/flare/
 latest.log
+latest.log.*
 
 ### MoonDust ###
 /modules/moondust/

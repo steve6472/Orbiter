@@ -18,6 +18,7 @@ import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.api.Connections;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.world.ecs.RenderECSSystem;
+import steve6472.orbiter.world.ecs.systems.NetworkSync;
 import steve6472.orbiter.world.ecs.systems.RenderNametag;
 import steve6472.orbiter.world.ecs.systems.UpdateECS;
 import steve6472.orbiter.world.ecs.systems.UpdatePhysics;
@@ -77,7 +78,7 @@ public class World implements EntityControl
         }, "Firefly AI", "Test firefly entity");*/
 
         // Last
-//        systems.registerSystem(new NetworkSync(steam), "Network Sync", "");
+        ecsEngine.addSystem(new NetworkSync(network())); //"Network Sync", ""
         ecsEngine.addSystem(new UpdatePhysics(this)); // "Update Physics Positions", "Updates Physics Positions with data from last tick ECS Systems"
     }
 

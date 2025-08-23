@@ -1,6 +1,9 @@
 package steve6472.orbiter.network.packets.play;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.jme3.bullet.objects.PhysicsRigidBody;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
 import steve6472.flare.settings.VisualSettings;
@@ -11,8 +14,13 @@ import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.network.api.User;
 import steve6472.orbiter.ui.MDUtil;
 import steve6472.orbiter.world.World;
+import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.components.UUIDComp;
+import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
+import steve6472.orbiter.world.ecs.core.ComponentEntry;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -46,6 +54,46 @@ public class GameClientboundListener extends OrbiterPacketListener
         OrbiterApp orbiter = OrbiterApp.getInstance();
         World world = orbiter.getClient().getWorld();
         world.addEntity(Registries.ENTITY_BLUEPRINT.get(entityType), uuid);
+    }
+
+    private static final Family UUID_FAMILY = Family.all(UUIDComp.class).get();
+    public void updateEntity(UUID uuid, List<Component> adds, int[] removes)
+    {
+        OrbiterApp orbiter = OrbiterApp.getInstance();
+        World world = orbiter.getClient().getWorld();
+        for (Entity entity : world.ecsEngine().getEntitiesFor(UUID_FAMILY))
+        {
+            if (!Components.UUID.get(entity).uuid().equals(uuid))
+                continue;
+
+            for (Component component : adds)
+            {
+                entity.add(component);
+
+                if (component instanceof PhysicsProperty pp)
+                {
+                    PhysicsRigidBody body = world.bodyMap().get(uuid);
+                    if (body == null)
+                    {
+                        LOGGER.warning("Body does not exist for entity " + uuid);
+                        continue;
+                    }
+                    pp.modifyBody(body);
+                }
+            }
+
+            for (int networkId : removes)
+            {
+                var componentEntry = Components.getComponentByNetworkId(networkId);
+                if (componentEntry.isPresent())
+                {
+                    entity.remove(componentEntry.get().componentClass());
+                } else
+                {
+                    LOGGER.warning("Recieved packet with component networkID of " + networkId + " but no such component exists (for removal)");
+                }
+            }
+        }
     }
 
     public void createCustomEntity(UUID uuid, List<Component> components)

@@ -8,6 +8,7 @@ import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.packets.configuration.clientbound.FinishConfiguration;
 import steve6472.orbiter.network.packets.configuration.clientbound.HeartbeatClientbound;
 import steve6472.orbiter.network.packets.configuration.hostbound.HeartbeatHostbound;
+import steve6472.orbiter.network.packets.game.UpdateEntityComponents;
 import steve6472.orbiter.network.packets.login.clientbound.LoginResponse;
 import steve6472.orbiter.network.packets.login.hostbound.LoginStart;
 import steve6472.orbiter.network.packets.play.clientbound.*;
@@ -42,6 +43,7 @@ public class Packets
         registerPacket(GameHeartbeatClientbound.KEY, GameHeartbeatClientbound.BUFFER_CODEC);
         registerPacket(EnterWorld.KEY, EnterWorld.BUFFER_CODEC);
         registerPacket(CreateEntity.KEY, CreateEntity.BUFFER_CODEC);
+        registerPacket(UpdateEntityComponents.KEY, UpdateEntityComponents.BUFFER_CODEC);
         registerPacket(KickUser.KEY, KickUser.BUFFER_CODEC);
         registerPacket(Disconnect.KEY, Disconnect.BUFFER_CODEC);
         // Hostbound

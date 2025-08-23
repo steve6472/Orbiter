@@ -23,7 +23,7 @@ import java.util.function.Predicate;
  */
 public class NetworkSerialization
 {
-    public static Pair<Integer, ByteBuf> entityComponentsToBuffer(Entity entity, Predicate<Class<?>> filter)
+    public static Pair<Integer, ByteBuf> entityComponentsToBuffer(Entity entity, Predicate<Class<? extends Component>> filter)
     {
         final int INITIAL_BYTES = 64;
 
@@ -38,8 +38,9 @@ public class NetworkSerialization
 
         for (Component component : components)
         {
+            Class<? extends Component> componentClass = component.getClass();
+
             // Never changes
-            Class<?> componentClass = component.getClass();
             if (componentClass.equals(UUIDComp.class))
                 continue;
 
@@ -56,7 +57,7 @@ public class NetworkSerialization
 
                 if (componentType.componentClass().equals(componentClass))
                 {
-                    BufferCodecs.KEY.encode(buffer, componentType.key());
+                    BufferCodecs.INT.encode(buffer, componentType.networkID());
                     networkCodec.encode(buffer, component);
                     encoded++;
                 }

@@ -1,128 +1,134 @@
 package steve6472.orbiter.world.ecs.systems;
 
+import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.Family;
+import com.badlogic.ashley.systems.IteratingSystem;
+import com.mojang.datafixers.util.Pair;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.PooledByteBufAllocator;
+import steve6472.core.log.Log;
 import steve6472.orbiter.network.api.NetworkMain;
+import steve6472.orbiter.network.api.User;
+import steve6472.orbiter.network.packets.game.UpdateEntityComponents;
+import steve6472.orbiter.world.NetworkSerialization;
+import steve6472.orbiter.world.World;
+import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.components.*;
+
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Predicate;
+import java.util.logging.Logger;
 
 /**
  * Created by steve6472
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class NetworkSync
+public class NetworkSync extends IteratingSystem
 {
+    private static final Logger LOGGER = Log.getLogger(NetworkSync.class);
     private final NetworkMain network;
 
     public NetworkSync(NetworkMain network)
     {
+        super(Family.all(UUIDComp.class).one(NetworkUpdates.class, NetworkAdd.class, NetworkRemove.class).get());
         this.network = network;
     }
-/*
+
     @Override
-    public void tick(Dominion dominion, World world)
+    protected void processEntity(Entity entity, float deltaTime)
     {
-//        if (!network.isHost() || network.disabled())
-//            return;
+        // TODO: enable/disable the whole system instead
+        if (!network.lobby().isHost() || !network.lobby().isLobbyOpen())
+            return;
 
-        // TODO: disable if no peers exist
+        UUID uuid = Components.UUID.get(entity).uuid();
+        NetworkUpdates updates = Components.NETWORK_UPDATES.get(entity);
+        NetworkAdd adds = Components.NETWORK_ADD.get(entity);
+        NetworkRemove removes = Components.NETWORK_REMOVE.get(entity);
+        Predicate<Class<? extends Component>> updatePredicate = null, addPredicate = null;
+        Pair<Integer, ByteBuf> addsPair = null;
+        int[] toRemove;
 
-        for (var entityComps : dominion.findEntitiesWith(UUID.class, NetworkUpdates.class))
+        User extraExclude = null;
+        if (Components.MP_CONTROLLED.has(entity))
         {
-            UUID uuid = entityComps.comp1();
-            NetworkUpdates updates = entityComps.comp2();
+            MPControlled mpControlled = Components.MP_CONTROLLED.get(entity);
+            extraExclude = mpControlled.controller();
+        }
+        Set<User> toExclude = extraExclude == null ? Set.of() : Set.of(extraExclude);
 
+        if (updates != null)
+        {
             if (updates.components().isEmpty())
-                continue;
-
-            Entity entity = entityComps.entity();
-
-//            if (OrbiterApp.getInstance().getSteam().isHost() && entity.has(Tag.ClientHandled.class))
-//                continue;
-
-            User extraExclude = null;
-            if (entity.has(MPControlled.class))
-            {
-                MPControlled mpControlled = entity.get(MPControlled.class);
-                extraExclude = mpControlled.controller();
-            }
-
-            Pair<Integer, ByteBuf> serialized = NetworkSerialization.entityComponentsToBuffer(entity, updates.test());
-            if (serialized.getFirst() == 0)
-                continue;
-
-            updates.clear();
-
-            Set<User> toExclude = extraExclude == null ? Set.of() : Set.of(extraExclude);
-
-            network.connections().broadcastPacketExclude(new UpdateEntityComponents(uuid, serialized.getFirst(), serialized.getSecond()), toExclude);
+                return;
+            updatePredicate = updates.test();
         }
 
-        for (var entityComps : dominion.findEntitiesWith(UUID.class, NetworkAdd.class))
+        if (adds != null)
         {
-            UUID uuid = entityComps.comp1();
-            NetworkAdd updates = entityComps.comp2();
-
-            if (updates.components().isEmpty())
-                continue;
-
-            Entity entity = entityComps.entity();
-
-//            if (OrbiterApp.getInstance().getSteam().isHost() && entity.has(Tag.ClientHandled.class))
-//                continue;
-
-            User extraExclude = null;
-            if (entity.has(MPControlled.class))
-            {
-                MPControlled mpControlled = entity.get(MPControlled.class);
-                extraExclude = mpControlled.controller();
-            }
-
-            Pair<Integer, ByteBuf> serialized = NetworkSerialization.entityComponentsToBuffer(entity, updates.test());
-            if (serialized.getFirst() == 0)
-                continue;
-
-            updates.clear();
-
-            Set<User> toExclude = extraExclude == null ? Set.of() : Set.of(extraExclude);
-
-            network.connections().broadcastPacketExclude(new AddEntityComponents(uuid, serialized.getFirst(), serialized.getSecond()), toExclude);
+            if (adds.components().isEmpty())
+                return;
+            addPredicate = adds.test();
         }
 
-        for (var entityComps : dominion.findEntitiesWith(UUID.class, NetworkRemove.class))
+        if (updatePredicate != null && addPredicate != null)
         {
-            UUID uuid = entityComps.comp1();
-            NetworkRemove updates = entityComps.comp2();
+            Predicate<Class<? extends Component>> finalUpdatePredicate = updatePredicate;
+            Predicate<Class<? extends Component>> finalAddPredicate = addPredicate;
+            addsPair = NetworkSerialization.entityComponentsToBuffer(entity, (c) -> finalUpdatePredicate.test(c) || finalAddPredicate.test(c));
+        } else if (updatePredicate != null)
+        {
+            addsPair = NetworkSerialization.entityComponentsToBuffer(entity, updatePredicate);
+        } else if (addPredicate != null)
+        {
+            addsPair = NetworkSerialization.entityComponentsToBuffer(entity, addPredicate);
+        }
 
-            Entity entity = entityComps.entity();
+        if (addsPair == null)
+        {
+            // Create with empty buffer
+            addsPair = Pair.of(0, PooledByteBufAllocator.DEFAULT.heapBuffer(0, 0));
+        }
 
-//            if (OrbiterApp.getInstance().getSteam().isHost() && entity.has(Tag.ClientHandled.class))
-//                continue;
+        if (updates != null) updates.clear();
+        if (adds != null) adds.clear();
 
-            User extraExclude = null;
-            if (entity.has(MPControlled.class))
+        if (removes != null)
+        {
+            if (removes.components().isEmpty())
+                return;
+
+            toRemove = new int[removes.components().size()];
+            int i = 0;
+            for (Class<? extends Component> component : removes.components())
             {
-                MPControlled mpControlled = entity.get(MPControlled.class);
-                extraExclude = mpControlled.controller();
-            }
-
-            StringBuilder componentKeys = new StringBuilder();
-
-            for (Class<?> component : updates.components())
-            {
-                Components.getComponentByClass(component).ifPresent(c ->
+                var entryOptional = Components.getComponentByClass(component);
+                if (entryOptional.isPresent())
                 {
-                    if (c.getNetworkCodec() != null)
-                    {
-                        componentKeys.append(c.key().toString());
-                        componentKeys.append(";");
-                    }
-                });
+                    toRemove[i] = entryOptional.get().networkID();
+                    i++;
+                } else
+                {
+                    LOGGER.warning("Unknown component for " + component);
+                }
             }
-            componentKeys.setLength(componentKeys.length() - 1);
 
-            updates.clear();
+            if (i != removes.components().size() - 1)
+            {
+                int[] newArr = new int[i];
+                System.arraycopy(toRemove, 0, newArr, 0, i);
+                toRemove = newArr;
+            }
 
-            Set<User> toExclude = extraExclude == null ? Set.of() : Set.of(extraExclude);
-
-            network.connections().broadcastPacketExclude(new RemoveEntityComponents(uuid, componentKeys.toString()), toExclude);
+            removes.clear();
+        } else
+        {
+            toRemove = new int[0];
         }
-    }*/
+
+        network.connections().broadcastPacketExclude(new UpdateEntityComponents(uuid, addsPair.getFirst(), addsPair.getSecond(), toRemove), toExclude);
+    }
 }
