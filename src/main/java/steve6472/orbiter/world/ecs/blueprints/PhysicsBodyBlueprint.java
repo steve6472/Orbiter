@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import steve6472.core.registry.Key;
 import steve6472.flare.registry.FlareRegistries;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.*;
@@ -21,7 +22,7 @@ public record PhysicsBodyBlueprint(Key model, Key collision, float mass) impleme
 {
     private static final Key FROM_MODEL = Key.withNamespace("from", "model");
 
-    public static final Key KEY = Key.defaultNamespace("physics_body");
+    public static final Key KEY = Constants.key("physics_body");
     public static final Codec<PhysicsBodyBlueprint> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Key.CODEC.fieldOf("model").forGetter(PhysicsBodyBlueprint::model),
         Key.CODEC.optionalFieldOf("collision", FROM_MODEL).forGetter(PhysicsBodyBlueprint::collision),

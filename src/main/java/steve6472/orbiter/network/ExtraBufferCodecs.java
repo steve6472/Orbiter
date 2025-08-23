@@ -1,14 +1,18 @@
 package steve6472.orbiter.network;
 
-import com.codedisaster.steamworks.SteamID;
+import com.badlogic.ashley.core.Component;
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
 import steve6472.orbiter.network.api.User;
 import steve6472.orbiter.network.impl.dedicated.DedicatedUser;
+import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.core.ComponentEntry;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by steve6472
@@ -18,12 +22,8 @@ import steve6472.orbiter.network.impl.dedicated.DedicatedUser;
 public interface ExtraBufferCodecs
 {
     BufferCodec<ByteBuf, Vector3f> VEC3F = BufferCodec.of(BufferCodecs.FLOAT, Vector3f::x, BufferCodecs.FLOAT, Vector3f::y, BufferCodecs.FLOAT, Vector3f::z, Vector3f::new);
-    /// @deprecated WIP
-    @Deprecated
-    BufferCodec<ByteBuf, SteamID> STEAM_USER = BufferCodec.of(BufferCodecs.LONG, SteamID::getNativeHandle, SteamID::createFromNativeHandle);
-    BufferCodec<ByteBuf, DedicatedUser> DEDICATED_USER = BufferCodec.of(BufferCodecs.STRING, User::username, DedicatedUser::new);
 
-    BufferCodec<ByteBuf, User> USER = new BufferCodec<ByteBuf, User>()
+    BufferCodec<ByteBuf, User> USER = new BufferCodec<>()
     {
         @Override
         public User decode(ByteBuf object)
@@ -31,22 +31,18 @@ public interface ExtraBufferCodecs
             boolean isDedicated = object.readBoolean();
             if (isDedicated)
             {
-                return DEDICATED_USER.decode(object);
+                return new DedicatedUser(BufferCodecs.UUID.decode(object), "");
             } else
             {
                 throw new IllegalStateException("Steam user decode not implemented yet!");
-//                return STEAM_USER.decode(object);
             }
         }
 
         @Override
         public void encode(ByteBuf left, User right)
         {
-            if (right instanceof DedicatedUser dedUser)
-            {
-                left.writeBoolean(true);
-                DEDICATED_USER.encode(left, dedUser);
-            }
+            left.writeBoolean(right instanceof DedicatedUser);
+            BufferCodecs.UUID.encode(left, right.uuid());
         }
     };
 
@@ -83,15 +79,38 @@ public interface ExtraBufferCodecs
         }
     };
 
-    /// Must manually release the buffer after decoding!
-    BufferCodec<ByteBuf, ByteBuf> BUFFER = BufferCodec.of((networkBuff, passBuff) -> {
-        networkBuff.writeInt(passBuff.writerIndex());
-        networkBuff.writeBytes(passBuff);
-        passBuff.release();
-    }, (buff) -> {
-        int size = buff.readInt();
-        ByteBuf retBuf = PooledByteBufAllocator.DEFAULT.buffer(size);
-        buff.readBytes(retBuf, size);
-        return retBuf;
+    BufferCodec<ByteBuf, List<Component>> COMPONENT_LIST = BufferCodec.of((buffer, components) -> {
+
+        int componentCountIndex = buffer.writerIndex();
+        buffer.writeInt(0);
+        int componentCount = 0;
+        for (Component component : components)
+        {
+            var componentEntryOptional = Components.getComponentByClass(component.getClass());
+            if (componentEntryOptional.isEmpty())
+                continue;
+
+            ComponentEntry<?> componentEntry = componentEntryOptional.get();
+            //noinspection unchecked
+            BufferCodec<ByteBuf, Object> networkCodec = (BufferCodec<ByteBuf, Object>) componentEntry.getNetworkCodec();
+            if (networkCodec == null)
+                continue;
+
+            buffer.writeInt(componentEntry.networkID());
+            networkCodec.encode(buffer, component);
+            componentCount++;
+        }
+        buffer.setInt(componentCountIndex, componentCount);
+    }, (buffer) -> {
+        int componentCount = buffer.readInt();
+        List<Component> components = new ArrayList<>(componentCount);
+
+        for (int i = 0; i < componentCount; i++)
+        {
+            int networkID = buffer.readInt();
+            var componentEntryOptional = Components.getComponentByNetworkId(networkID);
+            componentEntryOptional.ifPresent(componentEntry -> components.add(componentEntry.getNetworkCodec().decode(buffer)));
+        }
+        return components;
     });
 }

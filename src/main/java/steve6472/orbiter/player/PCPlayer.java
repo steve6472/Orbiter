@@ -1,6 +1,7 @@
 package steve6472.orbiter.player;
 
-import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.Entity;
 import com.jme3.bullet.collision.shapes.ConvexShape;
 import com.jme3.bullet.objects.PhysicsCharacter;
 import org.joml.Vector2i;
@@ -9,10 +10,18 @@ import steve6472.core.registry.Key;
 import steve6472.flare.Camera;
 import steve6472.flare.input.UserInput;
 import steve6472.flare.vr.VrInput;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
+import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.components.physics.Collision;
+import steve6472.orbiter.world.ecs.components.physics.PCCharacter;
+
+import java.util.List;
+import java.util.UUID;
 
 import static steve6472.orbiter.Convert.jomlToPhys;
 import static steve6472.orbiter.Convert.physGetToJoml;
@@ -24,6 +33,9 @@ import static steve6472.orbiter.Convert.physGetToJoml;
  */
 public class PCPlayer implements Player
 {
+    public static final Key PLAYER_BLUEPRINT = Constants.key("client_player");
+    public static final Key PLAYER_BLUEPRINT_HOST = Constants.key("client_player_host");
+
     public static final float RADIUS = 0.5f;
     public static final float HEIGHT = 1.6f;
     public static final float EYE_HEIGHT = 1.5f;
@@ -32,18 +44,27 @@ public class PCPlayer implements Player
     public static final int JUMP_COOLDOWN = 4;
 
     public final PhysicsCharacter character;
+    public final Entity ecsEntity;
     private float jumpCooldown = 0;
 
-    public PCPlayer()
+    public PCPlayer(UUID uuid)
     {
-        CollisionShape shape = Registries.COLLISION
-            .get(Key.defaultNamespace("blockbench/static/player_capsule"))
-            .collisionShape();
+        ecsEntity = new Entity();
+        List<Component> components = Registries.ENTITY_BLUEPRINT.get(OrbiterApp.getInstance().getNetwork().lobby().isHost() ? PLAYER_BLUEPRINT_HOST : PLAYER_BLUEPRINT).createEntityComponents(uuid);
+        for (Component component : components)
+        {
+            ecsEntity.add(component);
+        }
+        ecsEntity.add(new PCCharacter());
 
-        if (!(shape instanceof ConvexShape convex))
+        Collision collision = Components.COLLISION.get(ecsEntity);
+        if (collision == null)
+            throw new RuntimeException("Player Entity is missing collision!");
+
+        if (!(collision.shape() instanceof ConvexShape convexCollisionShape))
             throw new RuntimeException("Player capsule collision is not convex!");
 
-        character = new PhysicsCharacter(convex, STEP_HEIGHT);
+        character = new PhysicsCharacter(convexCollisionShape, STEP_HEIGHT);
         character.warp(Convert.jomlToPhys(new Vector3f(0, 1, 0)));
 
         character.setJumpSpeed(7f);
@@ -60,6 +81,12 @@ public class PCPlayer implements Player
     public void applyMotion(Vector3f motion)
     {
         character.setWalkDirection(jomlToPhys(motion));
+    }
+
+    @Override
+    public Entity ecsEntity()
+    {
+        return ecsEntity;
     }
 
     @Override

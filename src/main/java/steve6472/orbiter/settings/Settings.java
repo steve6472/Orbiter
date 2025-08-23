@@ -24,6 +24,7 @@ public class Settings extends SettingRegister
     public static final IntSetting UI_SCALE = registerInt("ui_scale", 2);
     public static final EnumSetting<MultiplayerBackend> MULTIPLAYER_BACKEND = registerEnum("multiplayer_beckend", MultiplayerBackend.DEDICATED);
     public static final BoolSetting TRACK_BANDWIDTH = registerBool("track_bandwidth", false);
+    public static final BoolSetting LOG_PACKETS = registerBool("log_packets", false);
 
     public enum MultiplayerBackend implements StringValue
     {

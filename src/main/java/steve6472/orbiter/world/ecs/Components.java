@@ -34,6 +34,7 @@ public class Components
     public static final ComponentEntry<Friction> FRICTION = register("friction", Friction.class, builder -> builder.persistent(Friction.CODEC).network(Friction.BUFFER_CODEC));
     public static final ComponentEntry<Mass> MASS = register("mass", Mass.class, builder -> builder.persistent(Mass.CODEC).network(Mass.BUFFER_CODEC));
     public static final ComponentEntry<Collision> COLLISION = register("collision", Collision.class, builder -> builder.persistent(Collision.CODEC).network(Collision.BUFFER_CODEC));
+    public static final ComponentEntry<PCCharacter> PC_CHARACTER = register("pc_character", PCCharacter.class, builder -> builder.persistent(PCCharacter.CODEC).network(PCCharacter.BUFFER_CODEC));
 
     /*
      * Rendering
@@ -50,7 +51,7 @@ public class Components
      */
     public static final ComponentEntry<Tag.Physics> TAG_PHYSICS = register("tag_physics", Tag.Physics.class, builder -> builder.persistent(Tag.PHYSICS.codec()).network(Tag.PHYSICS.networkCodec()));
     public static final ComponentEntry<Tag.FireflyAI> TAG_FIREFLY_AI = register("tag_firefly_ai", Tag.FireflyAI.class, builder -> builder.persistent(Tag.FIREFLY_AI.codec()).network(Tag.FIREFLY_AI.networkCodec()));
-    public static final ComponentEntry<Tag.ClientHandled> TAG_CLIENT_HANDLED = register("tag_client_handled", Tag.ClientHandled.class, builder -> builder.persistent(Tag.CLIENT_HANDLED.codec()).network(Tag.CLIENT_HANDLED.networkCodec()));
+    public static final ComponentEntry<Tag.ClientCharacter> TAG_CLIENT_HANDLED = register("tag_client_character", Tag.ClientCharacter.class, builder -> builder.persistent(Tag.CLIENT_CHARACTER.codec()).network(Tag.CLIENT_CHARACTER.networkCodec()));
 
     /*
      * Internal

@@ -38,6 +38,6 @@ public sealed class NetworkUpdates implements Component permits NetworkAdd, Netw
     @Override
     public String toString()
     {
-        return getClass().getSimpleName() + "[" + "components=" + components + ']';
+        return "%s[components=%s]".formatted(getClass().getSimpleName(), components.stream().map(Class::getSimpleName).toList());
     }
 }

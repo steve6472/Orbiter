@@ -251,7 +251,6 @@ public class OrbiterApp extends FlareApp
     public void clearWorld()
     {
         client.setWorld(null);
-        client.setPlayer(null);
         setMouseGrab(false);
     }
 
@@ -265,8 +264,6 @@ public class OrbiterApp extends FlareApp
         world.init(masterRenderer());
         this.client.setWorld(world);
         setMouseGrab(true);
-
-        client.setPlayer(VrData.VR_ON ? new VRPlayer(client) : new PCPlayer());
 
         if (!VrData.VR_ON)
             world.physics().add(((PCPlayer) client.player()).character);

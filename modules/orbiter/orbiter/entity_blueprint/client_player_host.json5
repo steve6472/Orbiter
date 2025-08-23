@@ -1,0 +1,5 @@
+{
+    position: {},
+    model: "blockbench/static/player_capsule_host",
+    collision: "blockbench/static/player_capsule_host"
+}

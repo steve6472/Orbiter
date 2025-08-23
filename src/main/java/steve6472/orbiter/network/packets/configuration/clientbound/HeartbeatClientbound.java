@@ -42,4 +42,10 @@ public class HeartbeatClientbound implements Packet<HeartbeatClientbound, Config
     {
         listener.heartbeat();
     }
+
+    @Override
+    public String toString()
+    {
+        return "HeartbeatClientbound{}";
+    }
 }

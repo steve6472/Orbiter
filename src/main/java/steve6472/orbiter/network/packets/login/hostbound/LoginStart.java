@@ -8,15 +8,20 @@ import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.network.packets.login.LoginHostboundListener;
 
+import java.util.UUID;
+
 /**
  * Created by steve6472
  * Date: 10/7/2024
  * Project: Orbiter <br>
  */
-public record LoginStart(String username) implements Packet<LoginStart, LoginHostboundListener>
+public record LoginStart(String username, UUID uuid) implements Packet<LoginStart, LoginHostboundListener>
 {
     public static final Key KEY = Constants.key("login/hb/login_start");
-    public static final BufferCodec<ByteBuf, LoginStart> BUFFER_CODEC = BufferCodec.of(BufferCodecs.STRING, LoginStart::username, LoginStart::new);
+    public static final BufferCodec<ByteBuf, LoginStart> BUFFER_CODEC = BufferCodec.of(
+        BufferCodecs.STRING, LoginStart::username,
+        BufferCodecs.UUID, LoginStart::uuid,
+        LoginStart::new);
 
     @Override
     public Key key()

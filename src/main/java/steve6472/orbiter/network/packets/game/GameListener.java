@@ -55,7 +55,7 @@ public class GameListener extends OrbiterPacketListener
 
             UUID uuid = entityData.comp2();
 
-            client.getWorld().bodyMap().get(uuid).setPhysicsLocation(Convert.jomlToPhys(destination));
+            client.getWorld().bodyMap().get(uuid).setPhysicsLocation(Convert.jomlToPhys(position));
         }*/
     }
 

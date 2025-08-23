@@ -1,6 +1,8 @@
 package steve6472.orbiter;
 
+import com.badlogic.ashley.core.Entity;
 import org.lwjgl.system.MemoryStack;
+import steve6472.core.log.Log;
 import steve6472.flare.Camera;
 import steve6472.flare.core.FrameInfo;
 import steve6472.flare.input.UserInput;
@@ -10,6 +12,11 @@ import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
 import steve6472.orbiter.player.VRPlayer;
 import steve6472.orbiter.world.World;
+import steve6472.orbiter.world.ecs.components.MPControlled;
+import steve6472.orbiter.world.ecs.components.Tag;
+
+import java.util.UUID;
+import java.util.logging.Logger;
 
 /**
  * Created by steve6472
@@ -18,12 +25,16 @@ import steve6472.orbiter.world.World;
  */
 public class Client
 {
+    private static final Logger LOGGER = Log.getLogger(Client.class);
+    private final UUID clientUUID;
     private Player player;
     private Camera camera;
     private World world;
 
     public Client()
     {
+        clientUUID = UUID.randomUUID();
+        LOGGER.info("Client UUID: " + clientUUID);
     }
 
     public void handleInput(UserInput userInput, VrInput vrInput, float frameTime)
@@ -46,11 +57,14 @@ public class Client
     public void setWorld(World world)
     {
         this.world = world;
-    }
-
-    public void setPlayer(Player player)
-    {
-        this.player = player;
+        if (world != null)
+        {
+            this.player = new PCPlayer(clientUUID);
+            world.ecsEngine().addEntity(player.ecsEntity());
+        } else
+        {
+            this.player = null;
+        }
     }
 
     public Player player()
@@ -61,6 +75,11 @@ public class Client
     public World getWorld()
     {
         return world;
+    }
+
+    public UUID getClientUUID()
+    {
+        return clientUUID;
     }
 
     public void tickClient()

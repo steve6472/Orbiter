@@ -202,9 +202,9 @@ public class LobbyMenuDedicated extends PanelView
             OrbiterApp orbiter = OrbiterApp.getInstance();
             DedicatedMain network = (DedicatedMain) orbiter.getNetwork();
             network.lobby().openLobby(RandomUtil.randomInt(DedicatedMain.MIN_PORT, DedicatedMain.MAX_PORT), false);
-            User user = ((DedicatedLobby) network.lobby()).expectConnection(new DedicatedUserConnection(network, joinIpFieldText.get(), Integer.parseInt(joinPortFieldText.get())));
+            User user = ((DedicatedLobby) network.lobby()).connectToLobby(new DedicatedUserConnection(network, joinIpFieldText.get(), Integer.parseInt(joinPortFieldText.get())));
             user.changeUserStage(UserStage.LOGIN);
-            network.connections().sendPacket(user, new LoginStart(VisualSettings.USERNAME.get()));
+            network.connections().sendPacket(user, new LoginStart(VisualSettings.USERNAME.get(), orbiter.getClient().getClientUUID()));
         });
 
         /*

@@ -5,6 +5,7 @@ import steve6472.core.network.Packet;
 
 import java.nio.ByteBuffer;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 /**

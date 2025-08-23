@@ -57,6 +57,9 @@ public class OrbiterUIRender extends UIRenderImpl
             sprite(i, windowHeight - sendHeight, 0, 1, sendHeight, SEND_SPRITE);
             sprite(i, windowHeight - readHeight - sendHeight, 0, 1, readHeight, READ_SPRITE);
         }
+
+//        if (!tracker.getSendMemory().isEmpty())
+//            LOGGER.info("Read: " + tracker.getReadMemory().getLast() + "B, Send: " + tracker.getSendMemory().getLast());
     }
 
     private static final double log2 = Math.log(2);

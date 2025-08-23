@@ -29,7 +29,11 @@
                             style: "moondust:button/normal"
                         },
                         {
-                            text: "Track Bandwidth:",
+                            text: "Track Bandwidth:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Log Packets:",
                             style: "moondust:button/normal"
                         }
                     ],
@@ -118,6 +122,17 @@
                     widget: "moondust:checkbox",
                     name: "track_bandwidth",
                     position: [-98, 74],
+
+                    bounds: [107, 9],
+                    sprite_size: [7, 7],
+                    sprite_offset: [100, 1],
+
+                    checkbox: {}
+                },
+                {
+                    widget: "moondust:checkbox",
+                    name: "log_packets",
+                    position: [-98, 88],
 
                     bounds: [107, 9],
                     sprite_size: [7, 7],

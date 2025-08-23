@@ -1,12 +1,10 @@
 package steve6472.orbiter.world.ecs.systems;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import steve6472.core.log.Log;
-import steve6472.orbiter.world.EntityModify;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.Tag;
@@ -22,7 +20,7 @@ import java.util.logging.Logger;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class UpdateECS extends IteratingSystem implements EntityModify
+public class UpdateECS extends IteratingSystem
 {
     private static final Logger LOGGER = Log.getLogger(UpdateECS.class);
 
@@ -49,7 +47,11 @@ public class UpdateECS extends IteratingSystem implements EntityModify
 
         for (Class<? extends PhysicsProperty> physicsComponent : PhysicsProperty.PHYSICS_COMPONENTS)
         {
-            PhysicsProperty physicsProperty = ComponentMapper.getFor(physicsComponent).get(entity);
+            var componentByClass = Components.getComponentByClass(physicsComponent);
+            if (componentByClass.isEmpty())
+                continue;
+
+            PhysicsProperty physicsProperty = componentByClass.get().get(entity);
             if (physicsProperty == null)
                 continue;
 
@@ -58,10 +60,10 @@ public class UpdateECS extends IteratingSystem implements EntityModify
             if (modified.hasNewComponent())
             {
                 entity.add(modified.getComponent());
-                markModified(entity, physicsComponent);
+                world.markModified(entity, physicsComponent);
             } else if (modified.hasModifiedComponent())
             {
-                markModified(entity, physicsComponent);
+                world.markModified(entity, physicsComponent);
             }
         }
     }

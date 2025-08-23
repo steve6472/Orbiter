@@ -49,4 +49,10 @@ public class IndexModel implements Component
             throw new RuntimeException("Tried to change model index!");
         this.modelIndex = newIndex;
     }
+
+    @Override
+    public String toString()
+    {
+        return "IndexModel{" + "model=" + model.key() + ", modelIndex=" + modelIndex + '}';
+    }
 }

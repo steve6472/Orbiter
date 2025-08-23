@@ -1,4 +1,4 @@
-package steve6472.orbiter.network.packets.game;
+package steve6472.orbiter.network.packets.play.clientbound;
 
 import com.badlogic.ashley.core.Entity;
 import io.netty.buffer.ByteBuf;
@@ -7,6 +7,7 @@ import steve6472.core.network.BufferCodecs;
 import steve6472.core.network.Packet;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
+import steve6472.orbiter.network.packets.play.GameClientboundListener;
 import steve6472.orbiter.world.ecs.Components;
 
 import java.util.UUID;
@@ -16,9 +17,9 @@ import java.util.UUID;
  * Date: 10/9/2024
  * Project: Orbiter <br>
  */
-public record RemoveEntity(UUID uuid) implements Packet<RemoveEntity, GameListener>
+public record RemoveEntity(UUID uuid) implements Packet<RemoveEntity, GameClientboundListener>
 {
-    public static final Key KEY = Constants.key("remove_entity");
+    public static final Key KEY = Constants.key("game/cb/remove_entity");
     public static final BufferCodec<ByteBuf, RemoveEntity> BUFFER_CODEC = BufferCodec.of(
         BufferCodecs.UUID, RemoveEntity::uuid,
         RemoveEntity::new);
@@ -41,8 +42,8 @@ public record RemoveEntity(UUID uuid) implements Packet<RemoveEntity, GameListen
     }
 
     @Override
-    public void handlePacket(GameListener gameListener)
+    public void handlePacket(GameClientboundListener listener)
     {
-        gameListener.removeEntity(uuid);
+        listener.removeEntity(uuid);
     }
 }

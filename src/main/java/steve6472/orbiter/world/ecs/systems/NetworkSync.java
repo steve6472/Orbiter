@@ -4,19 +4,15 @@ import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import com.mojang.datafixers.util.Pair;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.PooledByteBufAllocator;
 import steve6472.core.log.Log;
 import steve6472.orbiter.network.api.NetworkMain;
-import steve6472.orbiter.network.api.User;
-import steve6472.orbiter.network.packets.game.UpdateEntityComponents;
+import steve6472.orbiter.network.packets.play.clientbound.UpdateEntityComponents;
 import steve6472.orbiter.world.NetworkSerialization;
-import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.*;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
@@ -49,58 +45,42 @@ public class NetworkSync extends IteratingSystem
         NetworkAdd adds = Components.NETWORK_ADD.get(entity);
         NetworkRemove removes = Components.NETWORK_REMOVE.get(entity);
         Predicate<Class<? extends Component>> updatePredicate = null, addPredicate = null;
-        Pair<Integer, ByteBuf> addsPair = null;
+        List<Component> components = new ArrayList<>();
         int[] toRemove;
 
-        User extraExclude = null;
-        if (Components.MP_CONTROLLED.has(entity))
-        {
-            MPControlled mpControlled = Components.MP_CONTROLLED.get(entity);
-            extraExclude = mpControlled.controller();
-        }
-        Set<User> toExclude = extraExclude == null ? Set.of() : Set.of(extraExclude);
+//        User extraExclude = null;
+//        if (Components.MP_CONTROLLED.has(entity))
+//        {
+//            MPControlled mpControlled = Components.MP_CONTROLLED.get(entity);
+//            extraExclude = mpControlled.controller();
+//        }
+//        Set<User> toExclude = extraExclude == null ? Set.of() : Set.of(extraExclude);
 
         if (updates != null)
-        {
-            if (updates.components().isEmpty())
-                return;
             updatePredicate = updates.test();
-        }
 
         if (adds != null)
-        {
-            if (adds.components().isEmpty())
-                return;
             addPredicate = adds.test();
-        }
+
 
         if (updatePredicate != null && addPredicate != null)
         {
             Predicate<Class<? extends Component>> finalUpdatePredicate = updatePredicate;
             Predicate<Class<? extends Component>> finalAddPredicate = addPredicate;
-            addsPair = NetworkSerialization.entityComponentsToBuffer(entity, (c) -> finalUpdatePredicate.test(c) || finalAddPredicate.test(c));
+            components.addAll(NetworkSerialization.selectComponents(entity, (c) -> finalUpdatePredicate.test(c) || finalAddPredicate.test(c)));
         } else if (updatePredicate != null)
         {
-            addsPair = NetworkSerialization.entityComponentsToBuffer(entity, updatePredicate);
+            components.addAll(NetworkSerialization.selectComponents(entity, updatePredicate));
         } else if (addPredicate != null)
         {
-            addsPair = NetworkSerialization.entityComponentsToBuffer(entity, addPredicate);
-        }
-
-        if (addsPair == null)
-        {
-            // Create with empty buffer
-            addsPair = Pair.of(0, PooledByteBufAllocator.DEFAULT.heapBuffer(0, 0));
+            components.addAll(NetworkSerialization.selectComponents(entity, addPredicate));
         }
 
         if (updates != null) updates.clear();
         if (adds != null) adds.clear();
 
-        if (removes != null)
+        if (removes != null && !removes.components().isEmpty())
         {
-            if (removes.components().isEmpty())
-                return;
-
             toRemove = new int[removes.components().size()];
             int i = 0;
             for (Class<? extends Component> component : removes.components())
@@ -129,6 +109,6 @@ public class NetworkSync extends IteratingSystem
             toRemove = new int[0];
         }
 
-        network.connections().broadcastPacketExclude(new UpdateEntityComponents(uuid, addsPair.getFirst(), addsPair.getSecond(), toRemove), toExclude);
+        network.connections().broadcastPacket(new UpdateEntityComponents(uuid, components, toRemove));
     }
 }

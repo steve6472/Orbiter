@@ -15,13 +15,9 @@ import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.network.api.Connections;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.world.ecs.RenderECSSystem;
-import steve6472.orbiter.world.ecs.systems.NetworkSync;
-import steve6472.orbiter.world.ecs.systems.RenderNametag;
-import steve6472.orbiter.world.ecs.systems.UpdateECS;
-import steve6472.orbiter.world.ecs.systems.UpdatePhysics;
+import steve6472.orbiter.world.ecs.systems.*;
 
 import java.util.*;
 
@@ -32,7 +28,7 @@ import static steve6472.flare.render.debug.DebugRender.*;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class World implements EntityControl
+public class World implements EntityControl, EntityModify
 {
     PhysicsSpace physics;
     Engine ecsEngine;
@@ -55,6 +51,7 @@ public class World implements EntityControl
         initSystems();
 
         ecsEngine.addSystem(new RenderNametag(renderer)); // "Render Nametag"
+        ecsEngine.addSystem(new RenderNetworkData(renderer));
     }
 
     private void initSystems()
@@ -76,6 +73,8 @@ public class World implements EntityControl
                 });
             }
         }, "Firefly AI", "Test firefly entity");*/
+
+        ecsEngine.addSystem(new UpdateClientPosition());
 
         // Last
         ecsEngine.addSystem(new NetworkSync(network())); //"Network Sync", ""

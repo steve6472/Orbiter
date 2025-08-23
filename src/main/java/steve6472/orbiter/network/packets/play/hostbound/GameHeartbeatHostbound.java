@@ -43,4 +43,10 @@ public final class GameHeartbeatHostbound implements Packet<GameHeartbeatHostbou
     {
         listener.heartbeat();
     }
+
+    @Override
+    public String toString()
+    {
+        return "GameHeartbeatHostbound{}";
+    }
 }

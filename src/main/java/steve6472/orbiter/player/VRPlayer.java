@@ -75,6 +75,12 @@ public class VRPlayer implements Player
     }
 
     @Override
+    public Entity ecsEntity()
+    {
+        return null;
+    }
+
+    @Override
     public Vector3f getFeetPos()
     {
         return eyePos.sub(0, 1f, 0, new Vector3f());
@@ -166,7 +172,7 @@ public class VRPlayer implements Player
         }, () -> {
             if (handEntity != null)
             {
-                client.getWorld().removeEntity(Components.UUID.get(handEntity).uuid());
+                client.getWorld().removeEntity(Components.UUID.get(handEntity).uuid(), true);
                 handEntity = null;
                 LOGGER.info("Deleted hand entity");
             }

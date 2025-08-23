@@ -8,6 +8,7 @@ import steve6472.core.log.Log;
 import steve6472.core.network.Packet;
 import steve6472.core.network.PacketListener;
 import steve6472.core.registry.PacketRegistry;
+import steve6472.orbiter.settings.Settings;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -68,6 +69,10 @@ public final class PacketManager
             directBuffer.put(bytes);
             directBuffer.flip();
             return directBuffer;
+        } catch (Exception ex)
+        {
+            LOGGER.severe("Error when creating packet " + packetId + ", " + packet);
+            throw ex;
         } finally
         {
             buffer.release();
@@ -103,6 +108,8 @@ public final class PacketManager
             var packetCodec = registry.getPacketFromIntKey(packetId);
             //noinspection unchecked but this may actually throw an error
             Packet<?, T> decode = (Packet<?, T>) packetCodec.decode(buffer);
+            if (Settings.LOG_PACKETS.get())
+                LOGGER.info("[PKT] Handled: " + decode + " from " + lastSender);
             decode.handlePacket(packetListener);
         } catch (Exception e)
         {

@@ -36,6 +36,7 @@ public class SettingsMenu extends PanelView
         bindTextSetting(Settings.SENSITIVITY, findProperty("sensitivity:text"));
         bindSetting(VisualSettings.USERNAME, findProperty("username:text"));
         bindSetting(Settings.TRACK_BANDWIDTH, findProperty("track_bandwidth:checked"));
+        bindSetting(Settings.LOG_PACKETS, findProperty("log_packets:checked"));
 
         ((BooleanProperty) findProperty("username:enabled")).set(!OrbiterApp.getInstance().getNetwork().lobby().isLobbyOpen());
 

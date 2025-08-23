@@ -9,14 +9,12 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import steve6472.orbiter.network.api.Connections;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.packets.play.clientbound.CreateCustomEntity;
-import steve6472.orbiter.network.packets.game.RemoveEntity;
+import steve6472.orbiter.network.packets.play.clientbound.RemoveEntity;
 import steve6472.orbiter.network.packets.play.clientbound.CreateEntity;
 import steve6472.orbiter.world.ecs.Components;
-import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
-import steve6472.flare.assets.model.Model;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -39,7 +37,7 @@ public interface EntityControl
         return network().connections();
     }
 
-    default Entity addEntity(EntityBlueprint entityBlueprint, UUID uuid)
+    default Entity addEntity(EntityBlueprint entityBlueprint, UUID uuid, boolean broadcast)
     {
         List<Component> components = entityBlueprint.createEntityComponents(uuid);
         Entity entity = createEntity(components);
@@ -48,8 +46,26 @@ public interface EntityControl
         handlePhysics(entity, components);
 
         // Broadcast new entity to peers
-        if (connections() != null && network().lobby().isHost())
+        if (broadcast && connections() != null && network().lobby().isHost())
             connections().broadcastPacket(new CreateEntity(uuid, entityBlueprint.key()));
+
+        return entity;
+    }
+
+    default Entity addCustomEntity(UUID uuid, Collection<Component> components, boolean broadcast)
+    {
+        components.add(new UUIDComp(uuid));
+        Entity entity = createEntity(components);
+
+        // Special physics tag handling
+        handlePhysics(entity, components);
+
+        // Broadcast new entity to peers
+        if (broadcast && connections() != null && network().lobby().isHost())
+        {
+            CreateCustomEntity packet = new CreateCustomEntity(entity);
+            connections().broadcastPacket(packet);
+        }
 
         return entity;
     }
@@ -112,7 +128,7 @@ public interface EntityControl
     }
 
     /// Sends the RemoveEntity packet
-    default void removeEntity(UUID uuid)
+    default void removeEntity(UUID uuid, boolean broadcast)
     {
         PhysicsRigidBody body = bodyMap().get(uuid);
         if (body != null)
@@ -129,13 +145,13 @@ public interface EntityControl
             }
         }
 
-        if (connections() != null && network().lobby().isHost())
+        if (broadcast && connections() != null && network().lobby().isHost())
             connections().broadcastPacket(new RemoveEntity(uuid));
     }
 
     default Optional<Entity> getEntityByUUID(UUID uuid)
     {
-        return Stream.of(ecsEngine().getEntitiesFor(Family.all(UUIDComp.class).get()).toArray()).filter(e -> Components.UUID.get(e).uuid().equals(uuid)).findAny();
+        return Stream.of(ecsEngine().getEntitiesFor(Family.all(UUIDComp.class).get()).toArray(Entity.class)).filter(e -> Components.UUID.get(e).uuid().equals(uuid)).findAny();
     }
 
     private Entity createEntity(Collection<Component> components)

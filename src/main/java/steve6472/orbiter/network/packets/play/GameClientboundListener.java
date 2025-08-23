@@ -17,10 +17,8 @@ import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
-import steve6472.orbiter.world.ecs.core.ComponentEntry;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -53,7 +51,7 @@ public class GameClientboundListener extends OrbiterPacketListener
     {
         OrbiterApp orbiter = OrbiterApp.getInstance();
         World world = orbiter.getClient().getWorld();
-        world.addEntity(Registries.ENTITY_BLUEPRINT.get(entityType), uuid);
+        world.addEntity(Registries.ENTITY_BLUEPRINT.get(entityType), uuid, false);
     }
 
     private static final Family UUID_FAMILY = Family.all(UUIDComp.class).get();
@@ -66,11 +64,13 @@ public class GameClientboundListener extends OrbiterPacketListener
             if (!Components.UUID.get(entity).uuid().equals(uuid))
                 continue;
 
+            boolean hasPhysics = Components.TAG_PHYSICS.has(entity);
+
             for (Component component : adds)
             {
                 entity.add(component);
 
-                if (component instanceof PhysicsProperty pp)
+                if (hasPhysics && component instanceof PhysicsProperty pp)
                 {
                     PhysicsRigidBody body = world.bodyMap().get(uuid);
                     if (body == null)
@@ -97,7 +97,12 @@ public class GameClientboundListener extends OrbiterPacketListener
     }
 
     public void createCustomEntity(UUID uuid, List<Component> components)
-    {/*
+    {
+        OrbiterApp orbiter = OrbiterApp.getInstance();
+        World world = orbiter.getClient().getWorld();
+        world.addCustomEntity(uuid, components, false);
+
+        /*
         OrbiterApp orbiter = OrbiterApp.getInstance();
         World world = orbiter.getClient().getWorld();
         Entity entity = world.createEntity(components);
@@ -118,6 +123,13 @@ public class GameClientboundListener extends OrbiterPacketListener
             if (position != null)
                 body.setPhysicsLocation(Convert.jomlToPhys(position.toVec3f()));
         }*/
+    }
+
+    public void removeEntity(UUID uuid)
+    {
+        OrbiterApp orbiter = OrbiterApp.getInstance();
+        World world = orbiter.getClient().getWorld();
+        world.removeEntity(uuid, false);
     }
 
     public void kickUser(User toKick, String reason)

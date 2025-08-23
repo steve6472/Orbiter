@@ -9,10 +9,7 @@ import java.net.InetSocketAddress;
 import java.nio.channels.DatagramChannel;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by steve6472
@@ -163,9 +160,10 @@ public class DedicatedLobby implements Lobby
      * Impl stuff
      */
 
-    public User expectConnection(DedicatedUserConnection connection)
+    private static final UUID LOBBY_UUID = new UUID(0, 0);
+    public User connectToLobby(DedicatedUserConnection connection)
     {
-        ConnectedUser user = new ConnectedUser(new DedicatedUser(connection));
+        ConnectedUser user = new ConnectedUser(new DedicatedUser(LOBBY_UUID, connection));
         connectedUsers.add(user);
         return user.user();
     }

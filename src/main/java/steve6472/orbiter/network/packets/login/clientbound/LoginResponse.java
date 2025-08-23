@@ -8,6 +8,8 @@ import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.network.packets.login.LoginClientboundListener;
 
+import java.util.UUID;
+
 /**
  * Created by steve6472
  * Date: 10/7/2024

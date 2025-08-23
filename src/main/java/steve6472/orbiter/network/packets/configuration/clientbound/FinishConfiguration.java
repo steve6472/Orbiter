@@ -42,4 +42,10 @@ public class FinishConfiguration implements Packet<FinishConfiguration, Configur
     {
         listener.finishConfig();
     }
+
+    @Override
+    public String toString()
+    {
+        return "FinishConfiguration{}";
+    }
 }

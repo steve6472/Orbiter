@@ -1,5 +1,6 @@
 package steve6472.orbiter.player;
 
+import com.badlogic.ashley.core.Entity;
 import org.joml.Vector3f;
 import steve6472.flare.Camera;
 import steve6472.flare.input.UserInput;
@@ -22,6 +23,8 @@ public interface Player
     /*
      * Getters
      */
+    Entity ecsEntity();
+
     Vector3f getFeetPos();
     Vector3f getEyePos();
     Vector3f getCenterPos();

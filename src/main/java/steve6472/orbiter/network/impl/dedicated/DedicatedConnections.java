@@ -3,12 +3,15 @@ package steve6472.orbiter.network.impl.dedicated;
 import steve6472.core.network.Packet;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.network.api.*;
+import steve6472.orbiter.settings.Settings;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Created by steve6472
@@ -73,6 +76,7 @@ public class DedicatedConnections implements Connections
         return true;
     }
 
+    private static final UUID NEW_CONNECTION = new UUID(1111111111111111111L, 1111111111111111111L);
     // Receive data from the channel
     private void receiveData() throws IOException
     {
@@ -101,7 +105,8 @@ public class DedicatedConnections implements Connections
         // TODO: automatic rate limit for new connection
         LOGGER.info("Potential new connection from: " + sender);
 
-        DedicatedUser user = new DedicatedUser(new DedicatedUserConnection(((DedicatedMain) OrbiterApp.getInstance().getNetwork()), sender));
+        //TODO: For now assign random UUID
+        DedicatedUser user = new DedicatedUser(NEW_CONNECTION, new DedicatedUserConnection(((DedicatedMain) OrbiterApp.getInstance().getNetwork()), sender));
         user.changeUserStage(UserStage.LOGIN);
         packetManager.handleRawPacket(receivedData, user.getUserStage().pickListener(lobby.isHost()), user);
     }
@@ -120,9 +125,12 @@ public class DedicatedConnections implements Connections
     }
 
     @Override
-    public <T extends Packet<T, ?>> void sendPacket(User user, T packet)
+    public <T extends Packet<T, ?>> void sendPacket(User user, @Nonnull T packet)
     {
+        Objects.requireNonNull(packet, "Packet can not be null");
         ByteBuffer dataPacket = packetManager.createDataPacket(packet);
+        if (Settings.LOG_PACKETS.get())
+            LOGGER.info("[PKT] Send: " + packet + " to " + user);
         if (!sendPacket(user, dataPacket))
         {
             LOGGER.severe("Packet failed to send to user " + user + " packet: " + packet);
@@ -134,8 +142,11 @@ public class DedicatedConnections implements Connections
     // otherwise the peer gets a NAK, the actions get reversed and their list cleared
     // I wanna die omg networking is hell
     @Override
-    public <T extends Packet<T, ?>> void broadcastPacket(T packet)
+    public <T extends Packet<T, ?>> void broadcastPacket(@Nonnull T packet)
     {
+        Objects.requireNonNull(packet, "Packet can not be null");
+        if (Settings.LOG_PACKETS.get())
+            LOGGER.info("[PKT] Broadcast: " + packet);
         for (ConnectedUser connectedUser : lobby.getConnectedUsers())
         {
             ByteBuffer dataPacket = packetManager.createDataPacket(packet);

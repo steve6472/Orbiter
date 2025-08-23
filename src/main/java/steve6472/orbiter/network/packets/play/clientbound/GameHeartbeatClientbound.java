@@ -42,4 +42,10 @@ public final class GameHeartbeatClientbound implements Packet<GameHeartbeatClien
     {
         listener.heartbeat();
     }
+
+    @Override
+    public String toString()
+    {
+        return "GameHeartbeatClientbound{}";
+    }
 }

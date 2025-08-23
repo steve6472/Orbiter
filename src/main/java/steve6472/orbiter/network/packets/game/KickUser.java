@@ -15,7 +15,7 @@ import steve6472.orbiter.network.ExtraBufferCodecs;
 public record KickUser(SteamID toKick) implements Packet<KickUser, GameListener>
 {
     public static final Key KEY = Key.defaultNamespace("kick_user");
-    public static final BufferCodec<ByteBuf, KickUser> BUFFER_CODEC = BufferCodec.of(ExtraBufferCodecs.STEAM_USER, KickUser::toKick, KickUser::new);
+//    public static final BufferCodec<ByteBuf, KickUser> BUFFER_CODEC = BufferCodec.of(ExtraBufferCodecs.STEAM_USER, KickUser::toKick, KickUser::new);
 
     @Override
     public Key key()
@@ -26,7 +26,8 @@ public record KickUser(SteamID toKick) implements Packet<KickUser, GameListener>
     @Override
     public BufferCodec<ByteBuf, KickUser> codec()
     {
-        return BUFFER_CODEC;
+//        return BUFFER_CODEC;
+        return null;
     }
 
     @Override
