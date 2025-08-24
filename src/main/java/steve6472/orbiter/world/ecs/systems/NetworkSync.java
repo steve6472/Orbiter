@@ -3,13 +3,13 @@ package steve6472.orbiter.world.ecs.systems;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
 import steve6472.core.log.Log;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.packets.game.clientbound.UpdateEntityComponents;
 import steve6472.orbiter.world.NetworkSerialization;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.*;
+import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.logging.Logger;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class NetworkSync extends IteratingSystem
+public class NetworkSync extends IteratingProfiledSystem
 {
     private static final Logger LOGGER = Log.getLogger(NetworkSync.class);
     private final NetworkMain network;
@@ -36,10 +36,6 @@ public class NetworkSync extends IteratingSystem
     @Override
     protected void processEntity(Entity entity, float deltaTime)
     {
-        // TODO: enable/disable the whole system instead
-        if (!network.lobby().isHost() || !network.lobby().isLobbyOpen())
-            return;
-
         UUID uuid = Components.UUID.get(entity).uuid();
         NetworkUpdates updates = Components.NETWORK_UPDATES.get(entity);
         NetworkAdd adds = Components.NETWORK_ADD.get(entity);

@@ -70,37 +70,6 @@ public interface EntityControl
         return entity;
     }
 
-//    default Entity spawnDebugPlayer(User user, boolean VR)
-//    {
-//        ArrayList<Component> objects = new ArrayList<>();
-//        Key key = Constants.key(VR ? "blockbench/static/vr_player" : "blockbench/static/player_capsule");
-//        Model model = FlareRegistries.STATIC_MODEL.get(key);
-//        Collision collision = new Collision(key);
-//        UUID uuid = UUID.randomUUID();
-//
-//        objects.add(new IndexModel(model));
-//        objects.add(new UUIDComp(uuid));
-//        objects.add(new MPControlled(user));
-//        objects.add(Tag.PHYSICS);
-//        objects.add(new Position());
-//        objects.add(new Gravity(0, 0, 0));
-//        objects.add(collision);
-//
-//        if (VR)
-//        {
-//            objects.add(new Gravity(0, 0, 0));
-//        }
-//
-//        Entity entity = createEntity(objects);
-//
-//        PhysicsRigidBody body = handlePhysics(entity, objects);
-//        Objects.requireNonNull(body, "Player entity missing physics!");
-//        body.setUserIndex(Constants.PLAYER_MAGIC_CONSTANT);
-//        body.setAngularFactor(0f);
-//
-//        return entity;
-//    }
-
     private void handlePhysics(Entity entity, Collection<Component> components)
     {
         if (!Components.TAG_PHYSICS.has(entity))

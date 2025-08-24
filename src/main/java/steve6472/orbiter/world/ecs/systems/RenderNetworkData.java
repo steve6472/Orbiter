@@ -2,7 +2,6 @@ package steve6472.orbiter.world.ecs.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
 import org.joml.Matrix4f;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.ui.font.render.Billboard;
@@ -12,17 +11,15 @@ import steve6472.orbiter.world.ecs.RenderECSSystem;
 import steve6472.orbiter.world.ecs.components.NetworkAdd;
 import steve6472.orbiter.world.ecs.components.NetworkRemove;
 import steve6472.orbiter.world.ecs.components.NetworkUpdates;
-import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.Position;
-
-import java.util.UUID;
+import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 
 /**
  * Created by steve6472
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class RenderNetworkData extends IteratingSystem implements RenderECSSystem
+public class RenderNetworkData extends IteratingProfiledSystem implements RenderECSSystem
 {
     private final MasterRenderer renderer;
 

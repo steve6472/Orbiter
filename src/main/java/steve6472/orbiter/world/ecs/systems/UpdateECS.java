@@ -2,7 +2,6 @@ package steve6472.orbiter.world.ecs.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.badlogic.ashley.systems.IteratingSystem;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import steve6472.core.log.Log;
 import steve6472.orbiter.world.World;
@@ -11,6 +10,7 @@ import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.ModifyState;
 import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
+import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class UpdateECS extends IteratingSystem
+public class UpdateECS extends IteratingProfiledSystem
 {
     private static final Logger LOGGER = Log.getLogger(UpdateECS.class);
 

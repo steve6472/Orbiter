@@ -134,7 +134,8 @@ public class GameClientboundListener extends OrbiterPacketListener
 
     public void kickUser(User toKick, String reason)
     {
-        if (toKick.username().equals(VisualSettings.USERNAME.get()))
+        // Client was kicked - move to menu and close network
+        if (toKick.uuid().equals(OrbiterApp.getInstance().getClient().getClientUUID()))
         {
             network().shutdown();
 

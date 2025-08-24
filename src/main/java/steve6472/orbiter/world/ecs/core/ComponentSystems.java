@@ -1,7 +1,6 @@
 package steve6472.orbiter.world.ecs.core;
 
 import com.badlogic.ashley.core.EntitySystem;
-import steve6472.orbiter.util.Profiler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,6 @@ public class ComponentSystems<T extends EntitySystem>
 {
     public final List<ComponentSystemEntry<T>> systemEntries;
     public Consumer<T> systemRunFunction;
-    public Profiler profiler = new Profiler(15);
 
     public ComponentSystems(Consumer<T> systemRunFunction)
     {
@@ -30,13 +28,11 @@ public class ComponentSystems<T extends EntitySystem>
         if (systemRunFunction == null)
             return;
 
-        profiler.start();
         for (ComponentSystemEntry<T> entry : systemEntries)
         {
             if (!entry.enabled)
                 continue;
 
-            entry.profiler.start();
             try
             {
                 systemRunFunction.accept(entry.system);
@@ -44,9 +40,7 @@ public class ComponentSystems<T extends EntitySystem>
             {
                 exception.printStackTrace();
             }
-            entry.profiler.end();
         }
-        profiler.end();
     }
 
     public void registerSystem(T system, String name)

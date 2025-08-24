@@ -41,7 +41,7 @@ public class GameHostboundListener extends OrbiterPacketListener
     {
         UUID uuid = sender().uuid();
         World world = OrbiterApp.getInstance().getClient().getWorld();
-        world.updateClientData.add(uuid, entity ->
+        world.updateClientData(uuid, entity ->
         {
             Position posComp = Components.POSITION.get(entity);
             if (posComp != null)

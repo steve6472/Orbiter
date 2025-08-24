@@ -41,7 +41,7 @@ public class Client
     public void render(FrameInfo frameInfo, MemoryStack memoryStack)
     {
         if (world != null)
-            world.debugRender();
+            world.debugRender(frameInfo.frameTime());
     }
 
     public void setCamera(Camera camera)
@@ -77,9 +77,9 @@ public class Client
         return clientUUID;
     }
 
-    public void tickClient()
+    public void tickClient(float frameTime)
     {
         if (world != null)
-            world.tick();
+            world.tick(frameTime);
     }
 }

@@ -1,6 +1,7 @@
 package steve6472.orbiter.world;
 
 import com.badlogic.ashley.core.Engine;
+import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
@@ -17,9 +18,9 @@ import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.world.ecs.RenderECSSystem;
-import steve6472.orbiter.world.ecs.systems.*;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 import static steve6472.flare.render.debug.DebugRender.*;
 
@@ -36,7 +37,7 @@ public class World implements EntityControl, EntityModify
     private final Map<UUID, PhysicsRigidBody> bodyMap = new HashMap<>();
     private final Map<UUID, PhysicsGhostObject> ghostMap = new HashMap<>();
 
-    public UpdateClientData updateClientData;
+    private WorldSystems systems;
 
     private static final boolean RENDER_X_WALL = false;
 
@@ -45,44 +46,18 @@ public class World implements EntityControl, EntityModify
         physics = new PhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
         physics.useDeterministicDispatch(true);
         ecsEngine = new Engine();
+        systems = new WorldSystems(this, ecsEngine);
     }
 
     public void init(MasterRenderer renderer)
     {
         addPlane(new Vector3f(0, 1f, 0), 0);
-        initSystems();
-
-        ecsEngine.addSystem(new RenderNametag(renderer)); // "Render Nametag"
-        ecsEngine.addSystem(new RenderNetworkData(renderer));
+        systems.init(renderer);
     }
 
-    private void initSystems()
+    public void updateClientData(UUID uuid, Consumer<Entity> function)
     {
-        // First
-        ecsEngine.addSystem(new UpdateECS(this)); // "Update ECS Positions", "Updates ECS Positions with data from last tick of Physics Simulation"
-        /*systems.registerSystem(new ComponentSystem()
-        {
-            @Override
-            public void tick(Dominion dominion, World world)
-            {
-//                if (!steam.isHost())
-//                    return;
-
-                dominion.findEntitiesWith(Tag.FireflyAI.class, Position.class).forEach(e ->
-                {
-                    Position position = e.comp2();
-                    modifyComponent(e.entity(), position, p -> p.add(RandomUtil.randomFloat(-0.01f, 0.01f), RandomUtil.randomFloat(-0.01f, 0.01f), RandomUtil.randomFloat(-0.01f, 0.01f)));
-                });
-            }
-        }, "Firefly AI", "Test firefly entity");*/
-        // Needs to be before network sync and physics update
-        ecsEngine.addSystem(updateClientData = new UpdateClientData());
-
-        ecsEngine.addSystem(new BroadcastClientPosition());
-
-        // Last
-        ecsEngine.addSystem(new NetworkSync(network())); //"Network Sync", ""
-        ecsEngine.addSystem(new UpdatePhysics(this)); // "Update Physics Positions", "Updates Physics Positions with data from last tick ECS Systems"
+        systems.updateClientData.add(uuid, function);
     }
 
     @Override
@@ -109,7 +84,7 @@ public class World implements EntityControl, EntityModify
         return OrbiterApp.getInstance().getNetwork();
     }
 
-    public void tick()
+    public void tick(float frameTime)
     {
         Set<UUID> accessed = new HashSet<>();
 
@@ -140,22 +115,11 @@ public class World implements EntityControl, EntityModify
 
         physics.update(1f / Constants.TICKS_IN_SECOND, 8);
 
-        // Disable rendering systems, enable tick systems
-        for (EntitySystem system : ecsEngine.getSystems())
-        {
-            system.setProcessing(!(system instanceof RenderECSSystem));
-        }
-
-        ecsEngine.update(0);
-
-        // Enable rendering systems, disable tick systems
-        for (EntitySystem system : ecsEngine.getSystems())
-        {
-            system.setProcessing(system instanceof RenderECSSystem);
-        }
+        systems.updateStates();
+        systems.runTickSystems(frameTime);
     }
 
-    public void debugRender()
+    public void debugRender(float frameTime)
     {
         // Debug render of plane
         float density = 1f;
@@ -174,8 +138,7 @@ public class World implements EntityControl, EntityModify
             }
         }
 
-//        renderSystems.run();
-        ecsEngine.update(0);
+        systems.runRenderSystems(frameTime);
 
         PhysicsRenderer.render(physics());
     }

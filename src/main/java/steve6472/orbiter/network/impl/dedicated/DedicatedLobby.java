@@ -23,7 +23,6 @@ public class DedicatedLobby implements Lobby
 
     private final Map<String, String> lobbyData = new HashMap<>();
 
-    private final DedicatedMain network;
     private DatagramChannel channel;
     private Selector selector;
     private boolean isHost;
@@ -31,7 +30,6 @@ public class DedicatedLobby implements Lobby
 
     public DedicatedLobby(DedicatedMain network)
     {
-        this.network = network;
         connections = new DedicatedConnections(this, network.packetManager());
     }
 

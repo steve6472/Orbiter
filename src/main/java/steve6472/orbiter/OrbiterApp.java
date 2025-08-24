@@ -58,7 +58,7 @@ public class OrbiterApp extends FlareApp
     /* # TODOS:
      *
      *  [x] Unify network game/play naming to just game
-     *  [ ] Fix disconnecting
+     *  [x] Fix disconnecting
      *  [ ] System profiling
      *  [ ] Better Bandwidth tracker
      *  [ ] Client/Host systems
@@ -204,7 +204,7 @@ public class OrbiterApp extends FlareApp
         if (networkMain != null)
             networkMain.tick();
 
-        client.tickClient();
+        client.tickClient(frameTime);
 
         if (Keybinds.ESCAPE.isActive()) processEscape();
         if (Keybinds.CHAT.isActive() && !(MDUtil.isPanelOpen(Constants.UI.IN_GAME_MENU) && MDUtil.isPanelOpen(Constants.UI.SETTINGS))) processChat();

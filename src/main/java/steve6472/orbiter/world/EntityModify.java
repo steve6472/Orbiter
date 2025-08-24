@@ -2,6 +2,7 @@ package steve6472.orbiter.world;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
+import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.NetworkAdd;
 import steve6472.orbiter.world.ecs.components.NetworkRemove;
@@ -16,6 +17,9 @@ import java.util.function.Consumer;
  */
 public interface EntityModify
 {
+    NetworkMain network();
+
+    @Deprecated
     static void _markModified(Entity entity, Class<? extends Component> type)
     {
         NetworkUpdates networkUpdates = Components.NETWORK_UPDATES.get(entity);
@@ -30,6 +34,8 @@ public interface EntityModify
 
     default void markModified(Entity entity, Class<? extends Component> type)
     {
+        if (!network().lobby().isLobbyOpen() && !network().lobby().isHost())
+            return;
         _markModified(entity, type);
     }
 
@@ -42,6 +48,10 @@ public interface EntityModify
     default <T extends Component> void addComponent(Entity entity, T component)
     {
         entity.add(component);
+
+        if (!network().lobby().isLobbyOpen() && !network().lobby().isHost())
+            return;
+
         NetworkAdd networkUpdates = Components.NETWORK_ADD.get(entity);
         if (networkUpdates == null)
         {
@@ -56,6 +66,9 @@ public interface EntityModify
     {
         if (entity.remove(component) != null)
         {
+            if (!network().lobby().isLobbyOpen() && !network().lobby().isHost())
+                return;
+
             NetworkRemove networkUpdates = Components.NETWORK_REMOVE.get(entity);
             if (networkUpdates == null)
             {
