@@ -48,13 +48,10 @@ public class NetworkSync extends IteratingSystem
         List<Component> components = new ArrayList<>();
         int[] toRemove;
 
-//        User extraExclude = null;
-//        if (Components.MP_CONTROLLED.has(entity))
-//        {
-//            MPControlled mpControlled = Components.MP_CONTROLLED.get(entity);
-//            extraExclude = mpControlled.controller();
-//        }
-//        Set<User> toExclude = extraExclude == null ? Set.of() : Set.of(extraExclude);
+        if (Components.MP_CONTROLLED.has(entity) && ((adds != null && !adds.components().contains(MPControlled.class)) && (removes != null && !removes.components().contains(MPControlled.class))))
+        {
+            return;
+        }
 
         if (updates != null)
             updatePredicate = updates.test();
@@ -109,6 +106,7 @@ public class NetworkSync extends IteratingSystem
             toRemove = new int[0];
         }
 
-        network.connections().broadcastPacket(new UpdateEntityComponents(uuid, components, toRemove));
+        if (!components.isEmpty() || toRemove.length != 0)
+            network.connections().broadcastPacket(new UpdateEntityComponents(uuid, components, toRemove));
     }
 }

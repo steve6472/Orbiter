@@ -2,15 +2,11 @@ package steve6472.orbiter.steam;
 
 import com.codedisaster.steamworks.*;
 import steve6472.core.log.Log;
-import steve6472.orbiter.OrbiterMain;
 import steve6472.orbiter.network.packets.lobby.LobbyListener;
 import steve6472.orbiter.steam.lobby.Lobby;
-import steve6472.orbiter.world.ecs.components.MPControlled;
 
-import javax.swing.*;
 import java.nio.ByteBuffer;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 /**

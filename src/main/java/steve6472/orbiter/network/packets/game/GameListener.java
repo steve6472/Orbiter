@@ -1,29 +1,19 @@
 package steve6472.orbiter.network.packets.game;
 
-import com.badlogic.ashley.core.Entity;
 import com.codedisaster.steamworks.SteamID;
 import com.jme3.bullet.joints.PhysicsJoint;
 import com.jme3.bullet.joints.SixDofSpringJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Matrix3f;
-import com.mojang.datafixers.util.Pair;
-import io.netty.buffer.ByteBuf;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
-import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.network.api.User;
-import steve6472.orbiter.world.NetworkSerialization;
-import steve6472.orbiter.world.ecs.components.MPControlled;
-import steve6472.orbiter.world.ecs.components.Tag;
-import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
-import steve6472.orbiter.world.ecs.core.ComponentEntry;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 

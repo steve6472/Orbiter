@@ -57,11 +57,19 @@ public class StaticWorldRender extends StaticModelRenderImpl
         if (physicsModels.size() == 0)
             return;
 
-        List<Entity> list = new ArrayList<>();
+        List<Entity> list = new ArrayList<>(physicsModels.size());
         for (Entity entity : physicsModels)
         {
+            // Disable rendering of client model
+            UUIDComp uuidComp = Components.UUID.get(entity);
+            if (uuidComp != null && uuidComp.uuid().equals(client.getClientUUID()))
+                continue;
+
             list.add(entity);
         }
+
+        if (list.isEmpty())
+            return;
 
         sboTransfromArray.sort(list, entity -> sboTransfromArray.addArea(Components.MODEL.get(entity).model()).index());
 

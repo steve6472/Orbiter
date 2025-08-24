@@ -39,10 +39,12 @@ public class RenderNetworkData extends IteratingSystem implements RenderECSSyste
         NetworkAdd networkAdd = Components.NETWORK_ADD.get(entity);
         NetworkRemove networkRemove = Components.NETWORK_REMOVE.get(entity);
         NetworkUpdates networkUpdates = Components.NETWORK_UPDATES.get(entity);
+        var pos = Components.POSITION.get(entity);
 
         TextLine text1 = TextLine.fromText(networkAdd + "", 1f / 6f, Billboard.FACE_CENTER);
         TextLine text2 = TextLine.fromText(networkRemove + "", 1f / 6f, Billboard.FACE_CENTER);
         TextLine text3 = TextLine.fromText(networkUpdates + "", 1f / 6f, Billboard.FACE_CENTER);
+        TextLine posText = TextLine.fromText(pos + "", 1f / 6f, Billboard.FACE_CENTER);
 
         float yOffset = 0;
         if (Components.COLLISION.has(entity))
@@ -50,6 +52,7 @@ public class RenderNetworkData extends IteratingSystem implements RenderECSSyste
             yOffset = Components.COLLISION.get(entity).shape().maxRadius();
         }
 
+        renderer.textRender().line(posText, new Matrix4f().translate(position.x(), position.y() + yOffset + 1.2f, position.z()));
         renderer.textRender().line(text1, new Matrix4f().translate(position.x(), position.y() + yOffset + 1, position.z()));
         renderer.textRender().line(text2, new Matrix4f().translate(position.x(), position.y() + yOffset + 0.8f, position.z()));
         renderer.textRender().line(text3, new Matrix4f().translate(position.x(), position.y() + yOffset + 0.6f, position.z()));

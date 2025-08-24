@@ -1,19 +1,14 @@
 package steve6472.orbiter;
 
-import com.badlogic.ashley.core.Entity;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.log.Log;
 import steve6472.flare.Camera;
 import steve6472.flare.core.FrameInfo;
 import steve6472.flare.input.UserInput;
-import steve6472.flare.vr.VrData;
 import steve6472.flare.vr.VrInput;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
-import steve6472.orbiter.player.VRPlayer;
 import steve6472.orbiter.world.World;
-import steve6472.orbiter.world.ecs.components.MPControlled;
-import steve6472.orbiter.world.ecs.components.Tag;
 
 import java.util.UUID;
 import java.util.logging.Logger;

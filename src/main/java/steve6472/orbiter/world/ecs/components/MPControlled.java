@@ -5,22 +5,26 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
+import steve6472.core.network.BufferCodecs;
+import steve6472.core.util.ExtraCodecs;
 import steve6472.orbiter.network.ExtraBufferCodecs;
 import steve6472.orbiter.network.api.User;
 import steve6472.orbiter.util.OrbiterCodecs;
+
+import java.util.UUID;
 
 /**
  * Created by steve6472
  * Date: 10/3/2024
  * Project: Orbiter <br>
  */
-public record MPControlled(User controller) implements Component
+public record MPControlled(UUID controller) implements Component
 {
     public static final Codec<MPControlled> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        OrbiterCodecs.USER.fieldOf("user").forGetter(MPControlled::controller)
+        ExtraCodecs.UUID.fieldOf("user").forGetter(MPControlled::controller)
     ).apply(instance, MPControlled::new));
 
     public static final BufferCodec<ByteBuf, MPControlled> BUFFER_CODEC = BufferCodec.of(
-        ExtraBufferCodecs.USER, MPControlled::controller,
+        BufferCodecs.UUID, MPControlled::controller,
         MPControlled::new);
 }

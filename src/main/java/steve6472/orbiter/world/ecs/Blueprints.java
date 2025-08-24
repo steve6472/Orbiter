@@ -16,6 +16,7 @@ public class Blueprints
 {
     public static final BlueprintEntry<PhysicsBodyBlueprint> PHYSICS_BODY = register(PhysicsBodyBlueprint.KEY, PhysicsBodyBlueprint.CODEC);
     public static final BlueprintEntry<PositionBlueprint> POSITION = register(PositionBlueprint.KEY, PositionBlueprint.CODEC);
+    public static final BlueprintEntry<AngularFactorBlueprint> ANGULAR_FACTOR = register(AngularFactorBlueprint.KEY, AngularFactorBlueprint.CODEC);
     public static final BlueprintEntry<GravityBlueprint> GRAVITY = register(GravityBlueprint.KEY, GravityBlueprint.CODEC);
     public static final BlueprintEntry<RotationBlueprint> ROTATION = register(RotationBlueprint.KEY, RotationBlueprint.CODEC);
     public static final BlueprintEntry<CollisionBlueprint> COLLISION = register(CollisionBlueprint.KEY, CollisionBlueprint.CODEC);

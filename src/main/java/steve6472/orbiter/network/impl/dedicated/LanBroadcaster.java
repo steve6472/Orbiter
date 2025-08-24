@@ -5,6 +5,7 @@ import io.netty.buffer.Unpooled;
 import steve6472.core.log.Log;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
+import steve6472.orbiter.network.ExtraBufferCodecs;
 
 import java.io.IOException;
 import java.net.*;
@@ -140,7 +141,7 @@ public class LanBroadcaster implements Runnable
     {
         public static final BufferCodec<ByteBuf, BroadcastPacket> BUFFER_CODEC = BufferCodec.of(
             BufferCodecs.stringUTF8(64), BroadcastPacket::motd,
-            BufferCodecs.INT, BroadcastPacket::port,
+            ExtraBufferCodecs.VAR_INT, BroadcastPacket::port,
             BroadcastPacket::new
         );
     }

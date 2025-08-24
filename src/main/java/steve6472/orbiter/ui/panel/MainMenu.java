@@ -5,6 +5,8 @@ import steve6472.moondust.view.PanelView;
 import steve6472.moondust.view.property.BooleanProperty;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
+import steve6472.orbiter.network.api.ConnectedUser;
+import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
 import steve6472.orbiter.network.packets.play.clientbound.EnterWorld;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.ui.GlobalProperties;
@@ -42,7 +44,11 @@ public class MainMenu extends PanelView
             orbiter.setCurrentWorld(world);
             orbiter.setMouseGrab(true);
             MDUtil.removePanel(Constants.key("panel/main_menu"));
-            orbiter.getNetwork().connections().broadcastPacket(new EnterWorld());
+
+            for (ConnectedUser connectedUser : orbiter.getNetwork().lobby().getConnectedUsers())
+            {
+                ((DedicatedMain) orbiter.getNetwork()).newPlayer(world, connectedUser.user());
+            }
         });
 
         addCommandListener(Constants.key("open_settings"), _ ->

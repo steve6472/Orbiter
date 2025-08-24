@@ -12,7 +12,6 @@ import steve6472.flare.input.UserInput;
 import steve6472.flare.vr.VrInput;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
-import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
@@ -33,8 +32,7 @@ import static steve6472.orbiter.Convert.physGetToJoml;
  */
 public class PCPlayer implements Player
 {
-    public static final Key PLAYER_BLUEPRINT = Constants.key("client_player");
-    public static final Key PLAYER_BLUEPRINT_HOST = Constants.key("client_player_host");
+    public static final Key CLIENT_PLAYER_BLUEPRINT = Constants.key("client_player");
 
     public static final float RADIUS = 0.5f;
     public static final float HEIGHT = 1.6f;
@@ -50,7 +48,7 @@ public class PCPlayer implements Player
     public PCPlayer(UUID uuid)
     {
         ecsEntity = new Entity();
-        List<Component> components = Registries.ENTITY_BLUEPRINT.get(OrbiterApp.getInstance().getNetwork().lobby().isHost() ? PLAYER_BLUEPRINT_HOST : PLAYER_BLUEPRINT).createEntityComponents(uuid);
+        List<Component> components = Registries.ENTITY_BLUEPRINT.get(CLIENT_PLAYER_BLUEPRINT).createEntityComponents(uuid);
         for (Component component : components)
         {
             ecsEntity.add(component);

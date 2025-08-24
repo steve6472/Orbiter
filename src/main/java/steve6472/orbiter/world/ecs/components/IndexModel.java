@@ -25,8 +25,10 @@ public class IndexModel implements Component
         BufferCodecs.KEY, e -> e.model().key(),
         key -> new IndexModel(FlareRegistries.STATIC_MODEL.get(key)));
 
+    public static final int UNSET_MODEL_INDEX = -1;
+
     private final Model model;
-    private int modelIndex = -1;
+    private int modelIndex = UNSET_MODEL_INDEX;
 
     public IndexModel(Model model)
     {

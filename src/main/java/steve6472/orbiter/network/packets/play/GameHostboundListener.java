@@ -1,6 +1,7 @@
 package steve6472.orbiter.network.packets.play;
 
 import com.badlogic.ashley.core.Entity;
+import com.mojang.datafixers.util.Pair;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
 import steve6472.orbiter.OrbiterApp;
@@ -43,14 +44,12 @@ public class GameHostboundListener extends OrbiterPacketListener
     {
         UUID uuid = sender().uuid();
         World world = OrbiterApp.getInstance().getClient().getWorld();
-        Optional<Entity> entityByUUID = world.getEntityByUUID(uuid);
-        entityByUUID.ifPresentOrElse(entity -> {
-
-            entity.add(new Position(position.x, position.y, position.z));
+        world.updateClientData.add(uuid, entity ->
+        {
+            Position posComp = Components.POSITION.get(entity);
+            if (posComp != null)
+                posComp.set(position.x, position.y, position.z);
             world.markModified(entity, Components.POSITION.componentClass());
-
-        }, () -> {
-            LOGGER.warning("Player entity was not spawned!");
         });
     }
 }

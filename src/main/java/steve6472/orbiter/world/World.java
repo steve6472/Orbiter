@@ -36,6 +36,8 @@ public class World implements EntityControl, EntityModify
     private final Map<UUID, PhysicsRigidBody> bodyMap = new HashMap<>();
     private final Map<UUID, PhysicsGhostObject> ghostMap = new HashMap<>();
 
+    public UpdateClientData updateClientData;
+
     private static final boolean RENDER_X_WALL = false;
 
     public World()
@@ -73,8 +75,10 @@ public class World implements EntityControl, EntityModify
                 });
             }
         }, "Firefly AI", "Test firefly entity");*/
+        // Needs to be before network sync and physics update
+        ecsEngine.addSystem(updateClientData = new UpdateClientData());
 
-        ecsEngine.addSystem(new UpdateClientPosition());
+        ecsEngine.addSystem(new BroadcastClientPosition());
 
         // Last
         ecsEngine.addSystem(new NetworkSync(network())); //"Network Sync", ""

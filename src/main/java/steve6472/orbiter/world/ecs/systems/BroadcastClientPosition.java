@@ -3,7 +3,6 @@ package steve6472.orbiter.world.ecs.systems;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import org.joml.Vector3f;
-import steve6472.core.log.Log;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.network.api.NetworkMain;
@@ -11,16 +10,14 @@ import steve6472.orbiter.network.packets.play.hostbound.PlayerMove;
 import steve6472.orbiter.player.Player;
 import steve6472.orbiter.world.ecs.Components;
 
-import java.util.logging.Logger;
-
 /**
  * Created by steve6472
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class UpdateClientPosition extends EntitySystem
+public class BroadcastClientPosition extends EntitySystem
 {
-    public UpdateClientPosition()
+    public BroadcastClientPosition()
     {
     }
 

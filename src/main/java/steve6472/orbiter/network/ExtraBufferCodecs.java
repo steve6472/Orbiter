@@ -79,6 +79,49 @@ public interface ExtraBufferCodecs
         }
     };
 
+    int SEGMENT_BITS = 0x7F;
+    int CONTINUE_BIT = 0x80;
+
+    /// [Copied from](https://minecraft.wiki/w/Java_Edition_protocol/Data_types#VarInt_and_VarLong)
+    BufferCodec<ByteBuf, Integer> VAR_INT = BufferCodec.of((buffer, value) ->
+    {
+        while (true)
+        {
+            if ((value & ~SEGMENT_BITS) == 0)
+            {
+                buffer.writeByte(value);
+                return;
+            }
+
+            buffer.writeByte((value & SEGMENT_BITS) | CONTINUE_BIT);
+
+            // Note: >>> means that the sign bit is shifted with the rest of the number rather than being left alone
+            value >>>= 7;
+        }
+
+    }, (buffer) ->
+    {
+        int value = 0;
+        int position = 0;
+        byte currentByte;
+
+        while (true)
+        {
+            currentByte = buffer.readByte();
+            value |= (currentByte & SEGMENT_BITS) << position;
+
+            if ((currentByte & CONTINUE_BIT) == 0)
+                break;
+
+            position += 7;
+
+            if (position >= 32)
+                throw new RuntimeException("VarInt is too big");
+        }
+
+        return value;
+    });
+
     BufferCodec<ByteBuf, List<Component>> COMPONENT_LIST = BufferCodec.of((buffer, components) -> {
 
         int componentCountIndex = buffer.writerIndex();
@@ -96,7 +139,7 @@ public interface ExtraBufferCodecs
             if (networkCodec == null)
                 continue;
 
-            buffer.writeInt(componentEntry.networkID());
+            VAR_INT.encode(buffer, componentEntry.networkID());
             networkCodec.encode(buffer, component);
             componentCount++;
         }
@@ -107,7 +150,7 @@ public interface ExtraBufferCodecs
 
         for (int i = 0; i < componentCount; i++)
         {
-            int networkID = buffer.readInt();
+            int networkID = VAR_INT.decode(buffer);
             var componentEntryOptional = Components.getComponentByNetworkId(networkID);
             componentEntryOptional.ifPresent(componentEntry -> components.add(componentEntry.getNetworkCodec().decode(buffer)));
         }

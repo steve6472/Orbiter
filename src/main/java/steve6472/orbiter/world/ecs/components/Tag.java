@@ -4,7 +4,7 @@ import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
-import steve6472.core.network.BufferCodecs;
+import steve6472.orbiter.network.ExtraBufferCodecs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,7 +57,7 @@ public final class Tag
             this.id = id;
             TAGS.add(this);
             codec = Codec.INT.xmap(i -> (T) TAGS.get(i), (T c) -> c.id);
-            networkCodec = BufferCodec.of(BufferCodecs.INT, a -> a.id, i -> (T) TAGS.get(i));
+            networkCodec = BufferCodec.of(ExtraBufferCodecs.VAR_INT, a -> a.id, i -> (T) TAGS.get(i));
             CLASSES.put(getClass(), this);
         }
 
