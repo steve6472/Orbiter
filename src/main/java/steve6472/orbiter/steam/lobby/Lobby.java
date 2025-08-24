@@ -4,8 +4,6 @@ import com.codedisaster.steamworks.*;
 import steve6472.core.log.Log;
 import steve6472.core.network.Packet;
 import steve6472.orbiter.network.PacketManager;
-import steve6472.orbiter.network.packets.lobby.LobbyKickUser;
-import steve6472.orbiter.network.packets.lobby.LobbyClosing;
 import steve6472.orbiter.steam.SteamMain;
 
 import java.util.*;
@@ -144,7 +142,7 @@ public class Lobby
 
     public void close()
     {
-        broadcastLobbyPacket(LobbyClosing.instance());
+//        broadcastLobbyPacket(LobbyClosing.instance());
     }
 
     /// Broadcast packet to everyone (including sender)
@@ -235,12 +233,12 @@ public class Lobby
             return;
         }
 
-        broadcastLobbyPacket(new LobbyKickUser(steamID));
+//        broadcastLobbyPacket(new LobbyKickUser(steamID));
     }
 
     public void kickOwner()
     {
-        broadcastLobbyPacket(new LobbyKickUser(lobbyOwner));
+//        broadcastLobbyPacket(new LobbyKickUser(lobbyOwner));
         lobbyOwner = null;
     }
 

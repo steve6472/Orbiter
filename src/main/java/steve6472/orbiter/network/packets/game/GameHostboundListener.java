@@ -1,7 +1,5 @@
-package steve6472.orbiter.network.packets.play;
+package steve6472.orbiter.network.packets.game;
 
-import com.badlogic.ashley.core.Entity;
-import com.mojang.datafixers.util.Pair;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
 import steve6472.orbiter.OrbiterApp;
@@ -10,7 +8,6 @@ import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 
-import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 

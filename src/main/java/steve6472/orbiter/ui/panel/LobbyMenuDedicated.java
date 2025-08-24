@@ -15,7 +15,7 @@ import steve6472.orbiter.network.impl.dedicated.DedicatedLobby;
 import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
 import steve6472.orbiter.network.impl.dedicated.DedicatedUserConnection;
 import steve6472.orbiter.network.packets.login.hostbound.LoginStart;
-import steve6472.orbiter.network.packets.play.hostbound.JunkData;
+import steve6472.orbiter.network.packets.game.hostbound.JunkData;
 import steve6472.orbiter.ui.GlobalProperties;
 import steve6472.orbiter.ui.MDUtil;
 

@@ -4,11 +4,10 @@ import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import steve6472.core.registry.Key;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.world.ecs.components.physics.Gravity;
-import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.core.Blueprint;
 
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -18,7 +17,7 @@ import java.util.List;
  */
 public record GravityBlueprint(float x, float y, float z) implements Blueprint<GravityBlueprint>
 {
-    public static final Key KEY = Key.defaultNamespace("gravity");
+    public static final Key KEY = Constants.key("gravity");
     public static final Codec<GravityBlueprint> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Codec.FLOAT.fieldOf("x").forGetter(GravityBlueprint::x),
         Codec.FLOAT.fieldOf("y").forGetter(GravityBlueprint::y),

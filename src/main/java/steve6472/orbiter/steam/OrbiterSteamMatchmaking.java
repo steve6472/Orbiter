@@ -2,7 +2,6 @@ package steve6472.orbiter.steam;
 
 import com.codedisaster.steamworks.*;
 import steve6472.core.log.Log;
-import steve6472.orbiter.network.packets.lobby.LobbyListener;
 import steve6472.orbiter.steam.lobby.Lobby;
 
 import java.nio.ByteBuffer;
@@ -158,7 +157,7 @@ public class OrbiterSteamMatchmaking implements SteamMatchmakingCallback
                 int read = steamMain.steamMatchmaking.getLobbyChatEntry(steamIDLobby, chatID, chatEntry, byteBuffer);
 
                 byteBuffer.limit(read);
-                steamMain.packetManager.handlePacket(byteBuffer, LobbyListener.class, steamIDUser);
+//                steamMain.packetManager.handlePacket(byteBuffer, LobbyListener.class, steamIDUser);
 
             } catch (SteamException e)
             {

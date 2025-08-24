@@ -13,19 +13,18 @@ import steve6472.orbiter.network.packets.configuration.clientbound.HeartbeatClie
 import steve6472.orbiter.network.packets.configuration.hostbound.HeartbeatHostbound;
 import steve6472.orbiter.network.packets.login.LoginClientboundListener;
 import steve6472.orbiter.network.packets.login.LoginHostboundListener;
-import steve6472.orbiter.network.packets.play.GameClientboundListener;
-import steve6472.orbiter.network.packets.play.GameHostboundListener;
-import steve6472.orbiter.network.packets.play.clientbound.CreateCustomEntity;
-import steve6472.orbiter.network.packets.play.clientbound.EnterWorld;
-import steve6472.orbiter.network.packets.play.clientbound.GameHeartbeatClientbound;
-import steve6472.orbiter.network.packets.play.clientbound.KickUser;
-import steve6472.orbiter.network.packets.play.hostbound.Disconnect;
-import steve6472.orbiter.network.packets.play.hostbound.GameHeartbeatHostbound;
+import steve6472.orbiter.network.packets.game.GameClientboundListener;
+import steve6472.orbiter.network.packets.game.GameHostboundListener;
+import steve6472.orbiter.network.packets.game.clientbound.CreateCustomEntity;
+import steve6472.orbiter.network.packets.game.clientbound.EnterWorld;
+import steve6472.orbiter.network.packets.game.clientbound.GameHeartbeatClientbound;
+import steve6472.orbiter.network.packets.game.clientbound.KickUser;
+import steve6472.orbiter.network.packets.game.hostbound.Disconnect;
+import steve6472.orbiter.network.packets.game.hostbound.GameHeartbeatHostbound;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.components.MPControlled;
-import steve6472.orbiter.world.ecs.components.physics.AngularFactor;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 
 import java.util.List;

@@ -6,7 +6,7 @@ import org.joml.Vector3f;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.network.api.NetworkMain;
-import steve6472.orbiter.network.packets.play.hostbound.PlayerMove;
+import steve6472.orbiter.network.packets.game.hostbound.PlayerMove;
 import steve6472.orbiter.player.Player;
 import steve6472.orbiter.world.ecs.Components;
 
@@ -17,10 +17,6 @@ import steve6472.orbiter.world.ecs.Components;
  */
 public class BroadcastClientPosition extends EntitySystem
 {
-    public BroadcastClientPosition()
-    {
-    }
-
     private final Vector3f lastPosition = new Vector3f(Float.NaN);
 
     @Override

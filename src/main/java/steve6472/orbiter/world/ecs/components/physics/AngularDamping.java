@@ -2,13 +2,11 @@ package steve6472.orbiter.world.ecs.components.physics;
 
 import com.badlogic.ashley.core.Component;
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.math.Vector3f;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
 
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Created by steve6472

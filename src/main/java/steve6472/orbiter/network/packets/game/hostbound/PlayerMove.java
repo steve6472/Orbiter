@@ -1,4 +1,4 @@
-package steve6472.orbiter.network.packets.play.hostbound;
+package steve6472.orbiter.network.packets.game.hostbound;
 
 import io.netty.buffer.ByteBuf;
 import org.joml.Vector3f;
@@ -7,7 +7,7 @@ import steve6472.core.network.Packet;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.network.ExtraBufferCodecs;
-import steve6472.orbiter.network.packets.play.GameHostboundListener;
+import steve6472.orbiter.network.packets.game.GameHostboundListener;
 
 /**
  * Created by steve6472

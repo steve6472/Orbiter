@@ -11,7 +11,6 @@ import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.util.*;
-import java.util.function.Supplier;
 
 /**
  * Created by steve6472
@@ -105,7 +104,6 @@ public class DedicatedConnections implements Connections
         // TODO: automatic rate limit for new connection
         LOGGER.info("Potential new connection from: " + sender);
 
-        //TODO: For now assign random UUID
         DedicatedUser user = new DedicatedUser(NEW_CONNECTION, new DedicatedUserConnection(((DedicatedMain) OrbiterApp.getInstance().getNetwork()), sender));
         user.changeUserStage(UserStage.LOGIN);
         packetManager.handleRawPacket(receivedData, user.getUserStage().pickListener(lobby.isHost()), user);
@@ -182,20 +180,6 @@ public class DedicatedConnections implements Connections
     /*
      * Impl stuff
      */
-
-    public boolean verifySender(Lobby currentLobby, User user)
-    {
-        for (ConnectedUser connectedUser : currentLobby.getConnectedUsers())
-        {
-            if (connectedUser.user().equals(user))
-            {
-                return true;
-            }
-        }
-
-        LOGGER.warning("Recieved packet from a user not in lobby!");
-        return false;
-    }
 
     private void checkForTimeouts()
     {

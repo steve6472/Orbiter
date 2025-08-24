@@ -1,11 +1,11 @@
-package steve6472.orbiter.network.packets.play.clientbound;
+package steve6472.orbiter.network.packets.game.clientbound;
 
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.Packet;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
-import steve6472.orbiter.network.packets.play.GameClientboundListener;
+import steve6472.orbiter.network.packets.game.GameClientboundListener;
 
 /**
  * Created by steve6472

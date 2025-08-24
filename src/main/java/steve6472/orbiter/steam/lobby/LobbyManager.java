@@ -2,7 +2,6 @@ package steve6472.orbiter.steam.lobby;
 
 import com.codedisaster.steamworks.*;
 import steve6472.core.log.Log;
-import steve6472.orbiter.network.packets.lobby.LobbyListener;
 import steve6472.orbiter.steam.LobbyInvite;
 import steve6472.orbiter.steam.SteamMain;
 
@@ -85,7 +84,7 @@ public class LobbyManager
         }
 
         currentLobby = lobby;
-        steamMain.packetManager.registerListener(new LobbyListener(currentLobby, steamMain));
+//        steamMain.packetManager.registerListener(new LobbyListener(currentLobby, steamMain));
     }
 
     public void resetCurrentLobby()
@@ -97,7 +96,7 @@ public class LobbyManager
         }
 
         currentLobby = null;
-        steamMain.packetManager.unregisterListener(LobbyListener.class);
+//        steamMain.packetManager.unregisterListener(LobbyListener.class);
     }
 
     /*
@@ -134,7 +133,7 @@ public class LobbyManager
         lobbyCreateCallback.accept(currentLobby);
         lobbyCreateCallback = null;
 
-        steamMain.packetManager.registerListener(new LobbyListener(currentLobby, steamMain));
+//        steamMain.packetManager.registerListener(new LobbyListener(currentLobby, steamMain));
     }
 
     /*

@@ -1,4 +1,4 @@
-package steve6472.orbiter.network.packets.play;
+package steve6472.orbiter.network.packets.game;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;

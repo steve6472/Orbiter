@@ -1,7 +1,7 @@
 package steve6472.orbiter.network.impl.dedicated;
 
 import steve6472.orbiter.network.api.*;
-import steve6472.orbiter.network.packets.play.clientbound.KickUser;
+import steve6472.orbiter.network.packets.game.clientbound.KickUser;
 import steve6472.orbiter.ui.GlobalProperties;
 
 import java.io.IOException;

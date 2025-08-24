@@ -7,7 +7,6 @@ import steve6472.flare.vr.VrData;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.OrbiterMain;
 import steve6472.orbiter.network.PacketManager;
-import steve6472.orbiter.network.packets.game.GameListener;
 import steve6472.orbiter.steam.lobby.LobbyManager;
 import steve6472.orbiter.world.World;
 
@@ -85,7 +84,7 @@ public class SteamMain
     {
         if (!enabled) return;
 
-        packetManager.unregisterListener(GameListener.class);
+//        packetManager.unregisterListener(GameListener.class);
 
 //        if (world != null)
 //            packetManager.registerListener(new GameListener(this, world));

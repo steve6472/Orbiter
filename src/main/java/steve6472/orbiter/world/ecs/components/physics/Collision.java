@@ -2,7 +2,6 @@ package steve6472.orbiter.world.ecs.components.physics;
 
 import com.badlogic.ashley.core.Component;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.objects.PhysicsBody;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
@@ -35,10 +34,9 @@ public record Collision(Key collisionKey, CollisionShape shape) implements Physi
         CollisionShape shape = Registries.COLLISION.get(collisionKey()).collisionShape();
         if (body.getCollisionShape() != shape)
         {
-
+            body.setCollisionShape(shape);
             return ModifyState.modifiedComponent();
         }
-//        body.setCollisionShape(shape);
         return ModifyState.noModification();
     }
 

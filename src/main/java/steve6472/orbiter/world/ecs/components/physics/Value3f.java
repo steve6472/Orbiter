@@ -9,7 +9,6 @@ import org.joml.Vector3f;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
 import steve6472.orbiter.Convert;
-import steve6472.orbiter.OrbiterApp;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

@@ -5,8 +5,8 @@ import steve6472.orbiter.network.packets.configuration.ConfigurationClientboundL
 import steve6472.orbiter.network.packets.configuration.ConfigurationHostboundListener;
 import steve6472.orbiter.network.packets.login.LoginClientboundListener;
 import steve6472.orbiter.network.packets.login.LoginHostboundListener;
-import steve6472.orbiter.network.packets.play.GameClientboundListener;
-import steve6472.orbiter.network.packets.play.GameHostboundListener;
+import steve6472.orbiter.network.packets.game.GameClientboundListener;
+import steve6472.orbiter.network.packets.game.GameHostboundListener;
 
 /**
  * Created by steve6472

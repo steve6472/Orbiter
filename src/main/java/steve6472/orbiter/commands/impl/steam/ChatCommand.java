@@ -2,11 +2,8 @@ package steve6472.orbiter.commands.impl.steam;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
-import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.commands.Command;
 import steve6472.orbiter.commands.CommandSource;
-import steve6472.orbiter.network.packets.lobby.LobbyChatMessage;
-import steve6472.orbiter.steam.lobby.LobbyManager;
 
 public class ChatCommand extends Command
 {

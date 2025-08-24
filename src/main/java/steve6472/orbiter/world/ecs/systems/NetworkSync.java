@@ -6,7 +6,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
 import steve6472.core.log.Log;
 import steve6472.orbiter.network.api.NetworkMain;
-import steve6472.orbiter.network.packets.play.clientbound.UpdateEntityComponents;
+import steve6472.orbiter.network.packets.game.clientbound.UpdateEntityComponents;
 import steve6472.orbiter.world.NetworkSerialization;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.*;

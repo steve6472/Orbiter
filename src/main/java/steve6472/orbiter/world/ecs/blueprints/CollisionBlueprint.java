@@ -3,6 +3,7 @@ package steve6472.orbiter.world.ecs.blueprints;
 import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import steve6472.core.registry.Key;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
 import steve6472.orbiter.world.ecs.core.Blueprint;
 
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public record CollisionBlueprint(Key key) implements Blueprint<CollisionBlueprint>
 {
-    public static final Key KEY = Key.defaultNamespace("collision");
+    public static final Key KEY = Constants.key("collision");
     public static final Codec<CollisionBlueprint> CODEC = Key.CODEC.xmap(CollisionBlueprint::new, CollisionBlueprint::key);
 
     @Override

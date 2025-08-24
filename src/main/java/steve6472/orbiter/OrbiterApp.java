@@ -34,7 +34,6 @@ import steve6472.moondust.widget.component.ViewController;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
-import steve6472.orbiter.player.VRPlayer;
 import steve6472.orbiter.scheduler.Scheduler;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.player.PCPlayer;
@@ -56,6 +55,32 @@ import java.util.logging.Level;
  */
 public class OrbiterApp extends FlareApp
 {
+    /* # TODOS:
+     *
+     *  [x] Unify network game/play naming to just game
+     *  [ ] Fix disconnecting
+     *  [ ] System profiling
+     *  [ ] Better Bandwidth tracker
+     *  [ ] Client/Host systems
+     *  [ ] Fix player collision MP bug
+     *
+     *  [ ] Particle ECS
+     *  [ ] Particle components
+     *  [ ] Particle systems
+     *
+     *  akma asks:
+     *  [ ] Mana system
+     *  [ ] Ice brand arts
+     *
+     *  dj asks:
+     *  [ ] Explosions (Megumin style probably)
+     *
+     *
+     *
+     *
+     *
+     */
+
     private static OrbiterApp instance;
 
     private NetworkMain networkMain;

@@ -1,15 +1,11 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.mojang.datafixers.util.Function3;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import org.joml.Vector3f;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
-import steve6472.orbiter.Convert;
-import steve6472.orbiter.OrbiterApp;
 
 import java.util.function.Consumer;
 import java.util.function.Function;

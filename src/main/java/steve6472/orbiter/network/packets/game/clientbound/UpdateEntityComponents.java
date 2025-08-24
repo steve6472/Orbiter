@@ -1,4 +1,4 @@
-package steve6472.orbiter.network.packets.play.clientbound;
+package steve6472.orbiter.network.packets.game.clientbound;
 
 import com.badlogic.ashley.core.Component;
 import io.netty.buffer.ByteBuf;
@@ -8,7 +8,7 @@ import steve6472.core.network.Packet;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.network.ExtraBufferCodecs;
-import steve6472.orbiter.network.packets.play.GameClientboundListener;
+import steve6472.orbiter.network.packets.game.GameClientboundListener;
 
 import java.util.Arrays;
 import java.util.List;

@@ -8,14 +8,14 @@ import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.packets.configuration.clientbound.FinishConfiguration;
 import steve6472.orbiter.network.packets.configuration.clientbound.HeartbeatClientbound;
 import steve6472.orbiter.network.packets.configuration.hostbound.HeartbeatHostbound;
-import steve6472.orbiter.network.packets.play.clientbound.UpdateEntityComponents;
+import steve6472.orbiter.network.packets.game.clientbound.UpdateEntityComponents;
 import steve6472.orbiter.network.packets.login.clientbound.LoginResponse;
 import steve6472.orbiter.network.packets.login.hostbound.LoginStart;
-import steve6472.orbiter.network.packets.play.clientbound.*;
-import steve6472.orbiter.network.packets.play.hostbound.Disconnect;
-import steve6472.orbiter.network.packets.play.hostbound.GameHeartbeatHostbound;
-import steve6472.orbiter.network.packets.play.hostbound.JunkData;
-import steve6472.orbiter.network.packets.play.hostbound.PlayerMove;
+import steve6472.orbiter.network.packets.game.clientbound.*;
+import steve6472.orbiter.network.packets.game.hostbound.Disconnect;
+import steve6472.orbiter.network.packets.game.hostbound.GameHeartbeatHostbound;
+import steve6472.orbiter.network.packets.game.hostbound.JunkData;
+import steve6472.orbiter.network.packets.game.hostbound.PlayerMove;
 
 /**
  * Created by steve6472
@@ -48,29 +48,11 @@ public class Packets
         registerPacket(RemoveEntity.KEY, RemoveEntity.BUFFER_CODEC);
         registerPacket(UpdateEntityComponents.KEY, UpdateEntityComponents.BUFFER_CODEC);
         registerPacket(KickUser.KEY, KickUser.BUFFER_CODEC);
-        registerPacket(Disconnect.KEY, Disconnect.BUFFER_CODEC);
-        registerPacket(PlayerMove.KEY, PlayerMove.BUFFER_CODEC);
         // Hostbound
         registerPacket(GameHeartbeatHostbound.KEY, GameHeartbeatHostbound.BUFFER_CODEC);
         registerPacket(JunkData.KEY, JunkData.BUFFER_CODEC);
-
-        // Lobby packets
-//        registerPacket(LobbyClosing.KEY, LobbyClosing.BUFFER_CODEC);
-//        registerPacket(LobbyKickUser.KEY, LobbyKickUser.BUFFER_CODEC);
-//        registerPacket(LobbyChatMessage.KEY, LobbyChatMessage.BUFFER_CODEC);
-
-        // Game packets
-//        registerPacket(HelloGame.KEY, HelloGame.BUFFER_CODEC);
-//        registerPacket(Heartbeat.KEY, Heartbeat.BUFFER_CODEC);
-
-//        registerPacket(AcceptedPeerConnection.KEY, AcceptedPeerConnection.BUFFER_CODEC);
-//        registerPacket(SpawnPlayerCharacter.KEY, SpawnPlayerCharacter.BUFFER_CODEC);
-//        registerPacket(PlayerDisconnected.KEY, PlayerDisconnected.BUFFER_CODEC);
-//        registerPacket(TeleportToPosition.KEY, TeleportToPosition.BUFFER_CODEC);
-//
-//        registerPacket(RequestEntity.KEY, RequestEntity.BUFFER_CODEC);
-//        registerPacket(ClearJoints.KEY, ClearJoints.BUFFER_CODEC);
-//        registerPacket(AddJoint.KEY, AddJoint.BUFFER_CODEC);
+        registerPacket(PlayerMove.KEY, PlayerMove.BUFFER_CODEC);
+        registerPacket(Disconnect.KEY, Disconnect.BUFFER_CODEC);
     }
 
     private static void registerPacket(Key key, BufferCodec<ByteBuf, ? extends Packet<?, ?>> codec)

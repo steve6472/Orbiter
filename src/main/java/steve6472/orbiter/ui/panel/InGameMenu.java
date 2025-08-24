@@ -10,7 +10,6 @@ import steve6472.orbiter.network.api.Lobby;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.ui.MDUtil;
-import steve6472.orbiter.world.World;
 
 import java.util.logging.Logger;
 

@@ -7,7 +7,6 @@ import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.network.api.ConnectedUser;
 import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
-import steve6472.orbiter.network.packets.play.clientbound.EnterWorld;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.ui.GlobalProperties;
 import steve6472.orbiter.ui.MDUtil;
