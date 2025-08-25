@@ -55,7 +55,6 @@ public class InGameMenu extends PanelView
     @Override
     protected void createCommandListeners()
     {
-        addCommandListener(Constants.key("close"), _ -> OrbiterApp.getInstance().masterRenderer().getWindow().closeWindow());
         addCommandListener(Constants.key("resume"), _ ->
         {
             OrbiterApp orbiter = OrbiterApp.getInstance();
@@ -66,6 +65,11 @@ public class InGameMenu extends PanelView
         {
             MDUtil.removePanel(Constants.UI.IN_GAME_MENU);
             MDUtil.addPanel(Constants.UI.SETTINGS);
+        });
+        addCommandListener(Constants.key("open_ecs_profiler"), _ ->
+        {
+            MDUtil.removePanel(Constants.UI.IN_GAME_MENU);
+            MDUtil.addPanel(Constants.UI.IN_GAME_ECS_PROFILER);
         });
 
         addCommandListener(Constants.key("main_menu"), _ ->

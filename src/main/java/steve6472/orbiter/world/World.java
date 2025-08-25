@@ -31,13 +31,13 @@ import static steve6472.flare.render.debug.DebugRender.*;
  */
 public class World implements EntityControl, EntityModify
 {
-    PhysicsSpace physics;
-    Engine ecsEngine;
     // TODO: split to client & host ?
     private final Map<UUID, PhysicsRigidBody> bodyMap = new HashMap<>();
     private final Map<UUID, PhysicsGhostObject> ghostMap = new HashMap<>();
 
-    private WorldSystems systems;
+    private final PhysicsSpace physics;
+    private final Engine ecsEngine;
+    private final WorldSystems systems;
 
     private static final boolean RENDER_X_WALL = false;
 

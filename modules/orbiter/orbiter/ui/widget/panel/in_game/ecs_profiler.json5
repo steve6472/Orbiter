@@ -1,0 +1,67 @@
+{
+    view_controller: "orbiter:ecs_profiler",
+
+    children: [
+        {
+            name: "systems_picker",
+            bounds: [100, "100% - 55"],
+            position: [2, 2],
+
+            sprites: {
+                main: "moondust:generic_dark_pixel/frame/flat/background_frame"
+            },
+            current_sprite: "main"
+        },
+        {
+            name: "system_data",
+            bounds: [170, 50],
+            position: {
+                type: "anchored",
+                anchor: "bottom_left",
+                offset: [2, -2]
+            },
+
+            sprites: {
+                main: "moondust:generic_dark_pixel/frame/flat/background_frame"
+            },
+            current_sprite: "main"
+        },
+        {
+            name: "system_settings",
+            bounds: [69, 70],
+            position: [103, 2],
+
+            sprites: {
+                main: "moondust:generic_dark_pixel/frame/flat/background_frame"
+            },
+            current_sprite: "main"
+        },
+        {
+            name: "back",
+            bounds: [69, 13],
+            position: {
+                type: "anchored",
+                anchor: "bottom_left",
+                offset: [103, -53]
+            },
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:back"
+                    }
+                },
+                label: "Back"
+            },
+
+            sprites: {
+                normal: "moondust:generic_dark_pixel/button/generic/square/normal",
+                disabled: "moondust:generic_dark_pixel/button/generic/square/disabled",
+                hover: "moondust:generic_dark_pixel/button/generic/square/hover",
+                pressed: "moondust:generic_dark_pixel/button/generic/square/pressed"
+            },
+            focused_sprite: "moondust:generic_dark_pixel/generic/focus/square"
+        }
+    ]
+}

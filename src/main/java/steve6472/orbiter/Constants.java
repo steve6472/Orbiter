@@ -38,6 +38,7 @@ public final class Constants
 
         Key IN_GAME_MENU = key("panel/in_game/menu");
         Key IN_GAME_CHAT = key("panel/in_game/chat");
+        Key IN_GAME_ECS_PROFILER = key("panel/in_game/ecs_profiler");
     }
 
     public static Key key(String id)

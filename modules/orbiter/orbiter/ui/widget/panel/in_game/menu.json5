@@ -3,30 +3,6 @@
 
     children: [
         {
-            name: "close_button",
-            bounds: [13, 13],
-            position: {
-                type: "anchored",
-                anchor: "top_right"
-            },
-
-            button: {
-                on_press: {
-                    script: "moondust:button_send_command",
-                    input: {
-                        key: "orbiter:close"
-                    }
-                }
-            },
-
-            sprites: {
-                normal: "moondust:generic_dark_pixel/button/close_red/normal",
-                disabled: "moondust:generic_dark_pixel/button/close_red/disabled",
-                hover: "moondust:generic_dark_pixel/button/close_red/hover",
-                pressed: "moondust:generic_dark_pixel/button/close_red/pressed"
-            }
-        },
-        {
             name: "title",
             bounds: ["100%", 14],
             position: {
@@ -93,6 +69,25 @@
                     }
                 },
                 label: "Settings"
+            }
+        },
+        {
+            name: "ecs_profiler",
+            bounds: [30, 13],
+            position: {
+                type: "relative",
+                parent: "settings",
+                offset: [102, 0]
+            },
+
+            button: {
+                on_press: {
+                    script: "moondust:button_send_command",
+                    input: {
+                        key: "orbiter:open_ecs_profiler"
+                    }
+                },
+                label: "ECS"
             }
         },
         {

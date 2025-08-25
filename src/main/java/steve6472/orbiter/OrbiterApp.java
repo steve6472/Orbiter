@@ -60,8 +60,9 @@ public class OrbiterApp extends FlareApp
      *  [x] Unify network game/play naming to just game
      *  [x] Fix disconnecting
      *  [ ] System profiling
+     *  [ ] Fix camera glitching when opening menu
      *  [ ] Better Bandwidth tracker
-     *  [ ] Client/Host systems
+     *  [x] Client/Host systems
      *  [ ] Fix player collision MP bug
      *
      *  [ ] Particle ECS
@@ -121,6 +122,7 @@ public class OrbiterApp extends FlareApp
         MoonDustRegs.VIEW_ENTRIES.add(new PanelViewEntry(Constants.key("chat"), InGameChat::new));
         MoonDustRegs.VIEW_ENTRIES.add(new PanelViewEntry(Constants.key("settings"), SettingsMenu::new));
         MoonDustRegs.VIEW_ENTRIES.add(new PanelViewEntry(Constants.key("lobby_dedicated"), LobbyMenuDedicated::new));
+        MoonDustRegs.VIEW_ENTRIES.add(new PanelViewEntry(Constants.key("ecs_profiler"), InGameECSProfiler::new));
 
         initRegistry(MoonDustRegistries.POSITION_BLUEPRINT_TYPE);
         JavaFunctions.init(this);
@@ -227,7 +229,10 @@ public class OrbiterApp extends FlareApp
             return;
         }
 
-        if (MDUtil.isPanelOpen(Constants.UI.IN_GAME_MENU))
+        if (MDUtil.isPanelOpen(Constants.UI.IN_GAME_ECS_PROFILER))
+        {
+            setMouseGrab(!isMouseGrabbed);
+        } else if (MDUtil.isPanelOpen(Constants.UI.IN_GAME_MENU))
         {
             // If open, close
             MDUtil.removePanel(Constants.UI.IN_GAME_MENU);
