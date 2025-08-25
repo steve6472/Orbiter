@@ -1,6 +1,7 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.gdx.utils.Pool;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -15,7 +16,7 @@ import steve6472.orbiter.Convert;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class Rotation implements PhysicsProperty, Component
+public class Rotation implements PhysicsProperty, Component, Pool.Poolable
 {
     public static final Codec<Rotation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Codec.FLOAT.fieldOf("x").forGetter(Rotation::x),
@@ -106,5 +107,11 @@ public class Rotation implements PhysicsProperty, Component
 //            return;
 
         body.setPhysicsRotation(Convert.jomlToPhys(toQuat()));
+    }
+
+    @Override
+    public void reset()
+    {
+        set(0, 0, 0, 1);
     }
 }

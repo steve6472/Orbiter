@@ -5,6 +5,9 @@ import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.world.ecs.components.*;
+import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
+import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitters;
+import steve6472.orbiter.world.ecs.components.particle.*;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.core.ComponentEntry;
 
@@ -42,6 +45,17 @@ public class Components
     public static final ComponentEntry<IndexModel> MODEL = register("model", IndexModel.class, builder -> builder.persistent(IndexModel.CODEC).network(IndexModel.BUFFER_CODEC));
 
     /*
+     * Particle
+     */
+    public static final ComponentEntry<ParticleEmitters> PARTICLE_EMITTERS = register("particle_emitters", ParticleEmitters.class, builder -> builder.persistent(ParticleEmitters.CODEC));
+
+    public static final ComponentEntry<Scale> SCALE = register("scale", Scale.class);
+    public static final ComponentEntry<Lifetime> LIFETIME = register("lifetime", Lifetime.class);
+    public static final ComponentEntry<LocalSpace> LOCAL_SPACE = register("local_space", LocalSpace.class);
+    public static final ComponentEntry<ParticleHolderId> PARTICLE_HOLDER = register("particle_holder", ParticleHolderId.class);
+    public static final ComponentEntry<ParticleFollowerId> PARTICLE_FOLLOWER = register("particle_follower", ParticleFollowerId.class);
+
+    /*
      * MP Specific
      */
     public static final ComponentEntry<MPControlled> MP_CONTROLLED = register("mp_controlled", MPControlled.class, builder -> builder.persistent(MPControlled.CODEC).network(MPControlled.BUFFER_CODEC));
@@ -68,6 +82,11 @@ public class Components
     private static <T extends Component> ComponentEntry<T> register(String id, Class<T> clazz, UnaryOperator<ComponentEntry.Builder<T>> builder)
     {
         return register(Key.withNamespace(Constants.NAMESPACE, id), clazz, builder);
+    }
+
+    private static <T extends Component> ComponentEntry<T> register(String id, Class<T> clazz)
+    {
+        return register(Key.withNamespace(Constants.NAMESPACE, id), clazz, b -> b);
     }
 
     private static <T extends Component> ComponentEntry<T> register(Key key, Class<T> clazz, UnaryOperator<ComponentEntry.Builder<T>> builder)

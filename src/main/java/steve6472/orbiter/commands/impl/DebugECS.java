@@ -1,5 +1,6 @@
 package steve6472.orbiter.commands.impl;
 
+import com.badlogic.ashley.core.Entity;
 import com.mojang.brigadier.CommandDispatcher;
 import steve6472.orbiter.commands.Command;
 import steve6472.orbiter.commands.CommandSource;
@@ -15,7 +16,10 @@ public class DebugECS extends Command
 	{
 		dispatcher.register(literal("ecs").executes(c ->
 		{
-			c.getSource().sendError("disabled");
+			for (Entity entity : c.getSource().getWorld().ecsEngine().getEntities())
+			{
+				c.getSource().sendFeedback(entity.getComponents().toString());
+			}
 //			c.getSource().getWorld().ecs().findEntitiesWith(UUID.class).forEach(e -> {
 //				c.getSource().sendFeedback(Arrays.toString(((IntEntity) e.entity()).getComponentArray()));
 //			});

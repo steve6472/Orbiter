@@ -65,9 +65,10 @@ public class OrbiterApp extends FlareApp
      *  [x] Client/Host systems
      *  [ ] Fix player collision MP bug
      *
-     *  [ ] Particle ECS
-     *  [ ] Particle components
-     *  [ ] Particle systems
+     *  [x] Particle ECS
+     *  [x] Particle components
+     *  [x] Particle systems
+     *  [ ] Fix max_count for steady rate
      *
      *  akma asks:
      *  [ ] Mana system
@@ -151,6 +152,7 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new UILineRender(masterRenderer(), new DebugUILines()));
 
         addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticWorldRender(client), Pipelines.BLOCKBENCH_STATIC));
+        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new ParticleRender(client), Pipelines.BLOCKBENCH_STATIC));
 
         new MoonDustCallbacks().init(window().callbacks(), input());
     }
@@ -280,6 +282,7 @@ public class OrbiterApp extends FlareApp
 
     public void clearWorld()
     {
+        client.getWorld().particleEngine().clearPools();
         client.setWorld(null);
         setMouseGrab(false);
     }

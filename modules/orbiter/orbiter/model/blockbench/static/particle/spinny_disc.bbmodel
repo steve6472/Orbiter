@@ -1,0 +1,94 @@
+{
+    "meta": {
+        "format_version": "4.10",
+        "model_format": "free",
+        "box_uv": false
+    },
+    "name": "spinny_disc",
+    "model_identifier": "",
+    "visible_box": [1, 1, 0],
+    "variable_placeholders": "",
+    "variable_placeholder_buttons": [],
+    "timeline_setups": [],
+    "unhandled_root_fields": {},
+    "resolution": {
+        "width": 16,
+        "height": 16
+    },
+    "elements": [
+        {
+            "name": "cube",
+            "box_uv": false,
+            "rescale": false,
+            "locked": false,
+            "light_emission": 0,
+            "render_order": "default",
+            "allow_mirror_modeling": true,
+            "from": [-8, 0, -8],
+            "to": [8, 0, 8],
+            "autouv": 0,
+            "color": 7,
+            "origin": [-0.5, -0.5, -0.5],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 0, 0],
+                    "texture": null
+                },
+                "east": {
+                    "uv": [0, 0, 0, 0],
+                    "texture": null
+                },
+                "south": {
+                    "uv": [0, 0, 0, 0],
+                    "texture": null
+                },
+                "west": {
+                    "uv": [0, 0, 0, 0],
+                    "texture": null
+                },
+                "up": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "down": {
+                    "uv": [16, 0, 0, 16],
+                    "texture": 0
+                }
+            },
+            "type": "cube",
+            "uuid": "963d1250-99c5-2016-56e8-1aa647b5f22e"
+        }
+    ],
+    "outliner": ["963d1250-99c5-2016-56e8-1aa647b5f22e"],
+    "textures": [
+        {
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\particle\\spinny_disc.png",
+            "name": "orbiter:particle/spinny_disc",
+            "folder": "block",
+            "namespace": "",
+            "id": "0",
+            "group": "",
+            "width": 16,
+            "height": 64,
+            "uv_width": 16,
+            "uv_height": 16,
+            "particle": false,
+            "use_as_default": false,
+            "layers_enabled": false,
+            "sync_to_project": "eb437553-a096-bb93-c942-f98cfd00a3ca",
+            "render_mode": "default",
+            "render_sides": "auto",
+            "pbr_channel": "color",
+            "frame_time": 1,
+            "frame_order_type": "loop",
+            "frame_order": "",
+            "frame_interpolate": false,
+            "visible": true,
+            "internal": true,
+            "saved": true,
+            "uuid": "522eac11-1a35-545d-3167-b8bece67ca57",
+            "relative_path": "../../../../textures/model/particle/spinny_disc.png",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAABACAYAAAATffeWAAAAAXNSR0IArs4c6QAAASNJREFUWEftVzsOwjAMTbhEj8HMxMwNkDgfEjdgZmLmGL0ERYkU5Hyc2n5hQe3oui+O7ffsesc8u9tjoa/e56NvuVbG6fWMH877Q/aOs2dOl/m+XKdT86R0eunTdeauR+0bgHNbDkbnYEgrQ2SiPW6mcwJJAJwOJD+xHnDMVOtBCfQFkFSAlbSQ+VLCJGISfGIEEEDI9lqme9F4GEB615ZfOBwSFAggJd4cAQRAm04dgXm0iYYrV6pgF493bV+oc8DSWXtypUgaPajKaKFz1kgQAELnSKY/ALCK6rgqcBtorzMhPfgdF2Ayrf03wIJilrQyMrOoUqAhZYQGC21/SFSh4RqigAUl7kiIIo1ZsqyCAg0W2lTjVt2EypFGtGxTJ+m6/wH0r+uRgmetZQAAAABJRU5ErkJggg=="
+        }
+    ]
+}

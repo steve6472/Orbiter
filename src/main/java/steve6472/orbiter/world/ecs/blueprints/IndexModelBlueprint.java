@@ -1,6 +1,7 @@
 package steve6472.orbiter.world.ecs.blueprints;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.PooledEngine;
 import com.mojang.serialization.Codec;
 import steve6472.core.registry.Key;
 import steve6472.flare.registry.FlareRegistries;
@@ -24,6 +25,14 @@ public record IndexModelBlueprint(Key modelKey) implements Blueprint<IndexModelB
     public List<Component> createComponents()
     {
         return List.of(new IndexModel(FlareRegistries.STATIC_MODEL.get(modelKey)));
+    }
+
+    @Override
+    public List<Component> createParticleComponents(PooledEngine particleEngine)
+    {
+        IndexModel component = particleEngine.createComponent(IndexModel.class);
+        component.model = FlareRegistries.STATIC_MODEL.get(modelKey);
+        return List.of(component);
     }
 
     @Override

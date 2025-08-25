@@ -14,6 +14,9 @@ import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.world.collision.OrbiterCollisionShape;
 import steve6472.orbiter.world.ecs.Blueprints;
 import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.components.emitter.lifetime.EmitterLifetimeType;
+import steve6472.orbiter.world.ecs.components.emitter.rate.EmitterRateType;
+import steve6472.orbiter.world.ecs.components.emitter.shapes.EmitterShapeType;
 import steve6472.orbiter.world.ecs.core.BlueprintEntry;
 import steve6472.orbiter.world.ecs.core.ComponentEntry;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
@@ -28,6 +31,14 @@ import java.util.logging.Logger;
 public class Registries extends RegistryCreators
 {
     private static final Logger LOGGER = Log.getLogger(Registries.class);
+
+    /*
+     * Typed
+     */
+    // Components of emitters
+    public static final Registry<EmitterShapeType<?>> EMITTER_SHAPE = createRegistry("emitter_shape", () -> EmitterShapeType.POINT_SHAPE);
+    public static final Registry<EmitterRateType<?>> EMITTER_RATE = createRegistry("emitter_rate", () -> EmitterRateType.INSTANT_RATE);
+    public static final Registry<EmitterLifetimeType<?>> EMITTER_LIFETIME = createRegistry("emitter_lifetime", () -> EmitterLifetimeType.ONCE_LIFETIME);
 
     public static final ObjectRegistry<Setting<?, ?>> SETTINGS = createNamespacedObjectRegistry(Constants.NAMESPACE, "setting", () -> Settings.FOV);
     public static final Registry<Keybind> KEYBINDS = createNamespacedRegistry(Constants.NAMESPACE, "keybinds", () -> Keybinds.FORWARD);

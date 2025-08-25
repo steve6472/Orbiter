@@ -2,7 +2,7 @@ package steve6472.orbiter.world;
 
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.EntitySystem;
+import com.badlogic.ashley.core.PooledEngine;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
@@ -31,13 +31,17 @@ import static steve6472.flare.render.debug.DebugRender.*;
  */
 public class World implements EntityControl, EntityModify
 {
+    private static final int MAX_PARTICLES = 32767;
+
     // TODO: split to client & host ?
     private final Map<UUID, PhysicsRigidBody> bodyMap = new HashMap<>();
     private final Map<UUID, PhysicsGhostObject> ghostMap = new HashMap<>();
 
     private final PhysicsSpace physics;
     private final Engine ecsEngine;
+    private final PooledEngine particleEngine;
     private final WorldSystems systems;
+    private final ParticleSystems particleSystems;
 
     private static final boolean RENDER_X_WALL = false;
 
@@ -46,13 +50,16 @@ public class World implements EntityControl, EntityModify
         physics = new PhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
         physics.useDeterministicDispatch(true);
         ecsEngine = new Engine();
+        particleEngine = new PooledEngine(MAX_PARTICLES >> 4, MAX_PARTICLES, MAX_PARTICLES >> 4, MAX_PARTICLES);
         systems = new WorldSystems(this, ecsEngine);
+        particleSystems = new ParticleSystems(this, particleEngine);
     }
 
     public void init(MasterRenderer renderer)
     {
         addPlane(new Vector3f(0, 1f, 0), 0);
         systems.init(renderer);
+        particleSystems.init();
     }
 
     public void updateClientData(UUID uuid, Consumer<Entity> function)
@@ -70,6 +77,11 @@ public class World implements EntityControl, EntityModify
     public Engine ecsEngine()
     {
         return ecsEngine;
+    }
+
+    public PooledEngine particleEngine()
+    {
+        return particleEngine;
     }
 
     @Override
@@ -117,6 +129,7 @@ public class World implements EntityControl, EntityModify
 
         systems.updateStates();
         systems.runTickSystems(frameTime);
+        particleSystems.runTickSystems(frameTime);
     }
 
     public void debugRender(float frameTime)

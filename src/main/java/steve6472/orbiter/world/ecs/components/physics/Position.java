@@ -1,6 +1,7 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.gdx.utils.Pool;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Vector3f;
 import com.mojang.serialization.Codec;
@@ -15,7 +16,7 @@ import java.util.function.Function;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class Position extends Value3f implements Component
+public class Position extends Value3f implements Component, Pool.Poolable
 {
     public static final Codec<Position> CODEC = codec(Position::new);
     public static final BufferCodec<ByteBuf, Position> BUFFER_CODEC = bufferCodec(Position::new);
@@ -40,5 +41,11 @@ public class Position extends Value3f implements Component
     protected Consumer<Vector3f> set(PhysicsRigidBody body)
     {
         return body::setPhysicsLocation;
+    }
+
+    @Override
+    public void reset()
+    {
+        set(0, 0, 0);
     }
 }

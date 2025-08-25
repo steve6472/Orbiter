@@ -1,6 +1,7 @@
 package steve6472.orbiter.world.ecs.components;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.gdx.utils.Pool;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -15,7 +16,7 @@ import steve6472.flare.registry.FlareRegistries;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class IndexModel implements Component
+public class IndexModel implements Component, Pool.Poolable
 {
     public static final Codec<IndexModel> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Key.CODEC.fieldOf("key").forGetter(e -> e.model().key())
@@ -27,8 +28,10 @@ public class IndexModel implements Component
 
     public static final int UNSET_MODEL_INDEX = -1;
 
-    private final Model model;
+    public Model model;
     private int modelIndex = UNSET_MODEL_INDEX;
+
+    public IndexModel() {}
 
     public IndexModel(Model model)
     {
@@ -56,5 +59,12 @@ public class IndexModel implements Component
     public String toString()
     {
         return "IndexModel{" + "model=" + model.key() + ", modelIndex=" + modelIndex + '}';
+    }
+
+    @Override
+    public void reset()
+    {
+        model = null;
+        modelIndex = UNSET_MODEL_INDEX;
     }
 }

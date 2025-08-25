@@ -37,6 +37,7 @@ public class WorldSystems
     private EntitySystem updatePhysics;
     private EntitySystem braodcastClientPosition;
     private EntitySystem networkSync;
+    private EntitySystem primitiveEmitter;
 
     /*
      *
@@ -46,8 +47,8 @@ public class WorldSystems
     {
         initSystems();
 
-        addRenderSystem(new RenderNametag(renderer)); // "Render Nametag"
-        addRenderSystem(new RenderNetworkData(renderer));
+//        addRenderSystem(new RenderNametag(renderer)); // "Render Nametag"
+//        addRenderSystem(new RenderNetworkData(renderer));
     }
 
     private void initSystems()
@@ -73,6 +74,7 @@ public class WorldSystems
         engine.addSystem(updateClientData = new UpdateClientData());
 
         engine.addSystem(braodcastClientPosition = new BroadcastClientPosition());
+        engine.addSystem(primitiveEmitter = new ParticleEmitterSystem(world));
 
         // Last
         engine.addSystem(networkSync = new NetworkSync(OrbiterApp.getInstance().getNetwork())); //"Network Sync", ""

@@ -1,0 +1,52 @@
+{
+    position: {},
+    rotation: {},
+    model: "blockbench/static/antigrav_ball",
+    collision: "blockbench/static/antigrav_ball",
+    tags: ["tag_physics"],
+
+    angular_velocity: {
+        x: 0,
+        y: 1,
+        z: 0
+    },
+
+    particle_emitters: [
+        {
+            lifetime: {
+                lifetime_type: "looping",
+                ticks_active: 1,
+                ticks_asleep: 58
+            },
+            rate: {
+                rate_type: "instant",
+                count: 1
+            },
+            shape: {
+                shape_type: "point"
+            },
+            local_space: {
+                position: true
+            },
+            entity: "orbiter:particle/spinny_disc"
+        },
+        {
+            lifetime: {
+                lifetime_type: "looping",
+                ticks_active: 1,
+                ticks_asleep: 10
+            },
+            rate: {
+                rate_type: "steady",
+                spawn_rate: 16,
+                max_count: 9999
+            },
+            shape: {
+                shape_type: "sphere",
+                radius: 2,
+                surface_only: true
+            },
+            entity: "orbiter:particle/white_box"
+        }
+    ]
+}

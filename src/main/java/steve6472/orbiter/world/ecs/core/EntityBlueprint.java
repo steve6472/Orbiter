@@ -1,6 +1,7 @@
 package steve6472.orbiter.world.ecs.core;
 
 import com.badlogic.ashley.core.Component;
+import com.badlogic.ashley.core.PooledEngine;
 import steve6472.core.registry.Key;
 import steve6472.core.registry.Keyable;
 import steve6472.flare.core.Flare;
@@ -31,6 +32,13 @@ public class EntityBlueprint implements Keyable
         List<Component> components = new ArrayList<>(blueprints.size());
         blueprints.forEach(blueprint -> components.addAll(blueprint.createComponents()));
         components.add(new UUIDComp(uuid));
+        return components;
+    }
+
+    public List<Component> createParticleComponents(PooledEngine particleEngine)
+    {
+        List<Component> components = new ArrayList<>(blueprints.size());
+        blueprints.forEach(blueprint -> components.addAll(blueprint.createParticleComponents(particleEngine)));
         return components;
     }
 
