@@ -6,6 +6,8 @@ import steve6472.core.tokenizer.TokenParser;
 import steve6472.core.tokenizer.Tokenizer;
 import steve6472.orbiter.orlang.AST;
 import steve6472.orbiter.orlang.OrlangToken;
+import steve6472.orbiter.orlang.ParserException;
+import steve6472.orbiter.orlang.VarContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +22,10 @@ public class IdentifierParslet implements PrefixParselet<AST.Node>
     @Override
     public AST.Node parse(Tokenizer tokenizer, TokenParser<AST.Node> parser)
     {
-        String context = tokenizer.getCurrentToken().sval();
+        String contextSval = tokenizer.getCurrentToken().sval();
+        VarContext context = VarContext.getContext(contextSval);
+        if (context == null)
+            throw new ParserException("Context '" + contextSval + "' is invalid");
 
         tokenizer.consumeToken(OrlangToken.DOT);
         String name = tokenizer.nextToken().sval();
@@ -34,6 +39,6 @@ public class IdentifierParslet implements PrefixParselet<AST.Node>
             }
         }
 
-        return new AST.Node.Identifier(context + "." + name, path.toArray(new String[0]));
+        return new AST.Node.Identifier(context, name, path.toArray(new String[0]));
     }
 }

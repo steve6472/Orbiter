@@ -3,6 +3,7 @@ package steve6472.orbiter.orlang;
 import steve6472.core.tokenizer.MainTokens;
 import steve6472.core.tokenizer.TokenParser;
 import steve6472.core.tokenizer.TokenStorage;
+import steve6472.orbiter.orlang.codec.OrCode;
 import steve6472.orbiter.orlang.parser.*;
 
 import java.util.List;
@@ -63,10 +64,10 @@ public class OrlangParser
         tokenStorage.addTokens(OrlangToken.class);
     }
 
-    public List<AST.Node> parse(String toParse)
+    public OrCode parse(String toParse)
     {
         TokenParser<AST.Node> tokenize = parser.tokenize(toParse);
 //        System.out.println(tokenize.tokenizer.getTokens());
-        return tokenize.parseAll();
+        return new OrCode(tokenize.parseAll(), toParse);
     }
 }

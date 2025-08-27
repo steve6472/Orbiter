@@ -9,6 +9,8 @@ public enum VarContext
 {
     VARIABLE("variable", "v"),
     TEMP("temp", "t"),
+
+    // Functions
     MATH("math"),
     QUERY("query", "q"),
     ;
@@ -25,6 +27,17 @@ public enum VarContext
     VarContext(String contextName)
     {
         this(contextName, null);
+    }
+
+    public static VarContext getContext(String str)
+    {
+        for (VarContext value : values())
+        {
+            if (value.contextName.equals(str) || value.alias.equals(str))
+                return value;
+        }
+
+        return null;
     }
 
     public String contextName()

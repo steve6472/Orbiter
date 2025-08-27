@@ -11,11 +11,17 @@ public final class AST
 {
     public interface Node
     {
-        record Identifier(String name, String[] path) implements Node {
+        record Identifier(VarContext context, String name, String[] path) implements Node {
+
+            public Identifier(VarContext context, String name)
+            {
+                this(context, name, new String[0]);
+            }
+
             @Override
             public String toString()
             {
-                return "Identifier{" + "name='" + name + '\'' + ", path=" + Arrays.toString(path) + '}';
+                return "Identifier{" + "context=" + context + ", name='" + name + '\'' + ", path=" + Arrays.toString(path) + '}';
             }
         }
 

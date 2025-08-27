@@ -7,6 +7,7 @@ import org.joml.Vector3f;
 import steve6472.core.registry.Key;
 import steve6472.core.util.ExtraCodecs;
 import steve6472.orbiter.Constants;
+import steve6472.orbiter.orlang.codec.OrVec3;
 import steve6472.orbiter.world.ecs.components.emitter.LocalSpaceEmitter;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitters;
@@ -27,10 +28,10 @@ import java.util.List;
  */
 public record ParticleEmittersBlueprint(List<Emitter> emitters) implements Blueprint<ParticleEmittersBlueprint>
 {
-    private record Emitter(Vector3f offset, EmitterShape shape, EmitterLifetime lifetime, EmitterRate rate, LocalSpaceEmitter localSpace, Key entity)
+    private record Emitter(OrVec3 offset, EmitterShape shape, EmitterLifetime lifetime, EmitterRate rate, LocalSpaceEmitter localSpace, Key entity)
     {
         public static final Codec<Emitter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-            ExtraCodecs.VEC_3F.optionalFieldOf("offset", new Vector3f()).forGetter(Emitter::offset),
+            OrVec3.CODEC.optionalFieldOf("offset", new OrVec3()).forGetter(Emitter::offset),
             EmitterShape.CODEC.fieldOf("shape").forGetter(Emitter::shape),
             EmitterLifetime.CODEC.fieldOf("lifetime").forGetter(Emitter::lifetime),
             EmitterRate.CODEC.fieldOf("rate").forGetter(Emitter::rate),
@@ -49,7 +50,7 @@ public record ParticleEmittersBlueprint(List<Emitter> emitters) implements Bluep
         for (Emitter emitterBl : emitters)
         {
             ParticleEmitter emitter = new ParticleEmitter();
-            emitter.offset = new Vector3f(emitterBl.offset);
+            emitter.offset = emitterBl.offset.copy();
             emitter.shape = emitterBl.shape;
             emitter.rate = emitterBl.rate;
             // Because this object is mutable...

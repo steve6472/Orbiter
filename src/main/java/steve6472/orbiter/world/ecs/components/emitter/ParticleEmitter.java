@@ -4,9 +4,12 @@ import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.jetbrains.annotations.ApiStatus;
-import org.joml.Vector3f;
 import steve6472.core.registry.Key;
-import steve6472.core.util.ExtraCodecs;
+import steve6472.orbiter.orlang.AST;
+import steve6472.orbiter.orlang.OrlangEnvironment;
+import steve6472.orbiter.orlang.OrlangValue;
+import steve6472.orbiter.orlang.VarContext;
+import steve6472.orbiter.orlang.codec.OrVec3;
 import steve6472.orbiter.world.ecs.components.emitter.lifetime.EmitterLifetime;
 import steve6472.orbiter.world.ecs.components.emitter.rate.EmitterRate;
 import steve6472.orbiter.world.ecs.components.emitter.shapes.EmitterShape;
@@ -17,7 +20,7 @@ import steve6472.orbiter.world.ecs.components.emitter.shapes.EmitterShape;
 public class ParticleEmitter implements Component
 {
     public static final Codec<ParticleEmitter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        ExtraCodecs.VEC_3F.optionalFieldOf("offset", new Vector3f()).forGetter(o -> o.offset),
+        OrVec3.CODEC.optionalFieldOf("offset", new OrVec3()).forGetter(o -> o.offset),
         EmitterShape.CODEC.fieldOf("shape").forGetter(o -> o.shape),
         EmitterLifetime.CODEC.fieldOf("lifetime").forGetter(o -> o.lifetime),
         EmitterRate.CODEC.fieldOf("rate").forGetter(o -> o.rate),
@@ -34,13 +37,14 @@ public class ParticleEmitter implements Component
         return emitter;
     }));
 
-    public int ticksAlive;
-    public Vector3f offset;
+    public int emitterAge;
+    public OrVec3 offset;
 
     public EmitterShape shape;
     public EmitterLifetime lifetime;
     public EmitterRate rate;
     public LocalSpaceEmitter localSpace;
+    public OrlangEnvironment environment;
 
     public Key entity;
 
@@ -49,6 +53,7 @@ public class ParticleEmitter implements Component
 
     public ParticleEmitter()
     {
+        environment = new OrlangEnvironment();
     }
 
     @Override
@@ -56,7 +61,7 @@ public class ParticleEmitter implements Component
     {
         //noinspection StringBufferReplaceableByString
         final StringBuilder sb = new StringBuilder("ParticleEmitter{");
-        sb.append("ticksAlive=").append(ticksAlive).append('\n');
+        sb.append("emitterAge=").append(emitterAge).append('\n');
         sb.append(", offset=").append(offset).append('\n');
         sb.append(", shape=").append(shape).append('\n');
         sb.append(", lifetime=").append(lifetime).append('\n');
@@ -65,5 +70,12 @@ public class ParticleEmitter implements Component
 //        sb.append(", trackedParticles=").append(trackedParticles.size()).append('\n');
         sb.append('}');
         return sb.toString();
+    }
+
+    private static final AST.Node.Identifier EMITTER_AGE = new AST.Node.Identifier(VarContext.VARIABLE, "emitter_age");
+
+    public void updateEnvironment()
+    {
+        environment.setValue(EMITTER_AGE, new OrlangValue.Number(emitterAge));
     }
 }

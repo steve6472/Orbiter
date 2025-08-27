@@ -12,11 +12,29 @@
     },
 
     particle_emitters: [
+//        {
+//            lifetime: {
+//                lifetime_type: "looping",
+//                ticks_active: 1,
+//                ticks_asleep: 58
+//            },
+//            rate: {
+//                rate_type: "instant",
+//                count: 1
+//            },
+//            shape: {
+//                shape_type: "point"
+//            },
+//            local_space: {
+//                position: true
+//            },
+//            entity: "orbiter:particle/spinny_disc"
+//        },
         {
             lifetime: {
                 lifetime_type: "looping",
                 ticks_active: 1,
-                ticks_asleep: 58
+                ticks_asleep: 0
             },
             rate: {
                 rate_type: "instant",
@@ -28,6 +46,7 @@
             local_space: {
                 position: true
             },
+            offset: [0, "v.emitter_age / 60 / 5", 0],
             entity: "orbiter:particle/spinny_disc"
         },
         {

@@ -1,8 +1,8 @@
 package steve6472.orbiter.orlang;
 
 import steve6472.core.log.Log;
+import steve6472.orbiter.orlang.codec.OrCode;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -20,11 +20,11 @@ public class OrlangTest
         OrlangParser parser = new OrlangParser();
         OrlangInterpreter interpreter = new OrlangInterpreter();
 
-        List<AST.Node> parsed = parser.parse(expression);
+        OrCode parsed = parser.parse(expression);
 
         OrlangValue lastValue = null;
         OrlangEnvironment environment = new OrlangEnvironment();
-        for (AST.Node node : parsed)
+        for (AST.Node node : parsed.code())
         {
             LOGGER.finest("Executing: " + node);
             lastValue = interpreter.interpret(node, environment);

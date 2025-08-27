@@ -10,23 +10,44 @@ import java.util.Map;
  */
 public class OrlangEnvironment
 {
-    private Map<String, OrlangValue> valueMap = new HashMap<>();
-    private Map<String, OrlangValue> tempValueMap = new HashMap<>();
+    private final Map<String, OrlangValue> variableMap = new HashMap<>();
+    private final Map<String, OrlangValue> tempMap = new HashMap<>();
 
     public void setValue(AST.Node.Identifier identifier, OrlangValue value)
     {
         if (identifier.path().length == 0)
-            valueMap.put(identifier.name(), value);
-        else
+        {
+            if (identifier.context() == VarContext.VARIABLE)
+                variableMap.put(identifier.name(), value);
+            else if (identifier.context() == VarContext.TEMP)
+                tempMap.put(identifier.name(), value);
+            else
+                throw new IllegalArgumentException("Context " + identifier.context() + " can not be written to");
+        } else
+        {
             throw new UnsupportedOperationException("Path is not implemented yet");
+        }
     }
 
     public OrlangValue getValue(AST.Node.Identifier identifier)
     {
         if (identifier.path().length == 0)
-            return valueMap.get(identifier.name());
-        else
+        {
+            if (identifier.context() == VarContext.VARIABLE)
+                return variableMap.get(identifier.name());
+            else if (identifier.context() == VarContext.TEMP)
+                return tempMap.get(identifier.name());
+            else
+                throw new IllegalArgumentException("Context " + identifier.context() + " is not implemented yet");
+        } else
+        {
             throw new UnsupportedOperationException("Path is not implemented yet");
+        }
+    }
+
+    public void clearTemp()
+    {
+        tempMap.clear();
     }
 
     // Currently nesting is disabled
@@ -38,6 +59,6 @@ public class OrlangEnvironment
     @Override
     public String toString()
     {
-        return "OrlangEnvironment{" + "valueMap=" + valueMap + '}';
+        return "OrlangEnvironment{" + "valueMap=" + variableMap + '}';
     }
 }

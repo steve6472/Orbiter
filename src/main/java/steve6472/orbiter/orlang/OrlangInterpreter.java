@@ -1,5 +1,7 @@
 package steve6472.orbiter.orlang;
 
+import steve6472.orbiter.orlang.codec.OrCode;
+
 /**
  * Created by steve6472
  * Date: 8/27/2025
@@ -7,6 +9,16 @@ package steve6472.orbiter.orlang;
  */
 public class OrlangInterpreter
 {
+    public OrlangValue interpret(OrCode code, OrlangEnvironment environment)
+    {
+        OrlangValue lastValue = null;
+        for (AST.Node node : code.code())
+        {
+            lastValue = interpret(node, environment);
+        }
+        return lastValue;
+    }
+
     public OrlangValue interpret(AST.Node nodeExpression, OrlangEnvironment environment)
     {
         return switch (nodeExpression)

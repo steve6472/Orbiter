@@ -55,15 +55,15 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
 
     private void processEmitter(ParticleEmitters emitters, ParticleEmitter emitter, Entity entity)
     {
-        if (!emitter.lifetime.isAlive(emitter.ticksAlive))
+        if (!emitter.lifetime.isAlive(emitter.emitterAge))
         {
             emitters.emitters.remove(emitter);
             return;
         }
 
-        if (!emitter.lifetime.shouldEmit(emitter.ticksAlive))
+        if (!emitter.lifetime.shouldEmit(emitter.emitterAge))
         {
-            emitter.ticksAlive++;
+            emitter.emitterAge++;
             return;
         }
 
@@ -71,9 +71,11 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
 
         if (spawnCount <= 0)
         {
-            emitter.ticksAlive++;
+            emitter.emitterAge++;
             return;
         }
+
+        emitter.updateEnvironment();
 
         int holderId = 0;
         if (!emitter.localSpace.equals(LocalSpaceEmitter.DEFAULT))
@@ -111,18 +113,19 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
         if (particlePosition != null)
         {
             Vector3f position = emitter.shape.createPosition(emitter);
+            emitter.offset.evaluate(emitter.environment);
             if (emitter.localSpace.position())
             {
                 particlePosition.set(
-                    position.x + emitter.offset.x,
-                    position.y + emitter.offset.y,
-                    position.z + emitter.offset.z);
+                    position.x + emitter.offset.fx(),
+                    position.y + emitter.offset.fy(),
+                    position.z + emitter.offset.fz());
             } else
             {
                 particlePosition.set(
-                    emitterPosition.x() + position.x + emitter.offset.x,
-                    emitterPosition.y() + position.y + emitter.offset.y,
-                    emitterPosition.z() + position.z + emitter.offset.z);
+                    emitterPosition.x() + position.x + emitter.offset.fx(),
+                    emitterPosition.y() + position.y + emitter.offset.fy(),
+                    emitterPosition.z() + position.z + emitter.offset.fz());
             }
         }
         Lifetime lifetime = particleEngine.createComponent(Lifetime.class);
