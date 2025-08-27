@@ -31,7 +31,7 @@ public class OrNumValue
 
     public boolean hadFirstEval()
     {
-        return value != null;
+        return !isConstant() && value != null;
     }
 
     public boolean isConstant()

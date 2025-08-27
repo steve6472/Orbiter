@@ -2,35 +2,38 @@ package steve6472.orbiter.world.ecs.components.emitter.lifetime;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import steve6472.orbiter.orlang.codec.OrNumValue;
+import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
 
 public class OnceLifetime extends EmitterLifetime
 {
     public static final Codec<OnceLifetime> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Codec.INT.fieldOf("active_time").forGetter(OnceLifetime::activeTime)
+        OrNumValue.CODEC.fieldOf("active_time").forGetter(OnceLifetime::activeTime)
     ).apply(instance, OnceLifetime::new));
 
-    private final int activeTime;
+    public OrNumValue activeTime;
 
-    public OnceLifetime(int activeTime)
+    public OnceLifetime(OrNumValue activeTime)
     {
-        if (activeTime <= 0)
-            throw new RuntimeException("Value out of bound, only >= 1 allowed, got " + activeTime + " (" + activeTime + ")");
         this.activeTime = activeTime;
     }
 
-    public int activeTime()
+    public OrNumValue activeTime()
     {
         return activeTime;
     }
 
     @Override
-    public boolean isAlive(int ticksAlive)
+    public boolean isAlive(ParticleEmitter emitter, int ticksAlive)
     {
-        return ticksAlive < activeTime();
+        if (!activeTime.hadFirstEval())
+            activeTime.evaluate(emitter.environment);
+
+        return ticksAlive < activeTime.get();
     }
 
     @Override
-    public boolean shouldEmit(int ticksAlive)
+    public boolean shouldEmit(ParticleEmitter emitter, int ticksAlive)
     {
         return true;
     }

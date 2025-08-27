@@ -2,22 +2,23 @@ package steve6472.orbiter.world.ecs.components.emitter.rate;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import steve6472.orbiter.orlang.codec.OrNumValue;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
 
 public class InstantRate extends EmitterRate
 {
     public static final Codec<InstantRate> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Codec.INT.fieldOf("count").forGetter(InstantRate::count)
+        OrNumValue.CODEC.fieldOf("count").forGetter(InstantRate::count)
     ).apply(instance, InstantRate::new));
 
-    private final int count;
+    public final OrNumValue count;
 
-    private InstantRate(int count)
+    private InstantRate(OrNumValue count)
     {
         this.count = count;
     }
 
-    private int count()
+    private OrNumValue count()
     {
         return count;
     }
@@ -25,7 +26,7 @@ public class InstantRate extends EmitterRate
     @Override
     public int spawnCount(ParticleEmitter emitter)
     {
-        return count();
+        return (int) count.evaluateAndGet(emitter.environment);
     }
 
     @Override

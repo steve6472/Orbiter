@@ -26,10 +26,4 @@ public enum ShapeToken implements Token
     {
         return symbol;
     }
-
-    @Override
-    public boolean isMerge()
-    {
-        return false;
-    }
 }

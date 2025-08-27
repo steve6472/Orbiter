@@ -62,7 +62,7 @@
             },
             shape: {
                 shape_type: "sphere",
-                radius: 2,
+                radius: "math.sin(v.emitter_age / 60) * 0.1 + 2",
                 surface_only: true
             },
             entity: "orbiter:particle/white_box"

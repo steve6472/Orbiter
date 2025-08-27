@@ -1,5 +1,6 @@
 package steve6472.orbiter;
 
+import com.mojang.serialization.Codec;
 import steve6472.core.registry.Key;
 import steve6472.flare.FlareConstants;
 
@@ -45,4 +46,6 @@ public final class Constants
     {
         return Key.withNamespace(NAMESPACE, id);
     }
+
+    public static final Codec<Key> KEY_CODEC = Key.withDefaultNamespace(NAMESPACE);
 }

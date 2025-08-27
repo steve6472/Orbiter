@@ -55,13 +55,13 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
 
     private void processEmitter(ParticleEmitters emitters, ParticleEmitter emitter, Entity entity)
     {
-        if (!emitter.lifetime.isAlive(emitter.emitterAge))
+        if (!emitter.lifetime.isAlive(emitter, emitter.emitterAge))
         {
             emitters.emitters.remove(emitter);
             return;
         }
 
-        if (!emitter.lifetime.shouldEmit(emitter.emitterAge))
+        if (!emitter.lifetime.shouldEmit(emitter, emitter.emitterAge))
         {
             emitter.emitterAge++;
             return;

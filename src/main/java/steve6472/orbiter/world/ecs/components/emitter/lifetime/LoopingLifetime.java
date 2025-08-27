@@ -1,18 +1,19 @@
 package steve6472.orbiter.world.ecs.components.emitter.lifetime;
 
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import steve6472.core.registry.StringValue;
+import steve6472.orbiter.orlang.codec.OrNumValue;
+import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
 
 public class LoopingLifetime extends EmitterLifetime
 {
     private static final int INFINITE_LOOP = -1;
 
     public static final Codec<LoopingLifetime> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Codec.INT.fieldOf("ticks_active").forGetter(LoopingLifetime::ticksActive),
-        Codec.INT.fieldOf("ticks_asleep").forGetter(LoopingLifetime::ticksAsleep),
-        Codec.INT.optionalFieldOf("loop_count", INFINITE_LOOP).forGetter(LoopingLifetime::loopCount),
+        OrNumValue.CODEC.fieldOf("ticks_active").forGetter(LoopingLifetime::ticksActive),
+        OrNumValue.CODEC.fieldOf("ticks_asleep").forGetter(LoopingLifetime::ticksAsleep),
+        Codec.INT.optionalFieldOf("max_loop_count", INFINITE_LOOP).forGetter(LoopingLifetime::maxLoopCount),
         State.CODEC.optionalFieldOf("state", State.ACTIVE).forGetter(o -> o.state),
         Codec.INT.optionalFieldOf("timer", 0).forGetter(o -> o.timer),
         Codec.INT.optionalFieldOf("times_looped", 0).forGetter(o -> o.timesLooped)
@@ -24,51 +25,54 @@ public class LoopingLifetime extends EmitterLifetime
         return lifetime;
     }));
 
-    public final int ticksActive;
-    public final int ticksAsleep;
-    public final int loopCount;
+    public final OrNumValue ticksActive;
+    public final OrNumValue ticksAsleep;
+    public final int maxLoopCount;
 
     public State state;
     public int timer;
     public int timesLooped;
 
-    public LoopingLifetime(int ticksActive, int ticksAsleep, int loopCount)
+    public LoopingLifetime(OrNumValue ticksActive, OrNumValue ticksAsleep, int maxLoopCount)
     {
         this.ticksActive = ticksActive;
         this.ticksAsleep = ticksAsleep;
-        this.loopCount = loopCount;
+        this.maxLoopCount = maxLoopCount;
 
         this.state = State.ACTIVE;
     }
 
-    private int ticksActive()
+    private OrNumValue ticksActive()
     {
         return ticksActive;
     }
 
-    private int ticksAsleep()
+    private OrNumValue ticksAsleep()
     {
         return ticksAsleep;
     }
 
-    private int loopCount()
+    private int maxLoopCount()
     {
-        return loopCount;
+        return maxLoopCount;
     }
 
     @Override
-    public boolean isAlive(int ticksAlive)
+    public boolean isAlive(ParticleEmitter emitter, int ticksAlive)
     {
-        return loopCount == INFINITE_LOOP || timesLooped < loopCount();
+        return maxLoopCount == INFINITE_LOOP || timesLooped < maxLoopCount();
     }
 
     @Override
-    public boolean shouldEmit(int ticksAlive)
+    public boolean shouldEmit(ParticleEmitter emitter, int ticksAlive)
     {
         if (state == State.ACTIVE)
         {
+            if (timer == 0)
+                ticksActive.evaluate(emitter.environment);
+
             timer++;
-            if (timer >= ticksActive())
+            if (timer >= ticksActive.get())
             {
                 timer = 0;
                 timesLooped++;
@@ -77,8 +81,11 @@ public class LoopingLifetime extends EmitterLifetime
             return true;
         } else
         {
+            if (timer == 0)
+                ticksActive.evaluate(emitter.environment);
+
             timer++;
-            if (timer >= ticksAsleep())
+            if (timer >= ticksAsleep.get())
             {
                 timer = 0;
                 state = State.ACTIVE;
@@ -116,6 +123,6 @@ public class LoopingLifetime extends EmitterLifetime
     @Override
     public String toString()
     {
-        return "LoopingLifetime{" + "ticksActive=" + ticksActive + ", ticksAsleep=" + ticksAsleep + ", loopCount=" + loopCount + ", state=" + state + ", timer=" + timer + '}';
+        return "LoopingLifetime{" + "ticksActive=" + ticksActive + ", ticksAsleep=" + ticksAsleep + ", loopCount=" + maxLoopCount + ", state=" + state + ", timer=" + timer + '}';
     }
 }

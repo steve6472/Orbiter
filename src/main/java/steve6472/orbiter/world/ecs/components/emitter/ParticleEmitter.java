@@ -3,8 +3,8 @@ package steve6472.orbiter.world.ecs.components.emitter;
 import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.jetbrains.annotations.ApiStatus;
 import steve6472.core.registry.Key;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.orlang.AST;
 import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.orlang.OrlangValue;
@@ -13,6 +13,7 @@ import steve6472.orbiter.orlang.codec.OrVec3;
 import steve6472.orbiter.world.ecs.components.emitter.lifetime.EmitterLifetime;
 import steve6472.orbiter.world.ecs.components.emitter.rate.EmitterRate;
 import steve6472.orbiter.world.ecs.components.emitter.shapes.EmitterShape;
+import steve6472.orbiter.world.ecs.components.emitter.shapes.PointShape;
 
 /**
  * Totally not stolen from <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/particlesreference/particlecomponentlist?view=minecraft-bedrock-stable">Microsoft</a>
@@ -21,11 +22,11 @@ public class ParticleEmitter implements Component
 {
     public static final Codec<ParticleEmitter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         OrVec3.CODEC.optionalFieldOf("offset", new OrVec3()).forGetter(o -> o.offset),
-        EmitterShape.CODEC.fieldOf("shape").forGetter(o -> o.shape),
+        EmitterShape.CODEC.optionalFieldOf("shape", PointShape.INSTANCE).forGetter(o -> o.shape),
         EmitterLifetime.CODEC.fieldOf("lifetime").forGetter(o -> o.lifetime),
         EmitterRate.CODEC.fieldOf("rate").forGetter(o -> o.rate),
         LocalSpaceEmitter.CODEC.fieldOf("local_space").forGetter(o -> o.localSpace),
-        Key.CODEC.fieldOf("entity").forGetter(o -> o.entity)
+        Constants.KEY_CODEC.fieldOf("entity").forGetter(o -> o.entity)
     ).apply(instance, (offset, shape, lifetime, rate, localSpace, particle) -> {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.offset = offset;
@@ -48,7 +49,7 @@ public class ParticleEmitter implements Component
 
     public Key entity;
 
-    @ApiStatus.Internal
+//    @ApiStatus.Internal
 //    public Set<Entity> trackedParticles = new HashSet<>();
 
     public ParticleEmitter()

@@ -3,9 +3,7 @@ package steve6472.orbiter.world.ecs.blueprints.particle;
 import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import org.joml.Vector3f;
 import steve6472.core.registry.Key;
-import steve6472.core.util.ExtraCodecs;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.orlang.codec.OrVec3;
 import steve6472.orbiter.world.ecs.components.emitter.LocalSpaceEmitter;
@@ -58,7 +56,7 @@ public record ParticleEmittersBlueprint(List<Emitter> emitters) implements Bluep
             {
                 case OnceLifetime once -> new OnceLifetime(once.activeTime());
                 case LoopingLifetime looping -> {
-                    LoopingLifetime newLooping = new LoopingLifetime(looping.ticksActive, looping.ticksAsleep, looping.loopCount);
+                    LoopingLifetime newLooping = new LoopingLifetime(looping.ticksActive, looping.ticksAsleep, looping.maxLoopCount);
                     newLooping.state = looping.state;
                     newLooping.timer = looping.timer;
                     newLooping.timesLooped = looping.timesLooped;
