@@ -4,8 +4,8 @@ import com.badlogic.ashley.core.Component;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
+import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.world.ecs.components.*;
-import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitters;
 import steve6472.orbiter.world.ecs.components.particle.*;
 import steve6472.orbiter.world.ecs.components.physics.*;
@@ -50,10 +50,11 @@ public class Components
     public static final ComponentEntry<ParticleEmitters> PARTICLE_EMITTERS = register("particle_emitters", ParticleEmitters.class, builder -> builder.persistent(ParticleEmitters.CODEC));
 
     public static final ComponentEntry<Scale> SCALE = register("scale", Scale.class);
-    public static final ComponentEntry<Lifetime> LIFETIME = register("lifetime", Lifetime.class);
+    public static final ComponentEntry<MaxAge> MAX_AGE = register("max_age", MaxAge.class);
     public static final ComponentEntry<LocalSpace> LOCAL_SPACE = register("local_space", LocalSpace.class);
     public static final ComponentEntry<ParticleHolderId> PARTICLE_HOLDER = register("particle_holder", ParticleHolderId.class);
     public static final ComponentEntry<ParticleFollowerId> PARTICLE_FOLLOWER = register("particle_follower", ParticleFollowerId.class);
+    public static final ComponentEntry<OrlangEnvironment> PARTICLE_ENVIRONMENT = register("particle_environment", OrlangEnvironment.class);
 
     /*
      * MP Specific

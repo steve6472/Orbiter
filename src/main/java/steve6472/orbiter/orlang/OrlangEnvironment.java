@@ -1,5 +1,8 @@
 package steve6472.orbiter.orlang;
 
+import com.badlogic.ashley.core.Component;
+import com.badlogic.gdx.utils.Pool;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -8,7 +11,7 @@ import java.util.Map;
  * Date: 8/27/2025
  * Project: Orbiter <br>
  */
-public class OrlangEnvironment
+public class OrlangEnvironment implements Component, Pool.Poolable
 {
     private final Map<String, OrlangValue> variableMap = new HashMap<>();
     private final Map<String, OrlangValue> tempMap = new HashMap<>();
@@ -60,5 +63,12 @@ public class OrlangEnvironment
     public String toString()
     {
         return "OrlangEnvironment{" + "valueMap=" + variableMap + '}';
+    }
+
+    @Override
+    public void reset()
+    {
+        variableMap.clear();
+        tempMap.clear();
     }
 }

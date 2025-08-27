@@ -6,15 +6,13 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import org.joml.Vector3f;
 import steve6472.orbiter.Registries;
+import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.emitter.LocalSpaceEmitter;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitters;
-import steve6472.orbiter.world.ecs.components.particle.Lifetime;
-import steve6472.orbiter.world.ecs.components.particle.LocalSpace;
-import steve6472.orbiter.world.ecs.components.particle.ParticleFollowerId;
-import steve6472.orbiter.world.ecs.components.particle.ParticleHolderId;
+import steve6472.orbiter.world.ecs.components.particle.*;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
@@ -109,6 +107,10 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
         {
             entity.add(particleComponent);
         }
+
+        OrlangEnvironment env = particleEngine.createComponent(OrlangEnvironment.class);
+        entity.add(env);
+
         Position particlePosition = Components.POSITION.get(entity);
         if (particlePosition != null)
         {
@@ -128,7 +130,12 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
                     emitterPosition.z() + position.z + emitter.offset.fz());
             }
         }
-        Lifetime lifetime = particleEngine.createComponent(Lifetime.class);
+
+        MaxAge lifetime = particleEngine.createComponent(MaxAge.class);
+        if (emitter.maxAge != null)
+        {
+            lifetime.maxAge = (int) emitter.maxAge.maxAge().evaluateAndGet(env);
+        }
         entity.add(lifetime);
 
         if (holderId != ParticleHolderId.UNASSIGNED)

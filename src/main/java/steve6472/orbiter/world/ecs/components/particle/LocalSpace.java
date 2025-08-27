@@ -16,16 +16,17 @@ public class LocalSpace implements Component, Pool.Poolable
     public boolean rotation;
     public boolean velocity;
 
-    public LocalSpace()
-    {
-
-    }
-
     @Override
     public void reset()
     {
         position = false;
         rotation = false;
         velocity = false;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "LocalSpace{" + "position=" + position + ", rotation=" + rotation + ", velocity=" + velocity + '}';
     }
 }

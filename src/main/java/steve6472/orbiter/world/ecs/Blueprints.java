@@ -5,6 +5,7 @@ import steve6472.core.registry.Key;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.world.ecs.blueprints.*;
 import steve6472.orbiter.world.ecs.blueprints.particle.ParticleEmittersBlueprint;
+import steve6472.orbiter.world.ecs.blueprints.particle.ParticleScaleBlueprint;
 import steve6472.orbiter.world.ecs.core.Blueprint;
 import steve6472.orbiter.world.ecs.core.BlueprintEntry;
 
@@ -24,7 +25,9 @@ public class Blueprints
     public static final BlueprintEntry<CollisionBlueprint> COLLISION = register(CollisionBlueprint.KEY, CollisionBlueprint.CODEC);
     public static final BlueprintEntry<IndexModelBlueprint> MODEL = register(IndexModelBlueprint.KEY, IndexModelBlueprint.CODEC);
     public static final BlueprintEntry<TagsBlueprint> TAGS = register(TagsBlueprint.KEY, TagsBlueprint.CODEC);
+
     public static final BlueprintEntry<ParticleEmittersBlueprint> PRIMITIVE_EMITTER = register(ParticleEmittersBlueprint.KEY, ParticleEmittersBlueprint.CODEC);
+    public static final BlueprintEntry<ParticleScaleBlueprint> PARTICLE_SCALE = register(ParticleScaleBlueprint.KEY, ParticleScaleBlueprint.CODEC);
 
     private static <T extends Blueprint<?>> BlueprintEntry<T> register(Key key, Codec<T> codec)
     {

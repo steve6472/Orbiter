@@ -15,11 +15,6 @@ public class ParticleHolderId implements Component, Pool.Poolable
 
     public int followerId;
 
-    public ParticleHolderId()
-    {
-
-    }
-
     public static int generateRandomId()
     {
         return RandomUtil.randomInt(1, Integer.MAX_VALUE);

@@ -3,7 +3,7 @@ package steve6472.orbiter;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.mojang.datafixers.util.Pair;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import steve6472.core.registry.Key;
@@ -12,10 +12,10 @@ import steve6472.flare.core.FrameInfo;
 import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.render.SBOTransfromArray;
 import steve6472.flare.render.StaticModelRenderImpl;
+import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.IndexModel;
-import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.particle.LocalSpace;
 import steve6472.orbiter.world.ecs.components.particle.ParticleFollowerId;
 import steve6472.orbiter.world.ecs.components.particle.Scale;
@@ -24,7 +24,6 @@ import steve6472.orbiter.world.ecs.components.physics.Rotation;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by steve6472
@@ -49,7 +48,7 @@ public class ParticleRender extends StaticModelRenderImpl
         }
     }
 
-    private static final Family MODEL_FAMILY = Family.all(IndexModel.class, Position.class).get();
+    private static final Family PARTICLE_FAMILY = Family.all(IndexModel.class, Position.class, OrlangEnvironment.class).get();
 
     @Override
     public void updateTransformArray(SBOTransfromArray<Model> sboTransfromArray, FrameInfo frameInfo)
@@ -58,7 +57,7 @@ public class ParticleRender extends StaticModelRenderImpl
         if (world == null)
             return;
 
-        ImmutableArray<Entity> physicsModels = world.particleEngine().getEntitiesFor(MODEL_FAMILY);
+        ImmutableArray<Entity> physicsModels = world.particleEngine().getEntitiesFor(PARTICLE_FAMILY);
         if (physicsModels.size() == 0)
             return;
 
@@ -77,48 +76,59 @@ public class ParticleRender extends StaticModelRenderImpl
         Model lastModel = Components.MODEL.get(list.getFirst()).model();
         for (Entity entity : list)
         {
-            IndexModel model = Components.MODEL.get(entity);
+            Pair<Model, SBOTransfromArray<Model>.Area> modelAreaPair = processEntity(entity, lastModel, lastArea, sboTransfromArray);
+            lastModel = modelAreaPair.getFirst();
+            lastArea = modelAreaPair.getSecond();
+        }
+    }
 
-            if (lastArea == null || lastModel != model.model())
-            {
-                lastArea = sboTransfromArray.getAreaByType(model.model());
-                lastModel = model.model();
-            }
+    private Pair<Model, SBOTransfromArray<Model>.Area> processEntity(Entity entity, Model lastModel, SBOTransfromArray<Model>.Area lastArea, SBOTransfromArray<Model> sboTransfromArray)
+    {
+        IndexModel model = Components.MODEL.get(entity);
+        OrlangEnvironment env = Components.PARTICLE_ENVIRONMENT.get(entity);
 
-            LocalSpace localSpace = Components.LOCAL_SPACE.get(entity);
+        if (lastArea == null || lastModel != model.model())
+        {
+            lastArea = sboTransfromArray.getAreaByType(model.model());
+            lastModel = model.model();
+        }
 
-            Matrix4f primitiveTransform = new Matrix4f();
-            if (Components.POSITION.has(entity))
-            {
-                Position position = Components.POSITION.get(entity);
-                if (localSpace != null && localSpace.position)
-                {
-                    ParticleFollowerId follower = Components.PARTICLE_FOLLOWER.get(entity);
-                    Position holderPosition = Components.POSITION.get(follower.entity);
-                    if (holderPosition != null)
-                    {
-                        primitiveTransform.translate(holderPosition.x(), holderPosition.y(), holderPosition.z());
-                    }
-                }
-                primitiveTransform.translate(position.x(), position.y(), position.z());
-            }
+        LocalSpace localSpace = Components.LOCAL_SPACE.get(entity);
 
-            if (localSpace != null && localSpace.rotation)
+        Matrix4f primitiveTransform = new Matrix4f();
+        if (Components.POSITION.has(entity))
+        {
+            Position position = Components.POSITION.get(entity);
+            if (localSpace != null && localSpace.position)
             {
                 ParticleFollowerId follower = Components.PARTICLE_FOLLOWER.get(entity);
-                Rotation holderRotation = Components.ROTATION.get(follower.entity);
-                if (holderRotation != null)
+                Position holderPosition = Components.POSITION.get(follower.entity);
+                if (holderPosition != null)
                 {
-                    primitiveTransform.rotate(new Quaternionf(holderRotation.x(), holderRotation.y(), holderRotation.z(), holderRotation.w()));
+                    primitiveTransform.translate(holderPosition.x(), holderPosition.y(), holderPosition.z());
                 }
             }
-
-            if (Components.SCALE.has(entity))
-            {
-                Scale scale = Components.SCALE.get(entity);
-                primitiveTransform.scale(scale.scale());
-            }
-            lastArea.updateTransform(primitiveTransform);
+            primitiveTransform.translate(position.x(), position.y(), position.z());
         }
+
+        if (localSpace != null && localSpace.rotation)
+        {
+            ParticleFollowerId follower = Components.PARTICLE_FOLLOWER.get(entity);
+            Rotation holderRotation = Components.ROTATION.get(follower.entity);
+            if (holderRotation != null)
+            {
+                primitiveTransform.rotate(new Quaternionf(holderRotation.x(), holderRotation.y(), holderRotation.z(), holderRotation.w()));
+            }
+        }
+
+        if (Components.SCALE.has(entity))
+        {
+            Scale scale = Components.SCALE.get(entity);
+            scale.scale.evaluate(env);
+            primitiveTransform.scale(scale.scale.fx(), scale.scale.fy(), scale.scale.fz());
+        }
+        lastArea.updateTransform(primitiveTransform);
+
+        return Pair.of(lastModel, lastArea);
     }
 }

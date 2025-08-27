@@ -26,14 +26,16 @@ public class ParticleEmitter implements Component
         EmitterLifetime.CODEC.fieldOf("lifetime").forGetter(o -> o.lifetime),
         EmitterRate.CODEC.fieldOf("rate").forGetter(o -> o.rate),
         LocalSpaceEmitter.CODEC.fieldOf("local_space").forGetter(o -> o.localSpace),
+        ParticleMaxAge.CODEC.fieldOf("particle_max_age").forGetter(o -> o.maxAge),
         Constants.KEY_CODEC.fieldOf("entity").forGetter(o -> o.entity)
-    ).apply(instance, (offset, shape, lifetime, rate, localSpace, particle) -> {
+    ).apply(instance, (offset, shape, lifetime, rate, localSpace, maxAge, particle) -> {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.offset = offset;
         emitter.shape = shape;
         emitter.lifetime = lifetime;
         emitter.rate = rate;
         emitter.localSpace = localSpace;
+        emitter.maxAge = maxAge;
         emitter.entity = particle;
         return emitter;
     }));
@@ -45,6 +47,7 @@ public class ParticleEmitter implements Component
     public EmitterLifetime lifetime;
     public EmitterRate rate;
     public LocalSpaceEmitter localSpace;
+    public ParticleMaxAge maxAge;
     public OrlangEnvironment environment;
 
     public Key entity;

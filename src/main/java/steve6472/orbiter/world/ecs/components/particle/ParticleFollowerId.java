@@ -14,11 +14,6 @@ public class ParticleFollowerId implements Component, Pool.Poolable
     public int followerId;
     public Entity entity;
 
-    public ParticleFollowerId()
-    {
-
-    }
-
     @Override
     public void reset()
     {

@@ -9,6 +9,7 @@ import steve6472.orbiter.orlang.codec.OrVec3;
 import steve6472.orbiter.world.ecs.components.emitter.LocalSpaceEmitter;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitters;
+import steve6472.orbiter.world.ecs.components.emitter.ParticleMaxAge;
 import steve6472.orbiter.world.ecs.components.emitter.lifetime.EmitterLifetime;
 import steve6472.orbiter.world.ecs.components.emitter.lifetime.LoopingLifetime;
 import steve6472.orbiter.world.ecs.components.emitter.lifetime.OnceLifetime;
@@ -18,6 +19,7 @@ import steve6472.orbiter.world.ecs.core.Blueprint;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by steve6472
@@ -26,7 +28,7 @@ import java.util.List;
  */
 public record ParticleEmittersBlueprint(List<Emitter> emitters) implements Blueprint<ParticleEmittersBlueprint>
 {
-    private record Emitter(OrVec3 offset, EmitterShape shape, EmitterLifetime lifetime, EmitterRate rate, LocalSpaceEmitter localSpace, Key entity)
+    private record Emitter(OrVec3 offset, EmitterShape shape, EmitterLifetime lifetime, EmitterRate rate, LocalSpaceEmitter localSpace, Optional<ParticleMaxAge> maxAge, Key entity)
     {
         public static final Codec<Emitter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             OrVec3.CODEC.optionalFieldOf("offset", new OrVec3()).forGetter(Emitter::offset),
@@ -34,6 +36,7 @@ public record ParticleEmittersBlueprint(List<Emitter> emitters) implements Bluep
             EmitterLifetime.CODEC.fieldOf("lifetime").forGetter(Emitter::lifetime),
             EmitterRate.CODEC.fieldOf("rate").forGetter(Emitter::rate),
             LocalSpaceEmitter.CODEC.optionalFieldOf("local_space", LocalSpaceEmitter.DEFAULT).forGetter(Emitter::localSpace),
+            ParticleMaxAge.CODEC.optionalFieldOf("particle_max_age").forGetter(Emitter::maxAge),
             Key.CODEC.fieldOf("entity").forGetter(Emitter::entity)
         ).apply(instance, Emitter::new));
     }
@@ -65,6 +68,7 @@ public record ParticleEmittersBlueprint(List<Emitter> emitters) implements Bluep
                 default -> throw new IllegalStateException("Unexpected value: " + emitterBl.lifetime);
             };
             emitter.localSpace = emitterBl.localSpace;
+            emitter.maxAge = emitterBl.maxAge.orElse(null);
             emitter.entity = emitterBl.entity;
             emitterList.add(emitter);
         }

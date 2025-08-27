@@ -1,0 +1,10 @@
+{
+    position: {},
+    model: "orbiter:blockbench/static/particle/spinny_disc_slow",
+
+    particle_scale: {
+        x: "1 + v.particle_age / 50",
+        y: 1,
+        z: "1 + v.particle_age / 50"
+    }
+}

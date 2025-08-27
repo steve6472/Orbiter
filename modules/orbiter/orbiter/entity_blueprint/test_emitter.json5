@@ -12,24 +12,25 @@
     },
 
     particle_emitters: [
-//        {
-//            lifetime: {
-//                lifetime_type: "looping",
-//                ticks_active: 1,
-//                ticks_asleep: 58
-//            },
-//            rate: {
-//                rate_type: "instant",
-//                count: 1
-//            },
-//            shape: {
-//                shape_type: "point"
-//            },
-//            local_space: {
-//                position: true
-//            },
-//            entity: "orbiter:particle/spinny_disc"
-//        },
+        {
+            lifetime: {
+                lifetime_type: "looping",
+                ticks_active: 1,
+                ticks_asleep: 118
+            },
+            rate: {
+                rate_type: "instant",
+                count: 1
+            },
+            shape: {
+                shape_type: "point"
+            },
+            local_space: {
+                position: true
+            },
+            particle_max_age: 120,
+            entity: "orbiter:particle/spinny_disc_growing"
+        },
         {
             lifetime: {
                 lifetime_type: "looping",

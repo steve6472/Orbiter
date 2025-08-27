@@ -11,6 +11,7 @@ import steve6472.orbiter.orlang.VarContext;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by steve6472
@@ -22,7 +23,7 @@ public class IdentifierParslet implements PrefixParselet<AST.Node>
     @Override
     public AST.Node parse(Tokenizer tokenizer, TokenParser<AST.Node> parser)
     {
-        String contextSval = tokenizer.getCurrentToken().sval();
+        String contextSval = tokenizer.getCurrentToken().sval().toLowerCase(Locale.ROOT);
         VarContext context = VarContext.getContext(contextSval);
         if (context == null)
             throw new ParserException("Context '" + contextSval + "' is invalid");
