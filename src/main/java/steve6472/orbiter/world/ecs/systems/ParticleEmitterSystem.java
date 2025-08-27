@@ -40,23 +40,24 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
     protected void processEntity(Entity entity, float deltaTime)
     {
         ParticleEmitters emitters = Components.PARTICLE_EMITTERS.get(entity);
+
+        for (ParticleEmitter emitter : emitters.emitters)
+        {
+            processEmitter(emitters, emitter, entity);
+        }
+
         if (emitters.emitters.isEmpty())
         {
             entity.remove(ParticleEmitters.class);
-        } else
-        {
-            for (ParticleEmitter emitter : emitters.emitters)
-            {
-                processEmitter(emitter, entity);
-            }
+            entity.remove(ParticleHolderId.class);
         }
     }
 
-    private void processEmitter(ParticleEmitter emitter, Entity entity)
+    private void processEmitter(ParticleEmitters emitters, ParticleEmitter emitter, Entity entity)
     {
         if (!emitter.lifetime.isAlive(emitter.ticksAlive))
         {
-            entity.remove(ParticleEmitter.class);
+            emitters.emitters.remove(emitter);
             return;
         }
 
