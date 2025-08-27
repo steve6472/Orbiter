@@ -23,7 +23,7 @@ public class OrlangInterpreter
     {
         return switch (nodeExpression)
         {
-            case AST.Node.NumberLiteral exp -> new OrlangValue.Number(exp.value());
+            case AST.Node.NumberLiteral exp -> OrlangValue.num(exp.value());
             case AST.Node.BoolLiteral exp -> OrlangValue.bool(exp.value());
 
             case AST.Node.Assign exp -> {
@@ -90,10 +90,10 @@ public class OrlangInterpreter
                             }
                         }
                     }
-                    case MUL -> new OrlangValue.Number(checkNum(left, exp.type()) * checkNum(right, exp.type()));
-                    case DIV -> new OrlangValue.Number(checkNum(left, exp.type()) / checkNum(right, exp.type()));
-                    case ADD -> new OrlangValue.Number(checkNum(left, exp.type()) + checkNum(right, exp.type()));
-                    case SUB -> new OrlangValue.Number(checkNum(left, exp.type()) - checkNum(right, exp.type()));
+                    case MUL -> OrlangValue.num(checkNum(left, exp.type()) * checkNum(right, exp.type()));
+                    case DIV -> OrlangValue.num(checkNum(left, exp.type()) / checkNum(right, exp.type()));
+                    case ADD -> OrlangValue.num(checkNum(left, exp.type()) + checkNum(right, exp.type()));
+                    case SUB -> OrlangValue.num(checkNum(left, exp.type()) - checkNum(right, exp.type()));
                     default -> throw new IllegalStateException("Unexpected value: " + exp.type());
                 };
             }
@@ -104,9 +104,27 @@ public class OrlangInterpreter
                 yield switch (exp.type())
                 {
                     case NOT -> OrlangValue.bool(!checkBool(right, exp.type()));
-                    case SUB -> new OrlangValue.Number(-checkNum(right, exp.type()));
+                    case SUB -> OrlangValue.num(-checkNum(right, exp.type()));
                     default -> throw new IllegalStateException("Unexpected value: " + exp.type());
                 };
+            }
+
+            case AST.Node.FunctionCall exp ->
+            {
+                if (exp.identifier().context() == VarContext.MATH)
+                {
+                    OrlangValue.Func func = Orlang.MATH_FUNCTIONS.get(exp.identifier().name());
+                    if (func == null)
+                        throw new RuntimeException("Function " + "'math." + exp.identifier().name() + "' not found");
+                    AST.Node[] arguments = exp.arguments();
+                    OrlangValue[] values = new OrlangValue[arguments.length];
+                    for (int i = 0; i < arguments.length; i++)
+                    {
+                        values[i] = interpret(arguments[i], environment);
+                    }
+                    yield func.eval(values);
+                }
+                throw new IllegalStateException("Unexpected context " + exp.identifier().context());
             }
 
             case AST.Node.Identifier exp -> environment.getValue(exp);

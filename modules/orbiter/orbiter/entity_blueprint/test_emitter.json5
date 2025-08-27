@@ -46,7 +46,7 @@
             local_space: {
                 position: true
             },
-            offset: [0, "v.emitter_age / 60 / 5", 0],
+            offset: [0, "math.sin(v.emitter_age / 20) * 0.2", 0],
             entity: "orbiter:particle/spinny_disc"
         },
         {

@@ -76,6 +76,6 @@ public class ParticleEmitter implements Component
 
     public void updateEnvironment()
     {
-        environment.setValue(EMITTER_AGE, new OrlangValue.Number(emitterAge));
+        environment.setValue(EMITTER_AGE, OrlangValue.num(emitterAge));
     }
 }

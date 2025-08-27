@@ -26,7 +26,7 @@ public class OrNumValue
     public OrNumValue(double constant)
     {
         this.code = null;
-        this.value = new OrlangValue.Number(constant);
+        this.value = OrlangValue.num(constant);
     }
 
     public boolean hadFirstEval()
@@ -54,7 +54,6 @@ public class OrNumValue
         if (isConstant())
             return;
 
-        //noinspection DataFlowIssue - code will never be null here as it is checked with isConstant()
         OrlangValue retValue = Orlang.interpreter.interpret(code, environment);
         if (!(retValue instanceof OrlangValue.Number number))
             throw new RuntimeException("Orlang did not return a number");

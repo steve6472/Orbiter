@@ -13,6 +13,7 @@ public enum OrlangToken implements Token
     DOT("."),
     ASSIGN("="),
     SEMICOLON(";"),
+    COMMA(","),
 
     // Logical operators
     NOT("!", null, true),

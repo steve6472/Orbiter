@@ -26,5 +26,5 @@ public enum OrlangPrecedence implements Precedence
     SUM,
     PRODUCT,
     PREFIX,
-    ARROW
+    FUNC_CALL
 }

@@ -16,11 +16,12 @@ public class OrlangTest
 
     public static void main()
     {
-        String expression = "temp.foo = 1.23; temp.bar = 2; return temp.bar + temp.foo;";
+        String expression = "math.sin(7 + 2) + 2";
         OrlangParser parser = new OrlangParser();
         OrlangInterpreter interpreter = new OrlangInterpreter();
 
         OrCode parsed = parser.parse(expression);
+        LOGGER.finest("Parsed: " + parsed.code());
 
         OrlangValue lastValue = null;
         OrlangEnvironment environment = new OrlangEnvironment();

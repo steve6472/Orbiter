@@ -49,6 +49,7 @@ public class OrlangParser
         parser.prefixParslet(OrlangToken.PARENTHESIS_LEFT, new GroupParslet());
 
         parser.infixParslet(OrlangToken.ASSIGN, new AssignParslet(parser));
+        parser.infixParslet(OrlangToken.PARENTHESIS_LEFT, new FunctionCallParslet(parser));
 
         for (OrlangToken value : OrlangToken.values())
         {
