@@ -22,6 +22,11 @@ public interface OrlangValue
         return val ? TRUE : FALSE;
     }
 
+    static StringVal string(String string)
+    {
+        return new StringVal(string);
+    }
+
     static Func func(_Func0 function)
     {
         return new Func0(function);
@@ -86,6 +91,27 @@ public interface OrlangValue
         }
     }
 
+    final class StringVal implements OrlangValue
+    {
+        private final String value;
+
+        private StringVal(String value)
+        {
+            this.value = value;
+        }
+
+        public String value()
+        {
+            return value;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "AString[" + "value='" + value + '\'' + ']';
+        }
+    }
+
     final class Bool implements OrlangValue
     {
         private final boolean value;
@@ -115,34 +141,37 @@ public interface OrlangValue
     {
         Objects.requireNonNull(val);
 
-        if (val instanceof java.lang.Number number)
-            return num(number.doubleValue());
-        else if (val instanceof Boolean b)
-            return bool(b);
-        else
-            throw new IllegalArgumentException("Unknown type " + val.getClass().getSimpleName());
+        return switch (val)
+        {
+            case java.lang.Number number -> num(number.doubleValue());
+            case Boolean b -> bool(b);
+            case String s -> string(s);
+            default -> throw new IllegalArgumentException("Unknown type " + val.getClass().getSimpleName());
+        };
     }
 
     static Object dumbCast(OrlangValue val)
     {
         Objects.requireNonNull(val);
 
-        if (val instanceof Number number)
-            return number.value;
-        else if (val instanceof Bool b)
-            return b.value;
-        else
-            throw new IllegalArgumentException("Unknown type " + val.getClass().getSimpleName());
+        return switch (val)
+        {
+            case Number number -> number.value;
+            case Bool b -> b.value;
+            case StringVal s -> s.value;
+            default -> throw new IllegalArgumentException("Unknown type " + val.getClass().getSimpleName());
+        };
     }
 
     private static void verifyClasses(Class<?>... clazz)
     {
         Class<Double> D = double.class;
         Class<Boolean> B = boolean.class;
+        Class<String> S = String.class;
 
         for (Class<?> aClass : clazz)
         {
-            if (aClass != D && aClass != B)
+            if (aClass != D && aClass != B && aClass != S)
             {
                 throw new RuntimeException("Unexpected class type " + aClass);
             }
@@ -167,6 +196,9 @@ public interface OrlangValue
 
         if (type == boolean.class && !(value instanceof Bool))
             throw new IllegalArgumentException("Expected boolean, instead got " + value.getClass().getSimpleName() + " at " + index);
+
+        if (type == String.class && !(value instanceof StringVal))
+            throw new IllegalArgumentException("Expected string, instead got " + value.getClass().getSimpleName() + " at " + index);
     }
 
     private static void verifyInputCount(OrlangValue[] arr, int expected)

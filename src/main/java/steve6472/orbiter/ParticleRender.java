@@ -7,11 +7,13 @@ import com.mojang.datafixers.util.Pair;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import steve6472.core.registry.Key;
+import steve6472.flare.Camera;
 import steve6472.flare.assets.model.Model;
 import steve6472.flare.core.FrameInfo;
 import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.render.SBOTransfromArray;
 import steve6472.flare.render.StaticModelRenderImpl;
+import steve6472.flare.ui.font.render.Billboard;
 import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
@@ -77,13 +79,13 @@ public class ParticleRender extends StaticModelRenderImpl
         Model lastModel = ParticleComponents.MODEL.get(list.getFirst()).model;
         for (Entity entity : list)
         {
-            Pair<Model, SBOTransfromArray<Model>.Area> modelAreaPair = processEntity(entity, lastModel, lastArea, sboTransfromArray);
+            Pair<Model, SBOTransfromArray<Model>.Area> modelAreaPair = processEntity(entity, lastModel, lastArea, sboTransfromArray, frameInfo.camera());
             lastModel = modelAreaPair.getFirst();
             lastArea = modelAreaPair.getSecond();
         }
     }
 
-    private Pair<Model, SBOTransfromArray<Model>.Area> processEntity(Entity entity, Model lastModel, SBOTransfromArray<Model>.Area lastArea, SBOTransfromArray<Model> sboTransfromArray)
+    private Pair<Model, SBOTransfromArray<Model>.Area> processEntity(Entity entity, Model lastModel, SBOTransfromArray<Model>.Area lastArea, SBOTransfromArray<Model> sboTransfromArray, Camera camera)
     {
         ParticleModel model = ParticleComponents.MODEL.get(entity);
         OrlangEnvironment env = ParticleComponents.PARTICLE_ENVIRONMENT.get(entity);
@@ -128,6 +130,9 @@ public class ParticleRender extends StaticModelRenderImpl
             scale.scale.evaluate(env);
             primitiveTransform.scale(scale.scale.fx(), scale.scale.fy(), scale.scale.fz());
         }
+
+//        Billboard.FIXED.apply(camera, primitiveTransform);
+
         lastArea.updateTransform(primitiveTransform);
 
         return Pair.of(lastModel, lastArea);

@@ -25,8 +25,6 @@
             shape: {
                 shape_type: "point"
             },
-            // TODO Either defined or a reference to new registry "particle", think about "emitter" registry too
-            // TODO: registry for "particle_component" blueprint so it don't have to be hardcoded
             particle: {
                 max_age: 120,
                 model: "orbiter:blockbench/static/particle/spinny_disc_slow",
@@ -44,7 +42,7 @@
             lifetime: {
                 lifetime_type: "looping",
                 ticks_active: 1,
-                ticks_asleep: 0
+                ticks_asleep: 2
             },
             rate: {
                 rate_type: "instant",
@@ -58,7 +56,8 @@
                 model: "orbiter:blockbench/static/particle/spinny_disc",
                 local_space: {
                     position: true
-                }
+                },
+                max_age: 9
             }
         },
         {
@@ -77,9 +76,7 @@
                 radius: "math.sin(v.emitter_age / 60) * 0.1 + 2",
                 surface_only: true
             },
-            particle: {
-                model: "orbiter:blockbench/static/particle/white_box"
-            }
+            particle: "orbiter:white_box"
         }
     ]
 }

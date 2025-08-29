@@ -76,7 +76,7 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
         emitter.updateEnvironment();
 
         int holderId = ParticleHolderId.UNASSIGNED;
-        if (emitter.particleData.localSpace().isPresent())
+        if (emitter.particleData.get().containsLocalSpace)
         {
             ParticleHolderId holderId_ = Components.PARTICLE_HOLDER.get(entity);
             if (holderId_ == null)
@@ -102,7 +102,7 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
         OrlangEnvironment env = particleEngine.createComponent(OrlangEnvironment.class);
         entity.add(env);
 
-        List<Component> particleComponents = emitter.particleData.createComponents(particleEngine, env);
+        List<Component> particleComponents = emitter.particleData.get().createComponents(particleEngine, env);
         for (Component particleComponent : particleComponents)
         {
             entity.add(particleComponent);

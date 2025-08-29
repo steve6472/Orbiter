@@ -8,12 +8,12 @@ import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.orlang.OrlangValue;
 import steve6472.orbiter.orlang.VarContext;
 import steve6472.orbiter.orlang.codec.OrVec3;
-import steve6472.orbiter.world.ecs.blueprints.ParticleEmittersBlueprint;
+import steve6472.orbiter.util.Holder;
 import steve6472.orbiter.world.ecs.components.emitter.lifetime.EmitterLifetime;
 import steve6472.orbiter.world.ecs.components.emitter.rate.EmitterRate;
 import steve6472.orbiter.world.ecs.components.emitter.shapes.EmitterShape;
 import steve6472.orbiter.world.ecs.components.emitter.shapes.PointShape;
-import steve6472.orbiter.world.particle.blueprints.ParticleLocalSpaceBlueprint;
+import steve6472.orbiter.world.particle.core.ParticleBlueprint;
 
 /**
  * Totally not stolen from <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/particlesreference/particlecomponentlist?view=minecraft-bedrock-stable">Microsoft</a>
@@ -25,7 +25,7 @@ public class ParticleEmitter implements Component
         EmitterShape.CODEC.optionalFieldOf("shape", PointShape.INSTANCE).forGetter(o -> o.shape),
         EmitterLifetime.CODEC.fieldOf("lifetime").forGetter(o -> o.lifetime),
         EmitterRate.CODEC.fieldOf("rate").forGetter(o -> o.rate),
-        ParticleEmittersBlueprint.ParticleData.CODEC.fieldOf("particle").forGetter(o -> o.particleData)
+        ParticleBlueprint.REGISTRY_OR_INLINE_CODEC.fieldOf("particle").forGetter(o -> o.particleData)
     ).apply(instance, (offset, shape, lifetime, rate, particleData) -> {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.offset = offset;
@@ -44,7 +44,7 @@ public class ParticleEmitter implements Component
     public EmitterRate rate;
     public OrlangEnvironment environment;
 
-    public ParticleEmittersBlueprint.ParticleData particleData;
+    public Holder<ParticleBlueprint> particleData;
 
 //    @ApiStatus.Internal
 //    public Set<Entity> trackedParticles = new HashSet<>();

@@ -27,6 +27,7 @@ public final class AST
 
         record NumberLiteral(double value) implements Node {}
         record BoolLiteral(boolean value) implements Node {}
+        record StringLiteral(String value) implements Node {}
 
         record Assign(Identifier identifier, Node expression) implements Node {}
         record FunctionCall(Identifier identifier, Node[] arguments) implements Node {
