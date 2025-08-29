@@ -9,5 +9,6 @@ import steve6472.core.module.ModulePart;
  */
 public final class OrbiterParts
 {
+    public static final ModulePart PARTICLE_BLUEPRINT = new ModulePart("Particle Blueprint", "particle_blueprint");
     public static final ModulePart ENTITY_BLUEPRINT = new ModulePart("Entity Blueprint", "entity_blueprint");
 }

@@ -33,14 +33,6 @@ public record AngularVelocityBlueprint(float x, float y, float z) implements Blu
     }
 
     @Override
-    public List<Component> createParticleComponents(PooledEngine particleEngine)
-    {
-        AngularVelocity component = particleEngine.createComponent(AngularVelocity.class);
-        component.set(x, y, z);
-        return List.of(component);
-    }
-
-    @Override
     public Codec<AngularVelocityBlueprint> codec()
     {
         return CODEC;

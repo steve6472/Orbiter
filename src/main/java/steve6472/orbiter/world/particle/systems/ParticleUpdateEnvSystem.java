@@ -1,12 +1,13 @@
-package steve6472.orbiter.world.ecs.systems.particle;
+package steve6472.orbiter.world.particle.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.orlang.OrlangValue;
 import steve6472.orbiter.world.ecs.Components;
-import steve6472.orbiter.world.ecs.components.particle.MaxAge;
+import steve6472.orbiter.world.particle.components.MaxAge;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
+import steve6472.orbiter.world.particle.ParticleComponents;
 
 /**
  * Created by steve6472
@@ -23,9 +24,9 @@ public class ParticleUpdateEnvSystem extends IteratingProfiledSystem
     @Override
     protected void processEntity(Entity entity, float deltaTime)
     {
-        OrlangEnvironment env = Components.PARTICLE_ENVIRONMENT.get(entity);
+        OrlangEnvironment env = ParticleComponents.PARTICLE_ENVIRONMENT.get(entity);
 
-        MaxAge maxAge = Components.MAX_AGE.get(entity);
+        MaxAge maxAge = ParticleComponents.MAX_AGE.get(entity);
         if (maxAge != null)
         {
             env.setValue(MaxAge.AGE, OrlangValue.num(maxAge.age));

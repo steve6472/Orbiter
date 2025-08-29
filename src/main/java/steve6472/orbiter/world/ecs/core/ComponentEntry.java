@@ -3,6 +3,7 @@ package steve6472.orbiter.world.ecs.core;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
+import com.badlogic.ashley.core.PooledEngine;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
@@ -48,6 +49,11 @@ public class ComponentEntry<T extends Component> implements Keyable, Serializabl
     public boolean has(Entity entity)
     {
         return mapper.has(entity);
+    }
+
+    public T create(PooledEngine engine)
+    {
+        return engine.createComponent(clazz);
     }
 
     public static <T extends Component> Builder<T> builder()

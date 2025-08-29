@@ -35,13 +35,6 @@ public class EntityBlueprint implements Keyable
         return components;
     }
 
-    public List<Component> createParticleComponents(PooledEngine particleEngine)
-    {
-        List<Component> components = new ArrayList<>(blueprints.size());
-        blueprints.forEach(blueprint -> components.addAll(blueprint.createParticleComponents(particleEngine)));
-        return components;
-    }
-
     @Override
     public Key key()
     {
@@ -52,7 +45,7 @@ public class EntityBlueprint implements Keyable
     {
         Map<Key, EntityBlueprint> blueprints = new LinkedHashMap<>();
 
-        Flare.getModuleManager().loadParts(OrbiterParts.ENTITY_BLUEPRINT, Registries.BLUEPRINT.valueMapCodec(), (map, key) -> {
+        Flare.getModuleManager().loadParts(OrbiterParts.ENTITY_BLUEPRINT, Registries.COMPONENT_BLUEPRINT.valueMapCodec(), (map, key) -> {
 
             List<Blueprint<?>> objects = new ArrayList<>(map.size());
 

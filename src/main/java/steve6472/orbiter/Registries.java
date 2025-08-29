@@ -20,6 +20,9 @@ import steve6472.orbiter.world.ecs.components.emitter.shapes.EmitterShapeType;
 import steve6472.orbiter.world.ecs.core.BlueprintEntry;
 import steve6472.orbiter.world.ecs.core.ComponentEntry;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
+import steve6472.orbiter.world.particle.ParticleComponentBlueprints;
+import steve6472.orbiter.world.particle.core.PCBlueprintEntry;
+import steve6472.orbiter.world.particle.core.ParticleBlueprint;
 
 import java.util.logging.Logger;
 
@@ -44,8 +47,13 @@ public class Registries extends RegistryCreators
     public static final Registry<Keybind> KEYBINDS = createNamespacedRegistry(Constants.NAMESPACE, "keybinds", () -> Keybinds.FORWARD);
     public static final Registry<Rarity> RARITY = createRegistry("rarity", () -> Rarities.COMMON);
     public static final PacketRegistry PACKET = createPacketRegistry("packet", Packets::init);
+
+    public static final Registry<ComponentEntry<?>> PARTICLE_COMPONENT = createNamespacedRegistry(Constants.NAMESPACE, "particle_component", () -> Components.POSITION);
+    public static final Registry<PCBlueprintEntry<?>> PARTICLE_COMPONENT_BLUEPRINT = createRegistry("particle_component_blueprint", () -> ParticleComponentBlueprints.SCALE);
+    public static final ObjectRegistry<ParticleBlueprint> PARTICLE_BLUEPRINT = createObjectRegistry("particle_blueprint", ParticleBlueprint::load);
+
     public static final Registry<ComponentEntry<?>> COMPONENT = createNamespacedRegistry(Constants.NAMESPACE, "component", () -> Components.POSITION);
-    public static final Registry<BlueprintEntry<?>> BLUEPRINT = createRegistry("blueprint", () -> Blueprints.POSITION);
+    public static final Registry<BlueprintEntry<?>> COMPONENT_BLUEPRINT = createRegistry("component_blueprint", () -> Blueprints.POSITION);
     public static final ObjectRegistry<EntityBlueprint> ENTITY_BLUEPRINT = createObjectRegistry("entity_blueprint", EntityBlueprint::load);
     public static final ObjectRegistry<OrbiterCollisionShape> COLLISION = createObjectRegistry("collision", OrbiterCollisionShape::load);
 

@@ -5,17 +5,17 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import org.joml.Vector3f;
-import steve6472.orbiter.Registries;
 import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
-import steve6472.orbiter.world.ecs.components.emitter.LocalSpaceEmitter;
+import steve6472.orbiter.world.ecs.components.ParticleHolderId;
+import steve6472.orbiter.world.particle.ParticleComponents;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitters;
-import steve6472.orbiter.world.ecs.components.particle.*;
 import steve6472.orbiter.world.ecs.components.physics.Position;
-import steve6472.orbiter.world.ecs.core.EntityBlueprint;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
+import steve6472.orbiter.world.particle.components.LocalSpace;
+import steve6472.orbiter.world.particle.components.ParticleFollowerId;
 
 import java.util.List;
 
@@ -75,8 +75,8 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
 
         emitter.updateEnvironment();
 
-        int holderId = 0;
-        if (!emitter.localSpace.equals(LocalSpaceEmitter.DEFAULT))
+        int holderId = ParticleHolderId.UNASSIGNED;
+        if (emitter.particleData.localSpace().isPresent())
         {
             ParticleHolderId holderId_ = Components.PARTICLE_HOLDER.get(entity);
             if (holderId_ == null)
@@ -99,44 +99,32 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
     private void createEntity(Entity holder, int holderId, ParticleEmitter emitter, Position emitterPosition)
     {
         Entity entity = particleEngine.createEntity();
-        EntityBlueprint blueprint = Registries.ENTITY_BLUEPRINT.get(emitter.entity);
-        if (blueprint == null)
-            throw new NullPointerException("Entity " + emitter.entity + " not found!");
-        List<Component> particleComponents = blueprint.createParticleComponents(particleEngine);
+        OrlangEnvironment env = particleEngine.createComponent(OrlangEnvironment.class);
+        entity.add(env);
+
+        List<Component> particleComponents = emitter.particleData.createComponents(particleEngine, env);
         for (Component particleComponent : particleComponents)
         {
             entity.add(particleComponent);
         }
 
-        OrlangEnvironment env = particleEngine.createComponent(OrlangEnvironment.class);
-        entity.add(env);
+        LocalSpace localSpace = ParticleComponents.LOCAL_SPACE.get(entity);
 
-        Position particlePosition = Components.POSITION.get(entity);
-        if (particlePosition != null)
+        var particlePosition = ParticleComponents.POSITION.create(particleEngine);
+        Vector3f position = emitter.shape.createPosition(emitter);
+        emitter.offset.evaluate(emitter.environment);
+        if (localSpace != null && localSpace.position)
         {
-            Vector3f position = emitter.shape.createPosition(emitter);
-            emitter.offset.evaluate(emitter.environment);
-            if (emitter.localSpace.position())
-            {
-                particlePosition.set(
-                    position.x + emitter.offset.fx(),
-                    position.y + emitter.offset.fy(),
-                    position.z + emitter.offset.fz());
-            } else
-            {
-                particlePosition.set(
-                    emitterPosition.x() + position.x + emitter.offset.fx(),
-                    emitterPosition.y() + position.y + emitter.offset.fy(),
-                    emitterPosition.z() + position.z + emitter.offset.fz());
-            }
-        }
-
-        MaxAge lifetime = particleEngine.createComponent(MaxAge.class);
-        if (emitter.maxAge != null)
+            particlePosition.x = position.x + emitter.offset.fx();
+            particlePosition.y = position.y + emitter.offset.fy();
+            particlePosition.z = position.z + emitter.offset.fz();
+        } else
         {
-            lifetime.maxAge = (int) emitter.maxAge.maxAge().evaluateAndGet(env);
+            particlePosition.x = emitterPosition.x() + position.x + emitter.offset.fx();
+            particlePosition.y = emitterPosition.y() + position.y + emitter.offset.fy();
+            particlePosition.z = emitterPosition.z() + position.z + emitter.offset.fz();
         }
-        entity.add(lifetime);
+        entity.add(particlePosition);
 
         if (holderId != ParticleHolderId.UNASSIGNED)
         {
@@ -144,12 +132,6 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
             followerComponent.entity = holder;
             followerComponent.followerId = holderId;
             entity.add(followerComponent);
-
-            LocalSpace localSpace = particleEngine.createComponent(LocalSpace.class);
-            localSpace.position = emitter.localSpace.position();
-            localSpace.rotation = emitter.localSpace.rotation();
-            localSpace.velocity = emitter.localSpace.velocity();
-            entity.add(localSpace);
         }
 
         particleEngine.addEntity(entity);

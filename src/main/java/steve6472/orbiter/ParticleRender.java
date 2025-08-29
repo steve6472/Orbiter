@@ -15,11 +15,12 @@ import steve6472.flare.render.StaticModelRenderImpl;
 import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
-import steve6472.orbiter.world.ecs.components.IndexModel;
-import steve6472.orbiter.world.ecs.components.particle.LocalSpace;
-import steve6472.orbiter.world.ecs.components.particle.ParticleFollowerId;
-import steve6472.orbiter.world.ecs.components.particle.Scale;
-import steve6472.orbiter.world.ecs.components.physics.Position;
+import steve6472.orbiter.world.particle.components.LocalSpace;
+import steve6472.orbiter.world.particle.components.ParticleFollowerId;
+import steve6472.orbiter.world.particle.components.ParticleModel;
+import steve6472.orbiter.world.particle.components.Position;
+import steve6472.orbiter.world.particle.ParticleComponents;
+import steve6472.orbiter.world.particle.components.Scale;
 import steve6472.orbiter.world.ecs.components.physics.Rotation;
 
 import java.util.ArrayList;
@@ -48,7 +49,7 @@ public class ParticleRender extends StaticModelRenderImpl
         }
     }
 
-    private static final Family PARTICLE_FAMILY = Family.all(IndexModel.class, Position.class, OrlangEnvironment.class).get();
+    private static final Family PARTICLE_FAMILY = Family.all(ParticleModel.class, Position.class, OrlangEnvironment.class).get();
 
     @Override
     public void updateTransformArray(SBOTransfromArray<Model> sboTransfromArray, FrameInfo frameInfo)
@@ -70,10 +71,10 @@ public class ParticleRender extends StaticModelRenderImpl
         if (list.isEmpty())
             return;
 
-        sboTransfromArray.sort(list, entity -> sboTransfromArray.addArea(Components.MODEL.get(entity).model()).index());
+        sboTransfromArray.sort(list, entity -> sboTransfromArray.addArea(ParticleComponents.MODEL.get(entity).model).index());
 
         var lastArea = sboTransfromArray.getAreaByIndex(0);
-        Model lastModel = Components.MODEL.get(list.getFirst()).model();
+        Model lastModel = ParticleComponents.MODEL.get(list.getFirst()).model;
         for (Entity entity : list)
         {
             Pair<Model, SBOTransfromArray<Model>.Area> modelAreaPair = processEntity(entity, lastModel, lastArea, sboTransfromArray);
@@ -84,36 +85,36 @@ public class ParticleRender extends StaticModelRenderImpl
 
     private Pair<Model, SBOTransfromArray<Model>.Area> processEntity(Entity entity, Model lastModel, SBOTransfromArray<Model>.Area lastArea, SBOTransfromArray<Model> sboTransfromArray)
     {
-        IndexModel model = Components.MODEL.get(entity);
-        OrlangEnvironment env = Components.PARTICLE_ENVIRONMENT.get(entity);
+        ParticleModel model = ParticleComponents.MODEL.get(entity);
+        OrlangEnvironment env = ParticleComponents.PARTICLE_ENVIRONMENT.get(entity);
 
-        if (lastArea == null || lastModel != model.model())
+        if (lastArea == null || lastModel != model.model)
         {
-            lastArea = sboTransfromArray.getAreaByType(model.model());
-            lastModel = model.model();
+            lastArea = sboTransfromArray.getAreaByType(model.model);
+            lastModel = model.model;
         }
 
-        LocalSpace localSpace = Components.LOCAL_SPACE.get(entity);
+        LocalSpace localSpace = ParticleComponents.LOCAL_SPACE.get(entity);
 
         Matrix4f primitiveTransform = new Matrix4f();
-        if (Components.POSITION.has(entity))
+        if (ParticleComponents.POSITION.has(entity))
         {
-            Position position = Components.POSITION.get(entity);
+            Position position = ParticleComponents.POSITION.get(entity);
             if (localSpace != null && localSpace.position)
             {
-                ParticleFollowerId follower = Components.PARTICLE_FOLLOWER.get(entity);
-                Position holderPosition = Components.POSITION.get(follower.entity);
+                ParticleFollowerId follower = ParticleComponents.PARTICLE_FOLLOWER.get(entity);
+                var holderPosition = Components.POSITION.get(follower.entity);
                 if (holderPosition != null)
                 {
                     primitiveTransform.translate(holderPosition.x(), holderPosition.y(), holderPosition.z());
                 }
             }
-            primitiveTransform.translate(position.x(), position.y(), position.z());
+            primitiveTransform.translate(position.x, position.y, position.z);
         }
 
         if (localSpace != null && localSpace.rotation)
         {
-            ParticleFollowerId follower = Components.PARTICLE_FOLLOWER.get(entity);
+            ParticleFollowerId follower = ParticleComponents.PARTICLE_FOLLOWER.get(entity);
             Rotation holderRotation = Components.ROTATION.get(follower.entity);
             if (holderRotation != null)
             {
@@ -121,9 +122,9 @@ public class ParticleRender extends StaticModelRenderImpl
             }
         }
 
-        if (Components.SCALE.has(entity))
+        if (ParticleComponents.SCALE.has(entity))
         {
-            Scale scale = Components.SCALE.get(entity);
+            Scale scale = ParticleComponents.SCALE.get(entity);
             scale.scale.evaluate(env);
             primitiveTransform.scale(scale.scale.fx(), scale.scale.fy(), scale.scale.fz());
         }

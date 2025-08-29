@@ -1,11 +1,11 @@
-package steve6472.orbiter.world.ecs.systems.particle;
+package steve6472.orbiter.world.particle.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import steve6472.orbiter.world.World;
-import steve6472.orbiter.world.ecs.Components;
-import steve6472.orbiter.world.ecs.components.particle.MaxAge;
+import steve6472.orbiter.world.particle.ParticleComponents;
+import steve6472.orbiter.world.particle.components.MaxAge;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 
 /**
@@ -26,7 +26,7 @@ public class ParticleMaxAgeSystem extends IteratingProfiledSystem
     @Override
     protected void processEntity(Entity entity, float deltaTime)
     {
-        MaxAge maxAge = Components.MAX_AGE.get(entity);
+        MaxAge maxAge = ParticleComponents.MAX_AGE.get(entity);
         maxAge.age++;
         if (maxAge.age >= maxAge.maxAge)
         {

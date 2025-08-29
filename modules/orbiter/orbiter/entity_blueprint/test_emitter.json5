@@ -25,11 +25,20 @@
             shape: {
                 shape_type: "point"
             },
-            local_space: {
-                position: true
-            },
-            particle_max_age: 120,
-            entity: "orbiter:particle/spinny_disc_growing"
+            // TODO Either defined or a reference to new registry "particle", think about "emitter" registry too
+            // TODO: registry for "particle_component" blueprint so it don't have to be hardcoded
+            particle: {
+                max_age: 120,
+                model: "orbiter:blockbench/static/particle/spinny_disc_slow",
+                scale: {
+                    x: "1 + v.particle_age / 50",
+                    y: 1,
+                    z: "1 + v.particle_age / 50"
+                },
+                local_space: {
+                    position: true
+                }
+            }
         },
         {
             lifetime: {
@@ -44,11 +53,13 @@
             shape: {
                 shape_type: "point"
             },
-            local_space: {
-                position: true
-            },
             offset: [0, "math.sin(v.emitter_age / 20) * 0.2", 0],
-            entity: "orbiter:particle/spinny_disc"
+            particle: {
+                model: "orbiter:blockbench/static/particle/spinny_disc",
+                local_space: {
+                    position: true
+                }
+            }
         },
         {
             lifetime: {
@@ -66,7 +77,9 @@
                 radius: "math.sin(v.emitter_age / 60) * 0.1 + 2",
                 surface_only: true
             },
-            entity: "orbiter:particle/white_box"
+            particle: {
+                model: "orbiter:blockbench/static/particle/white_box"
+            }
         }
     ]
 }

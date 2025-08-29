@@ -15,5 +15,4 @@ import java.util.List;
 public interface Blueprint<SELF> extends Serializable<SELF>, Keyable
 {
     List<Component> createComponents();
-    default List<Component> createParticleComponents(PooledEngine particleEngine) { return List.of(); }
 }

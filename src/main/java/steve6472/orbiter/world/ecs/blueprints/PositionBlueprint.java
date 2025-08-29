@@ -1,7 +1,6 @@
 package steve6472.orbiter.world.ecs.blueprints;
 
 import com.badlogic.ashley.core.Component;
-import com.badlogic.ashley.core.PooledEngine;
 import com.mojang.serialization.Codec;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
@@ -27,12 +26,6 @@ public class PositionBlueprint implements Blueprint<PositionBlueprint>
     public List<Component> createComponents()
     {
         return List.of(new Position());
-    }
-
-    @Override
-    public List<Component> createParticleComponents(PooledEngine particleEngine)
-    {
-        return List.of(particleEngine.createComponent(Position.class));
     }
 
     @Override

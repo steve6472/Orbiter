@@ -1,4 +1,4 @@
-package steve6472.orbiter.world.ecs.components.particle;
+package steve6472.orbiter.world.ecs.components;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.utils.Pool;
