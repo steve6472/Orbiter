@@ -19,20 +19,19 @@
             },
             lifetime: {
                 lifetime_type: "looping",
-                ticks_active: 1,
-                ticks_asleep: 0
+                active_time: 2
             },
             rate: {
                 rate_type: "steady",
-                spawn_rate: 4,
-                max_count: 9999
+                spawn_rate: 250,
+                max_count: 500
             },
             shape: {
                 shape_type: "point"
             },
             offset: {
-                x: "math.sin(v.emitter_age / 10) * (2.5 - v.rng)",
-                y: "math.cos(v.emitter_age / 10) * (2.5 - v.rng)",
+                x: "math.cos(v.emitter_age * 90) * (2.5 - v.rng)",
+                y: "math.sin(v.emitter_age * 90) * (2.5 - v.rng)",
                 z: 0
             },
             particle: {

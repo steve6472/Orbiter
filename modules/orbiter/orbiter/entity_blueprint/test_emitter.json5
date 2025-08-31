@@ -15,8 +15,8 @@
         {
             lifetime: {
                 lifetime_type: "looping",
-                ticks_active: 1,
-                ticks_asleep: 118
+                active_time: 0,
+                sleep_time: 2
             },
             rate: {
                 rate_type: "instant",
@@ -39,19 +39,22 @@
             }
         },
         {
+            environment: {
+                init: "v.cycle_time = 2.5"
+            },
             lifetime: {
                 lifetime_type: "looping",
-                ticks_active: 1,
-                ticks_asleep: 2
+                active_time: "v.cycle_time"
             },
             rate: {
-                rate_type: "instant",
-                count: 1
+                rate_type: "steady",
+                spawn_rate: 20,
+                max_count: 99
             },
             shape: {
                 shape_type: "point"
             },
-            offset: [0, "math.sin(v.emitter_age / 20) * 0.2", 0],
+            offset: [0, "math.sin(v.emitter_age * (360 / v.cycle_time)) * 0.2", 0],
             particle: {
                 model: "orbiter:blockbench/static/particle/spinny_disc",
                 local_space: {
@@ -61,19 +64,21 @@
             }
         },
         {
+            environment: {
+                init: "v.cycle_time = 5"
+            },
             lifetime: {
                 lifetime_type: "looping",
-                ticks_active: 1,
-                ticks_asleep: 10
+                active_time: "v.cycle_time"
             },
             rate: {
                 rate_type: "steady",
-                spawn_rate: 16,
+                spawn_rate: 100,
                 max_count: 9999
             },
             shape: {
                 shape_type: "sphere",
-                radius: "math.sin(v.emitter_age / 60) * 0.1 + 2",
+                radius: "math.sin(v.emitter_age * (360 / v.cycle_time)) * 0.2 + 2",
                 surface_only: true
             },
             particle: "orbiter:white_box"

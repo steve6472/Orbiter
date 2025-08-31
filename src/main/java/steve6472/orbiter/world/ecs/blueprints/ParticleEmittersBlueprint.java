@@ -4,7 +4,9 @@ import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import steve6472.core.registry.*;
+import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
+import steve6472.orbiter.orlang.Orlang;
 import steve6472.orbiter.orlang.codec.OrVec3;
 import steve6472.orbiter.util.Holder;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
@@ -57,16 +59,16 @@ public record ParticleEmittersBlueprint(List<Emitter> emitters) implements Bluep
             emitter.lifetime = switch (emitterBl.lifetime)
             {
                 case OnceLifetime once -> new OnceLifetime(once.activeTime());
-                case LoopingLifetime looping -> {
-                    LoopingLifetime newLooping = new LoopingLifetime(looping.ticksActive, looping.ticksAsleep, looping.maxLoopCount);
-                    newLooping.state = looping.state;
-                    newLooping.timer = looping.timer;
-                    newLooping.timesLooped = looping.timesLooped;
-                    yield newLooping;
-                }
+                case LoopingLifetime looping -> new LoopingLifetime(looping.activeTime, looping.sleepTime, looping.maxLoops);
                 default -> throw new IllegalStateException("Unexpected value: " + emitterBl.lifetime);
             };
-            emitterBl.envData.ifPresent(envData -> emitter.environmentData = envData);
+            emitterBl.envData.ifPresent(envData ->
+            {
+                emitter.environmentData = envData;
+                envData.init().ifPresent(code -> {
+                    Orlang.interpreter.interpret(code, emitter.environment);
+                });
+            });
             emitter.particleData = emitterBl.particle;
             emitterList.add(emitter);
         }

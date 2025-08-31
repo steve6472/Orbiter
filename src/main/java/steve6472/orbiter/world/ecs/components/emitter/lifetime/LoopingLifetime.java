@@ -2,7 +2,6 @@ package steve6472.orbiter.world.ecs.components.emitter.lifetime;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import steve6472.core.registry.StringValue;
 import steve6472.orbiter.orlang.codec.OrNumValue;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
 
@@ -11,84 +10,57 @@ public class LoopingLifetime extends EmitterLifetime
     private static final int INFINITE_LOOP = -1;
 
     public static final Codec<LoopingLifetime> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        OrNumValue.CODEC.fieldOf("ticks_active").forGetter(LoopingLifetime::ticksActive),
-        OrNumValue.CODEC.fieldOf("ticks_asleep").forGetter(LoopingLifetime::ticksAsleep),
-        Codec.INT.optionalFieldOf("max_loop_count", INFINITE_LOOP).forGetter(LoopingLifetime::maxLoopCount),
-        State.CODEC.optionalFieldOf("state", State.ACTIVE).forGetter(o -> o.state),
-        Codec.INT.optionalFieldOf("timer", 0).forGetter(o -> o.timer),
-        Codec.INT.optionalFieldOf("times_looped", 0).forGetter(o -> o.timesLooped)
-    ).apply(instance, (ticksActive, ticksAsleep, loopCount, state, timer, timesLooped) -> {
-        LoopingLifetime lifetime = new LoopingLifetime(ticksActive, ticksAsleep, loopCount);
-        lifetime.state = state;
-        lifetime.timer = timer;
-        lifetime.timesLooped = timesLooped;
-        return lifetime;
-    }));
+        OrNumValue.CODEC.fieldOf("active_time").forGetter(o -> o.activeTime),
+        OrNumValue.CODEC.optionalFieldOf("sleep_time", new OrNumValue(0)).forGetter(o -> o.sleepTime),
+        Codec.INT.optionalFieldOf("max_loops", INFINITE_LOOP).forGetter(o -> o.maxLoops)
+    ).apply(instance, LoopingLifetime::new));
 
-    public final OrNumValue ticksActive;
-    public final OrNumValue ticksAsleep;
-    public final int maxLoopCount;
+    public final OrNumValue activeTime;
+    public final OrNumValue sleepTime;
+    public final int maxLoops;
 
     public State state;
-    public int timer;
     public int timesLooped;
 
-    public LoopingLifetime(OrNumValue ticksActive, OrNumValue ticksAsleep, int maxLoopCount)
+    private long timestamp;
+    private double currentTimer;
+
+    public LoopingLifetime(OrNumValue activeTime, OrNumValue sleepTime, int maxLoops)
     {
-        this.ticksActive = ticksActive;
-        this.ticksAsleep = ticksAsleep;
-        this.maxLoopCount = maxLoopCount;
+        this.activeTime = activeTime;
+        this.sleepTime = sleepTime;
+        this.maxLoops = maxLoops;
 
         this.state = State.ACTIVE;
     }
 
-    private OrNumValue ticksActive()
+    @Override
+    public boolean isAlive(ParticleEmitter emitter)
     {
-        return ticksActive;
-    }
-
-    private OrNumValue ticksAsleep()
-    {
-        return ticksAsleep;
-    }
-
-    private int maxLoopCount()
-    {
-        return maxLoopCount;
+        return maxLoops == INFINITE_LOOP || timesLooped < maxLoops;
     }
 
     @Override
-    public boolean isAlive(ParticleEmitter emitter, int ticksAlive)
-    {
-        return maxLoopCount == INFINITE_LOOP || timesLooped < maxLoopCount();
-    }
-
-    @Override
-    public boolean shouldEmit(ParticleEmitter emitter, int ticksAlive)
+    public boolean shouldEmit(ParticleEmitter emitter)
     {
         if (state == State.ACTIVE)
         {
-            if (timer == 0)
-                ticksActive.evaluate(emitter.environment);
-
-            timer++;
-            if (timer >= ticksActive.get())
+            if ((System.currentTimeMillis() - timestamp) / 1e3d >= currentTimer)
             {
-                timer = 0;
+                timestamp = System.currentTimeMillis();
+                currentTimer = sleepTime.evaluateAndGet(emitter.environment);
                 timesLooped++;
                 state = State.ASLEEP;
             }
             return true;
         } else
         {
-            if (timer == 0)
-                ticksActive.evaluate(emitter.environment);
-
-            timer++;
-            if (timer >= ticksAsleep.get())
+            if ((System.currentTimeMillis() - timestamp) / 1e3d >= currentTimer)
             {
-                timer = 0;
+                timestamp = System.currentTimeMillis();
+                currentTimer = activeTime.evaluateAndGet(emitter.environment);
                 state = State.ACTIVE;
+                emitter.lastEmitterTick = timestamp;
             }
             return false;
         }
@@ -100,29 +72,8 @@ public class LoopingLifetime extends EmitterLifetime
         return EmitterLifetimeType.LOOPING_LIFETIME;
     }
 
-    public enum State implements StringValue
+    public enum State
     {
-        ACTIVE("active"), ASLEEP("asleep");
-
-        private static final Codec<State> CODEC = StringValue.fromValues(State::values);
-
-        private final String id;
-
-        State(String id)
-        {
-            this.id = id;
-        }
-
-        @Override
-        public String stringValue()
-        {
-            return id;
-        }
-    }
-
-    @Override
-    public String toString()
-    {
-        return "LoopingLifetime{" + "ticksActive=" + ticksActive + ", ticksAsleep=" + ticksAsleep + ", loopCount=" + maxLoopCount + ", state=" + state + ", timer=" + timer + '}';
+        ACTIVE, ASLEEP
     }
 }

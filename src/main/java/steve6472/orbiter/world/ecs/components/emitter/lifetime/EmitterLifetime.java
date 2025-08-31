@@ -9,8 +9,8 @@ public abstract class EmitterLifetime implements Component
 {
     public static final Codec<EmitterLifetime> CODEC = Registries.EMITTER_LIFETIME.byKeyCodec().dispatch("lifetime_type", EmitterLifetime::getType, EmitterLifetimeType::mapCodec);
 
-    public abstract boolean isAlive(ParticleEmitter emitter, int ticksAlive);
-    public abstract boolean shouldEmit(ParticleEmitter emitter, int ticksAlive);
+    public abstract boolean isAlive(ParticleEmitter emitter);
+    public abstract boolean shouldEmit(ParticleEmitter emitter);
 
     protected abstract EmitterLifetimeType<? extends EmitterLifetime> getType();
 }

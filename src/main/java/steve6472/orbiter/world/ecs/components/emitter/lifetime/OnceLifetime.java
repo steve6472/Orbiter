@@ -12,6 +12,7 @@ public class OnceLifetime extends EmitterLifetime
     ).apply(instance, OnceLifetime::new));
 
     public OrNumValue activeTime;
+    private long timestamp;
 
     public OnceLifetime(OrNumValue activeTime)
     {
@@ -24,16 +25,19 @@ public class OnceLifetime extends EmitterLifetime
     }
 
     @Override
-    public boolean isAlive(ParticleEmitter emitter, int ticksAlive)
+    public boolean isAlive(ParticleEmitter emitter)
     {
         if (!activeTime.hadFirstEval())
+        {
             activeTime.evaluate(emitter.environment);
+            timestamp = System.currentTimeMillis();
+        }
 
-        return ticksAlive < activeTime.get();
+        return (System.currentTimeMillis() - timestamp) / 1e3d >= activeTime().get();
     }
 
     @Override
-    public boolean shouldEmit(ParticleEmitter emitter, int ticksAlive)
+    public boolean shouldEmit(ParticleEmitter emitter)
     {
         return true;
     }

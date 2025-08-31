@@ -14,23 +14,26 @@
 
     particle_emitters: [
         {
+            environment: {
+                init: "v.radius = 0.6;"
+            },
             lifetime: {
                 lifetime_type: "looping",
-                ticks_active: 1,
-                ticks_asleep: 2
+                active_time: "1",
+                sleep_time: 0
             },
             rate: {
                 rate_type: "steady",
-                spawn_rate: 1,
-                max_count: 9999
+                spawn_rate: 30,
+                max_count: 60
             },
             shape: {
                 shape_type: "point"
             },
             offset: {
-                x: "math.sin(v.emitter_age / 8)",
-                y: 0,
-                z: "math.cos(v.emitter_age / 8)"
+                x: "v.radius * -math.sin(v.emitter_age * 360)",
+                y: "v.radius * math.cos(v.emitter_age * 360) + v.radius + 0.2",
+                z: 0
             },
             particle: {
                 environment: {

@@ -15,6 +15,7 @@ public class SteadyRate extends EmitterRate
 
     public OrNumValue spawnRate;
     public OrNumValue maxCount;
+    private double accumulator = 0.0;
 
     public SteadyRate(OrNumValue spawnRate, OrNumValue maxCount)
     {
@@ -35,8 +36,15 @@ public class SteadyRate extends EmitterRate
     @Override
     public int spawnCount(ParticleEmitter emitter)
     {
-//        return Math.max(0, Math.min(maxCount() - emitter.trackedParticles.size(), spawnRate()));
-        return (int) Math.max(0, Math.min(maxCount().evaluateAndGet(emitter.environment), spawnRate().evaluateAndGet(emitter.environment)));
+        // rate is in particles/second
+        double r = spawnRate.evaluateAndGet(emitter.environment);
+        double perTick = r / 60.0; // emitter ticks 60 times per second
+
+        accumulator += perTick;
+        int toSpawn = (int) accumulator; // whole particles to spawn this tick
+        accumulator -= toSpawn; // keep the fractional part
+
+        return toSpawn;
     }
 
     @Override

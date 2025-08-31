@@ -34,12 +34,12 @@ public class ParticleEmitter implements Component
         emitter.shape = shape;
         emitter.lifetime = lifetime;
         emitter.rate = rate;
-        emitter.environmentData = env.orElse(null);
         emitter.particleData = particleData;
+        env.ifPresent(envData -> emitter.environmentData = envData);
         return emitter;
     }));
 
-    public int emitterAge;
+    public long lastEmitterTick;
     public OrVec3 offset;
 
     public EmitterShape shape;
@@ -59,28 +59,17 @@ public class ParticleEmitter implements Component
         environment = new OrlangEnvironment();
     }
 
-    @Override
-    public String toString()
-    {
-        //noinspection StringBufferReplaceableByString
-        final StringBuilder sb = new StringBuilder("ParticleEmitter{");
-        sb.append("emitterAge=").append(emitterAge).append('\n');
-        sb.append(", offset=").append(offset).append('\n');
-        sb.append(", shape=").append(shape).append('\n');
-        sb.append(", lifetime=").append(lifetime).append('\n');
-        sb.append(", rate=").append(rate).append('\n');
-        sb.append(", particleData=").append(particleData).append('\n');
-//        sb.append(", trackedParticles=").append(trackedParticles.size()).append('\n');
-        sb.append('}');
-        return sb.toString();
-    }
-
     private static final AST.Node.Identifier EMITTER_AGE = new AST.Node.Identifier(VarContext.VARIABLE, "emitter_age");
+
+    public double calculateAge(long now)
+    {
+        return (now - lastEmitterTick) / 1e3d;
+    }
 
     public void emitterTick()
     {
         // First set "constants"
-        environment.setValue(EMITTER_AGE, OrlangValue.num(emitterAge));
+        environment.setValue(EMITTER_AGE, OrlangValue.num(calculateAge(System.currentTimeMillis())));
 
         // Then evaluate expressions
         if (environmentData != null)

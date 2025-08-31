@@ -6,7 +6,6 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import org.joml.Vector3f;
 import steve6472.orbiter.orlang.OrlangEnvironment;
-import steve6472.orbiter.orlang.OrlangValue;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.ParticleHolderId;
@@ -54,25 +53,19 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
 
     private void processEmitter(ParticleEmitters emitters, ParticleEmitter emitter, Entity entity)
     {
-        if (!emitter.lifetime.isAlive(emitter, emitter.emitterAge))
+        if (!emitter.lifetime.isAlive(emitter))
         {
             emitters.emitters.remove(emitter);
             return;
         }
 
-        if (!emitter.lifetime.shouldEmit(emitter, emitter.emitterAge))
-        {
-            emitter.emitterAge++;
+        if (!emitter.lifetime.shouldEmit(emitter))
             return;
-        }
 
         int spawnCount = emitter.rate.spawnCount(emitter);
 
         if (spawnCount <= 0)
-        {
-            emitter.emitterAge++;
             return;
-        }
 
         emitter.emitterTick();
 
