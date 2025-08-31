@@ -24,7 +24,8 @@ public record ParticleMaxAgeBlueprint(OrNumValue maxAge) implements PCBlueprint<
     public ParticleComponent create(PooledEngine particleEngine, OrlangEnvironment environment)
     {
         MaxAge component = particleEngine.createComponent(MaxAge.class);
-        component.maxAge = (int) maxAge.evaluateAndGet(environment);
+        component.maxAge = maxAge.evaluateAndGet(environment);
+        component.spawnTimeMilli = System.currentTimeMillis();
         return component;
     }
 

@@ -23,6 +23,15 @@ public class ParticleUpdateEnvSystem extends IteratingProfiledSystem
         super(Family.all(OrlangEnvironment.class).get());
     }
 
+    private long now;
+
+    @Override
+    public void update(float deltaTime)
+    {
+        now = System.currentTimeMillis();
+        super.update(deltaTime);
+    }
+
     @Override
     protected void processEntity(Entity entity, float deltaTime)
     {
@@ -31,7 +40,7 @@ public class ParticleUpdateEnvSystem extends IteratingProfiledSystem
         MaxAge maxAge = ParticleComponents.MAX_AGE.get(entity);
         if (maxAge != null)
         {
-            env.setValue(MaxAge.AGE, OrlangValue.num(maxAge.age));
+            env.setValue(MaxAge.AGE, OrlangValue.num(maxAge.calculateAge(now)));
             env.setValue(MaxAge.MAX_AGE, OrlangValue.num(maxAge.maxAge));
         }
 

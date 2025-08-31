@@ -26,12 +26,12 @@
                 shape_type: "point"
             },
             particle: {
-                max_age: 120,
+                max_age: 2,
                 model: "orbiter:blockbench/static/particle/spinny_disc_slow",
                 scale: {
-                    x: "1 + v.age / 50",
+                    x: "1 + v.age",
                     y: 1,
-                    z: "1 + v.age / 50"
+                    z: "1 + v.age"
                 },
                 local_space: {
                     position: true
@@ -57,7 +57,7 @@
                 local_space: {
                     position: true
                 },
-                max_age: 9
+                max_age: 0.15
             }
         },
         {

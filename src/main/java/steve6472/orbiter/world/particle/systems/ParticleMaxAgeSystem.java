@@ -23,12 +23,20 @@ public class ParticleMaxAgeSystem extends IteratingProfiledSystem
         this.particleEngine = world.particleEngine();
     }
 
+    private long now;
+
+    @Override
+    public void update(float deltaTime)
+    {
+        now = System.currentTimeMillis();
+        super.update(deltaTime);
+    }
+
     @Override
     protected void processEntity(Entity entity, float deltaTime)
     {
         MaxAge maxAge = ParticleComponents.MAX_AGE.get(entity);
-        maxAge.age++;
-        if (maxAge.age >= maxAge.maxAge)
+        if (maxAge.calculateAge(now) >= maxAge.maxAge)
         {
             particleEngine.removeEntity(entity);
         }

@@ -82,7 +82,7 @@ public class ParticleBlueprint implements Keyable
         // Add default 1s max age to prevent forever particles
         if (objects.stream().noneMatch(e -> e.key().equals(ParticleComponentBlueprints.MAX_AGE.key())))
         {
-            objects.add(new ParticleMaxAgeBlueprint(new OrNumValue(60)));
+            objects.add(new ParticleMaxAgeBlueprint(new OrNumValue(1)));
         }
 
         if (objects.stream().noneMatch(e -> e.key().equals(ParticleComponentBlueprints.ENVIRONMENT.key())))

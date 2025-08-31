@@ -59,7 +59,7 @@
                 },
 
                 model: "orbiter:blockbench/static/particle/dot",
-                max_age: 60,
+                max_age: 1,
                 billboard: "face_center",
                 scale: ["v.psize", "v.psize", "v.psize"]
             }
