@@ -117,4 +117,10 @@ public class OrVec3
     {
         return new OrVec3(x.copy(), y.copy(), z.copy());
     }
+
+    @Override
+    public String toString()
+    {
+        return "OrVec3{" + "x=" + x + "\n, y=" + y + "\n, z=" + z + '}';
+    }
 }

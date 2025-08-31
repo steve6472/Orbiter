@@ -24,6 +24,9 @@ public class ParticleComponents
     public static final ComponentEntry<ParticleModel> MODEL = register("model", ParticleModel.class);
     public static final ComponentEntry<LocalSpace> LOCAL_SPACE = register("local_space", LocalSpace.class);
     public static final ComponentEntry<ParticleBillboard> BILLBOARD = register("billboard", ParticleBillboard.class);
+    public static final ComponentEntry<Velocity> VELOCITY = register("velocity", Velocity.class);
+    public static final ComponentEntry<LinearAcceleration> LINEAR_ACCELERATION = register("linear_acceleration", LinearAcceleration.class);
+    public static final ComponentEntry<LinearDragCoefficient> LINEAR_DRAG_COEFFICIENT = register("linear_drag_coefficient", LinearDragCoefficient.class);
 
     // Programmatically
     public static final ComponentEntry<Position> POSITION = register("position", Position.class);

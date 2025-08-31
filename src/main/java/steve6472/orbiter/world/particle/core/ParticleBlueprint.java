@@ -14,10 +14,13 @@ import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.orlang.codec.OrNumValue;
 import steve6472.orbiter.util.Holder;
 import steve6472.orbiter.world.particle.ParticleComponentBlueprints;
+import steve6472.orbiter.world.particle.blueprints.ParticleDirectionBlueprint;
 import steve6472.orbiter.world.particle.blueprints.ParticleEnvironmentBlueprint;
+import steve6472.orbiter.world.particle.blueprints.ParticleInitialSpeedBlueprint;
 import steve6472.orbiter.world.particle.blueprints.ParticleMaxAgeBlueprint;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 /**
  * Created by steve6472
@@ -31,14 +34,20 @@ public class ParticleBlueprint implements Keyable
 
     /// Just a disgusting boolean because emitter needs to know this
     public final boolean containsLocalSpace;
+    /// Environment has to be created before all other components
     public final ParticleEnvironmentBlueprint environmentBlueprint;
+    /// Velocity is a composition of two blueprints
+    public final ParticleDirectionBlueprint direction;
+    public final ParticleInitialSpeedBlueprint initialSpeed;
 
     public ParticleBlueprint(Key key, List<PCBlueprint<?>> blueprints)
     {
         this.key = key;
         this.blueprints = blueprints;
         containsLocalSpace = blueprints.stream().anyMatch(e -> e.key().equals(ParticleComponentBlueprints.LOCAL_SPACE.key()));
-        environmentBlueprint = blueprints.stream().filter(e -> e.key().equals(ParticleComponentBlueprints.ENVIRONMENT.key())).map(b -> (ParticleEnvironmentBlueprint) b).findFirst().orElseThrow();
+        environmentBlueprint = find(ParticleComponentBlueprints.ENVIRONMENT);
+        direction = find(ParticleComponentBlueprints.DIRECTION);
+        initialSpeed = find(ParticleComponentBlueprints.INITIAL_SPEED);
     }
 
     public List<Component> createComponents(PooledEngine particleEngine, OrlangEnvironment environment)
@@ -80,17 +89,34 @@ public class ParticleBlueprint implements Keyable
         }
 
         // Add default 1s max age to prevent forever particles
-        if (objects.stream().noneMatch(e -> e.key().equals(ParticleComponentBlueprints.MAX_AGE.key())))
-        {
-            objects.add(new ParticleMaxAgeBlueprint(new OrNumValue(1)));
-        }
-
-        if (objects.stream().noneMatch(e -> e.key().equals(ParticleComponentBlueprints.ENVIRONMENT.key())))
-        {
-            objects.add(new ParticleEnvironmentBlueprint(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty()));
-        }
+        addDefault(objects, ParticleComponentBlueprints.MAX_AGE, () -> new ParticleMaxAgeBlueprint(new OrNumValue(1)));
+        addDefault(objects, ParticleComponentBlueprints.ENVIRONMENT, () -> ParticleEnvironmentBlueprint.EMPTY);
 
         return DataResult.success(objects);
+    }
+
+    private static <T extends PCBlueprint<?>> void addDefault(List<PCBlueprint<?>> objects, PCBlueprintEntry<T> entry, Supplier<T> component)
+    {
+        if (objects.stream().noneMatch(e -> e.key().equals(entry.key())))
+        {
+            objects.add(component.get());
+        }
+    }
+
+    private <T extends PCBlueprint<?>> T find(PCBlueprintEntry<T> entry)
+    {
+        var blueprint = blueprints
+            .stream()
+            .filter(e -> e.key().equals(entry.key()))
+            .findFirst()
+            .orElse(null);
+
+        if (blueprint == null)
+            return null;
+
+        blueprints.remove(blueprint);
+        //noinspection unchecked
+        return (T) blueprint;
     }
 
     private static final Codec<ParticleBlueprint> INLINE_CODEC = Registries.PARTICLE_COMPONENT_BLUEPRINT.valueMapCodec().comapFlatMap(map -> {

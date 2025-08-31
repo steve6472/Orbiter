@@ -3,6 +3,7 @@ package steve6472.orbiter.world;
 import com.badlogic.ashley.core.PooledEngine;
 import steve6472.orbiter.world.particle.systems.ParticleMaxAgeSystem;
 import steve6472.orbiter.world.particle.systems.ParticleUpdateEnvSystem;
+import steve6472.orbiter.world.particle.systems.ParticleVelocitySystem;
 import steve6472.orbiter.world.particle.systems.RemoveInvalidFollowerSystem;
 
 /**
@@ -30,6 +31,7 @@ public class ParticleSystems
         // Should be first
         engine.addSystem(new ParticleUpdateEnvSystem());
 
+        engine.addSystem(new ParticleVelocitySystem());
         engine.addSystem(new ParticleMaxAgeSystem(world));
         engine.addSystem(new RemoveInvalidFollowerSystem(world));
     }

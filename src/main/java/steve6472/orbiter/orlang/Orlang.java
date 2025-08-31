@@ -87,11 +87,12 @@ public class Orlang
         {
             double diff = ((b - a + Math.PI) % (2 * Math.PI)) - Math.PI;
             return a + diff * t;
-        }));MATH_FUNCTIONS.put("lerprotate", OrlangValue.func(D, D, D, (a, b, t) ->
-    {
-        double diff = ((b - a + 180.0) % 360.0) - 180.0;
-        return a + diff * t;
-    }));
+        }));
+        MATH_FUNCTIONS.put("lerprotate", OrlangValue.func(D, D, D, (a, b, t) ->
+        {
+            double diff = ((b - a + 180.0) % 360.0) - 180.0;
+            return a + diff * t;
+        }));
     }
 
     public static boolean checkBool(OrlangValue value, OrlangToken operation)

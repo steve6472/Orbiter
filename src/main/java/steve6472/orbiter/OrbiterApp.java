@@ -194,7 +194,8 @@ public class OrbiterApp extends FlareApp
         timeToNextTick -= frameTime;
         if (timeToNextTick <= 0)
         {
-            tick(frameTime);
+            // TODO: if some lag is detected, look here
+            tick(1f / Constants.TICKS_IN_SECOND);
             timeToNextTick += 1f / Constants.TICKS_IN_SECOND;
         }
 

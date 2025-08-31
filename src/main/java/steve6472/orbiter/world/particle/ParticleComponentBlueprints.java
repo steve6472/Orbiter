@@ -21,6 +21,10 @@ public class ParticleComponentBlueprints
     public static final PCBlueprintEntry<ParticleLocalSpaceBlueprint> LOCAL_SPACE = register(ParticleLocalSpaceBlueprint.KEY, ParticleLocalSpaceBlueprint.CODEC);
     public static final PCBlueprintEntry<ParticleBillboardBlueprint> BILLBOARD = register(ParticleBillboardBlueprint.KEY, ParticleBillboardBlueprint.CODEC);
     public static final PCBlueprintEntry<ParticleEnvironmentBlueprint> ENVIRONMENT = register(ParticleEnvironmentBlueprint.KEY, ParticleEnvironmentBlueprint.CODEC);
+    public static final PCBlueprintEntry<ParticleDirectionBlueprint> DIRECTION = register(ParticleDirectionBlueprint.KEY, ParticleDirectionBlueprint.CODEC);
+    public static final PCBlueprintEntry<ParticleInitialSpeedBlueprint> INITIAL_SPEED = register(ParticleInitialSpeedBlueprint.KEY, ParticleInitialSpeedBlueprint.CODEC);
+    public static final PCBlueprintEntry<ParticleLinearAccelerationBlueprint> LINEAR_ACCELERATION = register(ParticleLinearAccelerationBlueprint.KEY, ParticleLinearAccelerationBlueprint.CODEC);
+    public static final PCBlueprintEntry<ParticleLinearDragCoefficientBlueprint> LINEAR_DRAG_COEFFICIENT = register(ParticleLinearDragCoefficientBlueprint.KEY, ParticleLinearDragCoefficientBlueprint.CODEC);
 
     private static <T extends PCBlueprint<?>> PCBlueprintEntry<T> register(Key key, Codec<T> codec)
     {

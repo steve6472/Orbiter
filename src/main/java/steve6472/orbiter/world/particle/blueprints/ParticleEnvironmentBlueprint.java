@@ -34,6 +34,9 @@ public record ParticleEnvironmentBlueprint(
         Codec.unboundedMap(AST.Node.Identifier.CODEC, Curve.CODEC).optionalFieldOf("curves").forGetter(ParticleEnvironmentBlueprint::curves)
     ).apply(instance, ParticleEnvironmentBlueprint::new));
 
+    public static final ParticleEnvironmentBlueprint EMPTY = new ParticleEnvironmentBlueprint(
+        Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+
     @Override
     public ParticleComponent create(PooledEngine particleEngine, OrlangEnvironment environment)
     {

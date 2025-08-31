@@ -14,8 +14,11 @@ import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitters;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
+import steve6472.orbiter.world.particle.blueprints.ParticleDirectionBlueprint;
+import steve6472.orbiter.world.particle.components.Velocity;
 import steve6472.orbiter.world.particle.components.LocalSpace;
 import steve6472.orbiter.world.particle.components.ParticleFollowerId;
+import steve6472.orbiter.world.particle.core.ParticleBlueprint;
 
 import java.util.List;
 
@@ -95,10 +98,11 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
         emitter.particleTick();
 
         Entity entity = particleEngine.createEntity();
-        OrlangEnvironment env = (OrlangEnvironment) emitter.particleData.get().environmentBlueprint.create(particleEngine, emitter.environment);
+        ParticleBlueprint blueprint = emitter.particleData.get();
+        OrlangEnvironment env = (OrlangEnvironment) blueprint.environmentBlueprint.create(particleEngine, emitter.environment);
         entity.add(env);
 
-        List<Component> particleComponents = emitter.particleData.get().createComponents(particleEngine, env);
+        List<Component> particleComponents = blueprint.createComponents(particleEngine, env);
         for (Component particleComponent : particleComponents)
         {
             entity.add(particleComponent);
@@ -106,6 +110,9 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
 
         LocalSpace localSpace = ParticleComponents.LOCAL_SPACE.get(entity);
 
+        /*
+         * Position
+         */
         var particlePosition = ParticleComponents.POSITION.create(particleEngine);
         Vector3f position = emitter.shape.createPosition(emitter);
         emitter.offset.evaluate(emitter.environment);
@@ -121,6 +128,23 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
             particlePosition.z = emitterPosition.z() + position.z + emitter.offset.fz();
         }
         entity.add(particlePosition);
+
+        /*
+         * Velocity
+         */
+        ParticleDirectionBlueprint particleDirectionBlueprint = blueprint.direction;
+        if (particleDirectionBlueprint != null)
+        {
+            var initialSpeedBlueprint = blueprint.initialSpeed;
+            float initialSpeed = 0;
+            if (initialSpeedBlueprint != null)
+            {
+                initialSpeed = (float) initialSpeedBlueprint.initialSpeed().evaluateAndGet(env);
+            }
+            Velocity velocity = particleEngine.createComponent(Velocity.class);
+            particleDirectionBlueprint.direction(velocity, initialSpeed, position, env);
+            entity.add(velocity);
+        }
 
         if (holderId != ParticleHolderId.UNASSIGNED)
         {

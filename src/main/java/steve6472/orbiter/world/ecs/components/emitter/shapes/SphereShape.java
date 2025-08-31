@@ -10,8 +10,8 @@ import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
 public class SphereShape extends EmitterShape
 {
     public static final Codec<SphereShape> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        OrNumValue.CODEC.fieldOf("radius").forGetter((SphereShape o) -> o.radius),
-        Codec.BOOL.optionalFieldOf("surface_only", false).forGetter((SphereShape o) -> o.surfaceOnly)
+        OrNumValue.CODEC.fieldOf("radius").forGetter(o -> o.radius),
+        Codec.BOOL.optionalFieldOf("surface_only", false).forGetter(o -> o.surfaceOnly)
     ).apply(instance, SphereShape::new));
 
     public OrNumValue radius;

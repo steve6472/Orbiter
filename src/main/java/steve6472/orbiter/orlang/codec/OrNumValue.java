@@ -72,4 +72,10 @@ public class OrNumValue
         orNumValue.value = value;
         return orNumValue;
     }
+
+    @Override
+    public String toString()
+    {
+        return "OrNumValue{" + "code=" + code + ", value=" + value + '}';
+    }
 }
