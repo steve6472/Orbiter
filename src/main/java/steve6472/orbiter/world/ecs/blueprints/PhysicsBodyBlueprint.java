@@ -23,8 +23,8 @@ public record PhysicsBodyBlueprint(Key model, Optional<Key> collision, float mas
 {
     public static final Key KEY = Constants.key("physics_body");
     public static final Codec<PhysicsBodyBlueprint> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Key.CODEC.fieldOf("model").forGetter(PhysicsBodyBlueprint::model),
-        Key.CODEC.optionalFieldOf("collision").forGetter(PhysicsBodyBlueprint::collision),
+        Constants.KEY_CODEC.fieldOf("model").forGetter(PhysicsBodyBlueprint::model),
+        Constants.KEY_CODEC.optionalFieldOf("collision").forGetter(PhysicsBodyBlueprint::collision),
         Codec.FLOAT.optionalFieldOf("mass", 1f).forGetter(PhysicsBodyBlueprint::mass)
     ).apply(instance, PhysicsBodyBlueprint::new));
 

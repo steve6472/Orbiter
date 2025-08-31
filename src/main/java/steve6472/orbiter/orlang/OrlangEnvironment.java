@@ -1,7 +1,7 @@
 package steve6472.orbiter.orlang;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.gdx.utils.Pool;
+import steve6472.orbiter.orlang.codec.OrCode;
+import steve6472.orbiter.world.particle.core.ParticleComponent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,10 +11,12 @@ import java.util.Map;
  * Date: 8/27/2025
  * Project: Orbiter <br>
  */
-public class OrlangEnvironment implements Component, Pool.Poolable
+public class OrlangEnvironment implements ParticleComponent
 {
     private final Map<String, OrlangValue> variableMap = new HashMap<>();
     private final Map<String, OrlangValue> tempMap = new HashMap<>();
+    public Map<String, OrCode> expressions = new HashMap<>();
+    public Map<AST.Node.Identifier, Curve> curves = new HashMap<>();
 
     public void setValue(AST.Node.Identifier identifier, OrlangValue value)
     {
@@ -62,7 +64,7 @@ public class OrlangEnvironment implements Component, Pool.Poolable
     @Override
     public String toString()
     {
-        return "OrlangEnvironment{" + "valueMap=" + variableMap + '}';
+        return "OrlangEnvironment{" + "variableMap=" + variableMap + ", tempMap=" + tempMap + ", expressions=" + expressions + ", curves=" + curves + '}';
     }
 
     @Override
@@ -70,5 +72,7 @@ public class OrlangEnvironment implements Component, Pool.Poolable
     {
         variableMap.clear();
         tempMap.clear();
+        expressions.clear();
+        curves.clear();
     }
 }

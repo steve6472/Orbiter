@@ -11,8 +11,8 @@ import steve6472.orbiter.world.particle.core.ParticleComponent;
  */
 public class MaxAge implements ParticleComponent
 {
-    public static final AST.Node.Identifier MAX_AGE = new AST.Node.Identifier(VarContext.VARIABLE, "particle_max_age");
-    public static final AST.Node.Identifier AGE = new AST.Node.Identifier(VarContext.VARIABLE, "particle_age");
+    public static final AST.Node.Identifier MAX_AGE = new AST.Node.Identifier(VarContext.VARIABLE, "max_age");
+    public static final AST.Node.Identifier AGE = new AST.Node.Identifier(VarContext.VARIABLE, "age");
 
     public int maxAge;
     public int age;

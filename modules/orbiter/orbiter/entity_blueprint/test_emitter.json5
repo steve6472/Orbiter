@@ -29,9 +29,9 @@
                 max_age: 120,
                 model: "orbiter:blockbench/static/particle/spinny_disc_slow",
                 scale: {
-                    x: "1 + v.particle_age / 50",
+                    x: "1 + v.age / 50",
                     y: 1,
-                    z: "1 + v.particle_age / 50"
+                    z: "1 + v.age / 50"
                 },
                 local_space: {
                     position: true

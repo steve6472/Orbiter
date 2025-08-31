@@ -14,15 +14,13 @@ import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.render.SBOTransfromArray;
 import steve6472.flare.render.StaticModelRenderImpl;
 import steve6472.flare.ui.font.render.Billboard;
+import steve6472.orbiter.orlang.Orlang;
 import steve6472.orbiter.orlang.OrlangEnvironment;
+import steve6472.orbiter.orlang.codec.OrCode;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
-import steve6472.orbiter.world.particle.components.LocalSpace;
-import steve6472.orbiter.world.particle.components.ParticleFollowerId;
-import steve6472.orbiter.world.particle.components.ParticleModel;
-import steve6472.orbiter.world.particle.components.Position;
+import steve6472.orbiter.world.particle.components.*;
 import steve6472.orbiter.world.particle.ParticleComponents;
-import steve6472.orbiter.world.particle.components.Scale;
 import steve6472.orbiter.world.ecs.components.physics.Rotation;
 
 import java.util.ArrayList;
@@ -90,6 +88,14 @@ public class ParticleRender extends StaticModelRenderImpl
         ParticleModel model = ParticleComponents.MODEL.get(entity);
         OrlangEnvironment env = ParticleComponents.PARTICLE_ENVIRONMENT.get(entity);
 
+        // Update curves each frame
+        env.curves.forEach((name, curve) -> curve.calculate(name, env));
+        OrCode frame = env.expressions.get("frame");
+        if (frame != null)
+        {
+            Orlang.interpreter.interpret(frame, env);
+        }
+
         if (lastArea == null || lastModel != model.model)
         {
             lastArea = sboTransfromArray.getAreaByType(model.model);
@@ -131,7 +137,11 @@ public class ParticleRender extends StaticModelRenderImpl
             primitiveTransform.scale(scale.scale.fx(), scale.scale.fy(), scale.scale.fz());
         }
 
-//        Billboard.FIXED.apply(camera, primitiveTransform);
+        ParticleBillboard particleBillboard = ParticleComponents.BILLBOARD.get(entity);
+        if (particleBillboard != null)
+        {
+            particleBillboard.billboard.apply(camera, primitiveTransform);
+        }
 
         lastArea.updateTransform(primitiveTransform);
 

@@ -3,10 +3,8 @@ package steve6472.orbiter.world.ecs.components.emitter;
 import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import steve6472.orbiter.orlang.AST;
-import steve6472.orbiter.orlang.OrlangEnvironment;
-import steve6472.orbiter.orlang.OrlangValue;
-import steve6472.orbiter.orlang.VarContext;
+import steve6472.orbiter.orlang.*;
+import steve6472.orbiter.orlang.codec.OrCode;
 import steve6472.orbiter.orlang.codec.OrVec3;
 import steve6472.orbiter.util.Holder;
 import steve6472.orbiter.world.ecs.components.emitter.lifetime.EmitterLifetime;
@@ -14,6 +12,9 @@ import steve6472.orbiter.world.ecs.components.emitter.rate.EmitterRate;
 import steve6472.orbiter.world.ecs.components.emitter.shapes.EmitterShape;
 import steve6472.orbiter.world.ecs.components.emitter.shapes.PointShape;
 import steve6472.orbiter.world.particle.core.ParticleBlueprint;
+
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * Totally not stolen from <a href="https://learn.microsoft.com/en-us/minecraft/creator/reference/content/particlesreference/particlecomponentlist?view=minecraft-bedrock-stable">Microsoft</a>
@@ -25,13 +26,15 @@ public class ParticleEmitter implements Component
         EmitterShape.CODEC.optionalFieldOf("shape", PointShape.INSTANCE).forGetter(o -> o.shape),
         EmitterLifetime.CODEC.fieldOf("lifetime").forGetter(o -> o.lifetime),
         EmitterRate.CODEC.fieldOf("rate").forGetter(o -> o.rate),
-        ParticleBlueprint.REGISTRY_OR_INLINE_CODEC.fieldOf("particle").forGetter(o -> o.particleData)
-    ).apply(instance, (offset, shape, lifetime, rate, particleData) -> {
+        ParticleBlueprint.REGISTRY_OR_INLINE_CODEC.fieldOf("particle").forGetter(o -> o.particleData),
+        EnvData.CODEC.optionalFieldOf("environment").forGetter(o -> Optional.ofNullable(o.environmentData))
+    ).apply(instance, (offset, shape, lifetime, rate, particleData, env) -> {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.offset = offset;
         emitter.shape = shape;
         emitter.lifetime = lifetime;
         emitter.rate = rate;
+        emitter.environmentData = env.orElse(null);
         emitter.particleData = particleData;
         return emitter;
     }));
@@ -42,6 +45,8 @@ public class ParticleEmitter implements Component
     public EmitterShape shape;
     public EmitterLifetime lifetime;
     public EmitterRate rate;
+
+    public EnvData environmentData;
     public OrlangEnvironment environment;
 
     public Holder<ParticleBlueprint> particleData;
@@ -72,8 +77,32 @@ public class ParticleEmitter implements Component
 
     private static final AST.Node.Identifier EMITTER_AGE = new AST.Node.Identifier(VarContext.VARIABLE, "emitter_age");
 
-    public void updateEnvironment()
+    public void emitterTick()
     {
+        // First set "constants"
         environment.setValue(EMITTER_AGE, OrlangValue.num(emitterAge));
+
+        // Then evaluate expressions
+        if (environmentData != null)
+            environmentData.emitterTick.ifPresent(code -> Orlang.interpreter.interpret(code, environment));
+    }
+
+    public void particleTick()
+    {
+        if (environmentData != null)
+        {
+            environmentData.particleTick.ifPresent(code -> Orlang.interpreter.interpret(code, environment));
+            environmentData.curves.ifPresent(curves -> curves.forEach((name, curve) -> curve.calculate(name, environment)));
+        }
+    }
+
+    public record EnvData(Optional<OrCode> init, Optional<OrCode> emitterTick, Optional<OrCode> particleTick, Optional<Map<AST.Node.Identifier, Curve>> curves)
+    {
+        public static final Codec<EnvData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            OrCode.CODEC.optionalFieldOf("init").forGetter(EnvData::init),
+            OrCode.CODEC.optionalFieldOf("tick").forGetter(EnvData::emitterTick),
+            OrCode.CODEC.optionalFieldOf("particle").forGetter(EnvData::particleTick),
+            Codec.unboundedMap(AST.Node.Identifier.CODEC, Curve.CODEC).optionalFieldOf("curves").forGetter(EnvData::curves)
+        ).apply(instance, EnvData::new));
     }
 }

@@ -56,7 +56,7 @@ public class OrNumValue
 
         OrlangValue retValue = Orlang.interpreter.interpret(code, environment);
         if (!(retValue instanceof OrlangValue.Number number))
-            throw new RuntimeException("Orlang did not return a number");
+            throw new RuntimeException("Orlang did not return a number, got: '" + retValue + "' for code: '" + code.codeStr() + "'");
         this.value = number;
     }
 

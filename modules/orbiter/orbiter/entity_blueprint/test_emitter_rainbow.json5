@@ -1,0 +1,68 @@
+{
+    physics_body: {
+        model: "blockbench/static/cube/25_cm",
+
+        // Pure copper cube masses:
+        // 1cm:   0.00896
+        // 5cm:   1.12
+        // 10cm:  8.96
+        // 25cm:  140
+        // 50cm:  1120
+        // 100cm: 8960
+        mass: 140
+    },
+
+    particle_emitters: [
+        {
+            environment: {
+                particle: "v.rng = math.random(0, 1)"
+            },
+            lifetime: {
+                lifetime_type: "looping",
+                ticks_active: 1,
+                ticks_asleep: 0
+            },
+            rate: {
+                rate_type: "steady",
+                spawn_rate: 4,
+                max_count: 9999
+            },
+            shape: {
+                shape_type: "point"
+            },
+            offset: {
+                x: "math.sin(v.emitter_age / 10) * (2.5 - v.rng)",
+                y: "math.cos(v.emitter_age / 10) * (2.5 - v.rng)",
+                z: 0
+            },
+            particle: {
+                environment: {
+                    pass_variables: {
+                        "v.rng": "v.rng"
+                    },
+                    // Need environment for emitter & a way to pass variables (a copy list of variables ?)
+                    init: "v.radius = 0.25;",
+                    curves: {
+                        "v.rainbow": {
+                            type: "catmull_rom",
+                            input: "v.rng",
+                            horizontal_range: 1,
+                            nodes: [1, 0, 1, 1.18]
+                        },
+                        "v.psize": {
+                            type: "catmull_rom",
+                            input: "v.age",
+                            horizontal_range: "v.max_age",
+                            nodes: [0, 0, 1, 0, 0]
+                        }
+                    }
+                },
+
+                model: "orbiter:blockbench/static/particle/dot",
+                max_age: 60,
+                billboard: "face_center",
+                scale: ["v.psize", "v.psize", "v.psize"]
+            }
+        }
+    ]
+}

@@ -25,7 +25,7 @@ public class Blueprints
     public static final BlueprintEntry<IndexModelBlueprint> MODEL = register(IndexModelBlueprint.KEY, IndexModelBlueprint.CODEC);
     public static final BlueprintEntry<TagsBlueprint> TAGS = register(TagsBlueprint.KEY, TagsBlueprint.CODEC);
 
-    public static final BlueprintEntry<ParticleEmittersBlueprint> PRIMITIVE_EMITTER = register(ParticleEmittersBlueprint.KEY, ParticleEmittersBlueprint.CODEC);
+    public static final BlueprintEntry<ParticleEmittersBlueprint> EMITTERS = register(ParticleEmittersBlueprint.KEY, ParticleEmittersBlueprint.CODEC);
 
     private static <T extends Blueprint<?>> BlueprintEntry<T> register(Key key, Codec<T> codec)
     {

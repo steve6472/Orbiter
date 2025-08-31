@@ -2,8 +2,10 @@ package steve6472.orbiter.world.particle.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
+import steve6472.orbiter.orlang.Orlang;
 import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.orlang.OrlangValue;
+import steve6472.orbiter.orlang.codec.OrCode;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.particle.components.MaxAge;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
@@ -32,5 +34,12 @@ public class ParticleUpdateEnvSystem extends IteratingProfiledSystem
             env.setValue(MaxAge.AGE, OrlangValue.num(maxAge.age));
             env.setValue(MaxAge.MAX_AGE, OrlangValue.num(maxAge.maxAge));
         }
+
+        OrCode tick = env.expressions.get("tick");
+        if (tick != null)
+        {
+            Orlang.interpreter.interpret(tick, env);
+        }
+
     }
 }

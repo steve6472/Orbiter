@@ -2,6 +2,9 @@ package steve6472.orbiter.orlang;
 
 import steve6472.orbiter.orlang.codec.OrCode;
 
+import static steve6472.orbiter.orlang.Orlang.checkBool;
+import static steve6472.orbiter.orlang.Orlang.checkNum;
+
 /**
  * Created by steve6472
  * Date: 8/27/2025
@@ -132,19 +135,5 @@ public class OrlangInterpreter
 
             default -> throw new IllegalStateException("Unexpected value: " + nodeExpression);
         };
-    }
-
-    private boolean checkBool(OrlangValue value, OrlangToken operation)
-    {
-        if (!(value instanceof OrlangValue.Bool bool))
-            throw new IllegalStateException("Operation " + operation.getSymbol() + " expected a boolean result");
-        return bool.value();
-    }
-
-    private double checkNum(OrlangValue value, OrlangToken operation)
-    {
-        if (!(value instanceof OrlangValue.Number num))
-            throw new IllegalStateException("Operation " + operation.getSymbol() + " expected a number result");
-        return num.value();
     }
 }

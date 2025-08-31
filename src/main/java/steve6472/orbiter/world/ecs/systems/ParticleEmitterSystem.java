@@ -6,6 +6,7 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import org.joml.Vector3f;
 import steve6472.orbiter.orlang.OrlangEnvironment;
+import steve6472.orbiter.orlang.OrlangValue;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.ParticleHolderId;
@@ -73,7 +74,7 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
             return;
         }
 
-        emitter.updateEnvironment();
+        emitter.emitterTick();
 
         int holderId = ParticleHolderId.UNASSIGNED;
         if (emitter.particleData.get().containsLocalSpace)
@@ -92,14 +93,16 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
 
         for (int i = 0; i < spawnCount; i++)
         {
-            createEntity(entity, holderId, emitter, position);
+            createParticle(entity, holderId, emitter, position);
         }
     }
 
-    private void createEntity(Entity holder, int holderId, ParticleEmitter emitter, Position emitterPosition)
+    private void createParticle(Entity holder, int holderId, ParticleEmitter emitter, Position emitterPosition)
     {
+        emitter.particleTick();
+
         Entity entity = particleEngine.createEntity();
-        OrlangEnvironment env = particleEngine.createComponent(OrlangEnvironment.class);
+        OrlangEnvironment env = (OrlangEnvironment) emitter.particleData.get().environmentBlueprint.create(particleEngine, emitter.environment);
         entity.add(env);
 
         List<Component> particleComponents = emitter.particleData.get().createComponents(particleEngine, env);

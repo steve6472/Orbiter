@@ -3,10 +3,7 @@ package steve6472.orbiter.world.particle;
 import com.mojang.serialization.Codec;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.world.particle.blueprints.ParticleLocalSpaceBlueprint;
-import steve6472.orbiter.world.particle.blueprints.ParticleMaxAgeBlueprint;
-import steve6472.orbiter.world.particle.blueprints.ParticleModelBlueprint;
-import steve6472.orbiter.world.particle.blueprints.ParticleScaleBlueprint;
+import steve6472.orbiter.world.particle.blueprints.*;
 import steve6472.orbiter.world.particle.core.PCBlueprint;
 import steve6472.orbiter.world.particle.core.PCBlueprintEntry;
 
@@ -22,6 +19,8 @@ public class ParticleComponentBlueprints
     public static final PCBlueprintEntry<ParticleModelBlueprint> MODEL = register(ParticleModelBlueprint.KEY, ParticleModelBlueprint.CODEC);
     public static final PCBlueprintEntry<ParticleMaxAgeBlueprint> MAX_AGE = register(ParticleMaxAgeBlueprint.KEY, ParticleMaxAgeBlueprint.CODEC);
     public static final PCBlueprintEntry<ParticleLocalSpaceBlueprint> LOCAL_SPACE = register(ParticleLocalSpaceBlueprint.KEY, ParticleLocalSpaceBlueprint.CODEC);
+    public static final PCBlueprintEntry<ParticleBillboardBlueprint> BILLBOARD = register(ParticleBillboardBlueprint.KEY, ParticleBillboardBlueprint.CODEC);
+    public static final PCBlueprintEntry<ParticleEnvironmentBlueprint> ENVIRONMENT = register(ParticleEnvironmentBlueprint.KEY, ParticleEnvironmentBlueprint.CODEC);
 
     private static <T extends PCBlueprint<?>> PCBlueprintEntry<T> register(Key key, Codec<T> codec)
     {

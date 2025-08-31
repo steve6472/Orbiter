@@ -19,6 +19,7 @@ import steve6472.orbiter.world.particle.core.ParticleBlueprint;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by steve6472
@@ -27,14 +28,15 @@ import java.util.List;
  */
 public record ParticleEmittersBlueprint(List<Emitter> emitters) implements Blueprint<ParticleEmittersBlueprint>
 {
-    private record Emitter(OrVec3 offset, EmitterShape shape, EmitterLifetime lifetime, EmitterRate rate, Holder<ParticleBlueprint> particle)
+    private record Emitter(OrVec3 offset, EmitterShape shape, EmitterLifetime lifetime, EmitterRate rate, Holder<ParticleBlueprint> particle, Optional<ParticleEmitter.EnvData> envData)
     {
         public static final Codec<Emitter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             OrVec3.CODEC.optionalFieldOf("offset", new OrVec3()).forGetter(Emitter::offset),
             EmitterShape.CODEC.fieldOf("shape").forGetter(Emitter::shape),
             EmitterLifetime.CODEC.fieldOf("lifetime").forGetter(Emitter::lifetime),
             EmitterRate.CODEC.fieldOf("rate").forGetter(Emitter::rate),
-            ParticleBlueprint.REGISTRY_OR_INLINE_CODEC.fieldOf("particle").forGetter(Emitter::particle)
+            ParticleBlueprint.REGISTRY_OR_INLINE_CODEC.fieldOf("particle").forGetter(Emitter::particle),
+            ParticleEmitter.EnvData.CODEC.optionalFieldOf("environment").forGetter(Emitter::envData)
         ).apply(instance, Emitter::new));
     }
 
@@ -64,6 +66,7 @@ public record ParticleEmittersBlueprint(List<Emitter> emitters) implements Bluep
                 }
                 default -> throw new IllegalStateException("Unexpected value: " + emitterBl.lifetime);
             };
+            emitterBl.envData.ifPresent(envData -> emitter.environmentData = envData);
             emitter.particleData = emitterBl.particle;
             emitterList.add(emitter);
         }

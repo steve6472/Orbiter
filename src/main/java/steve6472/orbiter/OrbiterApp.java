@@ -68,6 +68,7 @@ public class OrbiterApp extends FlareApp
      *  [x] Particle ECS
      *  [x] Particle components
      *  [x] Particle systems
+     *  [ ] Particle tinting renderer, without normals
      *  [ ] Fix max_count for steady rate
      *
      *  akma asks:
