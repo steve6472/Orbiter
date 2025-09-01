@@ -1,0 +1,137 @@
+{
+    "meta": {
+        "format_version": "4.10",
+        "model_format": "free",
+        "box_uv": false
+    },
+    "name": "head_trail",
+    "model_identifier": "",
+    "visible_box": [1, 1, 0],
+    "variable_placeholders": "",
+    "variable_placeholder_buttons": [],
+    "timeline_setups": [],
+    "unhandled_root_fields": {},
+    "resolution": {
+        "width": 16,
+        "height": 16
+    },
+    "elements": [
+        {
+            "name": "cube",
+            "box_uv": false,
+            "rescale": false,
+            "locked": false,
+            "light_emission": 0,
+            "render_order": "default",
+            "allow_mirror_modeling": true,
+            "collision": false,
+            "hitbox": false,
+            "from": [-8, -8, 0],
+            "to": [8, 8, 0],
+            "autouv": 0,
+            "color": 7,
+            "origin": [0, 0, 0],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 0, 0],
+                    "layer": "normal",
+                    "disable_other_cull": false,
+                    "texture": null
+                },
+                "east": {
+                    "uv": [0, 0, 0, 0],
+                    "layer": "normal",
+                    "disable_other_cull": false,
+                    "texture": null
+                },
+                "south": {
+                    "uv": [0, 0, 16, 16],
+                    "layer": "normal",
+                    "disable_other_cull": false,
+                    "texture": 0
+                },
+                "west": {
+                    "uv": [0, 0, 0, 0],
+                    "layer": "normal",
+                    "disable_other_cull": false,
+                    "texture": null
+                },
+                "up": {
+                    "uv": [0, 0, 0, 0],
+                    "layer": "normal",
+                    "disable_other_cull": false,
+                    "texture": null
+                },
+                "down": {
+                    "uv": [0, 0, 0, 0],
+                    "layer": "normal",
+                    "disable_other_cull": false,
+                    "texture": null
+                }
+            },
+            "type": "cube",
+            "uuid": "963d1250-99c5-2016-56e8-1aa647b5f22e"
+        }
+    ],
+    "outliner": ["963d1250-99c5-2016-56e8-1aa647b5f22e"],
+    "textures": [
+        {
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\particle\\fireball\\head_trail.png",
+            "name": "orbiter:particle/fireball/head_trail",
+            "folder": "block",
+            "namespace": "",
+            "id": "0",
+            "group": "",
+            "width": 8,
+            "height": 8,
+            "uv_width": 16,
+            "uv_height": 16,
+            "particle": false,
+            "use_as_default": false,
+            "layers_enabled": false,
+            "sync_to_project": "",
+            "render_mode": "default",
+            "render_sides": "auto",
+            "pbr_channel": "color",
+            "frame_time": 1,
+            "frame_order_type": "loop",
+            "frame_order": "",
+            "frame_interpolate": false,
+            "visible": true,
+            "internal": true,
+            "saved": true,
+            "uuid": "97e40a25-f550-4844-8550-91ab569ae50e",
+            "relative_path": "../../../../../textures/model/particle/fireball/head_trail.png",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADBJREFUKFNjZCAAGElW8P////+MjIxwjSgmgCRhJsIUwRUgSyIrIt4EmC68bsDmIwAjYxQJjxiNgAAAAABJRU5ErkJggg=="
+        },
+        {
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\particle\\spinny_disc.png",
+            "name": "orbiter:particle/spinny_disc",
+            "folder": "",
+            "namespace": "",
+            "id": "1",
+            "group": "",
+            "width": 16,
+            "height": 64,
+            "uv_width": 16,
+            "uv_height": 16,
+            "particle": false,
+            "use_as_default": false,
+            "layers_enabled": false,
+            "sync_to_project": "",
+            "render_mode": "default",
+            "render_sides": "auto",
+            "pbr_channel": "color",
+            "frame_time": 1,
+            "frame_order_type": "loop",
+            "frame_order": "",
+            "frame_interpolate": false,
+            "visible": true,
+            "internal": true,
+            "saved": true,
+            "uuid": "990f941f-18bc-4dc9-9a07-2799b834fc81",
+            "relative_path": "../../../../../textures/model/particle/spinny_disc.png",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAABACAYAAAATffeWAAAAAXNSR0IArs4c6QAAASNJREFUWEftVzsOwjAMTbhEj8HMxMwNkDgfEjdgZmLmGL0ERYkU5Hyc2n5hQe3oui+O7ffsesc8u9tjoa/e56NvuVbG6fWMH877Q/aOs2dOl/m+XKdT86R0eunTdeauR+0bgHNbDkbnYEgrQ2SiPW6mcwJJAJwOJD+xHnDMVOtBCfQFkFSAlbSQ+VLCJGISfGIEEEDI9lqme9F4GEB615ZfOBwSFAggJd4cAQRAm04dgXm0iYYrV6pgF493bV+oc8DSWXtypUgaPajKaKFz1kgQAELnSKY/ALCK6rgqcBtorzMhPfgdF2Ayrf03wIJilrQyMrOoUqAhZYQGC21/SFSh4RqigAUl7kiIIo1ZsqyCAg0W2lTjVt2EypFGtGxTJ+m6/wH0r+uRgmetZQAAAABJRU5ErkJggg=="
+        }
+    ]
+}

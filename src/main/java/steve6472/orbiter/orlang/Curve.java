@@ -1,7 +1,9 @@
 package steve6472.orbiter.orlang;
 
 import com.mojang.datafixers.util.Either;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import steve6472.core.registry.StringValue;
 import steve6472.core.util.MathUtil;
@@ -49,38 +51,47 @@ public record Curve(CurveType type, OrNumValue input, OrNumValue horizontalRange
 		if (type == CurveType.BEZIER_CHAIN)
 		{
 			List<ChainEntry> nodes = this.nodes.right().orElseThrow(() -> new IllegalArgumentException("Incorrect chain type"));
+
 			double input = this.input.evaluateAndGet(environment);
+
+			// expected in 0-1
 			double v = evaluateChain(nodes, input);
+
 			environment.setValue(name, OrlangValue.num(v));
 		} else
 		{
 			List<OrNumValue> nodes = this.nodes.left().orElseThrow(() -> new IllegalArgumentException("Incorrect chain type"));
 			double input = this.input.evaluateAndGet(environment);
 			double range = this.horizontalRange.evaluateAndGet(environment);
-			double indexSelector = Math.clamp(input / range, 0, 1);
+			double T = Math.clamp(input / range, 0, 1);
 
-			int index = Math.clamp((int) (indexSelector * (nodes.size() - 1)), 0, nodes.size() - 1);
+			int index = Math.clamp((int) (T * (nodes.size() - 1)), 0, nodes.size() - 1);
 			int next = Math.clamp(index + 1, 0, nodes.size() - 1);
-
-			double start = index / ((double) nodes.size() - 1);
-			double end = next / ((double) nodes.size() - 1);
-
-			double t = MathUtil.time(start, end, indexSelector);
 
 			double v = switch (type)
 			{
-				case LINEAR -> (float) MathUtil.lerp(nodes.get(index).evaluateAndGet(environment), nodes.get(next).evaluateAndGet(environment), t);
+				case LINEAR -> (float) MathUtil.lerp(nodes.get(index).evaluateAndGet(environment), nodes.get(next).evaluateAndGet(environment), T);
+				case BEZIER -> {
+					if (nodes.size() != 4)
+						throw new IllegalArgumentException("Bezier curve requires 4 nodes!");
+
+                    double P0 = nodes.get(0).evaluateAndGet(environment);
+					double P1 = nodes.get(1).evaluateAndGet(environment);
+					double P2 = nodes.get(2).evaluateAndGet(environment);
+					double P3 = nodes.get(3).evaluateAndGet(environment);
+                    yield Math.pow((1 - T), 3) * P0 + 3 * T * Math.pow((1 - T), 2) * P1 + 3 * Math.pow(T, 2) * (1 - T) * P2 + Math.pow(T, 3) * P3;
+				}
 				case CATMULL_ROM -> {
 
-					int past = Math.clamp((int) (indexSelector * (nodes.size() - 3)), 0, nodes.size() - 1);
+					int past = Math.clamp((int) (T * (nodes.size() - 3)), 0, nodes.size() - 1);
 					index = Math.clamp(past + 1, 0, nodes.size() - 2);
 					next = Math.clamp(index + 1, 0, nodes.size() - 2);
 					int future = Math.clamp(next + 1, 0, nodes.size() - 1);
 
-					start = past / ((double) nodes.size() - 1);
-					end = future / ((double) nodes.size() - 1);
+					double start = past / ((double) nodes.size() - 1);
+					double end = future / ((double) nodes.size() - 1);
 
-					t = MathUtil.time(start, end, indexSelector);
+					double t = MathUtil.time(start, end, T);
 
 					double p0 = nodes.get(past).evaluateAndGet(environment);
 					double p1 = nodes.get(index).evaluateAndGet(environment);
@@ -97,7 +108,7 @@ public record Curve(CurveType type, OrNumValue input, OrNumValue horizontalRange
 
 	public enum CurveType implements StringValue
 	{
-		LINEAR, CATMULL_ROM, BEZIER_CHAIN;
+		LINEAR, CATMULL_ROM, BEZIER, BEZIER_CHAIN;
 
 		public static final Codec<CurveType> CODEC = StringValue.fromValues(CurveType::values);
 
@@ -110,37 +121,89 @@ public record Curve(CurveType type, OrNumValue input, OrNumValue horizontalRange
 
 	private record ChainEntry(double t, ChainNode node) {}
 
-	private record ChainNode(double value, double leftValue, double rightValue, double slope, double leftSlope, double rightSlope)
+	private record ChainNode(double leftValue, double rightValue, double leftSlope, double rightSlope)
 	{
+		private static final MapCodec<Pair<Double, Double>> LR_VALUE = Codec.mapPair(Codec.DOUBLE.fieldOf("left_value"), Codec.DOUBLE.fieldOf("right_value"));
+		private static final MapCodec<Either<Pair<Double, Double>, Double>> VALUE = Codec.mapEither(LR_VALUE, Codec.DOUBLE.fieldOf("value"));
+
+		private static final MapCodec<Pair<Double, Double>> LR_SLOPE = Codec.mapPair(Codec.DOUBLE.fieldOf("left_slope"), Codec.DOUBLE.fieldOf("right_slope"));
+		private static final MapCodec<Either<Pair<Double, Double>, Double>> SLOPE = Codec.mapEither(LR_SLOPE, Codec.DOUBLE.fieldOf("slope"));
+
+		private ChainNode(Either<Pair<Double, Double>, Double> value, Either<Pair<Double, Double>, Double> slope)
+		{
+			this(left(value), right(value), left(slope), right(slope));
+		}
+
+		private static double left(Either<Pair<Double, Double>, Double> v)
+		{
+			Optional<Pair<Double, Double>> left = v.left();
+			Optional<Double> right = v.right();
+			if (left.isPresent())
+			{
+				return left.get().getFirst();
+			}
+			else if (right.isPresent())
+			{
+				return right.get();
+			} else
+			{
+				throw new IllegalArgumentException("Left nor Right are filled!");
+			}
+		}
+
+		private static double right(Either<Pair<Double, Double>, Double> v)
+		{
+			Optional<Pair<Double, Double>> left = v.left();
+			Optional<Double> right = v.right();
+			if (left.isPresent())
+			{
+				return left.get().getSecond();
+			}
+			else if (right.isPresent())
+			{
+				return right.get();
+			} else
+			{
+				throw new IllegalArgumentException("Left nor Right are filled!");
+			}
+		}
+
 		public static final Codec<ChainNode> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-			Codec.DOUBLE.fieldOf("value").forGetter(ChainNode::value),
-			Codec.DOUBLE.optionalFieldOf("left_value", 0d).forGetter(ChainNode::leftValue),
-			Codec.DOUBLE.optionalFieldOf("right_value", 0d).forGetter(ChainNode::rightValue),
-			Codec.DOUBLE.fieldOf("slope").forGetter(ChainNode::slope),
-			Codec.DOUBLE.optionalFieldOf("left_slope", 0d).forGetter(ChainNode::leftSlope),
-			Codec.DOUBLE.optionalFieldOf("right_slope", 0d).forGetter(ChainNode::rightSlope)
+			VALUE.forGetter(null),
+			SLOPE.forGetter(null)
 		).apply(instance, ChainNode::new));
 	}
 
 	private static double evaluateChain(List<ChainEntry> entries, double t)
 	{
-		if (entries == null || entries.size() < 2) {
+		if (entries == null || entries.size() < 2)
+		{
 			throw new IllegalArgumentException("At least 2 entries are required");
 		}
 
 		// Clamp
-		t = Math.max(0, Math.min(1, t));
+		t = Math.clamp(t, 0, 1);
 
 		// Find correct segment
 		int segmentIndex = -1;
-		for (int i = 0; i < entries.size() - 1; i++) {
-			if (t >= entries.get(i).t() && t <= entries.get(i + 1).t()) {
+		for (int i = 0; i < entries.size() - 1; i++)
+		{
+			if (t >= entries.get(i).t() && t <= entries.get(i + 1).t())
+			{
 				segmentIndex = i;
 				break;
 			}
 		}
-		if (segmentIndex == -1) {
-			segmentIndex = entries.size() - 2; // t=1 case
+
+		if (segmentIndex == -1)
+		{
+			if (t < entries.getFirst().t())
+			{
+				return entries.getFirst().node.leftValue;
+			} else
+			{
+				return entries.getLast().node.rightValue;
+			}
 		}
 
 		ChainEntry e0 = entries.get(segmentIndex);
@@ -148,37 +211,15 @@ public record Curve(CurveType type, OrNumValue input, OrNumValue horizontalRange
 
 		double localT = (t - e0.t()) / (e1.t() - e0.t());
 
-		return evaluateSegment(e0, e1, localT);
+		return calculateSegment(e0.node, e1.node, Math.clamp(localT, 0, 1));
 	}
 
-	// Evaluate cubic Bezier for one segment
-	private static double evaluateSegment(ChainEntry  e0, ChainEntry  e1, double localT)
+	private static double calculateSegment(ChainNode left, ChainNode right, double T)
 	{
-		double t0 = e0.t();
-		double t1 = e1.t();
-		double dt = t1 - t0;
-
-		double y0 = e0.node().value();
-		double y1 = e1.node().value();
-
-		double m0 = e0.node().slope(); // derivative at start
-		double m1 = e1.node().slope(); // derivative at end
-
-		// Control points in (x,y)
-		double x0 = t0, y_0 = y0;
-		double x3 = t1, y_3 = y1;
-
-		double x1 = x0 + dt / 3.0;
-		double y1c = y0 + m0 * dt / 3.0;
-
-		double x2 = x3 - dt / 3.0;
-		double y2c = y1 - m1 * dt / 3.0;
-
-		// Cubic Bezier interpolation in y (x is redundant since we know localT)
-		double u = 1 - localT;
-		return u*u*u * y_0 +
-			3*u*u*localT * y1c +
-			3*u*localT*localT * y2c +
-			localT*localT*localT * y_3;
+		double P0 = left.rightValue;
+		double P1 = left.rightSlope * (1d / 3d) + left.rightValue;
+		double P2 = -right.leftSlope * (1d / 3d) + right.leftValue;
+		double P3 = right.leftValue;
+		return Math.pow((1 - T), 3) * P0 + 3 * T * Math.pow((1 - T), 2) * P1 + 3 * Math.pow(T, 2) * (1 - T) * P2 + Math.pow(T, 3) * P3;
 	}
 }

@@ -19,7 +19,7 @@
             },
             lifetime: {
                 lifetime_type: "looping",
-                active_time: "1",
+                active_time: 1,
                 sleep_time: 0
             },
             rate: {
@@ -52,6 +52,86 @@
                 },
 
                 model: "orbiter:blockbench/static/particle/dot",
+                max_age: 1,
+                billboard: "face_center",
+                scale: ["v.scaled_size", "v.scaled_size", "v.scaled_size"]
+            }
+        },
+        {
+            lifetime: {
+                lifetime_type: "looping",
+                active_time: 1,
+                sleep_time: 0
+            },
+            rate: {
+                rate_type: "steady",
+                spawn_rate: 1,
+                max_count: 2
+            },
+            shape: {
+                shape_type: "point"
+            },
+            offset: [0, 0.6, 0],
+            particle: {
+                environment: {
+                    init: "v.scale_mult = 0.35;",
+
+                    // Curves are evaluated before frame
+                    curves: {
+                        "v.size": {
+                            type: "bezier",
+                            input: "v.age",
+                            horizontal_range: "v.max_age",
+                            nodes: [0, 0, 5, 0]
+                        }
+                    },
+                    frame: "v.scaled_size = v.size * v.scale_mult"
+                },
+
+                model: "orbiter:blockbench/static/particle/fireball/head_trail",
+                max_age: 1,
+                billboard: "face_center",
+                scale: ["v.scaled_size", "v.scaled_size", "v.scaled_size"]
+            }
+        },
+        {
+            lifetime: {
+                lifetime_type: "looping",
+                active_time: 1,
+                sleep_time: 0
+            },
+            rate: {
+                rate_type: "steady",
+                spawn_rate: 1,
+                max_count: 2
+            },
+            shape: {
+                shape_type: "point"
+            },
+            offset: [0, 1, 0],
+            particle: {
+                environment: {
+                    init: "v.scale_mult = 0.35;",
+                    curves: {
+                        "v.size": {
+                            type: "bezier_chain",
+                            input: "v.age",
+                            nodes: {
+                                "0.09": {
+                                    value: 0,
+                                    slope: 8
+                                },
+                                "0.37": {
+                                    value: 0,
+                                    slope: -0.05
+                                }
+                            }
+                        }
+                    },
+                    frame: "v.scaled_size = v.size * v.scale_mult"
+                },
+
+                model: "orbiter:blockbench/static/particle/fireball/head_trail",
                 max_age: 1,
                 billboard: "face_center",
                 scale: ["v.scaled_size", "v.scaled_size", "v.scaled_size"]
