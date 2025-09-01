@@ -32,8 +32,9 @@ public class BillboardUtil
         return mat;
     }
 
-    public static Matrix4f applySpin(Matrix4f billboardMat, float angleRadians) {
+    public static void applySpin(Matrix4f billboardMat, float angleRadians)
+    {
         Matrix4f spin = new Matrix4f().rotate(angleRadians, 0, 0, 1);
-        return new Matrix4f(billboardMat).mul(spin);
+        billboardMat.mul(spin);
     }
 }

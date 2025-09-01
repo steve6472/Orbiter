@@ -143,6 +143,12 @@ public class StaticParticleModelRender extends StaticModelRenderImpl
             }
         }
 
+        var rotation = ParticleComponents.ROTATION.get(entity);
+        if (rotation != null)
+        {
+            BillboardUtil.applySpin(primitiveTransform, (float) Math.toRadians(rotation.rotation));
+        }
+
         if (ParticleComponents.SCALE.has(entity))
         {
             Scale scale = ParticleComponents.SCALE.get(entity);

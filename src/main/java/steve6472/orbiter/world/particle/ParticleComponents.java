@@ -27,6 +27,7 @@ public class ParticleComponents
     public static final ComponentEntry<Velocity> VELOCITY = register("velocity", Velocity.class);
     public static final ComponentEntry<LinearAcceleration> LINEAR_ACCELERATION = register("linear_acceleration", LinearAcceleration.class);
     public static final ComponentEntry<LinearDragCoefficient> LINEAR_DRAG_COEFFICIENT = register("linear_drag_coefficient", LinearDragCoefficient.class);
+    public static final ComponentEntry<Rotation> ROTATION = register("rotation", Rotation.class);
 
     // Programmatically
     public static final ComponentEntry<Position> POSITION = register("position", Position.class);

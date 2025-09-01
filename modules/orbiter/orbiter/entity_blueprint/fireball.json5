@@ -59,6 +59,10 @@
                     y: "(math.random(0, 1) + -0.5) * 0.5",
                     z: "math.random(0, 1) * 0.1"
                 },
+                rotation: {
+                    initial: 45,
+                    rate: "math.random(-200, 200)"
+                },
                 initial_speed: 2,
                 linear_acceleration: [0, 0, 6],
                 linear_drag_coefficient: 1,
