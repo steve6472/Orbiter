@@ -1,4 +1,4 @@
-package steve6472.orbiter;
+package steve6472.orbiter.rendering;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -11,6 +11,8 @@ import steve6472.flare.core.FrameInfo;
 import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.render.SBOTransfromArray;
 import steve6472.flare.render.StaticModelRenderImpl;
+import steve6472.orbiter.Client;
+import steve6472.orbiter.Convert;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.IndexModel;

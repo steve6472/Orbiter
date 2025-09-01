@@ -62,7 +62,7 @@
                 initial_speed: 2,
                 linear_acceleration: [0, 0, 6],
                 linear_drag_coefficient: 1,
-                billboard: "face_center"
+                billboard: "lookat_y"
             }
         }
     ]

@@ -132,6 +132,9 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
         /*
          * Velocity
          */
+        Velocity velocity = particleEngine.createComponent(Velocity.class);
+        entity.add(velocity);
+
         ParticleDirectionBlueprint particleDirectionBlueprint = blueprint.direction;
         if (particleDirectionBlueprint != null)
         {
@@ -141,9 +144,7 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
             {
                 initialSpeed = (float) initialSpeedBlueprint.initialSpeed().evaluateAndGet(env);
             }
-            Velocity velocity = particleEngine.createComponent(Velocity.class);
             particleDirectionBlueprint.direction(velocity, initialSpeed, position, env);
-            entity.add(velocity);
         }
 
         if (holderId != ParticleHolderId.UNASSIGNED)

@@ -53,7 +53,7 @@
 
                 model: "orbiter:blockbench/static/particle/dot",
                 max_age: 1,
-                billboard: "face_center",
+                billboard: "rotate_xyz",
                 scale: ["v.scaled_size", "v.scaled_size", "v.scaled_size"]
             }
         },
@@ -90,7 +90,7 @@
 
                 model: "orbiter:blockbench/static/particle/fireball/head_trail",
                 max_age: 1,
-                billboard: "face_center",
+                billboard: "rotate_xyz",
                 scale: ["v.scaled_size", "v.scaled_size", "v.scaled_size"]
             }
         },
@@ -133,7 +133,7 @@
 
                 model: "orbiter:blockbench/static/particle/fireball/head_trail",
                 max_age: 1,
-                billboard: "face_center",
+                billboard: "rotate_xyz",
                 scale: ["v.scaled_size", "v.scaled_size", "v.scaled_size"]
             }
         }

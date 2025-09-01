@@ -1,4 +1,4 @@
-package steve6472.orbiter;
+package steve6472.orbiter.rendering;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
@@ -6,6 +6,7 @@ import com.badlogic.ashley.utils.ImmutableArray;
 import com.mojang.datafixers.util.Pair;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import steve6472.core.registry.Key;
 import steve6472.flare.Camera;
 import steve6472.flare.assets.model.Model;
@@ -13,7 +14,7 @@ import steve6472.flare.core.FrameInfo;
 import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.render.SBOTransfromArray;
 import steve6472.flare.render.StaticModelRenderImpl;
-import steve6472.flare.ui.font.render.Billboard;
+import steve6472.orbiter.Client;
 import steve6472.orbiter.orlang.Orlang;
 import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.orlang.codec.OrCode;
@@ -31,11 +32,11 @@ import java.util.List;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class ParticleRender extends StaticModelRenderImpl
+public class StaticParticleModelRender extends StaticModelRenderImpl
 {
     private final Client client;
 
-    public ParticleRender(Client client)
+    public StaticParticleModelRender(Client client)
     {
         this.client = client;
     }
@@ -105,18 +106,30 @@ public class ParticleRender extends StaticModelRenderImpl
         LocalSpace localSpace = ParticleComponents.LOCAL_SPACE.get(entity);
 
         Matrix4f primitiveTransform = new Matrix4f();
+        Vector3f position = new Vector3f();
+
         if (ParticleComponents.POSITION.has(entity))
         {
-            Position position = ParticleComponents.POSITION.get(entity);
+            Position particlePos = ParticleComponents.POSITION.get(entity);
             if (localSpace != null && localSpace.position)
             {
                 ParticleFollowerId follower = ParticleComponents.PARTICLE_FOLLOWER.get(entity);
                 var holderPosition = Components.POSITION.get(follower.entity);
                 if (holderPosition != null)
                 {
-                    primitiveTransform.translate(holderPosition.x(), holderPosition.y(), holderPosition.z());
+                    position.add(holderPosition.x(), holderPosition.y(), holderPosition.z());
                 }
             }
+            position.add(particlePos.x, particlePos.y, particlePos.z);
+        }
+
+        ParticleBillboard particleBillboard = ParticleComponents.BILLBOARD.get(entity);
+        if (particleBillboard != null)
+        {
+            Matrix4f matrix4f = BillboardUtil.makeBillboard(position, camera.viewPosition, camera, particleBillboard);
+            primitiveTransform.mul(matrix4f);
+        } else
+        {
             primitiveTransform.translate(position.x, position.y, position.z);
         }
 
@@ -135,12 +148,6 @@ public class ParticleRender extends StaticModelRenderImpl
             Scale scale = ParticleComponents.SCALE.get(entity);
             scale.scale.evaluate(env);
             primitiveTransform.scale(scale.scale.fx(), scale.scale.fy(), scale.scale.fz());
-        }
-
-        ParticleBillboard particleBillboard = ParticleComponents.BILLBOARD.get(entity);
-        if (particleBillboard != null)
-        {
-            particleBillboard.billboard.apply(camera, primitiveTransform);
         }
 
         lastArea.updateTransform(primitiveTransform);

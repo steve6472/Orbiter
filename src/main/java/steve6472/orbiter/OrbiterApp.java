@@ -34,6 +34,8 @@ import steve6472.moondust.widget.component.ViewController;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
+import steve6472.orbiter.rendering.StaticParticleModelRender;
+import steve6472.orbiter.rendering.StaticWorldRender;
 import steve6472.orbiter.scheduler.Scheduler;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.player.PCPlayer;
@@ -153,7 +155,7 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new UILineRender(masterRenderer(), new DebugUILines()));
 
         addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticWorldRender(client), Pipelines.BLOCKBENCH_STATIC));
-        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new ParticleRender(client), Pipelines.BLOCKBENCH_STATIC));
+        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticParticleModelRender(client), Pipelines.BLOCKBENCH_STATIC));
 
         new MoonDustCallbacks().init(window().callbacks(), input());
     }
