@@ -50,5 +50,10 @@ public class ParticleUpdateEnvSystem extends IteratingProfiledSystem
             Orlang.interpreter.interpret(tick, env);
         }
 
+        OrCode frame = env.expressions.get("frame");
+        if (frame != null)
+        {
+            Orlang.interpreter.interpret(frame, env);
+        }
     }
 }

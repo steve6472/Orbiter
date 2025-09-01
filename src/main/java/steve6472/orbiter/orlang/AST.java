@@ -56,6 +56,7 @@ public final class AST
         }
         record BinOp(OrlangToken type, Node left, Node right) implements Node {}
         record UnaryOp(OrlangToken type, Node expression) implements Node {}
+        record Ternary(Node condition, Node ifTrue, Node ifFalse) implements Node {}
         record Return(Node expression) implements Node {}
     }
 }

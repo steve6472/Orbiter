@@ -2,7 +2,7 @@
     position: {},
     rotation: {},
 //    model: "blockbench/static/cube/10_cm",
-    collision: "blockbench/static/cube/25_cm",
+    collision: "blockbench/static/cube/meter",
     tags: ["tag_physics"],
 
     angular_velocity: {
@@ -48,7 +48,7 @@
                 },
 
                 max_age: 0.4,
-                model: "orbiter:blockbench/static/particle/fireball/head_trail",
+                model: "orbiter:blockbench/static/particle/fireball/head_trail_orange",
                 scale: {
                     x: "0.2 * v.modifier",
                     y: "0.2 * v.modifier",
@@ -66,8 +66,70 @@
                 initial_speed: 2,
                 linear_acceleration: [0, 0, 6],
                 linear_drag_coefficient: 1,
-                billboard: "lookat_y"
+                billboard: "lookat_y",
+                render_pipeline: "additive"
             }
-        }
+        }/*,
+        // body_trail
+        {
+            lifetime: {
+                lifetime_type: "looping",
+                active_time: 999
+            },
+            rate: {
+                rate_type: "steady",
+                spawn_rate: 40,
+                max_count: 400
+            },
+            shape: {
+                shape_type: "sphere",
+                radius: 0.1
+            },
+            particle: {
+                environment: {
+                    init: "v.rng1 = math.random(0, 1);v.rng2 = math.random(0, 1);v.rng3 = math.random(0, 1);",
+                    // Difference between snowstorm: the last nodes right value is always 0
+                    curves: {
+                        "v.modifier": {
+                            type: "bezier_chain",
+                            input: "v.age",
+                            nodes: {
+                                "0.08": {
+                                    value: 2.06,
+                                    slope: 0
+                                },
+                                "1.0": {
+                                    value: 1.38,
+                                    slope: 0.15
+                                }
+                            }
+                        }
+                    },
+                    frame: "v.oscillate = (v.rng2 < 0.5 ? -1 : 1) * math.cos(20 + v.age * 500) * 20;  v.oscillate2 = (v.rng3 < 0.5 ? -1 : 1) * math.cos(20 + v.age * 500) * 20;"
+                },
+
+                max_age: 1,
+                model: "orbiter:blockbench/static/particle/fireball/head_trail",
+                scale: {
+                    x: "0.2 * v.modifier",
+                    y: "0.2 * v.modifier",
+                    z: "0.2 * v.modifier"
+                },
+                direction: {
+                    x: "(math.random(0, 1) + -0.5) * 0.5",
+                    y: 0,
+                    z: "-math.random(0, 1) * 10"
+                },
+                rotation: {
+                    initial: 45,
+                    rate: "math.random(-200, 200)"
+                },
+                initial_speed: 2,
+                linear_acceleration: ["v.oscillate2", "v.oscillate", 6],
+                linear_drag_coefficient: 1,
+                billboard: "lookat_y",
+                render_pipeline: "additive"
+            }
+        }*/
     ]
 }

@@ -14,6 +14,8 @@ public enum OrlangToken implements Token
     ASSIGN("="),
     SEMICOLON(";"),
     COMMA(","),
+    QUESTION("?"),
+    COLON(":"),
 
     // Logical operators
     NOT("!", null, true),

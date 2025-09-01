@@ -39,10 +39,18 @@ public class OrlangEnvironment implements ParticleComponent
         if (identifier.path().length == 0)
         {
             if (identifier.context() == VarContext.VARIABLE)
-                return variableMap.get(identifier.name());
-            else if (identifier.context() == VarContext.TEMP)
-                return tempMap.get(identifier.name());
-            else
+            {
+                OrlangValue orlangValue = variableMap.get(identifier.name());
+                if (orlangValue == null)
+                    throw new NullPointerException("No value for " + identifier + " was found");
+                return orlangValue;
+            } else if (identifier.context() == VarContext.TEMP)
+            {
+                OrlangValue orlangValue = tempMap.get(identifier.name());
+                if (orlangValue == null)
+                    throw new NullPointerException("No value for " + identifier + " was found");
+                return orlangValue;
+            } else
                 throw new IllegalArgumentException("Context " + identifier.context() + " is not implemented yet");
         } else
         {

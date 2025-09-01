@@ -35,10 +35,12 @@ import java.util.List;
 public class StaticParticleModelRender extends StaticModelRenderImpl
 {
     private final Client client;
+    private final RenderPipeline.Enum particlePipeline;
 
-    public StaticParticleModelRender(Client client)
+    public StaticParticleModelRender(Client client, RenderPipeline.Enum particlePipeline)
     {
         this.client = client;
+        this.particlePipeline = particlePipeline;
     }
 
     @Override
@@ -59,14 +61,17 @@ public class StaticParticleModelRender extends StaticModelRenderImpl
         if (world == null)
             return;
 
-        ImmutableArray<Entity> physicsModels = world.particleEngine().getEntitiesFor(PARTICLE_FAMILY);
-        if (physicsModels.size() == 0)
+        ImmutableArray<Entity> particle = world.particleEngine().getEntitiesFor(PARTICLE_FAMILY);
+        if (particle.size() == 0)
             return;
 
-        List<Entity> list = new ArrayList<>(physicsModels.size());
-        for (Entity entity : physicsModels)
+        List<Entity> list = new ArrayList<>(particle.size());
+        for (Entity entity : particle)
         {
-            list.add(entity);
+            RenderPipeline renderPipeline = ParticleComponents.RENDER_PIPELINE.get(entity);
+            // Model is default
+            if ((renderPipeline != null && renderPipeline.value == this.particlePipeline) || (renderPipeline == null && this.particlePipeline == RenderPipeline.Enum.MODEL))
+                list.add(entity);
         }
 
         if (list.isEmpty())

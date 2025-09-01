@@ -130,6 +130,17 @@ public class OrlangInterpreter
                 throw new IllegalStateException("Unexpected context " + exp.identifier().context());
             }
 
+            case AST.Node.Ternary exp ->
+            {
+                if (checkBool(interpret(exp.condition(), environment)))
+                {
+                    yield interpret(exp.ifTrue(), environment);
+                } else
+                {
+                    yield interpret(exp.ifFalse(), environment);
+                }
+            }
+
             case AST.Node.Identifier exp -> environment.getValue(exp);
             case AST.Node.Return exp -> interpret(exp.expression(), environment.nest());
 

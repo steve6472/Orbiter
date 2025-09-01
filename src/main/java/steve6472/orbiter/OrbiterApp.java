@@ -34,6 +34,7 @@ import steve6472.moondust.widget.component.ViewController;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
+import steve6472.orbiter.rendering.OrbiterPipelines;
 import steve6472.orbiter.rendering.StaticParticleModelRender;
 import steve6472.orbiter.rendering.StaticWorldRender;
 import steve6472.orbiter.scheduler.Scheduler;
@@ -45,6 +46,7 @@ import steve6472.orbiter.ui.OrbiterUIRender;
 import steve6472.orbiter.ui.panel.*;
 import steve6472.orbiter.util.RandomNameGenerator;
 import steve6472.orbiter.world.World;
+import steve6472.orbiter.world.particle.components.RenderPipeline;
 import steve6472.test.DebugUILines;
 
 import java.util.Optional;
@@ -155,7 +157,8 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new UILineRender(masterRenderer(), new DebugUILines()));
 
         addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticWorldRender(client), Pipelines.BLOCKBENCH_STATIC));
-        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticParticleModelRender(client), Pipelines.BLOCKBENCH_STATIC));
+        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticParticleModelRender(client, RenderPipeline.Enum.MODEL), Pipelines.BLOCKBENCH_STATIC));
+        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticParticleModelRender(client, RenderPipeline.Enum.ADDITIVE), OrbiterPipelines.BLOCKBENCH_STATIC_ADDITIVE));
 
         new MoonDustCallbacks().init(window().callbacks(), input());
     }
