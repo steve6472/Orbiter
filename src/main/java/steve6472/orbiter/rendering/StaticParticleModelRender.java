@@ -131,7 +131,7 @@ public class StaticParticleModelRender extends StaticModelRenderImpl
         ParticleBillboard particleBillboard = ParticleComponents.BILLBOARD.get(entity);
         if (particleBillboard != null)
         {
-            Matrix4f matrix4f = BillboardUtil.makeBillboard(position, camera.viewPosition, camera, particleBillboard);
+            Matrix4f matrix4f = BillboardUtil.makeBillboard(position, entity, camera, particleBillboard);
             primitiveTransform.mul(matrix4f);
         } else
         {

@@ -1,17 +1,22 @@
 package steve6472.orbiter.rendering;
 
+import com.badlogic.ashley.core.Entity;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import steve6472.flare.Camera;
 import steve6472.flare.FlareConstants;
+import steve6472.orbiter.world.particle.ParticleComponents;
 import steve6472.orbiter.world.particle.components.ParticleBillboard;
+import steve6472.orbiter.world.particle.components.Velocity;
 
 public class BillboardUtil
 {
-    public static Matrix4f makeBillboard(Vector3f position, Vector3f cameraPos, Camera camera, ParticleBillboard billboard)
+    public static Matrix4f makeBillboard(Vector3f position, Entity entity, Camera camera, ParticleBillboard billboard)
     {
+//        var textRender = OrbiterApp.getInstance().masterRenderer().textRender();
         Matrix4f mat = new Matrix4f();
+        Vector3f cameraPos = camera.viewPosition;
         Quaternionf cameraRot = new Quaternionf().setFromUnnormalized(camera.getViewMatrix());
 
         switch (billboard.billboard)
@@ -21,6 +26,17 @@ public class BillboardUtil
             case ROTATE_Y -> mat.rotateY(camera.yaw());
             case LOOKAT_XYZ -> mat.billboardSpherical(position, cameraPos);
             case LOOKAT_Y -> mat.billboardCylindrical(position, cameraPos, FlareConstants.CAMERA_UP);
+            case LOOKAT_DIRECTION -> {
+                Velocity velocity = ParticleComponents.VELOCITY.get(entity);
+                if (velocity != null)
+                {
+                    Vector3f vel = new Vector3f(velocity.x, velocity.y, velocity.z);
+                    vel.normalize();
+
+                    Quaternionf quaternionf = new Quaternionf().rotateTo(new Vector3f(1f, 0, 0), vel);
+                    mat.rotate(quaternionf);
+                }
+            }
             default -> throw new IllegalArgumentException("Unsupported billboard mode: " + billboard.billboard);
         }
 

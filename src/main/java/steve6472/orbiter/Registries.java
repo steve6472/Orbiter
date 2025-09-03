@@ -49,7 +49,7 @@ public class Registries extends RegistryCreators
     public static final PacketRegistry PACKET = createPacketRegistry("packet", Packets::init);
 
     public static final Registry<ComponentEntry<?>> PARTICLE_COMPONENT = createNamespacedRegistry(Constants.NAMESPACE, "particle_component", () -> Components.POSITION);
-    public static final Registry<PCBlueprintEntry<?>> PARTICLE_COMPONENT_BLUEPRINT = createRegistry("particle_component_blueprint", () -> ParticleComponentBlueprints.SCALE);
+    public static final Registry<PCBlueprintEntry<?>> PARTICLE_COMPONENT_BLUEPRINT = createNamespacedRegistry(Constants.NAMESPACE, "particle_component_blueprint", () -> ParticleComponentBlueprints.SCALE);
     public static final ObjectRegistry<ParticleBlueprint> PARTICLE_BLUEPRINT = createObjectRegistry("particle_blueprint", ParticleBlueprint::load);
 
     public static final Registry<ComponentEntry<?>> COMPONENT = createNamespacedRegistry(Constants.NAMESPACE, "component", () -> Components.POSITION);

@@ -4,7 +4,7 @@
         "model_format": "free",
         "box_uv": false
     },
-    "name": "head_trail_orange",
+    "name": "body_spark",
     "model_identifier": "",
     "visible_box": [1, 1, 0],
     "variable_placeholders": "",
@@ -24,48 +24,34 @@
             "light_emission": 0,
             "render_order": "default",
             "allow_mirror_modeling": true,
-            "collision": false,
-            "hitbox": false,
             "from": [-8, -8, 0],
-            "to": [8, 8, 0],
+            "to": [8, 24, 0],
             "autouv": 0,
             "color": 7,
-            "origin": [0, 0, 0],
+            "origin": [0, 8, 0],
             "faces": {
                 "north": {
-                    "uv": [0, 0, 0, 0],
-                    "layer": "normal",
-                    "disable_other_cull": false,
-                    "texture": null
+                    "uv": [16, 0, 0, 16],
+                    "texture": 0
                 },
                 "east": {
                     "uv": [0, 0, 0, 0],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "south": {
                     "uv": [0, 0, 16, 16],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": 0
                 },
                 "west": {
                     "uv": [0, 0, 0, 0],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "up": {
                     "uv": [0, 0, 0, 0],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "down": {
                     "uv": [0, 0, 0, 0],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 }
             },
@@ -76,8 +62,8 @@
     "outliner": ["963d1250-99c5-2016-56e8-1aa647b5f22e"],
     "textures": [
         {
-            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\particle\\fireball\\head_trail_orange.png",
-            "name": "orbiter:particle/fireball/head_trail_orange",
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\particle\\fireball\\body_spark.png",
+            "name": "orbiter:particle/fireball/body_spark",
             "folder": "block",
             "namespace": "",
             "id": "0",
@@ -101,8 +87,8 @@
             "internal": true,
             "saved": true,
             "uuid": "97e40a25-f550-4844-8550-91ab569ae50e",
-            "relative_path": "../../../../../textures/model/particle/fireball/head_trail_orange.png",
-            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAADFJREFUKFNjZCAAGElW8L9dbAFj5asEmEYUE0CScAmoIrgCZElkRcSbANOF1w3YfAQAyFQUCcOF0CkAAAAASUVORK5CYII="
+            "relative_path": "../../../../../textures/model/particle/fireball/body_spark.png",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAD9JREFUKFNjfPHixX8GJCAhIcGIzAdzsCkCiYEUw1XDFBFlAshUmEIU+7BZxYguiKwbxEZRgG4/WAEuX8C8CgDUWCQJH+j7kwAAAABJRU5ErkJggg=="
         }
     ]
 }

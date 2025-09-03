@@ -1,0 +1,108 @@
+{
+    "meta": {
+        "format_version": "4.10",
+        "model_format": "free",
+        "box_uv": false
+    },
+    "name": "head_main",
+    "model_identifier": "",
+    "visible_box": [1, 1, 0],
+    "variable_placeholders": "",
+    "variable_placeholder_buttons": [],
+    "timeline_setups": [],
+    "unhandled_root_fields": {},
+    "resolution": {
+        "width": 16,
+        "height": 16
+    },
+    "elements": [
+        {
+            "name": "cube",
+            "box_uv": false,
+            "rescale": false,
+            "locked": false,
+            "light_emission": 0,
+            "render_order": "default",
+            "allow_mirror_modeling": true,
+            "collision": false,
+            "hitbox": false,
+            "from": [-8, -8, 0],
+            "to": [8, 8, 0],
+            "autouv": 0,
+            "color": 7,
+            "origin": [0, 0, 0],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 0, 0],
+                    "layer": "normal",
+                    "disable_other_cull": false,
+                    "texture": null
+                },
+                "east": {
+                    "uv": [0, 0, 0, 0],
+                    "layer": "normal",
+                    "disable_other_cull": false,
+                    "texture": null
+                },
+                "south": {
+                    "uv": [0, 0, 16, 16],
+                    "layer": "normal",
+                    "disable_other_cull": false,
+                    "texture": 0
+                },
+                "west": {
+                    "uv": [0, 0, 0, 0],
+                    "layer": "normal",
+                    "disable_other_cull": false,
+                    "texture": null
+                },
+                "up": {
+                    "uv": [0, 0, 0, 0],
+                    "layer": "normal",
+                    "disable_other_cull": false,
+                    "texture": null
+                },
+                "down": {
+                    "uv": [0, 0, 0, 0],
+                    "layer": "normal",
+                    "disable_other_cull": false,
+                    "texture": null
+                }
+            },
+            "type": "cube",
+            "uuid": "963d1250-99c5-2016-56e8-1aa647b5f22e"
+        }
+    ],
+    "outliner": ["963d1250-99c5-2016-56e8-1aa647b5f22e"],
+    "textures": [
+        {
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\particle\\fireball\\head_main.png",
+            "name": "orbiter:particle/fireball/head_main",
+            "folder": "block",
+            "namespace": "",
+            "id": "0",
+            "group": "",
+            "width": 32,
+            "height": 32,
+            "uv_width": 16,
+            "uv_height": 16,
+            "particle": false,
+            "use_as_default": false,
+            "layers_enabled": false,
+            "sync_to_project": "",
+            "render_mode": "default",
+            "render_sides": "auto",
+            "pbr_channel": "color",
+            "frame_time": 1,
+            "frame_order_type": "loop",
+            "frame_order": "",
+            "frame_interpolate": false,
+            "visible": true,
+            "internal": true,
+            "saved": true,
+            "uuid": "97e40a25-f550-4844-8550-91ab569ae50e",
+            "relative_path": "../../../../../textures/model/particle/fireball/head_main.png",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAABDlJREFUWEfFl2mTFUUQRW8KCuICgqKoofz/nwWoLCrLyCzOMG2cJs+LnJ6no598ERnV26t782ZWVlblP/yWZbmR5MMkS5JrSar/zv15krMx3VJVJ1dNv06wLMsH/aETMnp9PQnvuWf0et/cEoGM14zau0E4VXU+CUxQr/FWQDzGJplJAlB+KsG4tQukJoEpJ+B4LZjAjKox3wmKdwAyaoRkPvf9KnxVvVMBCWzBAcRQgvGjvkYFSa6TJTltAozTIMC9pCRxgQCTKTsgE5h77WYTgLCkIMDkeAsQI8n3ZxvXPpfISqKqzlSAybh2UkYM4FtJAMY+7nvVMHlVAIDjJIc9HvXIM1XZhYVVMglMcD3+pEEBvt3XPmNJooQ5gKeCQ+CPNp697XeQQJk1XFV1LAEB9Zp7gLTPk2B3knyW5NMk1gQI4BUTA/Sm7XWPPIMMpCTJ92dVdSQBZFZWZQcEAxT7MskXfQ0Z/jMVQG7AAX6V5NckLwchSEDG/DitqsMa1U3vjTPg9xr0fpKvktxtIxwQgKwKMPlBkt+bwPMkL/qeZ5BDBZWAwAEE9B4CyIrseg4gwA+SSIJ7FeA/EmBiCOA5BoFnbSiB8R4lVhWq6rUEBMcjwIkzkmOAf5vk6x4hBQGUMgQsQ5JNBQB+2vZzK/Fbq8A3fAuJlQBgLCeXGgSQGE/xGvAfmsg3HRb+A9mZAyShBPAeAk/aIIQq5AbfkC/rEpUAEyE/XjE5SQc43n+X5MceUQEFCJv7xKz/hAEQCOD5oyQ/9TXPeEcumIxrEgJo4SH+eE+2k4AQwHvs+w4D5CC6jwBesQpIPoAh8LgJEIIZBhQ7+b8JnO7LAQsOISDmhODhvwgB1Q0FyHYUMATkwS8dFkKAQpbqc+uACchoGEhCM/+qJHTH+7skJCFNQpahSbhMAiThdhmaB6wE1MBYmv+0DIkzCYfXAKME4PuW4U4BwCnFFiJXAhlvLUANa8O2EiL/LESAWYQgYyFiBViI1pC5F7D2XQlkuNUQBVyShMTSzDOXov2AG5Fg5MG2FPMNRN0Rd9vxthxzDymIbDcjvFeBfZsRXpJsgLsZWYLntvx+M+qu2LKqCiQjJCDASMwFdju2fDOF+7x1AECrntuxiUcJvrQdA2ifZy64LdsRuQFxD2HzxhC41wO0bUhcdkp/qSFhMnt++0GbFAB5ryqM9g6GgJZsF9exztl0NN6vnttDVtWpIQDAptQ2fHbBdj+WYFt0vplNqY2pjehsTgWHyNqqV9WyPZjYnG7PArbm5sh8b1uuZ3bAemzHjBK25Cs4f9x3NJskCMs8EXkWsI2fXbGTz8OI15C5BL6PgM8kMY9hEvGM6Nmxo7A7/+EZwAKiiGdDPPd8uP5PBea5kOe2Wj6fRCQg8By3h9J5Yr4EviOwb6bts2VZJOW50FVjDrghvfesCs+v/P0Fj0wXhMXxI/4AAAAASUVORK5CYII="
+        }
+    ]
+}

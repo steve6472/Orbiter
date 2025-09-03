@@ -23,7 +23,11 @@ public class RenderPipeline implements ParticleComponent
 
     public enum Enum implements StringValue
     {
-        MODEL, ADDITIVE;
+        MODEL,
+        MODEL_UNSHADED_TINTED,
+        MODEL_UNSHADED_TINTED_ADDITIVE,
+        ADDITIVE,
+        ADDITIVE_UNSHADED;
 
         public static final Codec<Enum> CODEC = StringValue.fromValues(Enum::values);
 

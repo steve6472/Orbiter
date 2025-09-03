@@ -19,8 +19,7 @@ public enum Billboard implements StringValue
     LOOKAT_Y,
     DIRECTION_X,
     DIRECTION_Y,
-    DIRECTION_Z,
-    DERIVE_FROM_VELOCITY,
+    LOOKAT_DIRECTION,
     CUSTOM_DIRECTION;
 
     public static final Codec<Billboard> CODEC = StringValue.fromValues(Billboard::values);
