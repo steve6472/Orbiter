@@ -1,0 +1,123 @@
+{
+    "meta": {
+        "format_version": "4.10",
+        "model_format": "free",
+        "box_uv": false
+    },
+    "name": "player_capsule_ghost",
+    "model_identifier": "",
+    "visible_box": [1, 1, 0],
+    "variable_placeholders": "",
+    "variable_placeholder_buttons": [],
+    "timeline_setups": [],
+    "unhandled_root_fields": {},
+    "resolution": {
+        "width": 64,
+        "height": 64
+    },
+    "elements": [
+        {
+            "name": "collision{capsule(0.75,2.0)}",
+            "position": [0, 0, 0],
+            "ik_target": "",
+            "ik_source": "",
+            "lock_ik_target_rotation": false,
+            "visibility": true,
+            "locked": false,
+            "uuid": "af9175f6-3318-8840-4483-9e1020ea42c6",
+            "type": "null_object"
+        },
+        {
+            "name": "plane",
+            "color": 5,
+            "origin": [0, 0, 0],
+            "rotation": [0, 0, 0],
+            "export": true,
+            "visibility": true,
+            "locked": false,
+            "render_order": "default",
+            "allow_mirror_modeling": true,
+            "vertices": {
+                "GZh2": [1, 0, 1],
+                "BqvL": [1, 0, -1],
+                "YhYz": [-1, 0, 1],
+                "8QKy": [-1, 0, -1]
+            },
+            "faces": {
+                "Hoo0dlHC": {
+                    "uv": {
+                        "YhYz": [0, 32],
+                        "8QKy": [0, 0],
+                        "BqvL": [32, 0],
+                        "GZh2": [32, 32]
+                    },
+                    "vertices": ["GZh2", "BqvL", "8QKy", "YhYz"],
+                    "texture": 0
+                }
+            },
+            "type": "mesh",
+            "uuid": "247d426d-b9c5-3061-708a-4aca89e06691"
+        }
+    ],
+    "outliner": [
+        {
+            "name": "capsule",
+            "origin": [0, -4, 0],
+            "color": 0,
+            "uuid": "ae5b970e-7ef6-6f2a-45fe-af122708bcd4",
+            "export": true,
+            "mirror_uv": false,
+            "isOpen": true,
+            "locked": false,
+            "visibility": true,
+            "autouv": 0,
+            "selected": false,
+            "children": ["af9175f6-3318-8840-4483-9e1020ea42c6"]
+        },
+        "247d426d-b9c5-3061-708a-4aca89e06691"
+    ],
+    "textures": [
+        {
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\player_capsule.png",
+            "name": "orbiter:player_capsule",
+            "folder": "block",
+            "namespace": "",
+            "id": "0",
+            "group": "",
+            "width": 64,
+            "height": 64,
+            "uv_width": 64,
+            "uv_height": 64,
+            "particle": false,
+            "use_as_default": false,
+            "layers_enabled": false,
+            "sync_to_project": "",
+            "render_mode": "default",
+            "render_sides": "auto",
+            "pbr_channel": "color",
+            "frame_time": 1,
+            "frame_order_type": "loop",
+            "frame_order": "",
+            "frame_interpolate": false,
+            "visible": true,
+            "internal": true,
+            "saved": true,
+            "uuid": "a85aa48a-3ad7-61eb-14cc-63fbc4443dc8",
+            "relative_path": "../../../textures/model/player_capsule.png",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAAAXNSR0IArs4c6QAAAp9JREFUeF7tWbFOwzAQdViKBBsDTCDBCH9BN9hgY4IfQGphaD+gHaCV+AGY2GCDrfwFjCDBBANbkehC0Flc5aZOnNo5YrfXpWnju9y9e3dOXqI4jmNh8YmiKAIztIffSV9f7bZYbDbH/gc7dT36sgjD2UQb3CRe1eCnCoDBS11U1jupWFQ/uuJhpS5ZAJ9+qxUvNBpj63XMmDoGZLVRFgDfzzXZfvMb3SGQk7CviLWFtIAtAEUk4OrDCEBaBfHCtueDGYK2CZoAYgCUbdPrbZCSAQe9vhyC19VFf4cgJQCuA6wIex6CplthSgaot9FFVNPGR6kMsAm4aBsGwNQCJsRtW6TMrU/NycgABsCAADNAI4SMUCzlPLfAn6JkajHq88YZYEvxPA9D1Mnl8c8AAEqgzGTJX1lIYi/bSGJ5KkS9Rj6F6QAATRClKtd7BV0S3gzBPABsv3fi3nKt0GJ4BQCCoGaoCpUAQDJ7UISBGWoi0AbJdfBeAJ/71XNlagAj27RLWfcOT4YJ316dlyZquOQgg757fI13Nleln/unNwHH8L27tTasXrJiurmwf3QqAAhV6VGlb/Xx1wdJHPKN1OThj8/Bj1iqzEkw0oRLqPzN5ZkW+KSN7tWZL4KozDGvpp/1Cizt1jcvGC4UdrX9VwDU1vBBDcpkAM4AHcIY/HGjIy7a9ZElvmxveZkxNgPQEAHQVQpnAA49WIPHeS/sy7rh1gXDEIOC6Y/HvlCVCjDj3j3zAPiyX5fGAKoL++LX2AK+BEoVBwNAhWwofpkBoVSKKk5mABWyofhlBoRSKao4mQFUyIbilxkQSqWo4mQGUCEbil9mQCiVooqTGUCFbCh+mQGhVIoqTmYAFbKh+GUGhFIpqjiZAVTIhuJ35hnwC2gyTV95DrcGAAAAAElFTkSuQmCC"
+        }
+    ],
+    "texture_groups": [
+        {
+            "uuid": "96c8ae9b-b77c-4c8f-0884-51fccf195402",
+            "material_config": {
+                "color_value": [255, 255, 255, 255],
+                "mer_value": [0, 0, 0],
+                "subsurface_value": 0,
+                "saved": true
+            },
+            "name": "Texture Group 1",
+            "is_material": false
+        }
+    ]
+}

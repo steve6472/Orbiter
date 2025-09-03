@@ -8,6 +8,7 @@ import steve6472.flare.input.UserInput;
 import steve6472.flare.vr.VrInput;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
+import steve6472.orbiter.util.PhysicsRayTrace;
 import steve6472.orbiter.world.World;
 
 import java.util.UUID;
@@ -25,10 +26,12 @@ public class Client
     private Player player;
     private Camera camera;
     private World world;
+    private PhysicsRayTrace rayTrace;
 
     public Client()
     {
         clientUUID = UUID.randomUUID();
+        rayTrace = new PhysicsRayTrace(this);
         LOGGER.info("Client UUID: " + clientUUID);
     }
 
@@ -41,7 +44,10 @@ public class Client
     public void render(FrameInfo frameInfo, MemoryStack memoryStack)
     {
         if (world != null)
+        {
             world.debugRender(frameInfo.frameTime());
+            rayTrace.onRender(frameInfo.frameTime());
+        }
     }
 
     public void setCamera(Camera camera)
@@ -80,6 +86,8 @@ public class Client
     public void tickClient(float frameTime)
     {
         if (world != null)
+        {
             world.tick(frameTime);
+        }
     }
 }

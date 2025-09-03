@@ -11,10 +11,10 @@ import steve6472.flare.Camera;
 import steve6472.flare.input.UserInput;
 import steve6472.flare.vr.VrInput;
 import steve6472.orbiter.Constants;
-import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.ui.GlobalProperties;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
 import steve6472.orbiter.world.ecs.components.physics.PCCharacter;
@@ -63,10 +63,11 @@ public class PCPlayer implements Player
             throw new RuntimeException("Player capsule collision is not convex!");
 
         character = new PhysicsCharacter(convexCollisionShape, STEP_HEIGHT);
-        character.warp(Convert.jomlToPhys(new Vector3f(0, 1, 0)));
+        character.warp(jomlToPhys(new Vector3f(0, 1, 0)));
+        character.setUserIndex(Constants.CLIENT_PLAYER_MAGIC_CONSTANT);
 
         character.setJumpSpeed(7f);
-        character.setMaxPenetrationDepth(0.2f);
+        character.setMaxPenetrationDepth(PENETRATION_CONSTANT);
     }
 
     @Override
@@ -96,13 +97,16 @@ public class PCPlayer implements Player
     @Override
     public Vector3f getEyePos()
     {
-        return getFeetPos().add(0, EYE_HEIGHT, 0);
+        return getFeetPos().add(0, GlobalProperties.EYE_EIGHT.get().floatValue(), 0);
     }
 
     @Override
     public Vector3f getCenterPos()
     {
-        return physGetToJoml(character::getPhysicsLocation).add(0, PENETRATION_CONSTANT, 0);
+        Vector3f vector3f = physGetToJoml(character::getPhysicsLocation);
+        // compensate for.. something I guess
+        vector3f.add(0, 0.04f, 0);
+        return vector3f;
     }
 
     @Override

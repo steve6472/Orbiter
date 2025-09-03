@@ -17,7 +17,6 @@ import steve6472.orbiter.Convert;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.api.NetworkMain;
-import steve6472.orbiter.world.ecs.RenderECSSystem;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -98,20 +97,20 @@ public class World implements EntityControl, EntityModify
 
     public void tick(float frameTime)
     {
+
         Set<UUID> accessed = new HashSet<>();
 
         for (PhysicsRigidBody body : physics.getRigidBodyList())
         {
-            if (body.userIndex() == Constants.PLAYER_MAGIC_CONSTANT)
+            if (body.userIndex() == Constants.MP_PLAYER_MAGIC_CONSTANT)
             {
                 body.activate(true);
                 UUID uuid = (UUID) body.getUserObject();
                 PhysicsGhostObject physicsGhostObject = ghostMap.computeIfAbsent(uuid, _ ->
                 {
                     CollisionShape shape = Registries.COLLISION
-                        .get(Constants.key("blockbench/static/player_capsule"))
+                        .get(Constants.key("blockbench/static/player_capsule_ghost"))
                         .collisionShape();
-                    shape.setScale(1.5f);
                     PhysicsGhostObject pgo = new PhysicsGhostObject(shape);
                     physics.add(pgo);
                     return pgo;

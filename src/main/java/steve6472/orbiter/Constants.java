@@ -20,7 +20,8 @@ public final class Constants
 
     public static final float TICKS_IN_SECOND = 60f;
 
-    public static final int PLAYER_MAGIC_CONSTANT = 42;
+    public static final int MP_PLAYER_MAGIC_CONSTANT = 69;
+    public static final int CLIENT_PLAYER_MAGIC_CONSTANT = 42;
 
     /// Orbiter-generated resources
     public static final File GENERATED_ORBITER = new File(FlareConstants.GENERATED_FOLDER, NAMESPACE);

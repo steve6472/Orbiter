@@ -44,7 +44,7 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape) impl
         // sphere(radius)
         SHAPE_CONSTRUCTORS.put("sphere", obj -> new SphereCollisionShape(obj.params()[0] * 0.5f));
         // capsule(radius, height)
-        SHAPE_CONSTRUCTORS.put("capsule", obj -> new CapsuleCollisionShape(obj.params()[0] * 0.5f, obj.params()[1] * 0.5f));
+        SHAPE_CONSTRUCTORS.put("capsule", obj -> new CapsuleCollisionShape(obj.params()[0] * 0.5f, obj.params()[1] - obj.params()[0]));
         // box(x, y, z)
         SHAPE_CONSTRUCTORS.put("box", obj -> new BoxCollisionShape(obj.params()[0] * 0.5f, obj.params()[1] * 0.5f, obj.params()[2] * 0.5f));
         // cone(radius, height, axis)   cone(radius, height, [1])

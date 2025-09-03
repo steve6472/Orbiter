@@ -33,7 +33,11 @@
                             style: "moondust:button/normal"
                         },
                         {
-                            text: "Log Packets:",
+                            text: "Log Packets:\n\n",
+                            style: "moondust:button/normal"
+                        },
+                        {
+                            text: "Eye Height:",
                             style: "moondust:button/normal"
                         }
                     ],
@@ -139,6 +143,15 @@
                     sprite_offset: [100, 1],
 
                     checkbox: {}
+                },
+                {
+                    name: "eye_height",
+                    bounds: ["100%", 13],
+                    position: [0, 102],
+
+                    text_field: {
+                        ghost_text: "default: 1.5"
+                    }
                 }
             ]
         }

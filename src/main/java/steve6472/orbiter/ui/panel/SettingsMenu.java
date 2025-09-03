@@ -14,6 +14,7 @@ import steve6472.moondust.view.property.StringProperty;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.ui.GlobalProperties;
 import steve6472.orbiter.ui.MDUtil;
 
 /**
@@ -37,6 +38,17 @@ public class SettingsMenu extends PanelView
         bindSetting(VisualSettings.USERNAME, findProperty("username:text"));
         bindSetting(Settings.TRACK_BANDWIDTH, findProperty("track_bandwidth:checked"));
         bindSetting(Settings.LOG_PACKETS, findProperty("log_packets:checked"));
+
+        StringProperty eyeHeight = findProperty("eye_height:text");
+        eyeHeight.set(GlobalProperties.EYE_EIGHT.get().toString());
+
+        eyeHeight.addListener((_, _, nVal) ->
+        {
+            if (MathUtil.isDecimal(nVal) && !nVal.isEmpty())
+            {
+                GlobalProperties.EYE_EIGHT.set(Double.parseDouble(nVal));
+            }
+        });
 
         ((BooleanProperty) findProperty("username:enabled")).set(!OrbiterApp.getInstance().getNetwork().lobby().isLobbyOpen());
 

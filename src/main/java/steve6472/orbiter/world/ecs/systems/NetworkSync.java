@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import steve6472.core.log.Log;
+import steve6472.orbiter.network.api.ConnectedUser;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.packets.game.clientbound.UpdateEntityComponents;
 import steve6472.orbiter.world.NetworkSerialization;
@@ -103,6 +104,16 @@ public class NetworkSync extends IteratingProfiledSystem
         }
 
         if (!components.isEmpty() || toRemove.length != 0)
-            network.connections().broadcastPacket(new UpdateEntityComponents(uuid, components, toRemove));
+        {
+            UpdateEntityComponents packet = new UpdateEntityComponents(uuid, components, toRemove);
+            for (ConnectedUser connectedUser : network.lobby().getConnectedUsers())
+            {
+                // Otherwise we'd be sending the players position back to them
+                // Player stuff may have to be handled in a different way
+                if (connectedUser.user().uuid().equals(uuid))
+                    continue;
+                network.connections().sendPacket(connectedUser.user(), packet);
+            }
+        }
     }
 }
