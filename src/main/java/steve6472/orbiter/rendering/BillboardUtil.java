@@ -32,8 +32,12 @@ public class BillboardUtil
                 {
                     Vector3f vel = new Vector3f(velocity.x, velocity.y, velocity.z);
                     vel.normalize();
+                    Quaternionf q = new Quaternionf().rotationTo(new Vector3f(1, 0, 0), vel);
+                    Vector3f localCam = mat.transformPosition(new Vector3f(cameraPos));
 
-                    Quaternionf quaternionf = new Quaternionf().rotateTo(new Vector3f(1f, 0, 0), vel);
+                    float rx = (float) Math.atan2(-localCam.y, localCam.z);
+
+                    Quaternionf quaternionf = new Quaternionf().rotationXYZ(rx, 0, 0).premul(q);
                     mat.rotate(quaternionf);
                 }
             }

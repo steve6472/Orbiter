@@ -6,7 +6,6 @@ import steve6472.orbiter.orlang.Orlang;
 import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.orlang.OrlangValue;
 import steve6472.orbiter.orlang.codec.OrCode;
-import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.particle.components.MaxAge;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 import steve6472.orbiter.world.particle.ParticleComponents;
@@ -50,10 +49,19 @@ public class ParticleUpdateEnvSystem extends IteratingProfiledSystem
             Orlang.interpreter.interpret(tick, env);
         }
 
+        env.curves.forEach((name, curve) -> curve.calculate(name, env));
+
         OrCode frame = env.expressions.get("frame");
         if (frame != null)
         {
-            Orlang.interpreter.interpret(frame, env);
+            try
+            {
+                Orlang.interpreter.interpret(frame, env);
+            } catch (Exception ex)
+            {
+                System.err.println(frame.codeStr());
+                throw ex;
+            }
         }
     }
 }
