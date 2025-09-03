@@ -48,12 +48,12 @@ public class PhysicsRayTrace
             Vector3f hitObjPos = Convert.physGetToJoml(hitObj::getPhysicsLocation);
             Quaternionf hitObjRot = Convert.physGetToJomlQuat(hitObj::getPhysicsRotation);
 
-            DebugRender.addDebugObjectForFrame(DebugRender.lineCube(new Vector3f(), 0.2f, DebugRender.DARK_ORANGE), new Matrix4f().translate(hitObjPos).rotate(hitObjRot));
+//            DebugRender.addDebugObjectForFrame(DebugRender.lineCube(new Vector3f(), 0.2f, DebugRender.DARK_ORANGE), new Matrix4f().translate(hitObjPos).rotate(hitObjRot));
 
             Vector3f hitPosition = new Vector3f(player.getEyePos()).add(new Vector3f(direction).mul(res.getHitFraction() * distance));
 
             DebugRender.addDebugObjectForFrame(
-                DebugRender.lineSphere(0.02f, 3, DebugRender.IVORY),
+                DebugRender.lineSphere(0.015f, 4, DebugRender.IVORY),
                 new Matrix4f().translate(hitPosition));
         });
     }
@@ -74,6 +74,29 @@ public class PhysicsRayTrace
     {
         rayTraceList.clear();
         rayTrace(position, direction, distance, rayTraceList);
+        if (rayTraceList.isEmpty())
+            return Optional.empty();
+        if (excludeClientPlayer)
+        {
+            for (PhysicsRayTestResult physicsRayTestResult : rayTraceList)
+            {
+                PhysicsCollisionObject collisionObject = physicsRayTestResult.getCollisionObject();
+                if (collisionObject.userIndex() == Constants.CLIENT_PLAYER_MAGIC_CONSTANT)
+                {
+                    continue;
+                }
+                return Optional.of(physicsRayTestResult);
+            }
+            return Optional.empty();
+        }
+        return Optional.of(rayTraceList.getFirst());
+    }
+
+    public Optional<PhysicsRayTestResult> rayTraceGetFirst(Camera camera, float distance, boolean excludeClientPlayer)
+    {
+        Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
+        rayTraceList.clear();
+        rayTrace(camera.viewPosition, direction, distance, rayTraceList);
         if (rayTraceList.isEmpty())
             return Optional.empty();
         if (excludeClientPlayer)

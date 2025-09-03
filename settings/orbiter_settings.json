@@ -2,6 +2,10 @@
   "orbiter:fov": 80.0,
   "orbiter:log_packets": false,
   "orbiter:multiplayer_beckend": "dedicated",
+  "orbiter:physics_render_characters": false,
+  "orbiter:physics_render_ghosts": false,
+  "orbiter:physics_render_joints": true,
+  "orbiter:physics_render_rigidbody": false,
   "orbiter:sensitivity": 0.15,
   "orbiter:track_bandwidth": true,
   "orbiter:ui_scale": 3

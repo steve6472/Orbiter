@@ -97,7 +97,6 @@ public class World implements EntityControl, EntityModify
 
     public void tick(float frameTime)
     {
-
         Set<UUID> accessed = new HashSet<>();
 
         for (PhysicsRigidBody body : physics.getRigidBodyList())

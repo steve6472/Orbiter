@@ -23,8 +23,14 @@ public class Settings extends SettingRegister
     public static final FloatSetting SENSITIVITY = registerFloat("sensitivity", 0.15f);
     public static final IntSetting UI_SCALE = registerInt("ui_scale", 2);
     public static final EnumSetting<MultiplayerBackend> MULTIPLAYER_BACKEND = registerEnum("multiplayer_beckend", MultiplayerBackend.DEDICATED);
+
     public static final BoolSetting TRACK_BANDWIDTH = registerBool("track_bandwidth", false);
     public static final BoolSetting LOG_PACKETS = registerBool("log_packets", false);
+
+    public static final BoolSetting ENABLE_CHARACTERS = registerBool("physics_render_characters", false);
+    public static final BoolSetting ENABLE_RIGIDBODY = registerBool("physics_render_rigidbody", false);
+    public static final BoolSetting ENABLE_GHOSTS = registerBool("physics_render_ghosts", false);
+    public static final BoolSetting ENABLE_JOINTS = registerBool("physics_render_joints", true);
 
     public enum MultiplayerBackend implements StringValue
     {

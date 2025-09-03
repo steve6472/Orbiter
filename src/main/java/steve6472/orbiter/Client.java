@@ -83,6 +83,11 @@ public class Client
         return clientUUID;
     }
 
+    public PhysicsRayTrace getRayTrace()
+    {
+        return rayTrace;
+    }
+
     public void tickClient(float frameTime)
     {
         if (world != null)

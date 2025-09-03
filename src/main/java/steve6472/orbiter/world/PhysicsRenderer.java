@@ -13,6 +13,7 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import steve6472.flare.render.debug.objects.DebugHemisphere;
 import steve6472.orbiter.Convert;
+import steve6472.orbiter.settings.Settings;
 
 import static steve6472.flare.render.debug.DebugRender.*;
 
@@ -23,25 +24,20 @@ import static steve6472.flare.render.debug.DebugRender.*;
  */
 public class PhysicsRenderer
 {
-    public static final boolean ENABLE_CHARACTERS = false;
-    public static final boolean ENABLE_RIGIDBODY = true;
-    public static final boolean ENABLE_GHOSTS = false;
-    public static final boolean ENABLE_JOINTS = true;
-
     public static final boolean ENABLE_CENTER = true;
 
     public static void render(PhysicsSpace space)
     {
-        if (ENABLE_RIGIDBODY)
+        if (Settings.ENABLE_RIGIDBODY.get())
             space.getRigidBodyList().forEach(PhysicsRenderer::renderBody);
 
-        if (ENABLE_GHOSTS)
+        if (Settings.ENABLE_GHOSTS.get())
             space.getGhostObjectList().forEach(PhysicsRenderer::renderGhost);
 
-        if (ENABLE_CHARACTERS)
+        if (Settings.ENABLE_CHARACTERS.get())
             space.getCharacterList().forEach(PhysicsRenderer::renderCharacter);
 
-        if (ENABLE_JOINTS)
+        if (Settings.ENABLE_JOINTS.get())
             space.getJointList().forEach(PhysicsRenderer::renderJoint);
     }
 
@@ -132,11 +128,6 @@ public class PhysicsRenderer
         float radius = shape.getRadius();
         float height = shape.getHeight();
         int quality = 13;
-
-        Vector3f vector3f = bodyTransform.transformPosition(new Vector3f());
-//        System.out.println(vector3f.y + " " + height + " " + (height / 2f + radius) + " " + radius);
-        addDebugObjectForFrame(cross(vector3f, 0.5f, AQUA));
-        addDebugObjectForFrame(cross(new Vector3f(0, height / 2f + radius, 0), 0.5f, DARK_VIOLET));
 
         // TODO: fix it in Flare actually
 //        addDebugObjectForFrame(lineCapsule(height, radius, quality, KHAKI), bodyTransform);
