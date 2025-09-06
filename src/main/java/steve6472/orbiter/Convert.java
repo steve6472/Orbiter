@@ -118,6 +118,11 @@ public class Convert
         return jomlToPhys(vec, new com.jme3.math.Vector3f());
     }
 
+    public static com.jme3.math.Vector3f phys(float x, float y, float z)
+    {
+        return new com.jme3.math.Vector3f(x, y, z);
+    }
+
     public static com.jme3.math.Quaternion jomlToPhys(Quaternionf quat)
     {
         return jomlToPhys(quat, new com.jme3.math.Quaternion());

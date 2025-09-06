@@ -23,10 +23,10 @@ public class Client
 {
     private static final Logger LOGGER = Log.getLogger(Client.class);
     private final UUID clientUUID;
+    private final PhysicsRayTrace rayTrace;
     private Player player;
     private Camera camera;
     private World world;
-    private PhysicsRayTrace rayTrace;
 
     public Client()
     {
@@ -46,7 +46,6 @@ public class Client
         if (world != null)
         {
             world.debugRender(frameInfo.frameTime());
-            rayTrace.onRender(frameInfo.frameTime());
         }
     }
 
@@ -60,7 +59,7 @@ public class Client
         this.world = world;
         if (world != null)
         {
-            this.player = new PCPlayer(clientUUID);
+            this.player = new PCPlayer(clientUUID, this);
             world.ecsEngine().addEntity(player.ecsEntity());
         } else
         {

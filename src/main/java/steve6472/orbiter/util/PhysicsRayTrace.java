@@ -2,17 +2,12 @@ package steve6472.orbiter.util;
 
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.PhysicsRayTestResult;
-import org.joml.Matrix4f;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import steve6472.core.util.MathUtil;
 import steve6472.flare.Camera;
-import steve6472.flare.render.debug.DebugRender;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
-import steve6472.orbiter.OrbiterApp;
-import steve6472.orbiter.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,31 +28,6 @@ public class PhysicsRayTrace
         this.client = client;
     }
 
-    public void onRender(float frameTime)
-    {
-        Player player = client.player();
-        Camera camera = OrbiterApp.getInstance().camera();
-        Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
-
-        float distance = 16;
-
-        Optional<PhysicsRayTestResult> physicsRayTestResult = rayTraceGetFirst(new Vector3f(player.getEyePos()), direction, distance, true);
-        physicsRayTestResult.ifPresent(res ->
-        {
-            PhysicsCollisionObject hitObj = res.getCollisionObject();
-            Vector3f hitObjPos = Convert.physGetToJoml(hitObj::getPhysicsLocation);
-            Quaternionf hitObjRot = Convert.physGetToJomlQuat(hitObj::getPhysicsRotation);
-
-//            DebugRender.addDebugObjectForFrame(DebugRender.lineCube(new Vector3f(), 0.2f, DebugRender.DARK_ORANGE), new Matrix4f().translate(hitObjPos).rotate(hitObjRot));
-
-            Vector3f hitPosition = new Vector3f(player.getEyePos()).add(new Vector3f(direction).mul(res.getHitFraction() * distance));
-
-            DebugRender.addDebugObjectForFrame(
-                DebugRender.lineSphere(0.015f, 4, DebugRender.IVORY),
-                new Matrix4f().translate(hitPosition));
-        });
-    }
-
     /// @param position Starting position
     /// @param direction Normalized vector
     /// @param distance Max distance
@@ -76,20 +46,20 @@ public class PhysicsRayTrace
         rayTrace(position, direction, distance, rayTraceList);
         if (rayTraceList.isEmpty())
             return Optional.empty();
-        if (excludeClientPlayer)
+
+        if (!excludeClientPlayer)
+            return Optional.of(rayTraceList.getFirst());
+
+        for (PhysicsRayTestResult physicsRayTestResult : rayTraceList)
         {
-            for (PhysicsRayTestResult physicsRayTestResult : rayTraceList)
+            PhysicsCollisionObject collisionObject = physicsRayTestResult.getCollisionObject();
+            if (collisionObject.userIndex() == Constants.CLIENT_PLAYER_MAGIC_CONSTANT)
             {
-                PhysicsCollisionObject collisionObject = physicsRayTestResult.getCollisionObject();
-                if (collisionObject.userIndex() == Constants.CLIENT_PLAYER_MAGIC_CONSTANT)
-                {
-                    continue;
-                }
-                return Optional.of(physicsRayTestResult);
+                continue;
             }
-            return Optional.empty();
+            return Optional.of(physicsRayTestResult);
         }
-        return Optional.of(rayTraceList.getFirst());
+        return Optional.empty();
     }
 
     public Optional<PhysicsRayTestResult> rayTraceGetFirst(Camera camera, float distance, boolean excludeClientPlayer)
@@ -97,21 +67,22 @@ public class PhysicsRayTrace
         Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
         rayTraceList.clear();
         rayTrace(camera.viewPosition, direction, distance, rayTraceList);
+
         if (rayTraceList.isEmpty())
             return Optional.empty();
-        if (excludeClientPlayer)
+
+        if (!excludeClientPlayer)
+            return Optional.of(rayTraceList.getFirst());
+
+        for (PhysicsRayTestResult physicsRayTestResult : rayTraceList)
         {
-            for (PhysicsRayTestResult physicsRayTestResult : rayTraceList)
+            PhysicsCollisionObject collisionObject = physicsRayTestResult.getCollisionObject();
+            if (collisionObject.userIndex() == Constants.CLIENT_PLAYER_MAGIC_CONSTANT)
             {
-                PhysicsCollisionObject collisionObject = physicsRayTestResult.getCollisionObject();
-                if (collisionObject.userIndex() == Constants.CLIENT_PLAYER_MAGIC_CONSTANT)
-                {
-                    continue;
-                }
-                return Optional.of(physicsRayTestResult);
+                continue;
             }
-            return Optional.empty();
+            return Optional.of(physicsRayTestResult);
         }
-        return Optional.of(rayTraceList.getFirst());
+        return Optional.empty();
     }
 }

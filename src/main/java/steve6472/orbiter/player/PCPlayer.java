@@ -12,6 +12,7 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Matrix3f;
 import com.jme3.math.Transform;
 import jme3utilities.math.MyMath;
+import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -19,6 +20,7 @@ import steve6472.core.registry.Key;
 import steve6472.core.util.MathUtil;
 import steve6472.flare.Camera;
 import steve6472.flare.input.UserInput;
+import steve6472.flare.render.debug.DebugRender;
 import steve6472.flare.vr.VrInput;
 import steve6472.orbiter.*;
 import steve6472.orbiter.settings.Keybinds;
@@ -51,17 +53,21 @@ public class PCPlayer implements Player
     public static final float PENETRATION_CONSTANT = 0.19f;
     public static final int JUMP_COOLDOWN = 4;
 
+    private final Client client;
     public final PhysicsCharacter character;
     public final Entity ecsEntity;
     private float jumpCooldown = 0;
 
-    public static float REACH = 3;
+    public static float REACH = 2;
+    public static float STRENGTH = 1;
+
     private float holdPointDistance = REACH;
     private final PhysicsRigidBody holdPoint;
     private SixDofSpringJoint holdJoint;
 
-    public PCPlayer(UUID uuid)
+    public PCPlayer(UUID uuid, Client client)
     {
+        this.client = client;
         ecsEntity = new Entity();
         List<Component> components = Registries.ENTITY_BLUEPRINT.get(CLIENT_PLAYER_BLUEPRINT).createEntityComponents(uuid);
         for (Component component : components)
@@ -96,6 +102,8 @@ public class PCPlayer implements Player
         body.setGravity(new com.jme3.math.Vector3f(0, 0, 0));
         body.setLinearDamping(1);
         body.setAngularDamping(1);
+        body.setMass(STRENGTH);
+        body.setUserIndex2(~Constants.PhysicsFlags.NEVER_DEBUG_RENDER);
         return body;
     }
 
@@ -140,6 +148,32 @@ public class PCPlayer implements Player
 
     @Override
     public void handleInput(UserInput userInput, VrInput vrInput, Camera camera, float frameTime)
+    {
+        processMovementAndCamera(userInput, camera);
+
+        if (userInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT))
+        {
+            startHolding(camera);
+        } else
+        {
+            endHolding();
+        }
+
+        Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
+        updateHoldPoint(camera, direction);
+
+        Optional<PhysicsRayTestResult> physicsRayTestResult = client.getRayTrace().rayTraceGetFirst(getEyePos(), direction, REACH, true);
+        physicsRayTestResult.ifPresent(res ->
+        {
+            Vector3f hitPosition = new Vector3f(getEyePos()).add(new Vector3f(direction).mul(res.getHitFraction() * REACH));
+
+            DebugRender.addDebugObjectForFrame(
+                DebugRender.lineSphere(0.015f, 4, DebugRender.IVORY),
+                new Matrix4f().translate(hitPosition));
+        });
+    }
+
+    private void processMovementAndCamera(UserInput userInput, Camera camera)
     {
         character.setWalkDirection(jomlToPhys(new Vector3f()));
 
@@ -192,27 +226,27 @@ public class PCPlayer implements Player
         camera.updateViewMatrix();
 
         applyMotion(new Vector3f((float) x, 0, (float) z));
-
-        if (userInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT))
-        {
-            startHolding();
-        } else
-        {
-            endHolding();
-        }
-
-        Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
-        holdPoint.setPhysicsLocation(new com.jme3.math.Vector3f(Convert.jomlToPhys(camera.viewPosition)).add(Convert.jomlToPhys(direction).mult(holdPointDistance)));
     }
 
-    private void startHolding()
+    private void updateHoldPoint(Camera camera, Vector3f direction)
+    {
+        holdPoint.setPhysicsLocation(Convert.jomlToPhys(camera.viewPosition).add(Convert.jomlToPhys(direction).mult(holdPointDistance)));
+
+        if (holdJoint == null)
+            return;
+
+        com.jme3.math.Vector3f pivotA = holdJoint.getPivotA(null);
+        MyMath.transform(holdJoint.getBodyA().getTransform(null), pivotA, pivotA);
+        if (Convert.jomlToPhys(camera.viewPosition).distance(pivotA) > REACH)
+            endHolding();
+    }
+
+    private void startHolding(Camera camera)
     {
         // Already holding
         if (holdJoint != null)
             return;
 
-        Client client = OrbiterApp.getInstance().getClient();
-        Camera camera = OrbiterApp.getInstance().camera();
         Optional<PhysicsRayTestResult> resultOpt = client.getRayTrace().rayTraceGetFirst(camera, REACH, true);
         resultOpt.ifPresent(result ->
         {
@@ -221,6 +255,7 @@ public class PCPlayer implements Player
                 return;
             if (collisionObject == holdPoint)
                 return;
+
             collisionObject.activate(true);
             Transform invertTransform = collisionObject.getTransform(new Transform()).invert();
             Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
@@ -242,7 +277,6 @@ public class PCPlayer implements Player
             return;
 
         holdJoint.destroy();
-        Client client = OrbiterApp.getInstance().getClient();
         client.getWorld().physics().remove(holdJoint);
         holdJoint = null;
         holdPointDistance = REACH;

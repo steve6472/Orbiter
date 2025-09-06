@@ -46,7 +46,7 @@ public class World implements EntityControl, EntityModify
 
     public World()
     {
-        physics = new PhysicsSpace(PhysicsSpace.BroadphaseType.DBVT);
+        physics = new PhysicsSpace(Convert.phys(-1000, -1000, -1000), Convert.phys(1000, 1000, 1000), PhysicsSpace.BroadphaseType.DBVT);
         physics.useDeterministicDispatch(true);
         ecsEngine = new Engine();
         particleEngine = new PooledEngine(MAX_PARTICLES >> 4, MAX_PARTICLES, MAX_PARTICLES >> 4, MAX_PARTICLES);
@@ -160,6 +160,7 @@ public class World implements EntityControl, EntityModify
         CollisionShape planeShape = new PlaneCollisionShape(plane);
         float mass = PhysicsBody.massForStatic;
         PhysicsRigidBody floor = new PhysicsRigidBody(planeShape, mass);
+        floor.setUserIndex2(~Constants.PhysicsFlags.NEVER_DEBUG_RENDER);
         physics.addCollisionObject(floor);
     }
 }

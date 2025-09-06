@@ -1,5 +1,6 @@
 package steve6472.orbiter;
 
+import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.mojang.serialization.Codec;
 import steve6472.core.registry.Key;
 import steve6472.flare.FlareConstants;
@@ -41,6 +42,18 @@ public final class Constants
         Key IN_GAME_MENU = key("panel/in_game/menu");
         Key IN_GAME_CHAT = key("panel/in_game/chat");
         Key IN_GAME_ECS_PROFILER = key("panel/in_game/ecs_profiler");
+    }
+
+    /// Set in userIndex2 <br>
+    /// When setting flags on a body, the ORed result has to be negated <br>
+    /// Because for some dumb reason the default value of the index is -1 <br>
+    /// Checking for the flags requires !BitUtil.isBitSet(...) note the **!**
+    public interface PhysicsFlags
+    {
+        /// Override debug physics rendering to never debug render this object <br>
+        /// Should be used wisely! <br>
+        /// Can still be ignored by a boolean flag in code
+        int NEVER_DEBUG_RENDER = 0x1;
     }
 
     public static Key key(String id)

@@ -11,7 +11,8 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import steve6472.flare.render.debug.objects.DebugHemisphere;
+import steve6472.core.util.BitUtil;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.settings.Settings;
 
@@ -25,6 +26,9 @@ import static steve6472.flare.render.debug.DebugRender.*;
 public class PhysicsRenderer
 {
     public static final boolean ENABLE_CENTER = true;
+
+    /// Should be used only when debugging
+    public static boolean IGNORE_NEVER_DEBUG_RENDER = false;
 
     public static void render(PhysicsSpace space)
     {
@@ -43,6 +47,9 @@ public class PhysicsRenderer
 
     private static void renderBody(PhysicsRigidBody body)
     {
+        if (!IGNORE_NEVER_DEBUG_RENDER && !BitUtil.isBitSet(body.userIndex2(), Constants.PhysicsFlags.NEVER_DEBUG_RENDER >> 1))
+            return;
+
         CollisionShape collisionShape = body.getCollisionShape();
         Matrix4f matrix4f = Convert.physGetTransformToJoml(body, new Matrix4f());
 
@@ -54,6 +61,9 @@ public class PhysicsRenderer
 
     private static void renderGhost(PhysicsGhostObject body)
     {
+        if (!IGNORE_NEVER_DEBUG_RENDER && !BitUtil.isBitSet(body.userIndex2(), Constants.PhysicsFlags.NEVER_DEBUG_RENDER >> 1))
+            return;
+
         CollisionShape collisionShape = body.getCollisionShape();
         Matrix4f matrix4f = Convert.physGetTransformToJoml(body, new Matrix4f());
 
@@ -67,6 +77,9 @@ public class PhysicsRenderer
 
     private static void renderCharacter(PhysicsCharacter body)
     {
+        if (!IGNORE_NEVER_DEBUG_RENDER && !BitUtil.isBitSet(body.userIndex2(), Constants.PhysicsFlags.NEVER_DEBUG_RENDER >> 1))
+            return;
+
         CollisionShape collisionShape = body.getCollisionShape();
         Matrix4f matrix4f = Convert.physGetTransformToJoml(body, new Matrix4f());
 
@@ -129,11 +142,7 @@ public class PhysicsRenderer
         float height = shape.getHeight();
         int quality = 13;
 
-        // TODO: fix it in Flare actually
-//        addDebugObjectForFrame(lineCapsule(height, radius, quality, KHAKI), bodyTransform);
-        addDebugObjectForFrame(lineCylinder(height / 2f, radius, quality, KHAKI), bodyTransform);
-        addDebugObjectForFrame(new DebugHemisphere(radius, height / 2f, quality, true, KHAKI), bodyTransform);
-        addDebugObjectForFrame(new DebugHemisphere(radius, height / 2f, quality, false, KHAKI), bodyTransform);
+        addDebugObjectForFrame(lineCapsule(height, radius, quality, KHAKI), bodyTransform);
     }
 
     private static void renderSphere(SphereCollisionShape shape, Matrix4f bodyTransform)
