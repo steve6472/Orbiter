@@ -5,8 +5,6 @@ import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
 import com.mojang.datafixers.util.Pair;
 import org.joml.Matrix4f;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 import steve6472.core.registry.Key;
 import steve6472.flare.Camera;
 import steve6472.flare.assets.model.Model;
@@ -15,14 +13,10 @@ import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.render.SBOTransfromArray;
 import steve6472.flare.render.StaticModelRenderImpl;
 import steve6472.orbiter.Client;
-import steve6472.orbiter.orlang.Orlang;
 import steve6472.orbiter.orlang.OrlangEnvironment;
-import steve6472.orbiter.orlang.codec.OrCode;
 import steve6472.orbiter.world.World;
-import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.particle.components.*;
 import steve6472.orbiter.world.particle.ParticleComponents;
-import steve6472.orbiter.world.ecs.components.physics.Rotation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,15 +86,7 @@ public class StaticParticleModelRender extends StaticModelRenderImpl
     private Pair<Model, SBOTransfromArray<Model>.Area> processEntity(Entity entity, Model lastModel, SBOTransfromArray<Model>.Area lastArea, SBOTransfromArray<Model> sboTransfromArray, Camera camera)
     {
         ParticleModel model = ParticleComponents.MODEL.get(entity);
-        OrlangEnvironment env = ParticleComponents.PARTICLE_ENVIRONMENT.get(entity);
-
-        // Update curves each frame
-        env.curves.forEach((name, curve) -> curve.calculate(name, env));
-        OrCode frame = env.expressions.get("frame");
-        if (frame != null)
-        {
-            Orlang.interpreter.interpret(frame, env);
-        }
+        OrlangEnvironment env = ParticleRenderCommon.updateEnvironment(entity);
 
         if (lastArea == null || lastModel != model.model)
         {
@@ -108,58 +94,9 @@ public class StaticParticleModelRender extends StaticModelRenderImpl
             lastModel = model.model;
         }
 
-        LocalSpace localSpace = ParticleComponents.LOCAL_SPACE.get(entity);
-
         Matrix4f primitiveTransform = new Matrix4f();
-        Vector3f position = new Vector3f();
 
-        if (ParticleComponents.POSITION.has(entity))
-        {
-            Position particlePos = ParticleComponents.POSITION.get(entity);
-            if (localSpace != null && localSpace.position)
-            {
-                ParticleFollowerId follower = ParticleComponents.PARTICLE_FOLLOWER.get(entity);
-                var holderPosition = Components.POSITION.get(follower.entity);
-                if (holderPosition != null)
-                {
-                    position.add(holderPosition.x(), holderPosition.y(), holderPosition.z());
-                }
-            }
-            position.add(particlePos.x, particlePos.y, particlePos.z);
-        }
-
-        ParticleBillboard particleBillboard = ParticleComponents.BILLBOARD.get(entity);
-        if (particleBillboard != null)
-        {
-            Matrix4f matrix4f = BillboardUtil.makeBillboard(position, entity, camera, particleBillboard);
-            primitiveTransform.mul(matrix4f);
-        } else
-        {
-            primitiveTransform.translate(position.x, position.y, position.z);
-        }
-
-        if (localSpace != null && localSpace.rotation)
-        {
-            ParticleFollowerId follower = ParticleComponents.PARTICLE_FOLLOWER.get(entity);
-            Rotation holderRotation = Components.ROTATION.get(follower.entity);
-            if (holderRotation != null)
-            {
-                primitiveTransform.rotate(new Quaternionf(holderRotation.x(), holderRotation.y(), holderRotation.z(), holderRotation.w()));
-            }
-        }
-
-        var rotation = ParticleComponents.ROTATION.get(entity);
-        if (rotation != null)
-        {
-            BillboardUtil.applySpin(primitiveTransform, (float) Math.toRadians(rotation.rotation));
-        }
-
-        if (ParticleComponents.SCALE.has(entity))
-        {
-            Scale scale = ParticleComponents.SCALE.get(entity);
-            scale.scale.evaluate(env);
-            primitiveTransform.scale(scale.scale.fx(), scale.scale.fy(), scale.scale.fz());
-        }
+        ParticleRenderCommon.updateTransformMat(primitiveTransform, entity, camera, env);
 
         lastArea.updateTransform(primitiveTransform);
 
