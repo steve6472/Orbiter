@@ -3,58 +3,74 @@ package steve6472.orbiter.rendering;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.mojang.datafixers.util.Pair;
-import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
-import steve6472.flare.Camera;
 import steve6472.flare.FlareConstants;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.VkBuffer;
 import steve6472.flare.assets.model.Model;
 import steve6472.flare.assets.model.blockbench.ErrorModel;
 import steve6472.flare.core.FrameInfo;
+import steve6472.flare.pipeline.builder.PipelineConstructor;
 import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.render.common.CommonBuilder;
 import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.struct.Struct;
+import steve6472.flare.struct.StructDef;
 import steve6472.flare.struct.def.Push;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.orlang.OrlangEnvironment;
+import steve6472.orbiter.rendering.particle.Tint;
+import steve6472.orbiter.rendering.particle.Transform;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.particle.ParticleComponents;
 import steve6472.orbiter.world.particle.components.ParticleModel;
-import steve6472.orbiter.world.particle.components.Position;
 import steve6472.orbiter.world.particle.components.RenderPipeline;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 
-import static org.lwjgl.vulkan.VK10.*;
+import static org.lwjgl.vulkan.VK10.VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
+import static org.lwjgl.vulkan.VK10.VK_SHADER_STAGE_VERTEX_BIT;
 
 /**
  * Created by steve6472
  * Date: 8/31/2024
  * Project: Flare <br>
  */
-public final class ModelUnshadedTintedRenderSystem extends CommonRenderSystem
+public class CommonParticleRenderSystem<E extends SBOModelArray.Entry> extends CommonRenderSystem
 {
-    private final SBOTintedTransfromArray<Model> transfromArray = new SBOTintedTransfromArray<>(ErrorModel.VK_STATIC_INSTANCE);
+    private final SBOModelArray<Model, E> transfromArray;
     private final Client client;
-    private final RenderPipeline.Enum renderPipeline;
+    private final Family family;
+    private final RenderPipeline.Enum particlePipeline;
+    private final StructDef struct;
 
-    public ModelUnshadedTintedRenderSystem(MasterRenderer masterRenderer, Client client, boolean additive)
+    public CommonParticleRenderSystem(
+        MasterRenderer masterRenderer,
+        PipelineConstructor pipeline,
+        Client client,
+        Family family,
+        StructDef struct,
+        RenderPipeline.Enum particlePipeline,
+        Supplier<E> constructor,
+        IntFunction<Object[]> entryArray)
     {
         super(masterRenderer,
-            additive ? OrbiterPipelines.MODEL_UNSHADED_TINTED_ADDITIVE : OrbiterPipelines.MODEL_UNSHADED_TINTED,
+            pipeline,
             CommonBuilder
                 .create()
                 .entryImage(FlareRegistries.ATLAS.get(FlareConstants.ATLAS_BLOCKBENCH).getSampler())
-                .entrySBO(OrbiterSBO.MODEL_TINT_ENTRIES.sizeof(), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, VK_SHADER_STAGE_VERTEX_BIT)
+                .entrySBO(struct.sizeof(), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, VK_SHADER_STAGE_VERTEX_BIT)
         );
-
         this.client = client;
-        renderPipeline = additive ? RenderPipeline.Enum.MODEL_UNSHADED_TINTED_ADDITIVE : RenderPipeline.Enum.MODEL_UNSHADED_TINTED;
+        this.family = family;
+        this.particlePipeline = particlePipeline;
+        this.struct = struct;
+
+        transfromArray = new SBOModelArray<>(ErrorModel.VK_STATIC_INSTANCE, constructor, entryArray);
     }
 
     @Override
@@ -82,19 +98,17 @@ public final class ModelUnshadedTintedRenderSystem extends CommonRenderSystem
         transfromArray.start();
         updateTransformArray(transfromArray, frameInfo);
 
-        var sbo = OrbiterSBO.MODEL_TINT_ENTRIES.create(transfromArray.getTransformsArray());
-        buffer.writeToBuffer(OrbiterSBO.MODEL_TINT_ENTRIES::memcpy, sbo);
+        var sbo = struct.create(transfromArray.getEntriesArray());
+        buffer.writeToBuffer(struct::memcpy, sbo);
     }
 
-    private static final Family PARTICLE_FAMILY = Family.all(ParticleModel.class, Position.class, OrlangEnvironment.class).get();
-
-    public void updateTransformArray(SBOTintedTransfromArray<Model> sboTransfromArray, FrameInfo frameInfo)
+    public void updateTransformArray(SBOModelArray<Model, E> sboTransfromArray, FrameInfo frameInfo)
     {
         World world = client.getWorld();
         if (world == null)
             return;
 
-        ImmutableArray<Entity> particle = world.particleEngine().getEntitiesFor(PARTICLE_FAMILY);
+        ImmutableArray<Entity> particle = world.particleEngine().getEntitiesFor(family);
         if (particle.size() == 0)
             return;
 
@@ -102,7 +116,7 @@ public final class ModelUnshadedTintedRenderSystem extends CommonRenderSystem
         for (Entity entity : particle)
         {
             RenderPipeline renderPipeline = ParticleComponents.RENDER_PIPELINE.get(entity);
-            if ((renderPipeline != null && renderPipeline.value == this.renderPipeline))
+            if ((renderPipeline != null && renderPipeline.value == this.particlePipeline) || (renderPipeline == null && this.particlePipeline == RenderPipeline.Enum.MODEL))
                 list.add(entity);
         }
 
@@ -118,46 +132,21 @@ public final class ModelUnshadedTintedRenderSystem extends CommonRenderSystem
         Model lastModel = ParticleComponents.MODEL.get(list.getFirst()).model;
         for (Entity entity : list)
         {
-            Pair<Model, SBOTintedTransfromArray<Model>.Area> modelAreaPair = processEntity(entity, lastModel, lastArea, sboTransfromArray, frameInfo.camera());
-            lastModel = modelAreaPair.getFirst();
-            lastArea = modelAreaPair.getSecond();
-        }
-    }
+            ParticleModel model = ParticleComponents.MODEL.get(entity);
+            OrlangEnvironment env = ParticleRenderCommon.updateEnvironment(entity);
 
-    private Pair<Model, SBOTintedTransfromArray<Model>.Area> processEntity(Entity entity, Model lastModel, SBOTintedTransfromArray<Model>.Area lastArea, SBOTintedTransfromArray<Model> sboTransfromArray, Camera camera)
-    {
-        ParticleModel model = ParticleComponents.MODEL.get(entity);
-        OrlangEnvironment env = ParticleRenderCommon.updateEnvironment(entity);
-
-        if (lastArea == null || lastModel != model.model)
-        {
-            lastArea = sboTransfromArray.getAreaByType(model.model);
-            lastModel = model.model;
-        }
-
-        Matrix4f primitiveTransform = lastArea.getTransform();
-        ParticleRenderCommon.updateTransformMat(primitiveTransform, entity, camera, env);
-
-        var tintrgba = ParticleComponents.TINT_RGBA.get(entity);
-        if (tintrgba != null)
-        {
-            lastArea.getTint().set(
-                tintrgba.r.evaluateAndGet(env),
-                tintrgba.g.evaluateAndGet(env),
-                tintrgba.b.evaluateAndGet(env),
-                tintrgba.a.evaluateAndGet(env)
-            );
-        } else
-        {
-            var tintGradient = ParticleComponents.TINT_GRADIENT.get(entity);
-            if (tintGradient != null)
+            if (lastArea == null || lastModel != model.model)
             {
-                tintGradient.apply(env, lastArea.getTint());
+                lastArea = sboTransfromArray.getAreaByType(model.model);
+                lastModel = model.model;
             }
+
+            E entry = lastArea.getEntry();
+
+            if (entry instanceof Transform transform) ParticleRenderCommon.doTransform(entity, env, transform.transform(), frameInfo.camera());
+            if (entry instanceof Tint tint) ParticleRenderCommon.doTint(entity, env, tint.tint());
+
+            lastArea.moveIndex();
         }
-
-        lastArea.update();
-
-        return Pair.of(lastModel, lastArea);
     }
 }

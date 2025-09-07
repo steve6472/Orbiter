@@ -1,9 +1,11 @@
 package steve6472.orbiter;
 
+import com.badlogic.ashley.core.Family;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.util.NativeLibrary;
 import com.jme3.system.NativeLibraryLoader;
+import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.registry.Key;
@@ -14,11 +16,15 @@ import steve6472.flare.core.FlareApp;
 import steve6472.flare.core.FrameInfo;
 import steve6472.flare.input.KeybindUpdater;
 import steve6472.flare.pipeline.Pipelines;
+import steve6472.flare.pipeline.builder.PipelineConstructor;
 import steve6472.flare.render.StaticModelRenderSystem;
 import steve6472.flare.render.UIFontRender;
 import steve6472.flare.render.UILineRender;
 import steve6472.flare.render.UIRenderSystem;
 import steve6472.flare.settings.VisualSettings;
+import steve6472.flare.struct.Struct;
+import steve6472.flare.struct.StructDef;
+import steve6472.flare.struct.def.SBO;
 import steve6472.flare.vr.VrData;
 import steve6472.moondust.*;
 import steve6472.moondust.builtin.BuiltinEventCalls;
@@ -34,7 +40,10 @@ import steve6472.moondust.widget.component.ViewController;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
+import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.rendering.*;
+import steve6472.orbiter.rendering.particle.JustTransform;
+import steve6472.orbiter.rendering.particle.TintedTransform;
 import steve6472.orbiter.scheduler.Scheduler;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.player.PCPlayer;
@@ -44,10 +53,14 @@ import steve6472.orbiter.ui.OrbiterUIRender;
 import steve6472.orbiter.ui.panel.*;
 import steve6472.orbiter.util.RandomNameGenerator;
 import steve6472.orbiter.world.World;
+import steve6472.orbiter.world.particle.components.ParticleModel;
+import steve6472.orbiter.world.particle.components.Position;
 import steve6472.orbiter.world.particle.components.RenderPipeline;
 import steve6472.test.DebugUILines;
 
 import java.util.Optional;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
@@ -155,13 +168,38 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new UILineRender(masterRenderer(), new DebugUILines()));
 
         addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticWorldRender(client), Pipelines.BLOCKBENCH_STATIC));
-        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticParticleModelRender(client, RenderPipeline.Enum.MODEL), Pipelines.BLOCKBENCH_STATIC));
-        addRenderSystem(new ModelUnshadedTintedRenderSystem(masterRenderer(), client, false));
 
-        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticParticleModelRender(client, RenderPipeline.Enum.ADDITIVE), OrbiterPipelines.BLOCKBENCH_STATIC_ADDITIVE));
-        addRenderSystem(new ModelUnshadedTintedRenderSystem(masterRenderer(), client, true));
+        addParticleRenderSystem(Pipelines.BLOCKBENCH_STATIC, SBO.BLOCKBENCH_STATIC_TRANSFORMATIONS, RenderPipeline.Enum.MODEL, JustTransform::new, Matrix4f[]::new);
+        addParticleRenderSystem(OrbiterPipelines.MODEL_UNSHADED, SBO.BLOCKBENCH_STATIC_TRANSFORMATIONS, RenderPipeline.Enum.MODEL_UNSHADED, JustTransform::new, Matrix4f[]::new);
+        addParticleRenderSystem(OrbiterPipelines.MODEL_UNSHADED_TINTED, OrbiterSBO.MODEL_TINT_ENTRIES, RenderPipeline.Enum.MODEL_UNSHADED_TINTED, TintedTransform::new, Struct[]::new);
+
+        // Additive
+        addParticleRenderSystem(OrbiterPipelines.MODEL_ADDITIVE, SBO.BLOCKBENCH_STATIC_TRANSFORMATIONS, RenderPipeline.Enum.MODEL_ADDITIVE, JustTransform::new, Matrix4f[]::new);
+        addParticleRenderSystem(OrbiterPipelines.MODEL_UNSHADED_ADDITIVE, SBO.BLOCKBENCH_STATIC_TRANSFORMATIONS, RenderPipeline.Enum.MODEL_UNSHADED_ADDITIVE, JustTransform::new, Matrix4f[]::new);
+        addParticleRenderSystem(OrbiterPipelines.MODEL_UNSHADED_TINTED_ADDITIVE, OrbiterSBO.MODEL_TINT_ENTRIES, RenderPipeline.Enum.MODEL_UNSHADED_TINTED_ADDITIVE, TintedTransform::new, Struct[]::new);
 
         new MoonDustCallbacks().init(window().callbacks(), input());
+    }
+
+    private <E extends SBOModelArray.Entry> void addParticleRenderSystem(
+        PipelineConstructor pipeline,
+        StructDef struct,
+        RenderPipeline.Enum renderMode,
+        Supplier<E> transformSupplier,
+        IntFunction<Object[]> arraySupplier
+    ) {
+        final Family PARTICLE_FAMILY = Family.all(ParticleModel.class, Position.class, OrlangEnvironment.class).get();
+
+        addRenderSystem(new CommonParticleRenderSystem<>(
+            masterRenderer(),
+            pipeline,
+            client,
+            PARTICLE_FAMILY,
+            struct,
+            renderMode,
+            transformSupplier,
+            arraySupplier
+        ));
     }
 
     @Override

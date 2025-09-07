@@ -1,42 +1,37 @@
 package steve6472.orbiter.rendering;
 
-import org.joml.Matrix4f;
-import org.joml.Vector4f;
 import steve6472.flare.assets.model.VkModel;
-import steve6472.flare.struct.Struct;
-import steve6472.flare.struct.StructDef;
 
 import java.util.*;
+import java.util.function.IntFunction;
+import java.util.function.Supplier;
 import java.util.function.ToIntFunction;
 
-public class SBOTintedTransfromArray<T extends VkModel>
+public class SBOModelArray<T extends VkModel, E extends SBOModelArray.Entry>
 {
     public static final int MAX_TRANSFORMS = 32768;
 
-    private static class TintedTransform
+    public interface Entry
     {
-        Matrix4f transform = new Matrix4f();
-        Vector4f tint = new Vector4f(1, 1, 1, 1);
-
-        public Struct toStruct()
-        {
-            return OrbiterSBO.ENTRY.create(transform, tint);
-        }
+        void reset();
+        Object toStruct();
     }
 
-    private final Struct[] structs = new Struct[MAX_TRANSFORMS];
-    private final TintedTransform[] transforms = new TintedTransform[MAX_TRANSFORMS];
+    private final Object[] structs;
+    @SuppressWarnings("unchecked")
+    private final E[] entries = (E[]) new SBOModelArray.Entry[MAX_TRANSFORMS];
     private final Area rootArea;
     private final LinkedHashMap<T, Area> areas = new LinkedHashMap<>(16);
     private int totalIndex;
 
     /// @param rootModel Use error model
-    public SBOTintedTransfromArray(T rootModel)
+    public SBOModelArray(T rootModel, Supplier<E> constructor, IntFunction<Object[]> entryArray)
     {
-        for (int i = 0; i < transforms.length; i++)
+        structs = entryArray.apply(MAX_TRANSFORMS);
+        for (int i = 0; i < entries.length; i++)
         {
-            transforms[i] = new TintedTransform();
-            structs[i] = transforms[i].toStruct();
+            entries[i] = constructor.get();
+            structs[i] = entries[i].toStruct();
         }
 
         rootArea = new Area(rootModel);
@@ -48,7 +43,7 @@ public class SBOTintedTransfromArray<T extends VkModel>
         totalIndex = 0;
     }
 
-    public Object getTransformsArray()
+    public Object getEntriesArray()
     {
         return structs;
     }
@@ -60,10 +55,11 @@ public class SBOTintedTransfromArray<T extends VkModel>
 
     public Area addArea(T type)
     {
-        if (isMapped(type))
-            return getAreaByType(type);
-//        Preconditions.checkTrue(isMapped(type), "Area already exists");
-        Area lastArea = getLastArea(rootArea);
+        Area lastArea = getAreaByType(type);
+        if (lastArea != null)
+            return lastArea;
+
+        lastArea = getLastArea(rootArea);
         Area newArea = new Area(type);
         newArea.index = lastArea.index + 1;
         lastArea.rightArea = newArea;
@@ -81,11 +77,6 @@ public class SBOTintedTransfromArray<T extends VkModel>
         if (area.rightArea != null)
             return getLastArea(area.rightArea);
         return area;
-    }
-
-    public boolean isMapped(T type)
-    {
-        return getAreaByType(type) != null;
     }
 
     public Area getAreaByType(T type)
@@ -111,17 +102,13 @@ public class SBOTintedTransfromArray<T extends VkModel>
             this.modelType = modelType;
         }
 
-        public Matrix4f getTransform()
+        public E getEntry()
         {
-            return transforms[totalIndex].transform.identity();
+            entries[totalIndex].reset();
+            return entries[totalIndex];
         }
 
-        public Vector4f getTint()
-        {
-            return transforms[totalIndex].tint.set(1, 1, 1, 1);
-        }
-
-        public void update()
+        public void moveIndex()
         {
             toRender++;
             totalIndex++;

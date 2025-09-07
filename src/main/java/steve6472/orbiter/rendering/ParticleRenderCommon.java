@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import steve6472.flare.Camera;
 import steve6472.orbiter.orlang.Orlang;
 import steve6472.orbiter.orlang.OrlangEnvironment;
@@ -33,7 +34,7 @@ public final class ParticleRenderCommon
         return env;
     }
 
-    public static void updateTransformMat(Matrix4f transform, Entity entity, Camera camera, OrlangEnvironment env)
+    public static void doTransform(Entity entity, OrlangEnvironment env, Matrix4f transform, Camera camera)
     {
         LocalSpace localSpace = ParticleComponents.LOCAL_SPACE.get(entity);
 
@@ -85,6 +86,27 @@ public final class ParticleRenderCommon
             Scale scale = ParticleComponents.SCALE.get(entity);
             scale.scale.evaluate(env);
             transform.scale(scale.scale.fx(), scale.scale.fy(), scale.scale.fz());
+        }
+    }
+
+    public static void doTint(Entity entity, OrlangEnvironment env, Vector4f tint)
+    {
+        var tintrgba = ParticleComponents.TINT_RGBA.get(entity);
+        if (tintrgba != null)
+        {
+            tint.set(
+                tintrgba.r.evaluateAndGet(env),
+                tintrgba.g.evaluateAndGet(env),
+                tintrgba.b.evaluateAndGet(env),
+                tintrgba.a.evaluateAndGet(env)
+            );
+        } else
+        {
+            var tintGradient = ParticleComponents.TINT_GRADIENT.get(entity);
+            if (tintGradient != null)
+            {
+                tintGradient.apply(env, tint);
+            }
         }
     }
 }
