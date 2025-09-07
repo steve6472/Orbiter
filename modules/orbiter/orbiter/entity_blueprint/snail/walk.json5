@@ -1,0 +1,11 @@
+{
+    position: {},
+    rotation: {},
+    animated_model: {
+        model: "blockbench/animated/snail",
+        animation: "walk",
+        loop: true
+    },
+    collision: "blockbench/static/cube/50_cm",
+    tags: ["tag_physics"]
+}

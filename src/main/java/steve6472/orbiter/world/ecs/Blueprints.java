@@ -17,12 +17,14 @@ public class Blueprints
 {
     public static final BlueprintEntry<PhysicsBodyBlueprint> PHYSICS_BODY = register(PhysicsBodyBlueprint.KEY, PhysicsBodyBlueprint.CODEC);
     public static final BlueprintEntry<PositionBlueprint> POSITION = register(PositionBlueprint.KEY, PositionBlueprint.CODEC);
+    public static final BlueprintEntry<MassBlueprint> MASS = register(MassBlueprint.KEY, MassBlueprint.CODEC);
     public static final BlueprintEntry<AngularFactorBlueprint> ANGULAR_FACTOR = register(AngularFactorBlueprint.KEY, AngularFactorBlueprint.CODEC);
     public static final BlueprintEntry<AngularVelocityBlueprint> ANGULAR_VELOCITY = register(AngularVelocityBlueprint.KEY, AngularVelocityBlueprint.CODEC);
     public static final BlueprintEntry<GravityBlueprint> GRAVITY = register(GravityBlueprint.KEY, GravityBlueprint.CODEC);
     public static final BlueprintEntry<RotationBlueprint> ROTATION = register(RotationBlueprint.KEY, RotationBlueprint.CODEC);
     public static final BlueprintEntry<CollisionBlueprint> COLLISION = register(CollisionBlueprint.KEY, CollisionBlueprint.CODEC);
     public static final BlueprintEntry<IndexModelBlueprint> MODEL = register(IndexModelBlueprint.KEY, IndexModelBlueprint.CODEC);
+    public static final BlueprintEntry<AnimatedModelBlueprint> ANIMATED_MODEL = register(AnimatedModelBlueprint.KEY, AnimatedModelBlueprint.CODEC);
     public static final BlueprintEntry<TagsBlueprint> TAGS = register(TagsBlueprint.KEY, TagsBlueprint.CODEC);
 
     public static final BlueprintEntry<ParticleEmittersBlueprint> EMITTERS = register(ParticleEmittersBlueprint.KEY, ParticleEmittersBlueprint.CODEC);

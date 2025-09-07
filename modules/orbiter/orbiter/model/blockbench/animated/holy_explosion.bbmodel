@@ -143,13 +143,14 @@
             "locked": false,
             "visibility": true,
             "autouv": 0,
+            "selected": false,
             "children": ["a33492b9-5a27-6a08-f5f1-7fd0677cac03", "0ab599d0-5523-2527-7e17-69c02d06bbed", "7be6dde7-28a6-7a03-704c-e4458926f5e1"]
         }
     ],
     "textures": [
         {
-            "path": "C:\\storage\\Orbiter\\resources\\textures\\holy_explosion.png",
-            "name": "holy_explosion.png",
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\holy_explosion.png",
+            "name": "orbiter:holy_explosion",
             "folder": "block",
             "namespace": "",
             "id": "0",
@@ -164,6 +165,7 @@
             "sync_to_project": "",
             "render_mode": "default",
             "render_sides": "auto",
+            "pbr_channel": "color",
             "frame_time": 1,
             "frame_order_type": "loop",
             "frame_order": "",
@@ -185,7 +187,7 @@
                     "data_url": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAU5JREFUWEfNVzEOwjAMbBE7KwMDYuMfPJt/sCGGDqzsCJArHTLGie00kHZBqIl9vlzObt81fvrG+btiAPfT9snBL/eXolhFmygxAVhsDiOGx3DsqgJAdamgsnowYa3X3n8xkKsMiW/n65hztVuPv/I/T2QxlQRAtNJDwXjFlAyJpYDlO76Xjks7KlUDkmJZIYBxABIkZyh3RFkRUlCtqtzV1djKCTQJQCaPqpzrhY4std8FIJocDPEiQgBqmYwnTlKEOPvS6r0sqNeQC68GAHiFpoU3gKh6I00sd5s+AMAsLGuNJEffwB5pSPMCAJS1BKgJUbI7HxFKX6/FgmVGrmZUehWLjQjKncqCVT3lcfUCrf1aV3FyM5IseL0hamguDfx1IMEM12wkaz6Ucu+2xmwpRGu9ayy31M3t9WcfJh4QHpPxxCn+NPME96xpDuAFrCV+MOiQlHkAAAAASUVORK5CYII="
                 }
             ],
-            "relative_path": "../../../textures/holy_explosion.png",
+            "relative_path": "../../../textures/model/holy_explosion.png",
             "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAU5JREFUWEfNVzEOwjAMbBE7KwMDYuMfPJt/sCGGDqzsCJArHTLGie00kHZBqIl9vlzObt81fvrG+btiAPfT9snBL/eXolhFmygxAVhsDiOGx3DsqgJAdamgsnowYa3X3n8xkKsMiW/n65hztVuPv/I/T2QxlQRAtNJDwXjFlAyJpYDlO76Xjks7KlUDkmJZIYBxABIkZyh3RFkRUlCtqtzV1djKCTQJQCaPqpzrhY4std8FIJocDPEiQgBqmYwnTlKEOPvS6r0sqNeQC68GAHiFpoU3gKh6I00sd5s+AMAsLGuNJEffwB5pSPMCAJS1BKgJUbI7HxFKX6/FgmVGrmZUehWLjQjKncqCVT3lcfUCrf1aV3FyM5IseL0hamguDfx1IMEM12wkaz6Ucu+2xmwpRGu9ayy31M3t9WcfJh4QHpPxxCn+NPME96xpDuAFrCV+MOiQlHkAAAAASUVORK5CYII="
         }
     ],
@@ -197,7 +199,7 @@
             "override": false,
             "length": 1,
             "snapping": 100,
-            "selected": true,
+            "selected": false,
             "anim_time_update": "",
             "blend_weight": "",
             "start_delay": "",
@@ -226,9 +228,9 @@
                             "channel": "scale",
                             "data_points": [
                                 {
-                                    "x": 8,
-                                    "y": 8,
-                                    "z": 8
+                                    "x": "8",
+                                    "y": "8",
+                                    "z": "8"
                                 }
                             ],
                             "uuid": "001b45f0-eabc-f904-81b5-4cc3faf50165",

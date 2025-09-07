@@ -1,0 +1,193 @@
+{
+    "meta": {
+        "format_version": "4.10",
+        "model_format": "free",
+        "box_uv": false
+    },
+    "name": "matter_compressor",
+    "model_identifier": "block_gun",
+    "visible_box": [1, 1, 0],
+    "variable_placeholders": "",
+    "variable_placeholder_buttons": [],
+    "timeline_setups": [],
+    "unhandled_root_fields": {},
+    "resolution": {
+        "width": 32,
+        "height": 32
+    },
+    "elements": [
+        {
+            "name": "collision",
+            "box_uv": false,
+            "rescale": false,
+            "locked": false,
+            "light_emission": 0,
+            "render_order": "default",
+            "allow_mirror_modeling": true,
+            "from": [-4, -4.3302, -3],
+            "to": [4, 1.6698, 8],
+            "autouv": 0,
+            "color": 6,
+            "origin": [0, -10.25, 1.25],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "east": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "south": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "west": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "up": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "down": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                }
+            },
+            "type": "cube",
+            "uuid": "85ff3aa5-ac60-6b84-0885-ea7369b1d457"
+        },
+        {
+            "name": "collision",
+            "box_uv": false,
+            "rescale": false,
+            "locked": false,
+            "light_emission": 0,
+            "render_order": "default",
+            "allow_mirror_modeling": true,
+            "from": [-2, -3.3302, -8],
+            "to": [2, 0.6698, -3],
+            "autouv": 0,
+            "color": 6,
+            "origin": [0, -10.25, 1.25],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "east": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "south": {
+                    "uv": [0, 0, 4, 4],
+                    "texture": null
+                },
+                "west": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "up": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "down": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                }
+            },
+            "type": "cube",
+            "uuid": "8e3234d7-81bc-3476-fdfd-d45511cec4db"
+        },
+        {
+            "name": "collision",
+            "box_uv": false,
+            "rescale": false,
+            "locked": false,
+            "light_emission": 0,
+            "render_order": "default",
+            "allow_mirror_modeling": true,
+            "from": [-4, 1.6698, 3],
+            "to": [4, 4.6698, 7],
+            "autouv": 0,
+            "color": 6,
+            "origin": [0, -10.25, 1.25],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "east": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "south": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "west": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "up": {
+                    "uv": [0, 0, 16, 16],
+                    "texture": 0
+                },
+                "down": {
+                    "uv": [0, 0, 8, 4],
+                    "texture": null
+                }
+            },
+            "type": "cube",
+            "uuid": "d7658eb7-b12c-ffcd-3395-e0b1c36d10d6"
+        }
+    ],
+    "outliner": [
+        {
+            "name": "collision",
+            "origin": [0, -10.25, 1.25],
+            "color": 0,
+            "uuid": "a8f1434e-34b4-cd3c-4700-4049dad134a0",
+            "export": true,
+            "mirror_uv": false,
+            "isOpen": true,
+            "locked": false,
+            "visibility": true,
+            "autouv": 0,
+            "selected": false,
+            "children": ["85ff3aa5-ac60-6b84-0885-ea7369b1d457", "d7658eb7-b12c-ffcd-3395-e0b1c36d10d6", "8e3234d7-81bc-3476-fdfd-d45511cec4db"]
+        }
+    ],
+    "textures": [
+        {
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\cube.png",
+            "name": "orbiter:cube",
+            "folder": "",
+            "namespace": "",
+            "id": "0",
+            "group": "",
+            "width": 16,
+            "height": 16,
+            "uv_width": 16,
+            "uv_height": 16,
+            "particle": false,
+            "use_as_default": false,
+            "layers_enabled": false,
+            "sync_to_project": "",
+            "render_mode": "default",
+            "render_sides": "auto",
+            "pbr_channel": "color",
+            "frame_time": 1,
+            "frame_order_type": "loop",
+            "frame_order": "",
+            "frame_interpolate": false,
+            "visible": true,
+            "internal": true,
+            "saved": true,
+            "uuid": "f2de87b3-9902-11b2-5722-21226bc184ea",
+            "relative_path": "../../../../textures/model/cube.png",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAC1JREFUOE9jZGBg+M+AB/zHL83AOGrAsAiD/wz/8aYDRrAvcQPGUQMYhkEYAADvhC/xWxYHkQAAAABJRU5ErkJggg=="
+        }
+    ]
+}
