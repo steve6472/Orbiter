@@ -356,9 +356,8 @@ public class OrbiterApp extends FlareApp
 
     public void setMouseGrab(boolean isMouseGrabbed)
     {
-        this.isMouseGrabbed = isMouseGrabbed;
         GLFW.glfwSetInputMode(window().window(), GLFW.GLFW_CURSOR, isMouseGrabbed ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
-        if (!isMouseGrabbed)
+        if (!isMouseGrabbed && this.isMouseGrabbed)
         {
             GLFW.glfwSetCursorPos(window().window(), window().getWidth() / 2d, window().getHeight() / 2d);
         } else
@@ -367,6 +366,7 @@ public class OrbiterApp extends FlareApp
             camera().oldx = mousePos.x;
             camera().oldy = mousePos.y;
         }
+        this.isMouseGrabbed = isMouseGrabbed;
     }
 
     public Client getClient()

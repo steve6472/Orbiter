@@ -1,0 +1,94 @@
+{
+    "meta": {
+        "format_version": "4.10",
+        "model_format": "free",
+        "box_uv": false
+    },
+    "name": "dot_white",
+    "model_identifier": "",
+    "visible_box": [1, 1, 0],
+    "variable_placeholders": "",
+    "variable_placeholder_buttons": [],
+    "timeline_setups": [],
+    "unhandled_root_fields": {},
+    "resolution": {
+        "width": 8,
+        "height": 8
+    },
+    "elements": [
+        {
+            "name": "cube",
+            "box_uv": false,
+            "rescale": false,
+            "locked": false,
+            "light_emission": 0,
+            "render_order": "default",
+            "allow_mirror_modeling": true,
+            "from": [-2, -2, 0],
+            "to": [2, 2, 0],
+            "autouv": 0,
+            "color": 7,
+            "origin": [0, 0, 0],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 0, 0],
+                    "texture": null
+                },
+                "east": {
+                    "uv": [0, 0, 0, 0],
+                    "texture": null
+                },
+                "south": {
+                    "uv": [0, 0, 5, 5],
+                    "texture": 0
+                },
+                "west": {
+                    "uv": [0, 0, 0, 0],
+                    "texture": null
+                },
+                "up": {
+                    "uv": [0, 0, 0, 0],
+                    "texture": null
+                },
+                "down": {
+                    "uv": [0, 0, 0, 0],
+                    "texture": null
+                }
+            },
+            "type": "cube",
+            "uuid": "963d1250-99c5-2016-56e8-1aa647b5f22e"
+        }
+    ],
+    "outliner": ["963d1250-99c5-2016-56e8-1aa647b5f22e"],
+    "textures": [
+        {
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\particle\\dot_white.png",
+            "name": "orbiter:particle/dot_white",
+            "folder": "block",
+            "namespace": "",
+            "id": "0",
+            "group": "",
+            "width": 8,
+            "height": 8,
+            "uv_width": 8,
+            "uv_height": 8,
+            "particle": false,
+            "use_as_default": false,
+            "layers_enabled": false,
+            "sync_to_project": "",
+            "render_mode": "default",
+            "render_sides": "auto",
+            "pbr_channel": "color",
+            "frame_time": 1,
+            "frame_order_type": "loop",
+            "frame_order": "",
+            "frame_interpolate": false,
+            "visible": true,
+            "internal": true,
+            "saved": true,
+            "uuid": "97e40a25-f550-4844-8550-91ab569ae50e",
+            "relative_path": "../../../../textures/model/particle/dot_white.png",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAC5JREFUKFNjZGBgYPj///9/EA0CjIyMjDA2mI8siU0RFRQQdAOyg7CxUVxMlgIAKz0UCeTHhPUAAAAASUVORK5CYII="
+        }
+    ]
+}
