@@ -24,7 +24,7 @@ public record TagsBlueprint(List<Key> tagKeys) implements Blueprint<TagsBlueprin
     private static final Logger LOGGER = Log.getLogger(TagsBlueprint.class);
 
     public static final Key KEY = Constants.key("tags");
-    public static final Codec<TagsBlueprint> CODEC = Key.CODEC.listOf().xmap(TagsBlueprint::new, TagsBlueprint::tagKeys);
+    public static final Codec<TagsBlueprint> CODEC = Constants.KEY_CODEC.listOf().xmap(TagsBlueprint::new, TagsBlueprint::tagKeys);
 
     @Override
     public List<Component> createComponents()

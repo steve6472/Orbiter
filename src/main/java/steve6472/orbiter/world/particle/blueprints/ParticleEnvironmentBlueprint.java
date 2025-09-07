@@ -5,10 +5,11 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
-import steve6472.orbiter.orlang.*;
-import steve6472.orbiter.orlang.codec.OrCode;
+import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.particle.core.PCBlueprint;
 import steve6472.orbiter.world.particle.core.ParticleComponent;
+import steve6472.orlang.*;
+import steve6472.orlang.codec.OrCode;
 
 import java.util.Map;
 import java.util.Optional;
@@ -40,21 +41,21 @@ public record ParticleEnvironmentBlueprint(
     @Override
     public ParticleComponent create(PooledEngine particleEngine, OrlangEnvironment environment)
     {
-        OrlangEnvironment component = particleEngine.createComponent(OrlangEnvironment.class);
+        OrlangEnv component = particleEngine.createComponent(OrlangEnv.class);
         passVariables().ifPresent(map -> {
             map.forEach((fromEmitter, toParticle) -> {
                 OrlangValue value = environment.getValue(fromEmitter);
                 if (value != null)
-                    component.setValue(toParticle, value);
+                    component.env.setValue(toParticle, value);
                 else
                     throw new NullPointerException("Variable " + fromEmitter + " not found in emitter environment");
             });
         });
 
-        init.ifPresent(init -> Orlang.interpreter.interpret(init, component));
-        tick.ifPresent(tick -> component.expressions.put("tick", tick));
-        frame.ifPresent(frame -> component.expressions.put("frame", frame));
-        curves.ifPresent(curves -> component.curves.putAll(curves));
+        init.ifPresent(init -> Orlang.interpreter.interpret(init, component.env));
+        tick.ifPresent(tick -> component.env.expressions.put("tick", tick));
+        frame.ifPresent(frame -> component.env.expressions.put("frame", frame));
+        curves.ifPresent(curves -> component.env.curves.putAll(curves));
         return component;
     }
 

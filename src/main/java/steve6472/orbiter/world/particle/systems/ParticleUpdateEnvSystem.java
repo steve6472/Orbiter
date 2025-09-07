@@ -2,13 +2,14 @@ package steve6472.orbiter.world.particle.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import steve6472.orbiter.orlang.Orlang;
-import steve6472.orbiter.orlang.OrlangEnvironment;
-import steve6472.orbiter.orlang.OrlangValue;
-import steve6472.orbiter.orlang.codec.OrCode;
+import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.particle.components.MaxAge;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 import steve6472.orbiter.world.particle.ParticleComponents;
+import steve6472.orlang.Orlang;
+import steve6472.orlang.OrlangEnvironment;
+import steve6472.orlang.OrlangValue;
+import steve6472.orlang.codec.OrCode;
 
 /**
  * Created by steve6472
@@ -19,7 +20,7 @@ public class ParticleUpdateEnvSystem extends IteratingProfiledSystem
 {
     public ParticleUpdateEnvSystem()
     {
-        super(Family.all(OrlangEnvironment.class).get());
+        super(Family.all(OrlangEnv.class).get());
     }
 
     private long now;
@@ -34,7 +35,8 @@ public class ParticleUpdateEnvSystem extends IteratingProfiledSystem
     @Override
     protected void processEntity(Entity entity, float deltaTime)
     {
-        OrlangEnvironment env = ParticleComponents.PARTICLE_ENVIRONMENT.get(entity);
+        OrlangEnv envComp = ParticleComponents.PARTICLE_ENVIRONMENT.get(entity);
+        OrlangEnvironment env = envComp.env;
 
         MaxAge maxAge = ParticleComponents.MAX_AGE.get(entity);
         if (maxAge != null)

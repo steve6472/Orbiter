@@ -3,9 +3,9 @@ package steve6472.orbiter.world.ecs.components.emitter.shapes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.joml.Vector3f;
-import steve6472.orbiter.orlang.OrlangEnvironment;
-import steve6472.orbiter.orlang.codec.OrNumValue;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
+import steve6472.orlang.OrlangEnvironment;
+import steve6472.orlang.codec.OrNumValue;
 
 public class SphereShape extends EmitterShape
 {

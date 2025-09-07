@@ -6,12 +6,13 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import steve6472.flare.Camera;
-import steve6472.orbiter.orlang.Orlang;
-import steve6472.orbiter.orlang.OrlangEnvironment;
-import steve6472.orbiter.orlang.codec.OrCode;
 import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.particle.ParticleComponents;
 import steve6472.orbiter.world.particle.components.*;
+import steve6472.orlang.Orlang;
+import steve6472.orlang.OrlangEnvironment;
+import steve6472.orlang.codec.OrCode;
 
 /**
  * Created by steve6472
@@ -22,7 +23,8 @@ public final class ParticleRenderCommon
 {
     public static OrlangEnvironment updateEnvironment(Entity entity)
     {
-        OrlangEnvironment env = ParticleComponents.PARTICLE_ENVIRONMENT.get(entity);
+        OrlangEnv envComp = ParticleComponents.PARTICLE_ENVIRONMENT.get(entity);
+        OrlangEnvironment env = envComp.env;
 
         // Update curves each frame
         env.curves.forEach((name, curve) -> curve.calculate(name, env));
@@ -105,7 +107,7 @@ public final class ParticleRenderCommon
             var tintGradient = ParticleComponents.TINT_GRADIENT.get(entity);
             if (tintGradient != null)
             {
-                tintGradient.apply(env, tint);
+                tintGradient.gradient.apply(env, tint);
             }
         }
     }

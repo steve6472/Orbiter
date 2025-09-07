@@ -1,7 +1,7 @@
 package steve6472.orbiter.world.particle.components;
 
-import steve6472.orbiter.orlang.codec.OrVec3;
 import steve6472.orbiter.world.particle.core.ParticleComponent;
+import steve6472.orlang.codec.OrVec3;
 
 /**
  * Created by steve6472

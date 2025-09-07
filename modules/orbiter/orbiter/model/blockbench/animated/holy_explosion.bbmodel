@@ -143,7 +143,7 @@
             "locked": false,
             "visibility": true,
             "autouv": 0,
-            "selected": false,
+            "selected": true,
             "children": ["a33492b9-5a27-6a08-f5f1-7fd0677cac03", "0ab599d0-5523-2527-7e17-69c02d06bbed", "7be6dde7-28a6-7a03-704c-e4458926f5e1"]
         }
     ],
@@ -199,7 +199,7 @@
             "override": false,
             "length": 1,
             "snapping": 100,
-            "selected": false,
+            "selected": true,
             "anim_time_update": "",
             "blend_weight": "",
             "start_delay": "",
@@ -213,16 +213,21 @@
                             "channel": "scale",
                             "data_points": [
                                 {
-                                    "x": "1",
-                                    "y": "1",
-                                    "z": "1"
+                                    "x": "0",
+                                    "y": "0",
+                                    "z": "0"
                                 }
                             ],
                             "uuid": "ca4e063f-161d-7d28-e9aa-83b260165769",
                             "time": 0,
                             "color": -1,
                             "uniform": true,
-                            "interpolation": "linear"
+                            "interpolation": "bezier",
+                            "bezier_linked": true,
+                            "bezier_left_time": [-0.3, -0.3, -0.3],
+                            "bezier_left_value": [0.01421, 0.01421, 0.01421],
+                            "bezier_right_time": [0.3, 0.3, 0.3],
+                            "bezier_right_value": [-0.01421, -0.01421, -0.01421]
                         },
                         {
                             "channel": "scale",
@@ -237,7 +242,12 @@
                             "time": 1,
                             "color": -1,
                             "uniform": true,
-                            "interpolation": "linear"
+                            "interpolation": "bezier",
+                            "bezier_linked": true,
+                            "bezier_left_time": [-0.53333, -0.53333, -0.53333],
+                            "bezier_left_value": [-1.25582, -1.25582, -1.25582],
+                            "bezier_right_time": [0.53333, 0.53333, 0.53333],
+                            "bezier_right_value": [1.25582, 1.25582, 1.25582]
                         }
                     ]
                 },

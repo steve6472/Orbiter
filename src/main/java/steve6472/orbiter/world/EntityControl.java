@@ -6,15 +6,21 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import org.joml.Vector3f;
+import steve6472.core.util.MathUtil;
 import steve6472.orbiter.network.api.Connections;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.packets.game.clientbound.CreateCustomEntity;
 import steve6472.orbiter.network.packets.game.clientbound.RemoveEntity;
 import steve6472.orbiter.network.packets.game.clientbound.CreateEntity;
 import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
+import steve6472.orlang.OrlangEnvironment;
+import steve6472.orlang.OrlangValue;
+import steve6472.orlang.QueryFunctionSet;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -41,6 +47,28 @@ public interface EntityControl
     {
         List<Component> components = entityBlueprint.createEntityComponents(uuid);
         Entity entity = createEntity(components);
+
+        OrlangEnv orlangEnv = Components.ENVIRONMENT.get(entity);
+        if (orlangEnv != null)
+        {
+            OrlangEnvironment env = orlangEnv.env;
+
+            QueryFunctionSet test = new QueryFunctionSet();
+            test.functions.put("to_north", OrlangValue.func(() ->
+            {
+                Rotation rotation = Components.ROTATION.get(entity);
+                if (rotation == null)
+                    return 0;
+                Vector3f rotate = new Vector3f(0, 0, -1).rotate(rotation.toQuat());
+
+                double _2PI = 2 * Math.PI;
+                double x = rotate.x();
+                double z = rotate.z();
+                double theta = Math.atan2(-x, z);
+                return (float) -Math.toDegrees((theta) % _2PI + Math.PI);
+            }));
+            env.queryFunctionSet = test;
+        }
 
         // Special physics tag handling
         handlePhysics(entity, components);

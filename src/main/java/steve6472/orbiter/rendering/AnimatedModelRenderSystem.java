@@ -9,7 +9,6 @@ import steve6472.flare.FlareConstants;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.VkBuffer;
 import steve6472.flare.assets.model.Model;
-import steve6472.flare.assets.model.blockbench.LoadedModel;
 import steve6472.flare.assets.model.blockbench.anim.AnimationController;
 import steve6472.flare.assets.model.primitive.PrimitiveSkinModel;
 import steve6472.flare.core.FrameInfo;
@@ -19,18 +18,18 @@ import steve6472.flare.render.common.CommonBuilder;
 import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.struct.Struct;
-import steve6472.flare.struct.def.Push;
 import steve6472.flare.struct.def.SBO;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.AnimatedModel;
+import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.components.physics.Rotation;
+import steve6472.orlang.OrlangEnvironment;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
@@ -43,7 +42,7 @@ import static org.lwjgl.vulkan.VK10.VK_SHADER_STAGE_VERTEX_BIT;
  */
 public class AnimatedModelRenderSystem extends CommonRenderSystem
 {
-    private Client client;
+    private final Client client;
 
     public AnimatedModelRenderSystem(MasterRenderer masterRenderer, PipelineConstructor pipeline, Client client)
     {
@@ -65,6 +64,8 @@ public class AnimatedModelRenderSystem extends CommonRenderSystem
             AnimatedModel animatedModel = Components.ANIMATED_MODEL.get(entity);
             Position position = Components.POSITION.get(entity);
             Rotation rotation = Components.ROTATION.get(entity);
+            OrlangEnv orlangEnv = Components.ENVIRONMENT.get(entity);
+            OrlangEnvironment env = orlangEnv == null ? null : orlangEnv.env;
 
             Model model = animatedModel.model;
             PrimitiveSkinModel primitiveSkinModel = animatedModel.primitiveSkinModel;
@@ -80,7 +81,7 @@ public class AnimatedModelRenderSystem extends CommonRenderSystem
                 mat.rotate(rotation.toQuat());
             }
 
-            animationController.tick(mat);
+            animationController.tick(mat, env);
 
             Matrix4f[] array = animationController.skinData.toArray();
             var sbo = SBO.BONES.create((Object) array);

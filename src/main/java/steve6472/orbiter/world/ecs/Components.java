@@ -42,6 +42,7 @@ public class Components
      */
     public static final ComponentEntry<IndexModel> MODEL = register("model", IndexModel.class, builder -> builder.persistent(IndexModel.CODEC).network(IndexModel.BUFFER_CODEC));
     public static final ComponentEntry<AnimatedModel> ANIMATED_MODEL = register("animated_model", AnimatedModel.class, builder -> builder.persistent(AnimatedModel.CODEC).network(AnimatedModel.BUFFER_CODEC));
+    public static final ComponentEntry<OrlangEnv> ENVIRONMENT = register("environment", OrlangEnv.class);
 
     /*
      * Particle

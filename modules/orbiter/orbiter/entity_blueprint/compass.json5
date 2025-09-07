@@ -1,0 +1,12 @@
+{
+    position: {},
+    rotation: {},
+    animated_model: {
+        model: "blockbench/animated/compass",
+        animation: "rotate",
+        loop: true
+    },
+    environment: {},
+    collision: "blockbench/static/cube/25_cm",
+    tags: ["tag_physics"]
+}

@@ -31,13 +31,13 @@ public class ParticleVelocitySystem extends IteratingProfiledSystem
             var linearAcceleration = ParticleComponents.LINEAR_ACCELERATION.get(entity);
             if (linearAcceleration != null)
             {
-                linearAcceleration.value.evaluate(environment);
+                linearAcceleration.value.evaluate(environment.env);
 
                 var linearDragCoefficient = ParticleComponents.LINEAR_DRAG_COEFFICIENT.get(entity);
                 float drag = 0;
                 if (linearDragCoefficient != null)
                 {
-                    drag = (float) linearDragCoefficient.value.evaluateAndGet(environment);
+                    drag = (float) linearDragCoefficient.value.evaluateAndGet(environment.env);
                 }
 
                 float dragX = -drag * velocity.x;

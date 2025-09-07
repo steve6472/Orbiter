@@ -6,11 +6,11 @@ import steve6472.core.registry.Key;
 import steve6472.flare.assets.model.Model;
 import steve6472.flare.registry.FlareRegistries;
 import steve6472.orbiter.Constants;
-import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.util.Holder;
 import steve6472.orbiter.world.particle.components.ParticleModel;
 import steve6472.orbiter.world.particle.core.PCBlueprint;
 import steve6472.orbiter.world.particle.core.ParticleComponent;
+import steve6472.orlang.OrlangEnvironment;
 
 /**
  * Created by steve6472

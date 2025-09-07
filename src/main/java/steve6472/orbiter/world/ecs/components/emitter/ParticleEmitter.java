@@ -3,15 +3,15 @@ package steve6472.orbiter.world.ecs.components.emitter;
 import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import steve6472.orbiter.orlang.*;
-import steve6472.orbiter.orlang.codec.OrCode;
-import steve6472.orbiter.orlang.codec.OrVec3;
 import steve6472.orbiter.util.Holder;
 import steve6472.orbiter.world.ecs.components.emitter.lifetime.EmitterLifetime;
 import steve6472.orbiter.world.ecs.components.emitter.rate.EmitterRate;
 import steve6472.orbiter.world.ecs.components.emitter.shapes.EmitterShape;
 import steve6472.orbiter.world.ecs.components.emitter.shapes.PointShape;
 import steve6472.orbiter.world.particle.core.ParticleBlueprint;
+import steve6472.orlang.*;
+import steve6472.orlang.codec.OrCode;
+import steve6472.orlang.codec.OrVec3;
 
 import java.util.Map;
 import java.util.Optional;

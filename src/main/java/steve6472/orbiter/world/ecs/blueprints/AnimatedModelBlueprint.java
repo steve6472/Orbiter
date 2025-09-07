@@ -10,6 +10,7 @@ import steve6472.flare.registry.FlareRegistries;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.world.ecs.components.AnimatedModel;
 import steve6472.orbiter.world.ecs.components.IndexModel;
+import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.ecs.core.Blueprint;
 
 import java.util.List;

@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import org.joml.Vector3f;
 import steve6472.core.util.RandomUtil;
-import steve6472.orbiter.orlang.codec.OrVec3;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
+import steve6472.orlang.codec.OrVec3;
 
 public class BoxShape extends EmitterShape
 {

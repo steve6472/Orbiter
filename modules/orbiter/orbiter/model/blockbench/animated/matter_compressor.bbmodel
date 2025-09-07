@@ -1547,6 +1547,7 @@
             "to": [2, 0.66978, -3],
             "autouv": 1,
             "color": 6,
+            "visibility": false,
             "origin": [0, -9.33022, 1],
             "faces": {
                 "north": {
@@ -1584,6 +1585,7 @@
             "to": [4, 1.66978, 8],
             "autouv": 1,
             "color": 6,
+            "visibility": false,
             "origin": [0, -9.33022, 1],
             "faces": {
                 "north": {
@@ -1620,6 +1622,7 @@
             "to": [4, 4.66978, 7],
             "autouv": 1,
             "color": 6,
+            "visibility": false,
             "origin": [0, -9.33022, 1],
             "faces": {
                 "north": {
@@ -1654,7 +1657,7 @@
             "uuid": "7b535de3-d6e3-5eaf-4143-dc3184fc7fa9",
             "export": true,
             "mirror_uv": false,
-            "isOpen": false,
+            "isOpen": true,
             "locked": false,
             "visibility": true,
             "autouv": 0,
@@ -1662,7 +1665,7 @@
             "children": [
                 {
                     "name": "shooter",
-                    "origin": [1, -9.33022, 1],
+                    "origin": [0, -1.33022, -3],
                     "color": 0,
                     "uuid": "dd5f535b-39ad-0cf9-57a3-370f8bc789ee",
                     "export": true,
@@ -1671,7 +1674,7 @@
                     "locked": false,
                     "visibility": true,
                     "autouv": 0,
-                    "selected": false,
+                    "selected": true,
                     "children": [
                         "8c0700fc-91f7-bb84-8e75-155e3f0902df",
                         "8f2151e1-ec45-cd2a-29af-4961339a8840",
@@ -1823,9 +1826,9 @@
             "mirror_uv": false,
             "isOpen": true,
             "locked": false,
-            "visibility": true,
+            "visibility": false,
             "autouv": 0,
-            "selected": true,
+            "selected": false,
             "children": ["85ff3aa5-ac60-6b84-0885-ea7369b1d457", "d7658eb7-b12c-ffcd-3395-e0b1c36d10d6", "8e3234d7-81bc-3476-fdfd-d45511cec4db"]
         }
     ],
@@ -2042,7 +2045,7 @@
             "override": false,
             "length": 0.5,
             "snapping": 100,
-            "selected": false,
+            "selected": true,
             "anim_time_update": "",
             "blend_weight": "",
             "start_delay": "",

@@ -4,8 +4,7 @@ import com.badlogic.ashley.core.Component;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.orlang.Gradient;
-import steve6472.orbiter.orlang.OrlangEnvironment;
+import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.particle.components.*;
 import steve6472.orbiter.world.ecs.core.ComponentEntry;
 
@@ -31,12 +30,12 @@ public class ParticleComponents
     public static final ComponentEntry<Rotation> ROTATION = register("rotation", Rotation.class);
     public static final ComponentEntry<RenderPipeline> RENDER_PIPELINE = register("render_pipeline", RenderPipeline.class);
     public static final ComponentEntry<TintRGBA> TINT_RGBA = register("tint_rgba", TintRGBA.class);
-    public static final ComponentEntry<Gradient> TINT_GRADIENT = register("tint_gradient", Gradient.class);
+    public static final ComponentEntry<TintGradient> TINT_GRADIENT = register("tint_gradient", TintGradient.class);
 
     // Programmatically
     public static final ComponentEntry<Position> POSITION = register("position", Position.class);
     public static final ComponentEntry<ParticleFollowerId> PARTICLE_FOLLOWER = register("particle_follower", ParticleFollowerId.class);
-    public static final ComponentEntry<OrlangEnvironment> PARTICLE_ENVIRONMENT = register("particle_environment", OrlangEnvironment.class);
+    public static final ComponentEntry<OrlangEnv> PARTICLE_ENVIRONMENT = register("particle_environment", OrlangEnv.class);
 
     /*
      * Register functions

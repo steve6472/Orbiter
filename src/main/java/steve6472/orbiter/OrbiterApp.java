@@ -41,7 +41,7 @@ import steve6472.moondust.widget.component.ViewController;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
-import steve6472.orbiter.orlang.OrlangEnvironment;
+import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.rendering.*;
 import steve6472.orbiter.rendering.particle.JustTransform;
 import steve6472.orbiter.rendering.particle.TintedTransform;
@@ -190,7 +190,7 @@ public class OrbiterApp extends FlareApp
         Supplier<E> transformSupplier,
         IntFunction<Object[]> arraySupplier
     ) {
-        final Family PARTICLE_FAMILY = Family.all(ParticleModel.class, Position.class, OrlangEnvironment.class).get();
+        final Family PARTICLE_FAMILY = Family.all(ParticleModel.class, Position.class, OrlangEnv.class).get();
 
         addRenderSystem(new CommonParticleRenderSystem<>(
             masterRenderer(),

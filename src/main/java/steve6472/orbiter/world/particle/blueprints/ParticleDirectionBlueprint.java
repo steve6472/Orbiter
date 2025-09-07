@@ -7,11 +7,11 @@ import org.joml.Vector3f;
 import steve6472.core.registry.Key;
 import steve6472.core.registry.StringValue;
 import steve6472.orbiter.Constants;
-import steve6472.orbiter.orlang.OrlangEnvironment;
-import steve6472.orbiter.orlang.codec.OrVec3;
 import steve6472.orbiter.world.particle.components.Velocity;
 import steve6472.orbiter.world.particle.core.PCBlueprint;
 import steve6472.orbiter.world.particle.core.ParticleComponent;
+import steve6472.orlang.OrlangEnvironment;
+import steve6472.orlang.codec.OrVec3;
 
 import java.util.Locale;
 import java.util.Optional;

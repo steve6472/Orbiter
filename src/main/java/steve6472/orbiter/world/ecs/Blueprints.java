@@ -25,6 +25,7 @@ public class Blueprints
     public static final BlueprintEntry<CollisionBlueprint> COLLISION = register(CollisionBlueprint.KEY, CollisionBlueprint.CODEC);
     public static final BlueprintEntry<IndexModelBlueprint> MODEL = register(IndexModelBlueprint.KEY, IndexModelBlueprint.CODEC);
     public static final BlueprintEntry<AnimatedModelBlueprint> ANIMATED_MODEL = register(AnimatedModelBlueprint.KEY, AnimatedModelBlueprint.CODEC);
+    public static final BlueprintEntry<EnvironmentBlueprint> ENVIRONMENT = register(EnvironmentBlueprint.KEY, EnvironmentBlueprint.CODEC);
     public static final BlueprintEntry<TagsBlueprint> TAGS = register(TagsBlueprint.KEY, TagsBlueprint.CODEC);
 
     public static final BlueprintEntry<ParticleEmittersBlueprint> EMITTERS = register(ParticleEmittersBlueprint.KEY, ParticleEmittersBlueprint.CODEC);

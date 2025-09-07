@@ -4,9 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 import steve6472.orbiter.world.particle.ParticleComponents;
-import steve6472.orbiter.world.particle.components.Position;
 import steve6472.orbiter.world.particle.components.Rotation;
-import steve6472.orbiter.world.particle.components.Velocity;
 
 /**
  * Created by steve6472
@@ -31,13 +29,13 @@ public class ParticleRotationSystem extends IteratingProfiledSystem
             var linearAcceleration = rotation.acceleration;
             if (linearAcceleration != null)
             {
-                linearAcceleration.evaluate(environment);
+                linearAcceleration.evaluate(environment.env);
 
                 var linearDragCoefficient = rotation.dragCoefficient;
                 float drag = 0;
                 if (linearDragCoefficient != null)
                 {
-                    drag = (float) linearDragCoefficient.evaluateAndGet(environment);
+                    drag = (float) linearDragCoefficient.evaluateAndGet(environment.env);
                 }
 
                 float dragX = -drag * rotation.rate;

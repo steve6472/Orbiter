@@ -5,9 +5,9 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import org.joml.Vector3f;
-import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.ecs.components.ParticleHolderId;
 import steve6472.orbiter.world.particle.ParticleComponents;
 import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
@@ -19,6 +19,7 @@ import steve6472.orbiter.world.particle.components.Velocity;
 import steve6472.orbiter.world.particle.components.LocalSpace;
 import steve6472.orbiter.world.particle.components.ParticleFollowerId;
 import steve6472.orbiter.world.particle.core.ParticleBlueprint;
+import steve6472.orlang.OrlangEnvironment;
 
 import java.util.List;
 
@@ -99,8 +100,9 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
 
         Entity entity = particleEngine.createEntity();
         ParticleBlueprint blueprint = emitter.particleData.get();
-        OrlangEnvironment env = (OrlangEnvironment) blueprint.environmentBlueprint.create(particleEngine, emitter.environment);
-        entity.add(env);
+        OrlangEnv envComp = (OrlangEnv) blueprint.environmentBlueprint.create(particleEngine, emitter.environment);
+        entity.add(envComp);
+        OrlangEnvironment env = envComp.env;
 
         List<Component> particleComponents = blueprint.createComponents(particleEngine, env);
         for (Component particleComponent : particleComponents)

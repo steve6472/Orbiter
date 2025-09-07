@@ -19,13 +19,13 @@ import steve6472.flare.struct.Struct;
 import steve6472.flare.struct.StructDef;
 import steve6472.flare.struct.def.Push;
 import steve6472.orbiter.Client;
-import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.rendering.particle.Tint;
 import steve6472.orbiter.rendering.particle.Transform;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.particle.ParticleComponents;
 import steve6472.orbiter.world.particle.components.ParticleModel;
 import steve6472.orbiter.world.particle.components.RenderPipeline;
+import steve6472.orlang.OrlangEnvironment;
 
 import java.util.ArrayList;
 import java.util.List;

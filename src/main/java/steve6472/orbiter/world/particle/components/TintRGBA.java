@@ -3,8 +3,8 @@ package steve6472.orbiter.world.particle.components;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import steve6472.orbiter.orlang.codec.OrNumValue;
 import steve6472.orbiter.world.particle.core.ParticleComponent;
+import steve6472.orlang.codec.OrNumValue;
 
 import java.util.List;
 

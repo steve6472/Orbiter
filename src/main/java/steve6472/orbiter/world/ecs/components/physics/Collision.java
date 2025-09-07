@@ -8,6 +8,7 @@ import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
 import steve6472.core.registry.Key;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
 
 /**
@@ -17,7 +18,7 @@ import steve6472.orbiter.Registries;
  */
 public record Collision(Key collisionKey, CollisionShape shape) implements PhysicsProperty, Component
 {
-    public static final Codec<Collision> CODEC = Key.CODEC.xmap(Collision::new, Collision::collisionKey);
+    public static final Codec<Collision> CODEC = Constants.KEY_CODEC.xmap(Collision::new, Collision::collisionKey);
 
     public static final BufferCodec<ByteBuf, Collision> BUFFER_CODEC = BufferCodec.of(
         BufferCodecs.KEY, Collision::collisionKey,

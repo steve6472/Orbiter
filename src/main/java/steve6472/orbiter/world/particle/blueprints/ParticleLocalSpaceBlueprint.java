@@ -5,10 +5,10 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
-import steve6472.orbiter.orlang.OrlangEnvironment;
 import steve6472.orbiter.world.particle.components.LocalSpace;
 import steve6472.orbiter.world.particle.core.PCBlueprint;
 import steve6472.orbiter.world.particle.core.ParticleComponent;
+import steve6472.orlang.OrlangEnvironment;
 
 /**
  * Created by steve6472
