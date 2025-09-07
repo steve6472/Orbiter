@@ -6,6 +6,7 @@ import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.util.NativeLibrary;
 import com.jme3.system.NativeLibraryLoader;
 import org.joml.Matrix4f;
+import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.registry.Key;
@@ -357,6 +358,15 @@ public class OrbiterApp extends FlareApp
     {
         this.isMouseGrabbed = isMouseGrabbed;
         GLFW.glfwSetInputMode(window().window(), GLFW.GLFW_CURSOR, isMouseGrabbed ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
+        if (!isMouseGrabbed)
+        {
+            GLFW.glfwSetCursorPos(window().window(), window().getWidth() / 2d, window().getHeight() / 2d);
+        } else
+        {
+            Vector2i mousePos = input().getMousePositionRelativeToTopLeftOfTheWindow();
+            camera().oldx = mousePos.x;
+            camera().oldy = mousePos.y;
+        }
     }
 
     public Client getClient()
