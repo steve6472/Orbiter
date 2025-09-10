@@ -1,0 +1,29 @@
+{
+    controllers: {
+        main: {
+            initial_state: "idle",
+            states: {
+                idle: {
+                    animations: ["idle"],
+                    transitions: [
+                        {
+                            state: "walking",
+                            condition: "q.total_linear_velocity() > 0.02"
+                        }
+                    ],
+                    blend_transition: 0.333
+                },
+                walking: {
+                    animations: ["walk"],
+                    transitions: [
+                        {
+                            state: "idle",
+                            condition: "q.total_linear_velocity() < 0.02"
+                        }
+                    ],
+                    blend_transition: 0.333
+                }
+            }
+        }
+    }
+}

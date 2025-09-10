@@ -1,8 +1,8 @@
-package steve6472.orbiter.world.ecs.components.emitter.rate;
+package steve6472.orbiter.world.emitter.rate;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
+import steve6472.orbiter.world.emitter.ParticleEmitter;
 import steve6472.orlang.codec.OrNumValue;
 
 public class SteadyRate extends EmitterRate

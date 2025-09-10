@@ -1,11 +1,12 @@
 {
     position: {},
     rotation: {},
+    linear_velocity: {x: 0, y: 0, z: 0},
     animated_model: {
         model: "blockbench/animated/snail",
-        animation: "walk",
-        loop: true
+        controller: "orbiter:snail"
     },
+    environment: {},
     collision: "blockbench/static/cube/50_cm",
     tags: ["tag_physics"]
 }

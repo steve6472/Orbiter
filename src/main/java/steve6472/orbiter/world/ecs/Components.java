@@ -5,7 +5,7 @@ import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.world.ecs.components.*;
-import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitters;
+import steve6472.orbiter.world.emitter.ParticleEmitters;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.core.ComponentEntry;
 

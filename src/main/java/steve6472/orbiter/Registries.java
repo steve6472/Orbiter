@@ -14,9 +14,11 @@ import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.world.collision.OrbiterCollisionShape;
 import steve6472.orbiter.world.ecs.Blueprints;
 import steve6472.orbiter.world.ecs.Components;
-import steve6472.orbiter.world.ecs.components.emitter.lifetime.EmitterLifetimeType;
-import steve6472.orbiter.world.ecs.components.emitter.rate.EmitterRateType;
-import steve6472.orbiter.world.ecs.components.emitter.shapes.EmitterShapeType;
+import steve6472.orbiter.world.ecs.blueprints.ParticleEmittersBlueprint;
+import steve6472.orbiter.world.emitter.EmitterBlueprints;
+import steve6472.orbiter.world.emitter.lifetime.EmitterLifetimeType;
+import steve6472.orbiter.world.emitter.rate.EmitterRateType;
+import steve6472.orbiter.world.emitter.shapes.EmitterShapeType;
 import steve6472.orbiter.world.ecs.core.BlueprintEntry;
 import steve6472.orbiter.world.ecs.core.ComponentEntry;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
@@ -51,6 +53,8 @@ public class Registries extends RegistryCreators
     public static final Registry<ComponentEntry<?>> PARTICLE_COMPONENT = createNamespacedRegistry(Constants.NAMESPACE, "particle_component", () -> Components.POSITION);
     public static final Registry<PCBlueprintEntry<?>> PARTICLE_COMPONENT_BLUEPRINT = createNamespacedRegistry(Constants.NAMESPACE, "particle_component_blueprint", () -> ParticleComponentBlueprints.SCALE);
     public static final ObjectRegistry<ParticleBlueprint> PARTICLE_BLUEPRINT = createObjectRegistry("particle_blueprint", ParticleBlueprint::load);
+
+    public static final ObjectRegistry<ParticleEmittersBlueprint.EmitterEntry> EMITTER_BLUEPRINT = createObjectRegistry("emitter_blueprint", EmitterBlueprints::load);
 
     public static final Registry<ComponentEntry<?>> COMPONENT = createNamespacedRegistry(Constants.NAMESPACE, "component", () -> Components.POSITION);
     public static final Registry<BlueprintEntry<?>> COMPONENT_BLUEPRINT = createRegistry("component_blueprint", () -> Blueprints.POSITION);

@@ -6,21 +6,25 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.objects.PhysicsRigidBody;
-import org.joml.Vector3f;
-import steve6472.core.util.MathUtil;
+import steve6472.core.registry.Key;
+import steve6472.flare.assets.model.blockbench.animation.controller.AnimationController;
+import steve6472.flare.registry.FlareRegistries;
+import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.api.Connections;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.packets.game.clientbound.CreateCustomEntity;
 import steve6472.orbiter.network.packets.game.clientbound.RemoveEntity;
 import steve6472.orbiter.network.packets.game.clientbound.CreateEntity;
 import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.blueprints.ParticleEmittersBlueprint;
+import steve6472.orbiter.world.ecs.components.AnimatedModel;
 import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
+import steve6472.orbiter.world.emitter.ParticleEmitter;
+import steve6472.orbiter.world.emitter.ParticleEmitters;
 import steve6472.orlang.OrlangEnvironment;
-import steve6472.orlang.OrlangValue;
-import steve6472.orlang.QueryFunctionSet;
 
 import java.util.*;
 import java.util.stream.Stream;
@@ -52,22 +56,32 @@ public interface EntityControl
         if (orlangEnv != null)
         {
             OrlangEnvironment env = orlangEnv.env;
+            env.queryFunctionSet = new EntityQueryFunctions(entity);
+        }
 
-            QueryFunctionSet test = new QueryFunctionSet();
-            test.functions.put("to_north", OrlangValue.func(() ->
+        AnimatedModel animatedModel = Components.ANIMATED_MODEL.get(entity);
+        if (animatedModel != null)
+        {
+            AnimationController controller = animatedModel.animationController;
+            controller.callbacks().onParticle = particleData ->
             {
-                Rotation rotation = Components.ROTATION.get(entity);
-                if (rotation == null)
-                    return 0;
-                Vector3f rotate = new Vector3f(0, 0, -1).rotate(rotation.toQuat());
+                Key key = Key.parse(particleData.effect());
+                ParticleEmittersBlueprint.EmitterEntry emitterEntry = Registries.EMITTER_BLUEPRINT.get(key);
+                if (emitterEntry == null)
+                    return;
+                ParticleEmitter emitter = emitterEntry.toEmitter();
 
-                double _2PI = 2 * Math.PI;
-                double x = rotate.x();
-                double z = rotate.z();
-                double theta = Math.atan2(-x, z);
-                return (float) -Math.toDegrees((theta) % _2PI + Math.PI);
-            }));
-            env.queryFunctionSet = test;
+                ParticleEmitters particleEmitters = Components.PARTICLE_EMITTERS.get(entity);
+                if (particleEmitters == null)
+                {
+                    particleEmitters = new ParticleEmitters(new ArrayList<>());
+                    particleEmitters.emitters.add(emitter);
+                    entity.add(particleEmitters);
+                } else
+                {
+                    particleEmitters.emitters.add(emitter);
+                }
+            };
         }
 
         // Special physics tag handling

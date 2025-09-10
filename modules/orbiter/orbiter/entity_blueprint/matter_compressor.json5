@@ -1,11 +1,11 @@
 {
     position: {},
     rotation: {},
-    animated_model: {
-        model: "blockbench/animated/matter_compressor",
-        animation: "rotate_fan",
-        loop: true
-    },
+//    animated_model: {
+//        model: "blockbench/animated/matter_compressor",
+//        animation: "rotate_fan",
+//        loop: true
+//    },
     mass: 15,
     collision: "blockbench/static/coll/matter_compressor",
     tags: ["tag_physics"]

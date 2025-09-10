@@ -9,10 +9,12 @@ import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
 import steve6472.flare.assets.model.Model;
 import steve6472.flare.assets.model.blockbench.LoadedModel;
-import steve6472.flare.assets.model.blockbench.anim.AnimationController;
+import steve6472.flare.assets.model.blockbench.animation.Animation;
+import steve6472.flare.assets.model.blockbench.animation.controller.AnimationController;
 import steve6472.flare.assets.model.primitive.PrimitiveSkinModel;
 import steve6472.flare.registry.FlareRegistries;
 import steve6472.orbiter.Constants;
+import steve6472.orbiter.util.Holder;
 
 /**
  * Created by steve6472
@@ -22,34 +24,26 @@ import steve6472.orbiter.Constants;
 public class AnimatedModel implements Component, Pool.Poolable
 {
     public static final Codec<AnimatedModel> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Constants.KEY_CODEC.fieldOf("key").forGetter(e -> e.model().key()),
-        Codec.STRING.fieldOf("animation").forGetter(e -> e.animationName),
-        Codec.BOOL.fieldOf("model").forGetter(e -> e.animationController.timer.isLooping())
-    ).apply(instance, (key, animationName, looping) -> new AnimatedModel(FlareRegistries.STATIC_MODEL.get(key), animationName, looping)));
+        Constants.KEY_CODEC.fieldOf("model").forGetter(e -> e.model.key()),
+        Holder.create(FlareRegistries.ANIMATION_CONTROLLER).fieldOf("controller").forGetter(e -> Holder.fromValue(e.animationController))
+    ).apply(instance, (key, controllerHolder) -> new AnimatedModel(FlareRegistries.ANIMATED_MODEL.get(key), controllerHolder)));
 
     public static final BufferCodec<ByteBuf, AnimatedModel> BUFFER_CODEC = BufferCodec.of(
         BufferCodecs.KEY, e -> e.model().key(),
-        BufferCodecs.STRING, e -> e.animationName,
-        BufferCodecs.BOOL, e -> e.animationController.timer.isLooping(),
-        (key, animationName, looping) -> new AnimatedModel(FlareRegistries.STATIC_MODEL.get(key), animationName, looping));
+        BufferCodecs.KEY, e -> e.animationController.key(),
+        (key, controllerKey) -> new AnimatedModel(FlareRegistries.ANIMATED_MODEL.get(key), Holder.fromValue(FlareRegistries.ANIMATION_CONTROLLER.get(controllerKey))));
 
     public Model model;
-    public PrimitiveSkinModel primitiveSkinModel;
     public LoadedModel loadedModel;
     public AnimationController animationController;
-    public String animationName;
 
     public AnimatedModel() {}
 
-    public AnimatedModel(Model model, String animationName, boolean looping)
+    public AnimatedModel(Model model, Holder<AnimationController> controllerHolder)
     {
         this.model = model;
         this.loadedModel = FlareRegistries.ANIMATED_LOADED_MODEL.get(model.key());
-        this.primitiveSkinModel = loadedModel.toPrimitiveSkinModel();
-        this.animationController = new AnimationController(loadedModel.getAnimationByName(animationName), primitiveSkinModel.skinData, loadedModel);
-        this.animationController.timer.start();
-        this.animationController.timer.setLoop(looping);
-        this.animationName = animationName;
+        animationController = controllerHolder.get().createForModel(loadedModel);
     }
 
     public Model model()
@@ -61,7 +55,6 @@ public class AnimatedModel implements Component, Pool.Poolable
     public void reset()
     {
         model = null;
-        primitiveSkinModel = null;
         loadedModel = null;
     }
 }

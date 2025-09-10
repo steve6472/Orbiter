@@ -10,8 +10,8 @@ import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.ecs.components.ParticleHolderId;
 import steve6472.orbiter.world.particle.ParticleComponents;
-import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
-import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitters;
+import steve6472.orbiter.world.emitter.ParticleEmitter;
+import steve6472.orbiter.world.emitter.ParticleEmitters;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 import steve6472.orbiter.world.particle.blueprints.ParticleDirectionBlueprint;
@@ -21,6 +21,7 @@ import steve6472.orbiter.world.particle.components.ParticleFollowerId;
 import steve6472.orbiter.world.particle.core.ParticleBlueprint;
 import steve6472.orlang.OrlangEnvironment;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -43,9 +44,14 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
     {
         ParticleEmitters emitters = Components.PARTICLE_EMITTERS.get(entity);
 
-        for (ParticleEmitter emitter : emitters.emitters)
+        //noinspection Java8CollectionRemoveIf
+        for (Iterator<ParticleEmitter> iterator = emitters.emitters.iterator(); iterator.hasNext(); )
         {
-            processEmitter(emitters, emitter, entity);
+            ParticleEmitter emitter = iterator.next();
+            if (processEmitter(emitter, entity))
+            {
+                iterator.remove();
+            }
         }
 
         if (emitters.emitters.isEmpty())
@@ -55,21 +61,21 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
         }
     }
 
-    private void processEmitter(ParticleEmitters emitters, ParticleEmitter emitter, Entity entity)
+    /// @return true if emitter should be removed
+    private boolean processEmitter(ParticleEmitter emitter, Entity entity)
     {
         if (!emitter.lifetime.isAlive(emitter))
         {
-            emitters.emitters.remove(emitter);
-            return;
+            return true;
         }
 
         if (!emitter.lifetime.shouldEmit(emitter))
-            return;
+            return false;
 
         int spawnCount = emitter.rate.spawnCount(emitter);
 
         if (spawnCount <= 0)
-            return;
+            return false;
 
         emitter.emitterTick();
 
@@ -92,6 +98,8 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
         {
             createParticle(entity, holderId, emitter, position);
         }
+
+        return false;
     }
 
     private void createParticle(Entity holder, int holderId, ParticleEmitter emitter, Position emitterPosition)

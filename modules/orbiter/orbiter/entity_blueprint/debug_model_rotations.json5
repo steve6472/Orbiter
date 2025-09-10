@@ -1,11 +1,11 @@
 {
     position: {},
     rotation: {},
-    animated_model: {
-        model: "blockbench/animated/debug_model_rotations",
-        animation: "idle",
-        loop: true
-    },
+//    animated_model: {
+//        model: "blockbench/animated/debug_model_rotations",
+//        animation: "idle",
+//        loop: true
+//    },
     collision: "blockbench/static/cube/meter",
     tags: ["tag_physics"]
 }

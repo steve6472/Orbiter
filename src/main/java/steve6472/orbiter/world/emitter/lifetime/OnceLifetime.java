@@ -1,8 +1,8 @@
-package steve6472.orbiter.world.ecs.components.emitter.lifetime;
+package steve6472.orbiter.world.emitter.lifetime;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
+import steve6472.orbiter.world.emitter.ParticleEmitter;
 import steve6472.orlang.codec.OrNumValue;
 
 public class OnceLifetime extends EmitterLifetime
@@ -13,6 +13,7 @@ public class OnceLifetime extends EmitterLifetime
 
     public OrNumValue activeTime;
     private long timestamp;
+    private double activeTimeN = Double.NaN;
 
     public OnceLifetime(OrNumValue activeTime)
     {
@@ -27,13 +28,17 @@ public class OnceLifetime extends EmitterLifetime
     @Override
     public boolean isAlive(ParticleEmitter emitter)
     {
-        if (!activeTime.hadFirstEval())
+        if (Double.isNaN(activeTimeN))
         {
-            activeTime.evaluate(emitter.environment);
+            activeTimeN = activeTime.evaluateAndGet(emitter.environment);
             timestamp = System.currentTimeMillis();
         }
 
-        return (System.currentTimeMillis() - timestamp) / 1e3d >= activeTime().get();
+        long l = System.currentTimeMillis() - timestamp;
+        if (l == 0)
+            return true;
+
+        return l / 1e3d < activeTimeN;
     }
 
     @Override

@@ -1,8 +1,8 @@
-package steve6472.orbiter.world.ecs.components.emitter.shapes;
+package steve6472.orbiter.world.emitter.shapes;
 
 import com.mojang.serialization.Codec;
 import org.joml.Vector3f;
-import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
+import steve6472.orbiter.world.emitter.ParticleEmitter;
 
 public class PointShape extends EmitterShape
 {

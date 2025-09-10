@@ -9,8 +9,7 @@ import steve6472.flare.FlareConstants;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.VkBuffer;
 import steve6472.flare.assets.model.Model;
-import steve6472.flare.assets.model.blockbench.anim.AnimationController;
-import steve6472.flare.assets.model.primitive.PrimitiveSkinModel;
+import steve6472.flare.assets.model.blockbench.animation.controller.AnimationController;
 import steve6472.flare.core.FrameInfo;
 import steve6472.flare.pipeline.builder.PipelineConstructor;
 import steve6472.flare.registry.FlareRegistries;
@@ -68,7 +67,6 @@ public class AnimatedModelRenderSystem extends CommonRenderSystem
             OrlangEnvironment env = orlangEnv == null ? null : orlangEnv.env;
 
             Model model = animatedModel.model;
-            PrimitiveSkinModel primitiveSkinModel = animatedModel.primitiveSkinModel;
             AnimationController animationController = animatedModel.animationController;
 
             Matrix4f mat = new Matrix4f();
@@ -83,13 +81,13 @@ public class AnimatedModelRenderSystem extends CommonRenderSystem
 
             animationController.tick(mat, env);
 
-            Matrix4f[] array = animationController.skinData.toArray();
+            Matrix4f[] array = animationController.getTransformations();
             var sbo = SBO.BONES.create((Object) array);
 
             buffer.writeToBuffer(SBO.BONES::memcpy, List.of(sbo), array.length * 64L, offset);
             buffer.flush(array.length * 64L, offset);
 
-            Struct struct = OrbiterPush.SKIN.create(primitiveSkinModel.skinData.transformations.size(), offset / 64);
+            Struct struct = OrbiterPush.SKIN.create(array.length, offset / 64);
             OrbiterPush.SKIN.push(struct, frameInfo.commandBuffer(), pipeline().pipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0);
 
             model.bind(frameInfo.commandBuffer());

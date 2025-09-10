@@ -3,10 +3,9 @@
     rotation: {},
     animated_model: {
         model: "blockbench/animated/compass",
-        animation: "rotate",
-        loop: true
+        controller: "orbiter:compass"
     },
     environment: {},
-    collision: "blockbench/static/cube/25_cm",
+    collision: "blockbench/static/coll/compass",
     tags: ["tag_physics"]
 }

@@ -1,10 +1,10 @@
-package steve6472.orbiter.world.ecs.components.emitter.shapes;
+package steve6472.orbiter.world.emitter.shapes;
 
 import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import org.joml.Vector3f;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
+import steve6472.orbiter.world.emitter.ParticleEmitter;
 
 /**
  * Generate particle position </br>

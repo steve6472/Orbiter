@@ -1,4 +1,4 @@
-package steve6472.orbiter.world.ecs.components.emitter.lifetime;
+package steve6472.orbiter.world.emitter.lifetime;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;

@@ -1,0 +1,25 @@
+{
+    environment: {
+    },
+    lifetime: {
+        lifetime_type: "once",
+        active_time: 0
+    },
+    rate: {
+        rate_type: "instant",
+        count: 1
+    },
+    shape: {
+        shape_type: "point"
+    },
+    offset: [0, 0.25, 0],
+    particle: {
+        model: "orbiter:blockbench/static/particle/spinny_disc_slow",
+        scale: {
+            x: "1 + v.age",
+            y: 1,
+            z: "1 + v.age"
+        },
+        max_age: 2
+    }
+}

@@ -1,11 +1,11 @@
 {
     position: {},
     rotation: {},
-    animated_model: {
-        model: "blockbench/animated/holy_explosion",
-        animation: "explode",
-        loop: true
-    },
+//    animated_model: {
+//        model: "blockbench/animated/holy_explosion",
+//        animation: "explode",
+//        loop: true
+//    },
     collision: "blockbench/static/cube/25_cm",
     tags: ["tag_physics"]
 }

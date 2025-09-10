@@ -1,9 +1,9 @@
-package steve6472.orbiter.world.ecs.components.emitter.lifetime;
+package steve6472.orbiter.world.emitter.lifetime;
 
 import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.world.ecs.components.emitter.ParticleEmitter;
+import steve6472.orbiter.world.emitter.ParticleEmitter;
 
 public abstract class EmitterLifetime implements Component
 {

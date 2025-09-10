@@ -1,4 +1,4 @@
-package steve6472.orbiter.world.ecs.components.emitter;
+package steve6472.orbiter.world.emitter;
 
 import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;

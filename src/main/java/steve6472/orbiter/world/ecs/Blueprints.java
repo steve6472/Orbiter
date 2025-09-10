@@ -20,6 +20,7 @@ public class Blueprints
     public static final BlueprintEntry<MassBlueprint> MASS = register(MassBlueprint.KEY, MassBlueprint.CODEC);
     public static final BlueprintEntry<AngularFactorBlueprint> ANGULAR_FACTOR = register(AngularFactorBlueprint.KEY, AngularFactorBlueprint.CODEC);
     public static final BlueprintEntry<AngularVelocityBlueprint> ANGULAR_VELOCITY = register(AngularVelocityBlueprint.KEY, AngularVelocityBlueprint.CODEC);
+    public static final BlueprintEntry<LinearVelocityBlueprint> LINEAR_VELOCITY = register(LinearVelocityBlueprint.KEY, LinearVelocityBlueprint.CODEC);
     public static final BlueprintEntry<GravityBlueprint> GRAVITY = register(GravityBlueprint.KEY, GravityBlueprint.CODEC);
     public static final BlueprintEntry<RotationBlueprint> ROTATION = register(RotationBlueprint.KEY, RotationBlueprint.CODEC);
     public static final BlueprintEntry<CollisionBlueprint> COLLISION = register(CollisionBlueprint.KEY, CollisionBlueprint.CODEC);

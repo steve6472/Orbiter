@@ -1,4 +1,4 @@
-package steve6472.orbiter.world.ecs.components.emitter.shapes;
+package steve6472.orbiter.world.emitter.shapes;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
