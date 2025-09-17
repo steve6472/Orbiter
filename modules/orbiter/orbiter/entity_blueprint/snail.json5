@@ -8,5 +8,5 @@
     },
     environment: {},
     collision: "blockbench/static/cube/50_cm",
-    tags: ["tag_physics"]
+    tags: ["physics"]
 }

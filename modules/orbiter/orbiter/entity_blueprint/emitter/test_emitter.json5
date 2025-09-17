@@ -3,7 +3,7 @@
     rotation: {},
     model: "blockbench/static/antigrav_ball",
     collision: "blockbench/static/antigrav_ball",
-    tags: ["tag_physics"],
+    tags: ["physics"],
 
     angular_velocity: {
         x: 0,

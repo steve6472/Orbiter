@@ -86,6 +86,7 @@ public class OrbiterApp extends FlareApp
      *  [x] Particle systems
      *  [ ] Particle tinting renderer, without normals
      *  [ ] Fix max_count for steady rate
+     *  [ ] Emitter anchor to a locator from animated model
      *
      *  akma asks:
      *  [ ] Mana system

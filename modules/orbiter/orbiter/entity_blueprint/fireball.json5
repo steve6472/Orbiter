@@ -3,7 +3,7 @@
     rotation: {},
     model: "blockbench/static/gizmo",
     collision: "blockbench/static/cube/meter",
-    tags: ["tag_physics"],
+    tags: ["physics"],
 
     particle_emitters: [
         // head_trail

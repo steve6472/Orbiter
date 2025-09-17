@@ -3,5 +3,5 @@
     rotation: {},
     model: "blockbench/static/rainbow_in_a_pot",
     collision: "blockbench/static/rainbow_in_a_pot",
-    tags: ["tag_physics"]
+    tags: ["physics"]
 }

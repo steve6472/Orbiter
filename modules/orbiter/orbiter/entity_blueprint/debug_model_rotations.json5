@@ -7,5 +7,5 @@
 //        loop: true
 //    },
     collision: "blockbench/static/cube/meter",
-    tags: ["tag_physics"]
+    tags: ["physics"]
 }

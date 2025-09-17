@@ -3,5 +3,5 @@
     rotation: {},
     model: "blockbench/static/platform",
     collision: "blockbench/static/platform",
-    tags: ["tag_physics"]
+    tags: ["physics"]
 }

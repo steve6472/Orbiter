@@ -32,7 +32,8 @@ public record TagsBlueprint(List<Key> tagKeys) implements Blueprint<TagsBlueprin
         List<Component> components = new ArrayList<>(tagKeys.size());
         for (Key tagKey : tagKeys)
         {
-            ComponentEntry<?> component = Registries.COMPONENT.get(tagKey);
+            Key tagKeyFixed = Key.withNamespace(tagKey.namespace(), "tag_" + tagKey.id());
+            ComponentEntry<?> component = Registries.COMPONENT.get(tagKeyFixed);
             if (component == null)
             {
                 LOGGER.severe("Tag \"" + tagKey + "\" not found!");
