@@ -14,6 +14,7 @@ import steve6472.orbiter.world.collision.OrbiterCollisionShape;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
+import steve6472.orbiter.world.ecs.components.event.Click;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 
@@ -56,6 +57,7 @@ public class ClickECS extends EntitySystem
 
         // TODO: add temp component with this clickId. Other Systems can use this. Removed automatically at the end of the tick.
         short clickId = orbiterCollisionShape.ids()[client.getRayTrace().getLookAtTriangleIndex()];
+        entity.add(new Click(clickId));
     }
 
     public static Entity findEntity(Client client, UUID uuid)

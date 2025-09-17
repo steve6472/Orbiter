@@ -18,6 +18,7 @@ import steve6472.orlang.QueryFunctionSet;
 public class EntityQueryFunctions extends QueryFunctionSet implements AnimationQuery
 {
     private double animTime;
+    private boolean anyAnimFinished, allAnimsFinished;
 
     public EntityQueryFunctions(Entity entity)
     {
@@ -61,6 +62,8 @@ public class EntityQueryFunctions extends QueryFunctionSet implements AnimationQ
         }));
 
         functions.put("anim_time", OrlangValue.func(() -> animTime));
+        functions.put("any_animation_finished", OrlangValue.func(() -> anyAnimFinished));
+        functions.put("all_animations_finished", OrlangValue.func(() -> allAnimsFinished));
     }
 
     @Override
@@ -72,12 +75,12 @@ public class EntityQueryFunctions extends QueryFunctionSet implements AnimationQ
     @Override
     public void setAnyAnimationFinished(boolean flag)
     {
-
+        anyAnimFinished = flag;
     }
 
     @Override
-    public void setAllAnimationSFinished(boolean flag)
+    public void setAllAnimationsFinished(boolean flag)
     {
-
+        allAnimsFinished = flag;
     }
 }

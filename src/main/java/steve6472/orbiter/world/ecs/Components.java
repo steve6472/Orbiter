@@ -5,6 +5,7 @@ import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.world.ecs.components.*;
+import steve6472.orbiter.world.ecs.components.event.Click;
 import steve6472.orbiter.world.emitter.ParticleEmitters;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.core.ComponentEntry;
@@ -61,6 +62,11 @@ public class Components
     public static final ComponentEntry<Tag.Physics> TAG_PHYSICS = register("tag_physics", Tag.Physics.class, builder -> builder.persistent(Tag.PHYSICS.codec()).network(Tag.PHYSICS.networkCodec()));
     public static final ComponentEntry<Tag.FireflyAI> TAG_FIREFLY_AI = register("tag_firefly_ai", Tag.FireflyAI.class, builder -> builder.persistent(Tag.FIREFLY_AI.codec()).network(Tag.FIREFLY_AI.networkCodec()));
     public static final ComponentEntry<Tag.ClientCharacter> TAG_CLIENT_HANDLED = register("tag_client_character", Tag.ClientCharacter.class, builder -> builder.persistent(Tag.CLIENT_CHARACTER.codec()).network(Tag.CLIENT_CHARACTER.networkCodec()));
+
+    /*
+     * Event
+     */
+    public static final ComponentEntry<Click> CLICK = register("click", Click.class);
 
     /*
      * Internal

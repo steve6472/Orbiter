@@ -1401,7 +1401,37 @@
             "visibility": true,
             "autouv": 0,
             "selected": false,
-            "children": ["792c7fde-45c9-6a5c-3355-ab3acd6f587a", "a7865ec4-f9db-feeb-687e-bff3d3cbcf1a", "af5001d9-bc8e-0e19-d6ac-b70aa3692fcb"]
+            "children": [
+                "792c7fde-45c9-6a5c-3355-ab3acd6f587a",
+                {
+                    "name": "button_1",
+                    "origin": [-9.5, 2, -2],
+                    "color": 0,
+                    "uuid": "4f508d25-cc1c-d6da-4796-226c485ec569",
+                    "export": true,
+                    "mirror_uv": false,
+                    "isOpen": true,
+                    "locked": false,
+                    "visibility": true,
+                    "autouv": 0,
+                    "selected": true,
+                    "children": ["a7865ec4-f9db-feeb-687e-bff3d3cbcf1a"]
+                },
+                {
+                    "name": "button_2",
+                    "origin": [-10, 2.5, 2.5],
+                    "color": 0,
+                    "uuid": "3a9a88ed-e375-fc22-f379-10c157a53a48",
+                    "export": true,
+                    "mirror_uv": false,
+                    "isOpen": true,
+                    "locked": false,
+                    "visibility": true,
+                    "autouv": 0,
+                    "selected": false,
+                    "children": ["af5001d9-bc8e-0e19-d6ac-b70aa3692fcb"]
+                }
+            ]
         }
     ],
     "textures": [
@@ -2258,6 +2288,76 @@
                             "time": 0,
                             "color": -1,
                             "uniform": true,
+                            "interpolation": "linear"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "uuid": "ad6a52fb-9f01-61e0-ce01-aef349d7ea33",
+            "name": "press_button_1",
+            "loop": "once",
+            "override": false,
+            "length": 0.25,
+            "snapping": 100,
+            "selected": true,
+            "anim_time_update": "",
+            "blend_weight": "",
+            "start_delay": "",
+            "loop_delay": "",
+            "animators": {
+                "4f508d25-cc1c-d6da-4796-226c485ec569": {
+                    "name": "button_1",
+                    "type": "bone",
+                    "keyframes": [
+                        {
+                            "channel": "position",
+                            "data_points": [
+                                {
+                                    "x": "0",
+                                    "y": "math.max(-math.sin(q.anim_time*360*2), -0.95)",
+                                    "z": "0"
+                                }
+                            ],
+                            "uuid": "33f195e6-8a6a-8cd8-b41c-40444aecb573",
+                            "time": 0,
+                            "color": -1,
+                            "interpolation": "linear"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "uuid": "9666ca45-133a-409c-93ad-af907c8a1fc9",
+            "name": "press_button_2",
+            "loop": "once",
+            "override": false,
+            "length": 0.25,
+            "snapping": 100,
+            "selected": false,
+            "anim_time_update": "",
+            "blend_weight": "",
+            "start_delay": "",
+            "loop_delay": "",
+            "animators": {
+                "3a9a88ed-e375-fc22-f379-10c157a53a48": {
+                    "name": "button_2",
+                    "type": "bone",
+                    "keyframes": [
+                        {
+                            "channel": "position",
+                            "data_points": [
+                                {
+                                    "x": "0",
+                                    "y": "math.max(-math.sin(q.anim_time*360*2), -0.95)",
+                                    "z": "0"
+                                }
+                            ],
+                            "uuid": "b2425cd8-6d9a-7424-0db9-4ea8bae7c9e0",
+                            "time": 0,
+                            "color": -1,
                             "interpolation": "linear"
                         }
                     ]

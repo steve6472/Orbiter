@@ -39,6 +39,7 @@ public class WorldSystems
     private EntitySystem braodcastClientPosition;
     private EntitySystem networkSync;
     private EntitySystem primitiveEmitter;
+    private EntitySystem removeEventComponents;
 
     /*
      *
@@ -77,10 +78,12 @@ public class WorldSystems
 
         engine.addSystem(braodcastClientPosition = new BroadcastClientPosition());
         engine.addSystem(primitiveEmitter = new ParticleEmitterSystem(world));
+        engine.addSystem(new ClickConsumerTest());
 
         // Last
         engine.addSystem(networkSync = new NetworkSync(OrbiterApp.getInstance().getNetwork())); //"Network Sync", ""
         engine.addSystem(updatePhysics = new UpdatePhysics(world)); // "Update Physics Positions", "Updates Physics Positions with data from last tick ECS Systems"
+        engine.addSystem(removeEventComponents = new RemoveEventComponents());
     }
 
     public void updateStates()
