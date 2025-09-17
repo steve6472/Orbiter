@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.collision.parser;
 
+import steve6472.core.tokenizer.MainTokens;
 import steve6472.core.tokenizer.PrefixParselet;
 import steve6472.core.tokenizer.TokenParser;
 import steve6472.core.tokenizer.Tokenizer;
@@ -20,6 +21,9 @@ public class CollisionParslet implements PrefixParselet<ShapeExp>
     @Override
     public ShapeExp parse(Tokenizer tokenizer, TokenParser<ShapeExp> tokenParser)
     {
+        if (tokenizer.matchToken(MainTokens.EOF, false))
+            return new CollisionExp(new GroupExp(new ShapeExp[0]));
+
         return new CollisionExp(tokenParser.parse(GroupExp.class));
     }
 }

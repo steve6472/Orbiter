@@ -151,7 +151,7 @@ public class PCPlayer implements Player
     {
         processMovementAndCamera(userInput, camera);
 
-        if (userInput.isMouseButtonPressed(GLFW.GLFW_MOUSE_BUTTON_LEFT))
+        if (Keybinds.HOLD_OBJECT.isActive())
         {
             startHolding(camera);
         } else

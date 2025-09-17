@@ -1,5 +1,6 @@
 package steve6472.orbiter;
 
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.objects.PhysicsCharacter;
 import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
@@ -78,14 +79,7 @@ public class Convert
         return store;
     }
 
-    public static Matrix4f physGetTransformToJoml(PhysicsRigidBody body, Matrix4f store)
-    {
-        Transform transform = new Transform();
-        body.getTransform(transform);
-        return physToJoml(transform.toTransformMatrix(), store);
-    }
-
-    public static Matrix4f physGetTransformToJoml(PhysicsGhostObject body, Matrix4f store)
+    public static Matrix4f physGetTransformToJoml(PhysicsCollisionObject body, Matrix4f store)
     {
         Transform transform = new Transform();
         body.getTransform(transform);

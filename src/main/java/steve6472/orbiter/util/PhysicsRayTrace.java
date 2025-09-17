@@ -8,6 +8,7 @@ import steve6472.flare.Camera;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
+import steve6472.orbiter.player.PCPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,8 @@ public class PhysicsRayTrace
 {
     private final List<PhysicsRayTestResult> rayTraceList = new ArrayList<>();
     private final Client client;
+    private PhysicsCollisionObject lookAtObject;
+    private int lookAtTriangleIndex;
 
     public PhysicsRayTrace(Client client)
     {
@@ -84,5 +87,28 @@ public class PhysicsRayTrace
             return Optional.of(physicsRayTestResult);
         }
         return Optional.empty();
+    }
+
+    public void updateLookAt(Camera camera, float reach)
+    {
+        rayTraceGetFirst(camera, reach, true)
+            .ifPresentOrElse(
+                t ->
+                {
+                    lookAtObject = t.getCollisionObject();
+                    lookAtTriangleIndex = t.triangleIndex();
+                },
+                () -> lookAtObject = null
+            );
+    }
+
+    public PhysicsCollisionObject getLookAtObject()
+    {
+        return lookAtObject;
+    }
+
+    public int getLookAtTriangleIndex()
+    {
+        return lookAtTriangleIndex;
     }
 }

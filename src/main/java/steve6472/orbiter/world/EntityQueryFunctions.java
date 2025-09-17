@@ -2,6 +2,7 @@ package steve6472.orbiter.world;
 
 import com.badlogic.ashley.core.Entity;
 import org.joml.Vector3f;
+import steve6472.flare.assets.model.blockbench.animation.controller.AnimationQuery;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.physics.LinearVelocity;
 import steve6472.orbiter.world.ecs.components.physics.Position;
@@ -14,8 +15,10 @@ import steve6472.orlang.QueryFunctionSet;
  * Date: 9/8/2025
  * Project: Orbiter <br>
  */
-public class EntityQueryFunctions extends QueryFunctionSet
+public class EntityQueryFunctions extends QueryFunctionSet implements AnimationQuery
 {
+    private double animTime;
+
     public EntityQueryFunctions(Entity entity)
     {
         Class<Double> D = Double.TYPE;
@@ -56,5 +59,25 @@ public class EntityQueryFunctions extends QueryFunctionSet
                 return 0;
             return (double) Vector3f.length(linearVelocity.x(), linearVelocity.y(), linearVelocity.z());
         }));
+
+        functions.put("anim_time", OrlangValue.func(() -> animTime));
+    }
+
+    @Override
+    public void setAnimTime(double animTime)
+    {
+        this.animTime = animTime;
+    }
+
+    @Override
+    public void setAnyAnimationFinished(boolean flag)
+    {
+
+    }
+
+    @Override
+    public void setAllAnimationSFinished(boolean flag)
+    {
+
     }
 }

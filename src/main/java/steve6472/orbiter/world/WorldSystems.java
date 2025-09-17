@@ -34,6 +34,7 @@ public class WorldSystems
 
     public UpdateClientData updateClientData;
     private EntitySystem updateECS;
+    private EntitySystem clickECS;
     private EntitySystem updatePhysics;
     private EntitySystem braodcastClientPosition;
     private EntitySystem networkSync;
@@ -55,6 +56,7 @@ public class WorldSystems
     {
         // First
         engine.addSystem(updateECS = new UpdateECS(world)); // "Update ECS Positions", "Updates ECS Positions with data from last tick of Physics Simulation"
+        engine.addSystem(clickECS = new ClickECS());
         /*systems.registerSystem(new ComponentSystem()
         {
             @Override

@@ -1,5 +1,6 @@
 package steve6472.orbiter;
 
+import com.jme3.bullet.collision.PhysicsCollisionObject;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.log.Log;
 import steve6472.flare.Camera;
@@ -39,6 +40,8 @@ public class Client
     {
         if (world != null && player != null)
             player.handleInput(userInput, vrInput, camera, frameTime);
+
+        rayTrace.updateLookAt(camera, PCPlayer.REACH);
     }
 
     public void render(FrameInfo frameInfo, MemoryStack memoryStack)

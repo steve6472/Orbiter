@@ -5,7 +5,7 @@
   "orbiter:physics_render_characters": false,
   "orbiter:physics_render_ghosts": false,
   "orbiter:physics_render_joints": true,
-  "orbiter:physics_render_rigidbody": true,
+  "orbiter:physics_render_rigidbody": false,
   "orbiter:sensitivity": 0.15,
   "orbiter:track_bandwidth": true,
   "orbiter:ui_scale": 3

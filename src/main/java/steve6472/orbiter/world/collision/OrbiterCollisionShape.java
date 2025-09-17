@@ -27,7 +27,7 @@ import java.util.logging.Logger;
  * Date: 10/11/2024
  * Project: Orbiter <br>
  */
-public record OrbiterCollisionShape(Key key, CollisionShape collisionShape) implements Keyable
+public record OrbiterCollisionShape(Key key, CollisionShape collisionShape, short[] ids) implements Keyable
 {
     private static final Logger LOGGER = Log.getLogger(OrbiterCollisionShape.class);
 
@@ -56,6 +56,12 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape) impl
 
         // offset(x, y, z)
         PROPERTIES.put("offset", (obj, transform) -> transform.offset(obj.params()[0], obj.params()[1], obj.params()[2]));
+        PROPERTIES.put("id", (obj, transform) -> {
+            if (obj.params()[0] > Short.MAX_VALUE)
+                throw new RuntimeException("Collision ID is bigger than " + Short.MAX_VALUE);
+            transform.id = (short) obj.params()[0];
+            return transform;
+        });
     }
 
     public static void load()
@@ -63,16 +69,20 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape) impl
         for (Key key : FlareRegistries.STATIC_LOADED_MODEL.keys())
         {
             LoadedModel model = FlareRegistries.STATIC_LOADED_MODEL.get(key);
+            loadCollisionShape(model);
+        }
 
-            CollisionShape compound = loadCollisionShape(model);
-            if (compound != null)
-                Registries.COLLISION.register(new OrbiterCollisionShape(key, compound));
+        for (Key key : FlareRegistries.ANIMATED_LOADED_MODEL.keys())
+        {
+            LoadedModel model = FlareRegistries.ANIMATED_LOADED_MODEL.get(key);
+            loadCollisionShape(model);
         }
     }
 
-    private static CollisionShape loadCollisionShape(LoadedModel model)
+    private static void loadCollisionShape(LoadedModel model)
     {
         List<CollisionTransform> shapes = new ArrayList<>();
+        List<Short> ids = new ArrayList<>();
 
         model
             .elements()
@@ -82,12 +92,32 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape) impl
             {
                 Collection<CollisionTransform> shape = createCollisionShape(e);
                 if (shape != null)
+                {
                     shapes.addAll(shape);
+                    for (CollisionTransform collisionTransform : shape)
+                    {
+                        ids.add(collisionTransform.id);
+                    }
+                }
             });
 
         shapes.removeIf(p -> !p.hasShape());
 
-        return compound(shapes);
+        CollisionShape compound = compound(shapes);
+
+        if (compound != null)
+            Registries.COLLISION.register(new OrbiterCollisionShape(model.key(), compound, toIds(ids)));
+    }
+
+    private static short[] toIds(List<Short> list)
+    {
+        short[] ids = new short[list.size()];
+        for (int i = 0; i < list.size(); i++)
+        {
+            Short s = list.get(i);
+            ids[i] = s;
+        }
+        return ids;
     }
 
     private static Collection<CollisionTransform> createCollisionShape(Element element)
@@ -97,7 +127,15 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape) impl
             BoxCollisionShape shape = new BoxCollisionShape(Convert.jomlToPhys(elm.to().sub(elm.from(), new Vector3f()).mul(0.5f).absolute()));
             // Offsets, rotations, scaling..., also this from outliner ........
             Vector3f div = new Vector3f(elm.from()).add(elm.to()).div(2f);
-            return List.of(new CollisionTransform(shape).offset(div.x, div.y, div.z));
+            CollisionTransform transform = new CollisionTransform(shape).offset(div.x, div.y, div.z);
+            CollisionExp collisionExp = SHAPE_PARSER.parse(element.name());
+            GroupExp group = collisionExp.exp();
+            for (ObjectExp objectExp : group.getAll(PROPERTIES.keySet()))
+            {
+                transform = PROPERTIES.get(objectExp.type()).apply(objectExp, transform);
+            }
+
+            return List.of(transform);
         } else if (element instanceof MeshElement _)
         {
             return null;

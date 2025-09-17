@@ -172,6 +172,9 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticWorldRender(client), Pipelines.BLOCKBENCH_STATIC));
         addRenderSystem(new AnimatedModelRenderSystem(masterRenderer(), OrbiterPipelines.SKIN, client));
 
+        addRenderSystem(new PhysicsOutlineRenderSystem(masterRenderer(), false, client));
+        addRenderSystem(new PhysicsOutlineRenderSystem(masterRenderer(), true, client));
+
         addParticleRenderSystem(Pipelines.BLOCKBENCH_STATIC, SBO.BLOCKBENCH_STATIC_TRANSFORMATIONS, RenderPipeline.Enum.MODEL, JustTransform::new, Matrix4f[]::new);
         addParticleRenderSystem(OrbiterPipelines.MODEL_UNSHADED, SBO.BLOCKBENCH_STATIC_TRANSFORMATIONS, RenderPipeline.Enum.MODEL_UNSHADED, JustTransform::new, Matrix4f[]::new);
         addParticleRenderSystem(OrbiterPipelines.MODEL_UNSHADED_TINTED, OrbiterSBO.MODEL_TINT_ENTRIES, RenderPipeline.Enum.MODEL_UNSHADED_TINTED, TintedTransform::new, Struct[]::new);
