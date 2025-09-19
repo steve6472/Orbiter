@@ -6,10 +6,15 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
 import steve6472.flare.assets.model.blockbench.animation.controller.AnimationController;
 import steve6472.flare.registry.FlareRegistries;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
+import steve6472.orbiter.audio.Sound;
+import steve6472.orbiter.audio.Source;
+import steve6472.orbiter.audio.WorldSounds;
 import steve6472.orbiter.network.api.Connections;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.packets.game.clientbound.CreateCustomEntity;
@@ -27,6 +32,7 @@ import steve6472.orbiter.world.emitter.ParticleEmitters;
 import steve6472.orlang.OrlangEnvironment;
 
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -35,8 +41,9 @@ import java.util.stream.Stream;
  * Project: Orbiter <br>
  */
 @SuppressWarnings("UnusedReturnValue")
-public interface EntityControl
+public interface EntityControl extends WorldSounds
 {
+    Logger CONTROL_LOGGER = Log.getLogger(EntityControl.class);
     PhysicsSpace physics();
     Engine ecsEngine();
     Map<UUID, PhysicsRigidBody> bodyMap();
@@ -81,6 +88,24 @@ public interface EntityControl
                 {
                     particleEmitters.emitters.add(emitter);
                 }
+            };
+
+            controller.callbacks().onSound = soundData ->
+            {
+                Key parse = Key.parse(Constants.NAMESPACE, soundData.effect());
+                Sound sound = Registries.SOUND.get(parse);
+                if (sound == null)
+                {
+                    Log.warningOnce(CONTROL_LOGGER, "Sound '%s' not found".formatted(parse));
+                    return;
+
+                }
+
+                Position position = Components.POSITION.get(entity);
+                if (position == null)
+                    return;
+
+                addSound(sound, position.x(), position.y(), position.z(), 1.0f, 0.5f);
             };
         }
 

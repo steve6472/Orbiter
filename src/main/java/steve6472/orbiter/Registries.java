@@ -8,6 +8,8 @@ import steve6472.core.registry.Registry;
 import steve6472.core.setting.Setting;
 import steve6472.flare.input.Keybind;
 import steve6472.flare.registry.RegistryCreators;
+import steve6472.orbiter.audio.Sound;
+import steve6472.orbiter.audio.SoundLoader;
 import steve6472.orbiter.network.Packets;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
@@ -49,6 +51,7 @@ public class Registries extends RegistryCreators
     public static final Registry<Keybind> KEYBINDS = createNamespacedRegistry(Constants.NAMESPACE, "keybinds", () -> Keybinds.FORWARD);
     public static final Registry<Rarity> RARITY = createRegistry("rarity", () -> Rarities.COMMON);
     public static final PacketRegistry PACKET = createPacketRegistry("packet", Packets::init);
+    public static final ObjectRegistry<Sound> SOUND = createNamespacedObjectRegistry(Constants.NAMESPACE, "sound", SoundLoader::init);
 
     public static final Registry<ComponentEntry<?>> PARTICLE_COMPONENT = createNamespacedRegistry(Constants.NAMESPACE, "particle_component", () -> Components.POSITION);
     public static final Registry<PCBlueprintEntry<?>> PARTICLE_COMPONENT_BLUEPRINT = createNamespacedRegistry(Constants.NAMESPACE, "particle_component_blueprint", () -> ParticleComponentBlueprints.SCALE);

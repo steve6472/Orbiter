@@ -16,6 +16,8 @@ import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.Registries;
+import steve6472.orbiter.audio.Source;
+import steve6472.orbiter.audio.WorldSounds;
 import steve6472.orbiter.network.api.NetworkMain;
 
 import java.util.*;
@@ -28,7 +30,7 @@ import static steve6472.flare.render.debug.DebugRender.*;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class World implements EntityControl, EntityModify
+public class World implements EntityControl, EntityModify, WorldSounds
 {
     private static final int MAX_PARTICLES = 32767;
 
@@ -41,6 +43,7 @@ public class World implements EntityControl, EntityModify
     private final PooledEngine particleEngine;
     private final WorldSystems systems;
     private final ParticleSystems particleSystems;
+    private final List<Source> soundSources;
 
     private static final boolean RENDER_X_WALL = false;
 
@@ -52,6 +55,7 @@ public class World implements EntityControl, EntityModify
         particleEngine = new PooledEngine(MAX_PARTICLES >> 4, MAX_PARTICLES, MAX_PARTICLES >> 4, MAX_PARTICLES);
         systems = new WorldSystems(this, ecsEngine);
         particleSystems = new ParticleSystems(this, particleEngine);
+        soundSources = new ArrayList<>(256);
     }
 
     public void init(MasterRenderer renderer)
@@ -97,6 +101,17 @@ public class World implements EntityControl, EntityModify
 
     public void tick(float frameTime)
     {
+        tickSoundClean();
+        shittyGhostPhysicsThing();
+        physics.update(1f / Constants.TICKS_IN_SECOND, 8);
+
+        systems.updateStates();
+        systems.runTickSystems(frameTime);
+        particleSystems.runTickSystems(frameTime);
+    }
+
+    private void shittyGhostPhysicsThing()
+    {
         Set<UUID> accessed = new HashSet<>();
 
         for (PhysicsRigidBody body : physics.getRigidBodyList())
@@ -122,12 +137,6 @@ public class World implements EntityControl, EntityModify
         }
 
         ghostMap.keySet().removeIf(uuid -> !accessed.contains(uuid));
-
-        physics.update(1f / Constants.TICKS_IN_SECOND, 8);
-
-        systems.updateStates();
-        systems.runTickSystems(frameTime);
-        particleSystems.runTickSystems(frameTime);
     }
 
     public void debugRender(float frameTime)
@@ -162,5 +171,17 @@ public class World implements EntityControl, EntityModify
         PhysicsRigidBody floor = new PhysicsRigidBody(planeShape, mass);
         floor.setUserIndex2(~Constants.PhysicsFlags.NEVER_DEBUG_RENDER);
         physics.addCollisionObject(floor);
+    }
+
+    @Override
+    public List<Source> getSoundSources()
+    {
+        return soundSources;
+    }
+
+    public void cleanup()
+    {
+        particleEngine().clearPools();
+        clearAllSoundSources();
     }
 }

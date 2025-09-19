@@ -1,6 +1,7 @@
 {
   "orbiter:fov": 80.0,
   "orbiter:log_packets": false,
+  "orbiter:master_volume": 0.025,
   "orbiter:multiplayer_beckend": "dedicated",
   "orbiter:physics_render_characters": false,
   "orbiter:physics_render_ghosts": false,

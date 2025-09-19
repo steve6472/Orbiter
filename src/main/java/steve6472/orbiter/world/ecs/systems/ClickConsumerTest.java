@@ -40,7 +40,7 @@ public class ClickConsumerTest extends IteratingProfiledSystem implements Render
         AnimatedModel animatedModel = Components.ANIMATED_MODEL.get(entity);
         if (animatedModel == null)
             return;
-        
+
         AnimationController controller = animatedModel.animationController;
         if (controller == null)
             return;

@@ -1414,7 +1414,7 @@
                     "locked": false,
                     "visibility": true,
                     "autouv": 0,
-                    "selected": true,
+                    "selected": false,
                     "children": ["a7865ec4-f9db-feeb-687e-bff3d3cbcf1a"]
                 },
                 {
@@ -2301,7 +2301,7 @@
             "override": false,
             "length": 0.25,
             "snapping": 100,
-            "selected": true,
+            "selected": false,
             "anim_time_update": "",
             "blend_weight": "",
             "start_delay": "",
@@ -2326,6 +2326,26 @@
                             "interpolation": "linear"
                         }
                     ]
+                },
+                "effects": {
+                    "name": "Effects",
+                    "type": "effect",
+                    "keyframes": [
+                        {
+                            "channel": "sound",
+                            "data_points": [
+                                {
+                                    "effect": "switch",
+                                    "locator": "",
+                                    "file": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\sound\\switch.ogg"
+                                }
+                            ],
+                            "uuid": "d07fb873-c9fc-7b08-4550-71ffddf07a0a",
+                            "time": 0,
+                            "color": -1,
+                            "interpolation": "linear"
+                        }
+                    ]
                 }
             }
         },
@@ -2336,7 +2356,7 @@
             "override": false,
             "length": 0.25,
             "snapping": 100,
-            "selected": false,
+            "selected": true,
             "anim_time_update": "",
             "blend_weight": "",
             "start_delay": "",
@@ -2356,6 +2376,26 @@
                                 }
                             ],
                             "uuid": "b2425cd8-6d9a-7424-0db9-4ea8bae7c9e0",
+                            "time": 0,
+                            "color": -1,
+                            "interpolation": "linear"
+                        }
+                    ]
+                },
+                "effects": {
+                    "name": "Effects",
+                    "type": "effect",
+                    "keyframes": [
+                        {
+                            "channel": "sound",
+                            "data_points": [
+                                {
+                                    "effect": "switch",
+                                    "locator": "",
+                                    "file": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\sound\\switch.wav"
+                                }
+                            ],
+                            "uuid": "ed46b9a4-d550-8ccc-b8cd-ce0da137b665",
                             "time": 0,
                             "color": -1,
                             "interpolation": "linear"

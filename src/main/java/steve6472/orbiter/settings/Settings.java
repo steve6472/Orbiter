@@ -21,6 +21,7 @@ public class Settings extends SettingRegister
 
     public static final FloatSetting FOV = registerFloat("fov", 90);
     public static final FloatSetting SENSITIVITY = registerFloat("sensitivity", 0.15f);
+    public static final FloatSetting MASTER_VOLUME = registerFloat("master_volume", 0.15f);
     public static final IntSetting UI_SCALE = registerInt("ui_scale", 2);
     public static final EnumSetting<MultiplayerBackend> MULTIPLAYER_BACKEND = registerEnum("multiplayer_beckend", MultiplayerBackend.DEDICATED);
 

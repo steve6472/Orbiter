@@ -1,12 +1,13 @@
 package steve6472.orbiter;
 
-import com.jme3.bullet.collision.PhysicsCollisionObject;
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.log.Log;
 import steve6472.flare.Camera;
 import steve6472.flare.core.FrameInfo;
 import steve6472.flare.input.UserInput;
 import steve6472.flare.vr.VrInput;
+import steve6472.orbiter.audio.SoundMaster;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
 import steve6472.orbiter.util.PhysicsRayTrace;
@@ -25,6 +26,7 @@ public class Client
     private static final Logger LOGGER = Log.getLogger(Client.class);
     private final UUID clientUUID;
     private final PhysicsRayTrace rayTrace;
+    private final SoundMaster soundMaster;
     private Player player;
     private Camera camera;
     private World world;
@@ -34,6 +36,8 @@ public class Client
         clientUUID = UUID.randomUUID();
         rayTrace = new PhysicsRayTrace(this);
         LOGGER.info("Client UUID: " + clientUUID);
+        soundMaster = new SoundMaster();
+        soundMaster.setup();
     }
 
     public void handleInput(UserInput userInput, VrInput vrInput, float frameTime)
@@ -42,6 +46,10 @@ public class Client
             player.handleInput(userInput, vrInput, camera, frameTime);
 
         rayTrace.updateLookAt(camera, PCPlayer.REACH);
+
+        soundMaster.setListenerOrientation(camera.getViewMatrix());
+        Vector3f eyePos = player.getEyePos();
+        soundMaster.setListenerPosition(eyePos.x, eyePos.y, eyePos.z);
     }
 
     public void render(FrameInfo frameInfo, MemoryStack memoryStack)
@@ -88,6 +96,11 @@ public class Client
     public PhysicsRayTrace getRayTrace()
     {
         return rayTrace;
+    }
+
+    public SoundMaster getSoundMaster()
+    {
+        return soundMaster;
     }
 
     public void tickClient(float frameTime)
