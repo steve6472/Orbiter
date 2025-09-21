@@ -98,14 +98,20 @@ public interface EntityControl extends WorldSounds
                 {
                     Log.warningOnce(CONTROL_LOGGER, "Sound '%s' not found".formatted(parse));
                     return;
-
                 }
 
-                Position position = Components.POSITION.get(entity);
-                if (position == null)
-                    return;
+                if (!soundData.locator().isBlank())
+                {
+                    AnimationController.LocatorInfo locator = controller.getLocator(soundData.locator());
+                    addSound(sound, locator.position().x, locator.position().y, locator.position().z, 1.0f, 0.5f);
+                } else
+                {
+                    Position position = Components.POSITION.get(entity);
+                    if (position == null)
+                        return;
 
-                addSound(sound, position.x(), position.y(), position.z(), 1.0f, 0.5f);
+                    addSound(sound, position.x(), position.y(), position.z(), 1.0f, 0.5f);
+                }
             };
         }
 

@@ -1225,6 +1225,26 @@
             },
             "type": "cube",
             "uuid": "af5001d9-bc8e-0e19-d6ac-b70aa3692fcb"
+        },
+        {
+            "name": "button_1_sound",
+            "position": [-10, 2.5, -2.5],
+            "rotation": [0, 0, 0],
+            "ignore_inherited_scale": false,
+            "visibility": true,
+            "locked": false,
+            "uuid": "f691f0d8-b69c-a5cc-0f99-e36f91a7b81f",
+            "type": "locator"
+        },
+        {
+            "name": "button_2_sound",
+            "position": [-10, 2.5, 2.5],
+            "rotation": [0, 0, 0],
+            "ignore_inherited_scale": false,
+            "visibility": true,
+            "locked": false,
+            "uuid": "16cc5b07-deb7-38c3-7691-eaf5a386bc23",
+            "type": "locator"
         }
     ],
     "outliner": [
@@ -1432,7 +1452,9 @@
                     "children": ["af5001d9-bc8e-0e19-d6ac-b70aa3692fcb"]
                 }
             ]
-        }
+        },
+        "f691f0d8-b69c-a5cc-0f99-e36f91a7b81f",
+        "16cc5b07-deb7-38c3-7691-eaf5a386bc23"
     ],
     "textures": [
         {
@@ -2336,7 +2358,7 @@
                             "data_points": [
                                 {
                                     "effect": "switch",
-                                    "locator": "",
+                                    "locator": "button_1_sound",
                                     "file": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\sound\\switch.ogg"
                                 }
                             ],
@@ -2391,8 +2413,8 @@
                             "data_points": [
                                 {
                                     "effect": "switch",
-                                    "locator": "",
-                                    "file": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\sound\\switch.wav"
+                                    "locator": "button_2_sound",
+                                    "file": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\sound\\switch.ogg"
                                 }
                             ],
                             "uuid": "ed46b9a4-d550-8ccc-b8cd-ce0da137b665",

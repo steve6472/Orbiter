@@ -84,6 +84,15 @@ public class Source
 		return new Vector3f(x[0], y[0], z[0]);
 	}
 
+	public Vector3f getVelocity()
+	{
+		float[] x = new float[1];
+		float[] y = new float[1];
+		float[] z = new float[1];
+		alGetSource3f(sourceId, AL_VELOCITY, x, y, z);
+		return new Vector3f(x[0], y[0], z[0]);
+	}
+
 	public void delete()
 	{
 		stop();

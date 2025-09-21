@@ -1,7 +1,10 @@
 package steve6472.orbiter.audio;
 
+import org.joml.Vector3f;
+
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * Created by steve6472
@@ -23,7 +26,17 @@ public interface WorldSounds
         getSoundSources().add(source);
     }
 
-    default void tickSoundClean()
+    default void addMovingSound(Sound sound, float volume, float pitch, Supplier<Vector3f> position, Supplier<Vector3f> velocity)
+    {
+        MovingSource source = new MovingSource(position, velocity);
+        source.setVolume(volume);
+        source.setPitch(pitch);
+        source.play(sound.id());
+
+        getSoundSources().add(source);
+    }
+
+    default void tickSound()
     {
         for (Iterator<Source> iterator = getSoundSources().iterator(); iterator.hasNext(); )
         {
@@ -32,6 +45,12 @@ public interface WorldSounds
             {
                 source.delete();
                 iterator.remove();
+            } else
+            {
+                if (source instanceof MovingSource movingSource)
+                {
+                    movingSource.tick();
+                }
             }
         }
     }

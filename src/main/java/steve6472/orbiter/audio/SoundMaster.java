@@ -13,7 +13,6 @@ import java.nio.ShortBuffer;
 import static org.lwjgl.openal.AL10.*;
 import static org.lwjgl.openal.ALC11.*;
 import static org.lwjgl.stb.STBVorbis.stb_vorbis_decode_filename;
-import static org.lwjgl.stb.STBVorbis.stb_vorbis_get_error;
 import static org.lwjgl.system.libc.LibCStdlib.free;
 
 /**********************

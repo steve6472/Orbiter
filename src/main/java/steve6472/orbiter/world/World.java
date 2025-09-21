@@ -17,6 +17,7 @@ import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.Registries;
+import steve6472.orbiter.audio.MovingSource;
 import steve6472.orbiter.audio.Source;
 import steve6472.orbiter.audio.WorldSounds;
 import steve6472.orbiter.network.api.NetworkMain;
@@ -103,7 +104,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
     public void tick(float frameTime)
     {
-        tickSoundClean();
+        tickSound();
         shittyGhostPhysicsThing();
         physics.update(1f / Constants.TICKS_IN_SECOND, 8);
 
@@ -175,6 +176,12 @@ public class World implements EntityControl, EntityModify, WorldSounds
         {
             Vector3f position = soundSource.getPosition();
             addDebugObjectForFrame(lineSphere(0.2f, 3, soundSource.isPlaying() ? LIGHT_GREEN : RED), new Matrix4f().translate(position));
+
+            if (soundSource instanceof MovingSource)
+            {
+                Vector3f velocity = soundSource.getVelocity();
+                addDebugObjectForFrame(line(position, new Vector3f(position).add(velocity), BLUE));
+            }
         }
     }
 
