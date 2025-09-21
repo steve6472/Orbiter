@@ -9,5 +9,6 @@
   "orbiter:physics_render_rigidbody": false,
   "orbiter:sensitivity": 0.15,
   "orbiter:track_bandwidth": true,
-  "orbiter:ui_scale": 3
+  "orbiter:ui_scale": 3,
+  "orbiter:visual_sounds": true
 }

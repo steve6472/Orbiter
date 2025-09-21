@@ -1,5 +1,6 @@
 package steve6472.orbiter.audio;
 
+import org.joml.Vector3f;
 import steve6472.orbiter.settings.Settings;
 
 import static org.lwjgl.openal.AL11.*;
@@ -72,6 +73,15 @@ public class Source
 	public void setPosition(float x, float y, float z)
 	{
 		alSource3f(sourceId, AL_POSITION, x, y, z);
+	}
+
+	public Vector3f getPosition()
+	{
+		float[] x = new float[1];
+		float[] y = new float[1];
+		float[] z = new float[1];
+		alGetSource3f(sourceId, AL_POSITION, x, y, z);
+		return new Vector3f(x[0], y[0], z[0]);
 	}
 
 	public void delete()

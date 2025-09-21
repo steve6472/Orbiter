@@ -10,6 +10,7 @@ import com.jme3.bullet.objects.PhysicsBody;
 import com.jme3.bullet.objects.PhysicsGhostObject;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.math.Plane;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import steve6472.flare.MasterRenderer;
 import steve6472.orbiter.Constants;
@@ -19,6 +20,7 @@ import steve6472.orbiter.Registries;
 import steve6472.orbiter.audio.Source;
 import steve6472.orbiter.audio.WorldSounds;
 import steve6472.orbiter.network.api.NetworkMain;
+import steve6472.orbiter.settings.Settings;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -161,6 +163,19 @@ public class World implements EntityControl, EntityModify, WorldSounds
         systems.runRenderSystems(frameTime);
 
         PhysicsRenderer.render(physics());
+        debugSounds();
+    }
+
+    private void debugSounds()
+    {
+        if (!Settings.VISUAL_SOUNDS.get())
+            return;
+
+        for (Source soundSource : soundSources)
+        {
+            Vector3f position = soundSource.getPosition();
+            addDebugObjectForFrame(lineSphere(0.2f, 3, soundSource.isPlaying() ? LIGHT_GREEN : RED), new Matrix4f().translate(position));
+        }
     }
 
     private void addPlane(Vector3f normal, float constant)
