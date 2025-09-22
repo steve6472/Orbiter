@@ -8,7 +8,6 @@ import steve6472.flare.Camera;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
-import steve6472.orbiter.player.PCPlayer;
 
 import java.util.ArrayList;
 import java.util.List;

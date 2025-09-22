@@ -17,6 +17,7 @@ import steve6472.flare.render.common.CommonBuilder;
 import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.struct.Struct;
+import steve6472.flare.struct.def.Push;
 import steve6472.flare.struct.def.SBO;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.world.World;
@@ -87,8 +88,8 @@ public class AnimatedModelRenderSystem extends CommonRenderSystem
             buffer.writeToBuffer(SBO.BONES::memcpy, List.of(sbo), array.length * 64L, offset);
             buffer.flush(array.length * 64L, offset);
 
-            Struct struct = OrbiterPush.SKIN.create(array.length, offset / 64);
-            OrbiterPush.SKIN.push(struct, frameInfo.commandBuffer(), pipeline().pipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0);
+            Struct struct = Push.SKIN.create(array.length, offset / 64);
+            Push.SKIN.push(struct, frameInfo.commandBuffer(), pipeline().pipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT, 0);
 
             model.bind(frameInfo.commandBuffer());
             model.draw(frameInfo.commandBuffer());

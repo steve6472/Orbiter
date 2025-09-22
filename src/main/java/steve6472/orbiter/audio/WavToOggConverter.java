@@ -12,7 +12,7 @@ public class WavToOggConverter
 
     public static void main(String[] args)
     {
-        args = new String[] {"C:\\storage\\Download\\Sonniss.com-GDC2024-GameAudioBundle1of9"};
+        args = new String[] {"C:\\storage\\Download\\Sonniss.com-GDC2024-GameAudioBundle"};
 
         if (args.length != 1)
         {
@@ -57,7 +57,7 @@ public class WavToOggConverter
     {
         try
         {
-            String command = String.format("ffmpeg -y -i \"%s\" \"%s\"", inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
+            String command = String.format("ffmpeg -hide_banner -loglevel error -y -i \"%s\" \"%s\"", inputFile.getAbsolutePath(), outputFile.getAbsolutePath());
 
             Process process = Runtime.getRuntime().exec(command);
             consumeStream(process.getErrorStream(), LOGGER::fine);

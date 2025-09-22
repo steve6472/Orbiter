@@ -55,8 +55,11 @@ public class ClickECS extends EntitySystem
         Collision collision = Components.COLLISION.get(entity);
         OrbiterCollisionShape orbiterCollisionShape = Registries.COLLISION.get(collision.collisionKey());
 
-        // TODO: add temp component with this clickId. Other Systems can use this. Removed automatically at the end of the tick.
-        short clickId = orbiterCollisionShape.ids()[client.getRayTrace().getLookAtTriangleIndex()];
+        short clickId;
+        if (client.getRayTrace().getLookAtTriangleIndex() == -1)
+            clickId = -1;
+        else
+            clickId = orbiterCollisionShape.ids()[client.getRayTrace().getLookAtTriangleIndex()];
         entity.add(new Click(clickId));
     }
 

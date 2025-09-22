@@ -2,21 +2,13 @@ package steve6472.orbiter.world.ecs.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import org.joml.Matrix4f;
 import steve6472.core.registry.Key;
-import steve6472.flare.MasterRenderer;
 import steve6472.flare.assets.model.blockbench.animation.controller.AnimationController;
-import steve6472.flare.ui.font.render.Billboard;
-import steve6472.flare.ui.font.render.TextLine;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.RenderECSSystem;
 import steve6472.orbiter.world.ecs.components.AnimatedModel;
-import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.event.Click;
-import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
-
-import java.util.UUID;
 
 /**
  * Created by steve6472

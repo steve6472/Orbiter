@@ -170,7 +170,7 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new UILineRender(masterRenderer(), new DebugUILines()));
 
         addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticWorldRender(client), Pipelines.BLOCKBENCH_STATIC));
-        addRenderSystem(new AnimatedModelRenderSystem(masterRenderer(), OrbiterPipelines.SKIN, client));
+        addRenderSystem(new AnimatedModelRenderSystem(masterRenderer(), Pipelines.SKIN, client));
 
         addRenderSystem(new PhysicsOutlineRenderSystem(masterRenderer(), false, client));
         addRenderSystem(new PhysicsOutlineRenderSystem(masterRenderer(), true, client));

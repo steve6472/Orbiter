@@ -36,6 +36,7 @@ build/
 
 ### Orbiter ###
 /notes/
+ffmpeg.exe
 
 ### Flare ###
 generated/

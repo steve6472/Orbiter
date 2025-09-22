@@ -2273,7 +2273,7 @@
             "override": false,
             "length": 6,
             "snapping": 100,
-            "selected": false,
+            "selected": true,
             "anim_time_update": "",
             "blend_weight": "",
             "start_delay": "",
@@ -2310,6 +2310,54 @@
                             "time": 0,
                             "color": -1,
                             "uniform": true,
+                            "interpolation": "linear"
+                        }
+                    ]
+                },
+                "effects": {
+                    "name": "Effects",
+                    "type": "effect",
+                    "keyframes": [
+                        {
+                            "channel": "sound",
+                            "data_points": [
+                                {
+                                    "effect": "sizzling",
+                                    "locator": "",
+                                    "file": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\sound\\sizzling.ogg"
+                                }
+                            ],
+                            "uuid": "7260d8b8-cf87-0684-2e7d-d1353604e340",
+                            "time": 0,
+                            "color": -1,
+                            "interpolation": "linear"
+                        },
+                        {
+                            "channel": "sound",
+                            "data_points": [
+                                {
+                                    "effect": "sizzling",
+                                    "locator": "",
+                                    "file": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\sound\\sizzling.ogg"
+                                }
+                            ],
+                            "uuid": "c1e1be85-87fb-2d01-d711-d77359e533ae",
+                            "time": 3.17,
+                            "color": -1,
+                            "interpolation": "linear"
+                        },
+                        {
+                            "channel": "sound",
+                            "data_points": [
+                                {
+                                    "effect": "arc_crackling",
+                                    "locator": "",
+                                    "file": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\sound\\arc_crackling.ogg"
+                                }
+                            ],
+                            "uuid": "b167cd48-782d-3355-4876-e62160c573f5",
+                            "time": 1.09,
+                            "color": -1,
                             "interpolation": "linear"
                         }
                     ]
@@ -2378,7 +2426,7 @@
             "override": false,
             "length": 0.25,
             "snapping": 100,
-            "selected": true,
+            "selected": false,
             "anim_time_update": "",
             "blend_weight": "",
             "start_delay": "",

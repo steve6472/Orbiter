@@ -1,7 +1,6 @@
 package steve6472.orbiter.rendering;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.ashley.core.Family;
 import com.jme3.bullet.collision.PhysicsCollisionObject;
 import com.jme3.bullet.collision.shapes.*;
 import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
@@ -25,10 +24,7 @@ import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.world.collision.OrbiterCollisionShape;
 import steve6472.orbiter.world.ecs.Components;
-import steve6472.orbiter.world.ecs.components.Tag;
-import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
-import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.systems.ClickECS;
 
 import java.nio.LongBuffer;
@@ -63,6 +59,9 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
     @Override
     protected void render(FlightFrame flightFrame, FrameInfo frameInfo, MemoryStack stack)
     {
+        if (client.getWorld() == null)
+            return;
+
         PhysicsCollisionObject lookAtObject = client.getRayTrace().getLookAtObject();
         if (lookAtObject == null)
             return;
