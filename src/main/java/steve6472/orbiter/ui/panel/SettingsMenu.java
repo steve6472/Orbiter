@@ -16,6 +16,7 @@ import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.ui.GlobalProperties;
 import steve6472.orbiter.ui.MDUtil;
+import steve6472.orbiter.util.SamplerDump;
 
 /**
  * Created by steve6472
@@ -111,6 +112,8 @@ public class SettingsMenu extends PanelView
                 MDUtil.addPanel(Constants.UI.MAIN_MENU);
             }
         });
+
+        addCommandListener(Constants.key("dump_samplers"), _ -> SamplerDump.dumpSamplers());
     }
 
     protected void bindTextSetting(EnumSetting<?> setting, StringProperty dest)

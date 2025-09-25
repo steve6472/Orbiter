@@ -13,12 +13,14 @@ public class ParticleFollowerId implements Component, Pool.Poolable
 {
     public int followerId;
     public Entity entity;
+    public String locator;
 
     @Override
     public void reset()
     {
         followerId = 0;
         entity = null;
+        locator = null;
     }
 
     @Override

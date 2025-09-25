@@ -24,8 +24,6 @@
             "light_emission": 0,
             "render_order": "default",
             "allow_mirror_modeling": true,
-            "collision": false,
-            "hitbox": false,
             "from": [0, 0, -8],
             "to": [0, 16, 8],
             "autouv": 1,
@@ -34,38 +32,26 @@
             "faces": {
                 "north": {
                     "uv": [0, 0, 0, 16],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "east": {
                     "uv": [0, 0, 16, 16],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": 0
                 },
                 "south": {
                     "uv": [0, 0, 0, 16],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "west": {
                     "uv": [0, 0, 16, 16],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": 0
                 },
                 "up": {
                     "uv": [0, 0, 0, 16],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "down": {
                     "uv": [0, 0, 0, 16],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 }
             },
@@ -80,8 +66,6 @@
             "light_emission": 0,
             "render_order": "default",
             "allow_mirror_modeling": true,
-            "collision": false,
-            "hitbox": false,
             "from": [-8, 0, 0],
             "to": [8, 16, 0],
             "autouv": 0,
@@ -90,40 +74,28 @@
             "faces": {
                 "north": {
                     "uv": [0, 0, 16, 16],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": 0
                 },
                 "east": {
                     "uv": [0, 0, 0, 16],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "south": {
                     "uv": [0, 0, 16, 16],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": 0
                 },
                 "west": {
                     "uv": [0, 0, 0, 16],
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "up": {
                     "uv": [0, 0, 0, 16],
                     "rotation": 90,
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "down": {
                     "uv": [0, 0, 0, 16],
                     "rotation": 270,
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 }
             },
@@ -138,8 +110,6 @@
             "light_emission": 0,
             "render_order": "default",
             "allow_mirror_modeling": true,
-            "collision": false,
-            "hitbox": false,
             "from": [-8, 8, -8],
             "to": [8, 8, 8],
             "autouv": 1,
@@ -149,43 +119,31 @@
                 "north": {
                     "uv": [0, 0, 0, 16],
                     "rotation": 90,
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "east": {
                     "uv": [0, 0, 0, 16],
                     "rotation": 270,
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "south": {
                     "uv": [0, 0, 0, 16],
                     "rotation": 270,
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "west": {
                     "uv": [0, 0, 0, 16],
                     "rotation": 270,
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": null
                 },
                 "up": {
                     "uv": [0, 0, 16, 16],
                     "rotation": 270,
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": 0
                 },
                 "down": {
                     "uv": [0, 0, 16, 16],
                     "rotation": 270,
-                    "layer": "normal",
-                    "disable_other_cull": false,
                     "texture": 0
                 }
             },
@@ -200,8 +158,6 @@
             "light_emission": 0,
             "render_order": "default",
             "allow_mirror_modeling": true,
-            "collision": true,
-            "hitbox": true,
             "from": [-1, 7, -1],
             "to": [1, 9, 1],
             "autouv": 1,
@@ -209,34 +165,22 @@
             "origin": [0, 0, 0],
             "faces": {
                 "north": {
-                    "uv": [0, 0, 2, 2],
-                    "layer": "normal",
-                    "disable_other_cull": false
+                    "uv": [0, 0, 2, 2]
                 },
                 "east": {
-                    "uv": [0, 0, 2, 2],
-                    "layer": "normal",
-                    "disable_other_cull": false
+                    "uv": [0, 0, 2, 2]
                 },
                 "south": {
-                    "uv": [0, 0, 2, 2],
-                    "layer": "normal",
-                    "disable_other_cull": false
+                    "uv": [0, 0, 2, 2]
                 },
                 "west": {
-                    "uv": [0, 0, 2, 2],
-                    "layer": "normal",
-                    "disable_other_cull": false
+                    "uv": [0, 0, 2, 2]
                 },
                 "up": {
-                    "uv": [0, 0, 2, 2],
-                    "layer": "normal",
-                    "disable_other_cull": false
+                    "uv": [0, 0, 2, 2]
                 },
                 "down": {
-                    "uv": [0, 0, 2, 2],
-                    "layer": "normal",
-                    "disable_other_cull": false
+                    "uv": [0, 0, 2, 2]
                 }
             },
             "type": "cube",
@@ -251,8 +195,8 @@
     ],
     "textures": [
         {
-            "path": "D:\\VoxWorld\\game\\textures\\content\\sparkticle.png",
-            "name": "sparkticle.png",
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\particle\\sparkticle.png",
+            "name": "orbiter:particle/sparkticle",
             "folder": "content",
             "namespace": "game",
             "id": "0",
@@ -274,10 +218,10 @@
             "frame_interpolate": false,
             "visible": true,
             "internal": true,
-            "saved": false,
+            "saved": true,
             "uuid": "07fb7ed2-c7f6-f6b5-7afd-f76fcd36f8ac",
-            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAA1ElEQVQ4T2NkoBAwUqifAasB/99F/GcUWgGWQ2Zjs4xoF/z/WPafkb8LQz12F3yd+5+RO5kRpun/zyP/GdltsLoIxQBkW/7DDEHWDBVD9gqGC+Aa/z7/z8gsCbEVTSNyuGD3ws8j/xn+3GRg4PCCWPbnLgPcC2hhgeIvmMkwP///+/w/SD/IJSAxkKGgsMHrBZgkSsCBDEJyBU4D4KGOFIDItsLDB8kbmIEIlUSJERxpAOw9ZOegpzp4mEBTJrbEhDMl4kp56MmZqKSMLz8QZQC+HAsASAWiEXgVtdwAAAAASUVORK5CYII=",
-            "relative_path": "D:/VoxWorld/game/textures/content/sparkticle.png"
+            "relative_path": "../../../../textures/model/particle/sparkticle.png",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAANRJREFUOE9jZKAQMFKonwGrAf/fRfxnFFoBlkNmY7OMaBf8/1j2n5G/C0M9dhd8nfufkTuZEabp/88j/xnZbbC6CMUAZFv+wwxB1gwVQ/YKhgvgGv8+/8/ILAmxFU0jcrhg98LPI/8Z/txkYODwglj25y4D3AtoYYHiL5jJMD////v8P0g/yCUgMZChoLDB6wWYJErAgQxCcgVOA+ChjhSAyLbCwwfJG5iBCJVEiREcaQDsPWTnoKc6eJhAUya2xIQzJeJKeejJmaikjC8/EGUAvhwLAEgFohF4FbXcAAAAAElFTkSuQmCC"
         }
     ]
 }

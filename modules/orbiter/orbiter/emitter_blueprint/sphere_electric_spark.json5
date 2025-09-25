@@ -1,0 +1,74 @@
+{
+    environment: {
+    },
+    lifetime: {
+        lifetime_type: "looping",
+        active_time: 0.3,
+        sleep_time: 0.1
+    },
+    rate: {
+        rate_type: "steady",
+        spawn_rate: 60,
+        max_count: 128
+    },
+    shape: {
+        shape_type: "sphere",
+        radius: 0.1,
+        surface_only: true
+    },
+
+    particle: {
+        environment: {
+            init: "v.rng1 = math.random(0, 1)",
+            curves: {
+                "variable.len": {
+                    type: "bezier_chain",
+                    input: "v.age / v.max_age",
+                    nodes: {
+                        "0.0": {
+                            "value": 0,
+                            "slope": 0
+                        },
+                        "1.0": {
+                            "value": -1,
+                            "slope": 0
+                        },
+                        "0.16": {
+                            "value": 1,
+                            "slope": 0
+                        },
+                        "0.45": {
+                            "value": 0.19,
+                            "slope": -0.65
+                        },
+                        "0.8": {
+                            "value": 0,
+                            "slope": 0
+                        }
+                    }
+                }
+            }
+        },
+        rotation: {
+            initial: 90
+        },
+        flipbook: {
+            texture: "orbiter:particle/electric_spark",
+            stretch_to_max_age: true
+        },
+        local_space: {
+            position: true
+        },
+        initial_speed: 0.5,
+        linear_drag_coefficient: -3,
+        linear_acceleration: [0, 0, 0],
+        direction: "outwards",
+        billboard: "lookat_direction",
+        scale: {
+            x: 0.03,
+            y: 0.06,
+            z: 1
+        },
+        max_age: "math.random(0.23, 0.28)"
+    }
+}

@@ -1,0 +1,33 @@
+{
+    environment: {
+    },
+    lifetime: {
+        lifetime_type: "looping",
+        active_time: 1
+    },
+    rate: {
+        rate_type: "steady",
+        spawn_rate: 1,
+        max_count: 128
+    },
+    shape: {
+        shape_type: "point"
+    },
+
+    particle: {
+        flipbook: {
+            texture: "orbiter:particle/electric_spark",
+            stretch_to_max_age: true
+        },
+        initial_speed: 0,
+        linear_drag_coefficient: 0,
+//        billboard: "lookat_direction",
+        billboard: "rotate_xyz",
+        scale: {
+            x: 1,
+            y: 1,
+            z: 1
+        },
+        max_age: 1
+    }
+}

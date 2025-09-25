@@ -62,6 +62,25 @@
 
             children: [
                 {
+                    name: "dump_samplers",
+                    bounds: [60, 13],
+                    position: {
+                        type: "anchored",
+                        anchor: "top_right",
+                        offset: [1, 1]
+                    },
+
+                    button: {
+                        on_press: {
+                            script: "moondust:button_send_command",
+                            input: {
+                                key: "orbiter:dump_samplers"
+                            }
+                        },
+                        label: "Dump Samplers"
+                    }
+                },
+                {
                     widget: "moondust:checkbox",
                     name: "debug_line_single_buffer",
                     position: [-98, 5],

@@ -24,6 +24,10 @@ public interface OrbiterVertex
         .addMember(UV)      // uv
         .build(StructVertex::new);
 
+    StructVertex POS3F = builder()
+        .addMember(VEC_3F)  // position
+        .build(StructVertex::new);
+
     StructVertex POS3F_COL3F_NOR3F_UV = builder()
         .addMember(VEC_3F)  // position
         .addMember(VEC_3F)  // color

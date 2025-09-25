@@ -22,6 +22,7 @@ public class ParticleComponents
     public static final ComponentEntry<Scale> SCALE = register("scale", Scale.class);
     public static final ComponentEntry<MaxAge> MAX_AGE = register("max_age", MaxAge.class);
     public static final ComponentEntry<ParticleModel> MODEL = register("model", ParticleModel.class);
+    public static final ComponentEntry<FlipbookModel> FLIPBOOK_MODEL = register("flipbook_model", FlipbookModel.class);
     public static final ComponentEntry<LocalSpace> LOCAL_SPACE = register("local_space", LocalSpace.class);
     public static final ComponentEntry<ParticleBillboard> BILLBOARD = register("billboard", ParticleBillboard.class);
     public static final ComponentEntry<Velocity> VELOCITY = register("velocity", Velocity.class);

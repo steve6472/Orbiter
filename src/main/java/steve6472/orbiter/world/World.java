@@ -161,6 +161,10 @@ public class World implements EntityControl, EntityModify, WorldSounds
             }
         }
 
+        addDebugObjectForFrame(line(new Vector3f(0, 0, 0), new Vector3f(1, 0, 0), RED));
+        addDebugObjectForFrame(line(new Vector3f(0, 0, 0), new Vector3f(0, 1, 0), GREEN));
+        addDebugObjectForFrame(line(new Vector3f(0, 0, 0), new Vector3f(0, 0, 1), BLUE));
+
         systems.runRenderSystems(frameTime);
 
         PhysicsRenderer.render(physics());

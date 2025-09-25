@@ -75,6 +75,8 @@ public interface EntityControl extends WorldSounds
                 if (emitterEntry == null)
                     return;
                 ParticleEmitter emitter = emitterEntry.toEmitter();
+                if (!particleData.locator().isBlank())
+                    emitter.locator = particleData.locator();
 
                 ParticleEmitters particleEmitters = Components.PARTICLE_EMITTERS.get(entity);
                 if (particleEmitters == null)

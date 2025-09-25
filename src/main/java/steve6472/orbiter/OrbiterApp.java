@@ -18,10 +18,7 @@ import steve6472.flare.core.FrameInfo;
 import steve6472.flare.input.KeybindUpdater;
 import steve6472.flare.pipeline.Pipelines;
 import steve6472.flare.pipeline.builder.PipelineConstructor;
-import steve6472.flare.render.StaticModelRenderSystem;
-import steve6472.flare.render.UIFontRender;
-import steve6472.flare.render.UILineRender;
-import steve6472.flare.render.UIRenderSystem;
+import steve6472.flare.render.*;
 import steve6472.flare.settings.VisualSettings;
 import steve6472.flare.struct.Struct;
 import steve6472.flare.struct.StructDef;
@@ -162,6 +159,7 @@ public class OrbiterApp extends FlareApp
     @Override
     protected void createRenderSystems()
     {
+        addRenderSystem(new DebugLineRenderSystem(masterRenderer(), Pipelines.DEBUG_LINE));
         addRenderSystem(new UIRenderSystem(masterRenderer(), new MoonDustUIRender(this), 256f));
         addRenderSystem(new UIFontRender(masterRenderer(), new MoonDustUIFontRender()));
         addRenderSystem(new UIRenderSystem(masterRenderer(), new OrbiterUIRender(this), 256f));
@@ -175,6 +173,7 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new PhysicsOutlineRenderSystem(masterRenderer(), false, client));
         addRenderSystem(new PhysicsOutlineRenderSystem(masterRenderer(), true, client));
 
+        addRenderSystem(new FlipbookRenderSystem(masterRenderer(), OrbiterPipelines.FLIPBOOK, client));
         addParticleRenderSystem(Pipelines.BLOCKBENCH_STATIC, SBO.BLOCKBENCH_STATIC_TRANSFORMATIONS, RenderPipeline.Enum.MODEL, JustTransform::new, Matrix4f[]::new);
         addParticleRenderSystem(OrbiterPipelines.MODEL_UNSHADED, SBO.BLOCKBENCH_STATIC_TRANSFORMATIONS, RenderPipeline.Enum.MODEL_UNSHADED, JustTransform::new, Matrix4f[]::new);
         addParticleRenderSystem(OrbiterPipelines.MODEL_UNSHADED_TINTED, OrbiterSBO.MODEL_TINT_ENTRIES, RenderPipeline.Enum.MODEL_UNSHADED_TINTED, TintedTransform::new, Struct[]::new);

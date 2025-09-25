@@ -1,0 +1,7 @@
+{
+    position: {},
+    rotation: {},
+    model: "blockbench/static/particle/texture_test",
+    collision: "blockbench/static/antigrav_ball",
+    tags: ["physics"]
+}

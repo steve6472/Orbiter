@@ -33,7 +33,7 @@ public class ParticleBlueprint implements Keyable
     private final Key key;
 
     /// Just a disgusting boolean because emitter needs to know this
-    public final boolean containsLocalSpace;
+    public final boolean containsLocalSpace, containsFlipbook;
     /// Environment has to be created before all other components
     public final ParticleEnvironmentBlueprint environmentBlueprint;
     /// Velocity is a composition of two blueprints
@@ -45,6 +45,7 @@ public class ParticleBlueprint implements Keyable
         this.key = key;
         this.blueprints = blueprints;
         containsLocalSpace = blueprints.stream().anyMatch(e -> e.key().equals(ParticleComponentBlueprints.LOCAL_SPACE.key()));
+        containsFlipbook = blueprints.stream().anyMatch(e -> e.key().equals(ParticleComponentBlueprints.FLIPBOOK_MODEL.key()));
         environmentBlueprint = find(ParticleComponentBlueprints.ENVIRONMENT);
         direction = find(ParticleComponentBlueprints.DIRECTION);
         initialSpeed = find(ParticleComponentBlueprints.INITIAL_SPEED);

@@ -50,6 +50,7 @@ public class ParticleEmitter implements Component
     public OrlangEnvironment environment;
 
     public Holder<ParticleBlueprint> particleData;
+    public String locator = null;
 
 //    @ApiStatus.Internal
 //    public Set<Entity> trackedParticles = new HashSet<>();

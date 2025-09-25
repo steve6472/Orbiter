@@ -40,7 +40,10 @@ public class EntityBlueprintArgument implements ArgumentType<EntityBlueprint>
 	    final String text = reader.getRemaining();
 	    reader.setCursor(reader.getTotalLength());
 		Key key = Key.parse(text);
-	    return Registries.ENTITY_BLUEPRINT.get(key);
+	    EntityBlueprint blueprint = Registries.ENTITY_BLUEPRINT.get(key);
+		if (blueprint == null)
+			throw new RuntimeException("Entity " + key + " not found");
+	    return blueprint;
 	}
 
 	@Override

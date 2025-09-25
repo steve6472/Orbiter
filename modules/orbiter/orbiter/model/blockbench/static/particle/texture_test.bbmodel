@@ -1,0 +1,95 @@
+{
+    "meta": {
+        "format_version": "4.10",
+        "model_format": "free",
+        "box_uv": false
+    },
+    "name": "texture_test",
+    "model_identifier": "",
+    "visible_box": [1, 1, 0],
+    "variable_placeholders": "",
+    "variable_placeholder_buttons": [],
+    "timeline_setups": [],
+    "unhandled_root_fields": {},
+    "resolution": {
+        "width": 16,
+        "height": 16
+    },
+    "elements": [
+        {
+            "name": "cube",
+            "box_uv": false,
+            "rescale": false,
+            "locked": false,
+            "light_emission": 0,
+            "render_order": "default",
+            "allow_mirror_modeling": true,
+            "from": [-16, -8, 0],
+            "to": [16, 9, 0],
+            "autouv": 0,
+            "color": 8,
+            "rotation": [0, 0, 90],
+            "origin": [0, 0, 0],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 16, 8],
+                    "texture": 0
+                },
+                "east": {
+                    "uv": [0, 0, 0, 0],
+                    "texture": null
+                },
+                "south": {
+                    "uv": [0, 8, 16, 0],
+                    "rotation": 180,
+                    "texture": 0
+                },
+                "west": {
+                    "uv": [0, 0, 0, 0],
+                    "texture": null
+                },
+                "up": {
+                    "uv": [0, 0, 0, 0],
+                    "texture": null
+                },
+                "down": {
+                    "uv": [0, 0, 16, 0]
+                }
+            },
+            "type": "cube",
+            "uuid": "c2f78efa-e0d4-9868-6cba-765a53aa07da"
+        }
+    ],
+    "outliner": ["c2f78efa-e0d4-9868-6cba-765a53aa07da"],
+    "textures": [
+        {
+            "path": "C:\\storage\\Orbiter\\modules\\orbiter\\orbiter\\textures\\model\\particle\\electric_spark.png",
+            "name": "orbiter:particle/electric_spark",
+            "folder": "",
+            "namespace": "",
+            "id": "0",
+            "group": "",
+            "width": 16,
+            "height": 40,
+            "uv_width": 16,
+            "uv_height": 8,
+            "particle": false,
+            "use_as_default": false,
+            "layers_enabled": false,
+            "sync_to_project": "",
+            "render_mode": "default",
+            "render_sides": "auto",
+            "pbr_channel": "color",
+            "frame_time": 1,
+            "frame_order_type": "loop",
+            "frame_order": "",
+            "frame_interpolate": false,
+            "visible": true,
+            "internal": true,
+            "saved": true,
+            "uuid": "34e58f3f-9c14-c331-5f55-b600e779a12a",
+            "relative_path": "../../../../textures/model/particle/electric_spark.png",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAoCAYAAAD32nqhAAAAAXNSR0IArs4c6QAAAJNJREFUSEvtlsENwCAIRXHBbtJpukkXtKEJyT9ABeHQAx5NfBr+gzgouUbyPOUB1z0nv+I8xhbsPZSBbN2KdWsAFXsgcUa8UD1gkFesjrEixtKBgh4gmCO1Wt6MUVxYyeX2wJLLDbBq1YAPE7HqWpSypxZREwplkkR4r1P43TzwDhds9VCMmh8hgLwQp9MWoPSD8QDH8k3yx07EgQAAAABJRU5ErkJggg=="
+        }
+    ]
+}

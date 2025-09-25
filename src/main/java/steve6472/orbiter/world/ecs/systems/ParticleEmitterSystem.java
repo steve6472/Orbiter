@@ -5,8 +5,11 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
 import org.joml.Vector3f;
+import steve6472.core.log.Log;
+import steve6472.flare.assets.model.blockbench.animation.controller.AnimationController;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.components.AnimatedModel;
 import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.ecs.components.ParticleHolderId;
 import steve6472.orbiter.world.particle.ParticleComponents;
@@ -15,6 +18,7 @@ import steve6472.orbiter.world.emitter.ParticleEmitters;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 import steve6472.orbiter.world.particle.blueprints.ParticleDirectionBlueprint;
+import steve6472.orbiter.world.particle.components.FlipbookModel;
 import steve6472.orbiter.world.particle.components.Velocity;
 import steve6472.orbiter.world.particle.components.LocalSpace;
 import steve6472.orbiter.world.particle.components.ParticleFollowerId;
@@ -23,6 +27,7 @@ import steve6472.orlang.OrlangEnvironment;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Created by steve6472
@@ -31,6 +36,7 @@ import java.util.List;
  */
 public class ParticleEmitterSystem extends IteratingProfiledSystem
 {
+    private static final Logger LOGGER = Log.getLogger(ParticleEmitterSystem.class);
     private final PooledEngine particleEngine;
 
     public ParticleEmitterSystem(World world)
@@ -120,23 +126,34 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
 
         LocalSpace localSpace = ParticleComponents.LOCAL_SPACE.get(entity);
 
+        if (blueprint.containsFlipbook)
+        {
+            FlipbookModel flipbookModel = ParticleComponents.FLIPBOOK_MODEL.get(entity);
+            flipbookModel.finishSetup(ParticleComponents.MAX_AGE.get(entity).maxAge);
+        }
+
         /*
          * Position
          */
         var particlePosition = ParticleComponents.POSITION.create(particleEngine);
         Vector3f position = emitter.shape.createPosition(emitter);
         emitter.offset.evaluate(emitter.environment);
-        if (localSpace != null && localSpace.position)
+        if (emitter.locator != null)
         {
-            particlePosition.x = position.x + emitter.offset.fx();
-            particlePosition.y = position.y + emitter.offset.fy();
-            particlePosition.z = position.z + emitter.offset.fz();
-        } else
-        {
-            particlePosition.x = emitterPosition.x() + position.x + emitter.offset.fx();
-            particlePosition.y = emitterPosition.y() + position.y + emitter.offset.fy();
-            particlePosition.z = emitterPosition.z() + position.z + emitter.offset.fz();
+            AnimatedModel animatedModel = Components.ANIMATED_MODEL.get(holder);
+            AnimationController.LocatorInfo locator = animatedModel.animationController.getLocator(emitter.locator);
+            if (locator == null)
+            {
+                Log.warningOnce(LOGGER, "Locator '" + emitter.locator + "' not found");
+                setPosition(emitter, emitterPosition, localSpace, particlePosition, position);
+            } else
+            {
+                particlePosition.x = locator.position().x;
+                particlePosition.y = locator.position().y;
+                particlePosition.z = locator.position().z;
+            }
         }
+        setPosition(emitter, emitterPosition, localSpace, particlePosition, position);
         entity.add(particlePosition);
 
         /*
@@ -162,9 +179,30 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
             ParticleFollowerId followerComponent = particleEngine.createComponent(ParticleFollowerId.class);
             followerComponent.entity = holder;
             followerComponent.followerId = holderId;
+            followerComponent.locator = emitter.locator;
             entity.add(followerComponent);
         }
 
         particleEngine.addEntity(entity);
+    }
+
+    private static void setPosition(
+        ParticleEmitter emitter,
+        Position emitterPosition,
+        LocalSpace localSpace,
+        steve6472.orbiter.world.particle.components.Position particlePosition,
+        Vector3f position)
+    {
+        if (localSpace != null && localSpace.position)
+        {
+            particlePosition.x = position.x + emitter.offset.fx();
+            particlePosition.y = position.y + emitter.offset.fy();
+            particlePosition.z = position.z + emitter.offset.fz();
+        } else
+        {
+            particlePosition.x = emitterPosition.x() + position.x + emitter.offset.fx();
+            particlePosition.y = emitterPosition.y() + position.y + emitter.offset.fy();
+            particlePosition.z = emitterPosition.z() + position.z + emitter.offset.fz();
+        }
     }
 }

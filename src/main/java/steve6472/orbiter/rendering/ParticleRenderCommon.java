@@ -5,8 +5,11 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import steve6472.core.log.Log;
 import steve6472.flare.Camera;
+import steve6472.flare.assets.model.blockbench.animation.controller.AnimationController;
 import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.components.AnimatedModel;
 import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.particle.ParticleComponents;
 import steve6472.orbiter.world.particle.components.*;
@@ -48,10 +51,28 @@ public final class ParticleRenderCommon
             if (localSpace != null && localSpace.position)
             {
                 ParticleFollowerId follower = ParticleComponents.PARTICLE_FOLLOWER.get(entity);
-                var holderPosition = Components.POSITION.get(follower.entity);
-                if (holderPosition != null)
+                if (follower.locator != null)
                 {
-                    position.add(holderPosition.x(), holderPosition.y(), holderPosition.z());
+                    AnimatedModel animatedModel = Components.ANIMATED_MODEL.get(follower.entity);
+                    AnimationController.LocatorInfo locator = animatedModel.animationController.getLocator(follower.locator);
+                    if (locator == null)
+                    {
+                        var holderPosition = Components.POSITION.get(follower.entity);
+                        if (holderPosition != null)
+                        {
+                            position.add(holderPosition.x(), holderPosition.y(), holderPosition.z());
+                        }
+                    } else
+                    {
+                        position.add(locator.position());
+                    }
+                } else
+                {
+                    var holderPosition = Components.POSITION.get(follower.entity);
+                    if (holderPosition != null)
+                    {
+                        position.add(holderPosition.x(), holderPosition.y(), holderPosition.z());
+                    }
                 }
             }
             position.add(particlePos.x, particlePos.y, particlePos.z);

@@ -30,15 +30,25 @@ public class BillboardUtil
                 Velocity velocity = ParticleComponents.VELOCITY.get(entity);
                 if (velocity != null)
                 {
-                    Vector3f vel = new Vector3f(velocity.x, velocity.y, velocity.z);
-                    vel.normalize();
-                    Quaternionf q = new Quaternionf().rotationTo(new Vector3f(1, 0, 0), vel);
-                    Vector3f localCam = mat.transformPosition(new Vector3f(cameraPos));
+                    Vector3f vec = new Vector3f(velocity.x, velocity.y, velocity.z);
+                    vec.normalize();
 
-                    float rx = (float) Math.atan2(-localCam.y, localCam.z);
+                    Matrix4f dummy = new Matrix4f();
+                    dummy.translate(position);
 
-                    Quaternionf quaternionf = new Quaternionf().rotationXYZ(rx, 0, 0).premul(q);
-                    mat.rotate(quaternionf);
+                    Quaternionf q = new Quaternionf().rotationTo(new Vector3f(1, 0, 0), vec);
+                    dummy.rotate(q);
+
+                    vec.set(cameraPos);
+
+                    Matrix4f dummyInv = new Matrix4f(dummy).invert();
+                    dummyInv.transformPosition(vec);
+
+                    float rotX = (float) Math.atan2(-vec.y, vec.z);
+                    Quaternionf rotQuat = new Quaternionf().rotationX(rotX);
+                    Quaternionf finalQuat = new Quaternionf(q).mul(rotQuat);
+
+                    mat.rotate(finalQuat);
                 }
             }
             default -> throw new IllegalArgumentException("Unsupported billboard mode: " + billboard.billboard);
