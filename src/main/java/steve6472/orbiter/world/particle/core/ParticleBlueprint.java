@@ -1,6 +1,5 @@
 package steve6472.orbiter.world.particle.core;
 
-import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.PooledEngine;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -51,9 +50,9 @@ public class ParticleBlueprint implements Keyable
         initialSpeed = find(ParticleComponentBlueprints.INITIAL_SPEED);
     }
 
-    public List<Component> createComponents(PooledEngine particleEngine, OrlangEnvironment environment)
+    public List<ParticleComponent> createComponents(PooledEngine particleEngine, OrlangEnvironment environment)
     {
-        List<Component> components = new ArrayList<>(blueprints.size());
+        List<ParticleComponent> components = new ArrayList<>(blueprints.size());
         blueprints.forEach(blueprint -> components.add(blueprint.create(particleEngine, environment)));
         return components;
     }

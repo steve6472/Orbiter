@@ -18,6 +18,7 @@ public class ParticleComponentBlueprints
     public static final PCBlueprintEntry<ParticleScaleBlueprint> SCALE = register(ParticleScaleBlueprint.KEY, ParticleScaleBlueprint.CODEC);
     public static final PCBlueprintEntry<ParticleModelBlueprint> MODEL = register(ParticleModelBlueprint.KEY, ParticleModelBlueprint.CODEC);
     public static final PCBlueprintEntry<ParticleFlipbookBlueprint> FLIPBOOK_MODEL = register(ParticleFlipbookBlueprint.KEY, ParticleFlipbookBlueprint.CODEC);
+    public static final PCBlueprintEntry<ParticlePlaneModelBlueprint> PLANE_MODEL = register(ParticlePlaneModelBlueprint.KEY, ParticlePlaneModelBlueprint.CODEC);
     public static final PCBlueprintEntry<ParticleMaxAgeBlueprint> MAX_AGE = register(ParticleMaxAgeBlueprint.KEY, ParticleMaxAgeBlueprint.CODEC);
     public static final PCBlueprintEntry<ParticleLocalSpaceBlueprint> LOCAL_SPACE = register(ParticleLocalSpaceBlueprint.KEY, ParticleLocalSpaceBlueprint.CODEC);
     public static final PCBlueprintEntry<ParticleBillboardBlueprint> BILLBOARD = register(ParticleBillboardBlueprint.KEY, ParticleBillboardBlueprint.CODEC);

@@ -1,15 +1,14 @@
 package steve6472.orbiter.world.particle.components;
 
-import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.utils.Pool;
+import steve6472.orbiter.world.particle.core.ParticleComponent;
 
 /**
  * Created by steve6472
  * Date: 8/25/2025
  * Project: Orbiter <br>
  */
-public class ParticleFollowerId implements Component, Pool.Poolable
+public class ParticleFollowerId implements ParticleComponent
 {
     public int followerId;
     public Entity entity;

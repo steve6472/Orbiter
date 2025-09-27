@@ -25,6 +25,7 @@ import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
+import steve6472.orbiter.world.emitter.EmitterQueryFunctions;
 import steve6472.orbiter.world.emitter.ParticleEmitter;
 import steve6472.orbiter.world.emitter.ParticleEmitters;
 import steve6472.orlang.OrlangEnvironment;
@@ -57,6 +58,7 @@ public interface EntityControl extends WorldSounds
         List<Component> components = entityBlueprint.createEntityComponents(uuid);
         Entity entity = createEntity(components);
 
+        // Attach entity query functions
         OrlangEnv orlangEnv = Components.ENVIRONMENT.get(entity);
         if (orlangEnv != null)
         {
@@ -64,6 +66,18 @@ public interface EntityControl extends WorldSounds
             env.queryFunctionSet = new EntityQueryFunctions(entity);
         }
 
+        // Attach emitter query functions to existing emitters
+        ParticleEmitters emitters = Components.PARTICLE_EMITTERS.get(entity);
+        if (emitters != null)
+        {
+            for (ParticleEmitter emitter : emitters.emitters)
+            {
+                emitter.environment.queryFunctionSet = new EmitterQueryFunctions(entity);
+                emitter.emitterTick();
+            }
+        }
+
+        // Create callbacks for animated models
         AnimatedModel animatedModel = Components.ANIMATED_MODEL.get(entity);
         if (animatedModel != null)
         {
@@ -77,6 +91,8 @@ public interface EntityControl extends WorldSounds
                 ParticleEmitter emitter = emitterEntry.toEmitter();
                 if (!particleData.locator().isBlank())
                     emitter.locator = particleData.locator();
+                emitter.environment.queryFunctionSet = new EmitterQueryFunctions(entity);
+                emitter.emitterTick();
 
                 ParticleEmitters particleEmitters = Components.PARTICLE_EMITTERS.get(entity);
                 if (particleEmitters == null)

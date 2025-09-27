@@ -5,6 +5,7 @@ import org.joml.Vector2i;
 import org.joml.Vector4f;
 import steve6472.core.registry.Key;
 import steve6472.core.util.BitUtil;
+import steve6472.flare.FlareConstants;
 import steve6472.flare.assets.atlas.AnimationAtlas;
 import steve6472.flare.assets.atlas.SpriteAtlas;
 import steve6472.flare.registry.FlareRegistries;
@@ -44,11 +45,11 @@ public class FlipbookModel implements ParticleComponent
     int frameIndex;
 
     // TODO: make this safe
-    public void setup(Key texture, Key atlas, boolean stretchToMaxAge)
+    public void setup(Key texture, boolean stretchToMaxAge)
     {
-        AnimationAtlas animationAtlas = ((SpriteAtlas) FlareRegistries.ATLAS.get(atlas)).getAnimationAtlas();
+        AnimationAtlas animationAtlas = ((SpriteAtlas) FlareRegistries.ATLAS.get(FlareConstants.ATLAS_BLOCKBENCH)).getAnimationAtlas();
         this.spriteEntry = animationAtlas.getSprite(texture);
-        Objects.requireNonNull(spriteEntry, "No animated sprite for '%s' was found in atlas '%s'".formatted(texture, atlas));
+        Objects.requireNonNull(spriteEntry, "No animated sprite for '%s' was found".formatted(texture));
         this.stretchToMaxAge = stretchToMaxAge;
         this.totalFrames = countPossibleFrames(spriteEntry);
 

@@ -39,7 +39,7 @@ public final class ParticleRenderCommon
         return env;
     }
 
-    public static void doTransform(Entity entity, OrlangEnvironment env, Matrix4f transform, Camera camera)
+    public static void doTransform(Entity entity, OrlangEnvironment env, Matrix4f transform, Camera camera, boolean isModel)
     {
         LocalSpace localSpace = ParticleComponents.LOCAL_SPACE.get(entity);
 

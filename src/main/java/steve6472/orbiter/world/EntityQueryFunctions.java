@@ -39,6 +39,21 @@ public class EntityQueryFunctions extends QueryFunctionSet implements AnimationQ
             return (float) -Math.toDegrees((theta) % _2PI + Math.PI);
         }));
 
+        functions.put("rotation", OrlangValue.func(D, (axis) ->
+        {
+            Rotation rotation = Components.ROTATION.get(entity);
+            if (rotation == null)
+                return 0;
+            Vector3f eulerAnglesXYZ = rotation.toQuat().getEulerAnglesXYZ(new Vector3f());
+            if (axis == 0.0)
+                return Math.toDegrees(eulerAnglesXYZ.x());
+            else if (axis == 1.0)
+                return Math.toDegrees(eulerAnglesXYZ.y());
+            else if (axis == 2.0)
+                return Math.toDegrees(eulerAnglesXYZ.z());
+            return 0;
+        }));
+
         functions.put("position", OrlangValue.func(D, (axis) ->
         {
             Position position = Components.POSITION.get(entity);

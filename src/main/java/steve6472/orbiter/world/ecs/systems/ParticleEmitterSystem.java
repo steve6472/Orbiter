@@ -23,6 +23,7 @@ import steve6472.orbiter.world.particle.components.Velocity;
 import steve6472.orbiter.world.particle.components.LocalSpace;
 import steve6472.orbiter.world.particle.components.ParticleFollowerId;
 import steve6472.orbiter.world.particle.core.ParticleBlueprint;
+import steve6472.orbiter.world.particle.core.ParticleComponent;
 import steve6472.orlang.OrlangEnvironment;
 
 import java.util.Iterator;
@@ -83,6 +84,7 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
         if (spawnCount <= 0)
             return false;
 
+        // Sets environment variables
         emitter.emitterTick();
 
         int holderId = ParticleHolderId.UNASSIGNED;
@@ -118,7 +120,7 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
         entity.add(envComp);
         OrlangEnvironment env = envComp.env;
 
-        List<Component> particleComponents = blueprint.createComponents(particleEngine, env);
+        List<ParticleComponent> particleComponents = blueprint.createComponents(particleEngine, env);
         for (Component particleComponent : particleComponents)
         {
             entity.add(particleComponent);
@@ -136,24 +138,13 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
          * Position
          */
         var particlePosition = ParticleComponents.POSITION.create(particleEngine);
-        Vector3f position = emitter.shape.createPosition(emitter);
         emitter.offset.evaluate(emitter.environment);
-        if (emitter.locator != null)
-        {
-            AnimatedModel animatedModel = Components.ANIMATED_MODEL.get(holder);
-            AnimationController.LocatorInfo locator = animatedModel.animationController.getLocator(emitter.locator);
-            if (locator == null)
-            {
-                Log.warningOnce(LOGGER, "Locator '" + emitter.locator + "' not found");
-                setPosition(emitter, emitterPosition, localSpace, particlePosition, position);
-            } else
-            {
-                particlePosition.x = locator.position().x;
-                particlePosition.y = locator.position().y;
-                particlePosition.z = locator.position().z;
-            }
-        }
-        setPosition(emitter, emitterPosition, localSpace, particlePosition, position);
+        particlePosition.x = emitter.offset.fx();
+        particlePosition.y = emitter.offset.fy();
+        particlePosition.z = emitter.offset.fz();
+
+        Vector3f position = emitter.shape.createPosition(emitter);
+        setPosition(holder, emitter, emitterPosition, localSpace, particlePosition, position);
         entity.add(particlePosition);
 
         /*
@@ -187,22 +178,59 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
     }
 
     private static void setPosition(
+        Entity holder,
         ParticleEmitter emitter,
         Position emitterPosition,
         LocalSpace localSpace,
         steve6472.orbiter.world.particle.components.Position particlePosition,
         Vector3f position)
     {
-        if (localSpace != null && localSpace.position)
+        if (emitter.locator != null)
         {
-            particlePosition.x = position.x + emitter.offset.fx();
-            particlePosition.y = position.y + emitter.offset.fy();
-            particlePosition.z = position.z + emitter.offset.fz();
-        } else
+            AnimatedModel animatedModel = Components.ANIMATED_MODEL.get(holder);
+            AnimationController.LocatorInfo locator = animatedModel.animationController.getLocator(emitter.locator);
+            if (locator == null)
+            {
+                Log.warningOnce(LOGGER, "Locator '" + emitter.locator + "' not found");
+                if (localSpace != null && localSpace.position)
+                {
+                    particlePosition.x += position.x;
+                    particlePosition.y += position.y;
+                    particlePosition.z += position.z;
+                } else
+                {
+                    particlePosition.x += emitterPosition.x() + position.x;
+                    particlePosition.y += emitterPosition.y() + position.y;
+                    particlePosition.z += emitterPosition.z() + position.z;
+                }
+            } else
+            {
+                if (localSpace != null && localSpace.position)
+                {
+                    particlePosition.x += position.x;
+                    particlePosition.y += position.y;
+                    particlePosition.z += position.z;
+                } else
+                {
+                    particlePosition.x += locator.position().x + position.x;
+                    particlePosition.y += locator.position().y + position.y;
+                    particlePosition.z += locator.position().z + position.z;
+                }
+            }
+        }
+        else
         {
-            particlePosition.x = emitterPosition.x() + position.x + emitter.offset.fx();
-            particlePosition.y = emitterPosition.y() + position.y + emitter.offset.fy();
-            particlePosition.z = emitterPosition.z() + position.z + emitter.offset.fz();
+            if (localSpace != null && localSpace.position)
+            {
+                particlePosition.x += position.x;
+                particlePosition.y += position.y;
+                particlePosition.z += position.z;
+            } else
+            {
+                particlePosition.x += emitterPosition.x() + position.x;
+                particlePosition.y += emitterPosition.y() + position.y;
+                particlePosition.z += emitterPosition.z() + position.z;
+            }
         }
     }
 }

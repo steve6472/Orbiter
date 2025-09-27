@@ -1,0 +1,86 @@
+{
+    environment: {
+        tick: "v.rot_y = q.get_rot_y",
+        curves: {
+            // TODO: this does not work because emitters are just so jank
+            "v.rate": {
+                type: "bezier_chain",
+                input: "v.emitter_age / 3",
+                nodes: {
+                    "0.0": {
+                        "value": 0,
+                        "slope": 0
+                    },
+                    "1.0": {
+                        "value": 0,
+                        "slope": 0
+                    },
+                    "0.22": {
+                        "value": 1,
+                        "slope": 0
+                    },
+                    "0.54": {
+                        "value": 1,
+                        "slope": 0
+                    },
+                    "0.73": {
+                        "value": 0.47,
+                        "slope": -1.25
+                    },
+                    "0.12": {
+                        "value": 0.52,
+                        "slope": 1.45
+                    }
+                }
+            }
+        }
+    },
+    lifetime: {
+        lifetime_type: "looping",
+        active_time: 3,
+        sleep_time: "math.random(1, 6)"
+    },
+    rate: {
+        rate_type: "steady",
+        spawn_rate: 128,
+        max_count: 128
+    },
+    shape: {
+        shape_type: "point"
+    },
+
+    particle: {
+        environment: {
+            pass_variables: {
+                "v.rot_y": "v.rot_y"
+            },
+            init: "v.rot_y = v.rot_y + 90; v.spread = 0.2"
+        },
+        rotation: {
+            initial: 0
+        },
+        plane_model: {
+            texture: "orbiter:particle/load",
+            texture_size: [8, 64],
+            uv: [0, 8],
+            uv_size: [8, 8]
+        },
+        initial_speed: "4 + math.random(-v.spread, v.spread) * 4",
+        linear_drag_coefficient: 3,
+        linear_acceleration: [0, -5.41, 0],
+        direction: {
+            x: "-math.sin(v.rot_y) + math.random(-v.spread, v.spread)",
+            y: "0.6 + math.random(-v.spread, v.spread)",
+            z: "-math.cos(v.rot_y) + math.random(-v.spread, v.spread)"
+        },
+        billboard: "rotate_xyz",
+        scale: {
+            x: 0.07,
+            y: 0.07,
+            z: 1
+        },
+        max_age: 0.8,
+        tint: [0.14, 0.43, 0.16, 0.6],
+        render_pipeline: "model_additive"
+    }
+}

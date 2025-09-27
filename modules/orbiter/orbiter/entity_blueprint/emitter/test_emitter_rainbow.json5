@@ -44,18 +44,17 @@
                             type: "catmull_rom",
                             input: "v.age",
                             horizontal_range: "v.max_age",
-                            nodes: [0, 0, 1, 0, 0]
+                            nodes: [0, 0, 0.2, 0, 0]
                         }
                     }
                 },
 
                 linear_acceleration: [0, 1, 0],
 
-                model: "orbiter:blockbench/static/particle/dot_white",
+                plane_model: "orbiter:particle/dot_white",
                 max_age: 1,
                 billboard: "rotate_xyz",
-                scale: ["v.psize", "v.psize", "v.psize"],
-                render_pipeline: "model_unshaded_tinted",
+                scale: ["v.psize", "v.psize", 1],
                 tint: {
                     "interpolant": "v.rainbow",
                     "gradient": {

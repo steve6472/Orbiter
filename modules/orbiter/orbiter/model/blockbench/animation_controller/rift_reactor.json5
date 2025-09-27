@@ -4,7 +4,7 @@
             initial_state: "idle",
             states: {
                 idle: {
-                    animations: ["idle", "idle_catalyst", "spawn_sparks"]
+                    animations: ["idle", "idle_catalyst", "spawn_particles"]
                 }
             }
         },

@@ -69,10 +69,8 @@ public record ParticleEmittersBlueprint(List<Emitter> emitters) implements Bluep
             };
             emitterBlueprint.envData.ifPresent(envData ->
             {
-                emitter.environmentData = envData;
-                envData.init().ifPresent(code -> {
-                    Orlang.interpreter.interpret(code, emitter.environment);
-                });
+                emitter.environmentData = new ParticleEmitter.EnvData(envData.init(), envData.emitterTick(), envData.particleTick(), envData.curves());
+                emitter.environmentData.init().ifPresent(code -> Orlang.interpreter.interpret(code, emitter.environment));
             });
             emitter.particleData = emitterBlueprint.particle;
             return emitter;

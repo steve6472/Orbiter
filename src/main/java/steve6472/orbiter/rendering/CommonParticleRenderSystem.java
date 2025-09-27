@@ -143,7 +143,7 @@ public class CommonParticleRenderSystem<E extends SBOModelArray.Entry> extends C
 
             E entry = lastArea.getEntry();
 
-            if (entry instanceof Transform transform) ParticleRenderCommon.doTransform(entity, env, transform.transform(), frameInfo.camera());
+            if (entry instanceof Transform transform) ParticleRenderCommon.doTransform(entity, env, transform.transform(), frameInfo.camera(), true);
             if (entry instanceof Tint tint) ParticleRenderCommon.doTint(entity, env, tint.tint());
 
             lastArea.moveIndex();

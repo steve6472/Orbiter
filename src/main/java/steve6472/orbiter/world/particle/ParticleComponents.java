@@ -1,12 +1,12 @@
 package steve6472.orbiter.world.particle;
 
-import com.badlogic.ashley.core.Component;
 import steve6472.core.registry.Key;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.particle.components.*;
 import steve6472.orbiter.world.ecs.core.ComponentEntry;
+import steve6472.orbiter.world.particle.core.ParticleComponent;
 
 import java.util.function.UnaryOperator;
 
@@ -23,6 +23,7 @@ public class ParticleComponents
     public static final ComponentEntry<MaxAge> MAX_AGE = register("max_age", MaxAge.class);
     public static final ComponentEntry<ParticleModel> MODEL = register("model", ParticleModel.class);
     public static final ComponentEntry<FlipbookModel> FLIPBOOK_MODEL = register("flipbook_model", FlipbookModel.class);
+    public static final ComponentEntry<PlaneModel> PLANE_MODEL = register("plane_model", PlaneModel.class);
     public static final ComponentEntry<LocalSpace> LOCAL_SPACE = register("local_space", LocalSpace.class);
     public static final ComponentEntry<ParticleBillboard> BILLBOARD = register("billboard", ParticleBillboard.class);
     public static final ComponentEntry<Velocity> VELOCITY = register("velocity", Velocity.class);
@@ -42,12 +43,12 @@ public class ParticleComponents
      * Register functions
      */
 
-    private static <T extends Component> ComponentEntry<T> register(String id, Class<T> clazz)
+    private static <T extends ParticleComponent> ComponentEntry<T> register(String id, Class<T> clazz)
     {
         return register(Key.withNamespace(Constants.NAMESPACE, id), clazz, b -> b);
     }
 
-    private static <T extends Component> ComponentEntry<T> register(Key key, Class<T> clazz, UnaryOperator<ComponentEntry.Builder<T>> builder)
+    private static <T extends ParticleComponent> ComponentEntry<T> register(Key key, Class<T> clazz, UnaryOperator<ComponentEntry.Builder<T>> builder)
     {
         var entryBuilder = builder.apply(ComponentEntry.builder())._key(key).clazz(clazz);
         ComponentEntry<T> build = entryBuilder.build();

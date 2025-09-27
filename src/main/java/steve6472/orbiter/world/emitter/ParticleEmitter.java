@@ -74,7 +74,10 @@ public class ParticleEmitter implements Component
 
         // Then evaluate expressions
         if (environmentData != null)
+        {
             environmentData.emitterTick.ifPresent(code -> Orlang.interpreter.interpret(code, environment));
+            environmentData.curves.ifPresent(curves -> curves.forEach((name, curve) -> curve.calculate(name, environment)));
+        }
     }
 
     public void particleTick()

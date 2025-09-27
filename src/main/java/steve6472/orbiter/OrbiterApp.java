@@ -83,7 +83,8 @@ public class OrbiterApp extends FlareApp
      *  [x] Particle systems
      *  [ ] Particle tinting renderer, without normals
      *  [ ] Fix max_count for steady rate
-     *  [ ] Emitter anchor to a locator from animated model
+     *  [x] Emitter anchor to a locator from animated model
+     *  [ ] "unify" render pipelines into opaque (default for plane/flipbook), alpha_test, blend (default for model), additive. "shaded" flag in the blueprint
      *
      *  akma asks:
      *  [ ] Mana system
@@ -174,11 +175,13 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new PhysicsOutlineRenderSystem(masterRenderer(), true, client));
 
         addRenderSystem(new FlipbookRenderSystem(masterRenderer(), OrbiterPipelines.FLIPBOOK, client));
+        addRenderSystem(new PlaneRenderSystem(masterRenderer(), OrbiterPipelines.PLANE, client, RenderPipeline.Enum.MODEL));
         addParticleRenderSystem(Pipelines.BLOCKBENCH_STATIC, SBO.BLOCKBENCH_STATIC_TRANSFORMATIONS, RenderPipeline.Enum.MODEL, JustTransform::new, Matrix4f[]::new);
         addParticleRenderSystem(OrbiterPipelines.MODEL_UNSHADED, SBO.BLOCKBENCH_STATIC_TRANSFORMATIONS, RenderPipeline.Enum.MODEL_UNSHADED, JustTransform::new, Matrix4f[]::new);
         addParticleRenderSystem(OrbiterPipelines.MODEL_UNSHADED_TINTED, OrbiterSBO.MODEL_TINT_ENTRIES, RenderPipeline.Enum.MODEL_UNSHADED_TINTED, TintedTransform::new, Struct[]::new);
 
         // Additive
+        addRenderSystem(new PlaneRenderSystem(masterRenderer(), OrbiterPipelines.PLANE_ADDITIVE, client, RenderPipeline.Enum.MODEL_ADDITIVE));
         addParticleRenderSystem(OrbiterPipelines.MODEL_ADDITIVE, SBO.BLOCKBENCH_STATIC_TRANSFORMATIONS, RenderPipeline.Enum.MODEL_ADDITIVE, JustTransform::new, Matrix4f[]::new);
         addParticleRenderSystem(OrbiterPipelines.MODEL_UNSHADED_ADDITIVE, SBO.BLOCKBENCH_STATIC_TRANSFORMATIONS, RenderPipeline.Enum.MODEL_UNSHADED_ADDITIVE, JustTransform::new, Matrix4f[]::new);
         addParticleRenderSystem(OrbiterPipelines.MODEL_UNSHADED_TINTED_ADDITIVE, OrbiterSBO.MODEL_TINT_ENTRIES, RenderPipeline.Enum.MODEL_UNSHADED_TINTED_ADDITIVE, TintedTransform::new, Struct[]::new);
