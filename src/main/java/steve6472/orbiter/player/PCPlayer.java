@@ -2,20 +2,11 @@ package steve6472.orbiter.player;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
-import com.jme3.bullet.collision.PhysicsCollisionObject;
-import com.jme3.bullet.collision.PhysicsRayTestResult;
-import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
-import com.jme3.bullet.collision.shapes.ConvexShape;
-import com.jme3.bullet.joints.SixDofSpringJoint;
-import com.jme3.bullet.objects.PhysicsCharacter;
-import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.math.Matrix3f;
-import com.jme3.math.Transform;
-import jme3utilities.math.MyMath;
+import com.github.stephengold.joltjni.*;
+import com.github.stephengold.joltjni.Character;
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 import steve6472.core.registry.Key;
 import steve6472.core.util.MathUtil;
 import steve6472.flare.Camera;
@@ -51,10 +42,10 @@ public class PCPlayer implements Player
     public static final float EYE_HEIGHT = 1.5f;
     public static final float STEP_HEIGHT = 0.4f;
     public static final float PENETRATION_CONSTANT = 0.19f;
-    public static final int JUMP_COOLDOWN = 4;
+    public static final int JUMP_COOLDOWN = 10;
 
     private final Client client;
-    public final PhysicsCharacter character;
+    public final Character character;
     public final Entity ecsEntity;
     private float jumpCooldown = 0;
 
@@ -62,8 +53,8 @@ public class PCPlayer implements Player
     public static float STRENGTH = 1;
 
     private float holdPointDistance = REACH;
-    private final PhysicsRigidBody holdPoint;
-    private SixDofSpringJoint holdJoint;
+//    private final PhysicsRigidBody holdPoint;
+//    private SixDofSpringJoint holdJoint;
 
     public PCPlayer(UUID uuid, Client client)
     {
@@ -83,17 +74,17 @@ public class PCPlayer implements Player
         if (!(collision.shape() instanceof ConvexShape convexCollisionShape))
             throw new RuntimeException("Player capsule collision is not convex!");
 
-        character = new PhysicsCharacter(convexCollisionShape, STEP_HEIGHT);
-        character.warp(jomlToPhys(new Vector3f(0, 1, 0)));
-        character.setUserIndex(Constants.CLIENT_PLAYER_MAGIC_CONSTANT);
+        CharacterSettings settings = new CharacterSettings();
+        settings.setShape(convexCollisionShape);
+        settings.setLayer(Constants.Physics.OBJ_LAYER_MOVING);
 
-        character.setJumpSpeed(7f);
-        character.setMaxPenetrationDepth(PENETRATION_CONSTANT);
+        character = new Character(settings, new RVec3(0, 1, 0), new Quat(), Constants.PhysicsFlags.CLIENT_PLAYER, client.getWorld().physics());
+        character.addToPhysicsSystem();
 
-        holdPoint = createHoldPoint();
-        OrbiterApp.getInstance().getClient().getWorld().physics().add(holdPoint);
+        /*holdPoint = createHoldPoint();
+        OrbiterApp.getInstance().getClient().getWorld().physics().add(holdPoint);*/
     }
-
+/*
     private PhysicsRigidBody createHoldPoint()
     {
         PhysicsRigidBody body = new PhysicsRigidBody(new CompoundCollisionShape(1));
@@ -105,18 +96,18 @@ public class PCPlayer implements Player
         body.setMass(STRENGTH);
         body.setUserIndex2(~Constants.PhysicsFlags.NEVER_DEBUG_RENDER);
         return body;
-    }
+    }*/
 
     @Override
     public void teleport(Vector3f position)
     {
-        character.warp(jomlToPhys(position));
+        character.setPosition(jomlToPhys(position).toRVec3());
     }
 
     @Override
     public void applyMotion(Vector3f motion)
     {
-        character.setWalkDirection(jomlToPhys(motion));
+//        character.addLinearVelocity(jomlToPhys(motion));
     }
 
     @Override
@@ -140,9 +131,9 @@ public class PCPlayer implements Player
     @Override
     public Vector3f getCenterPos()
     {
-        Vector3f vector3f = physGetToJoml(character::getPhysicsLocation);
+        Vector3f vector3f = physGetToJoml(_ -> character.getPosition().toVec3());
         // compensate for.. something I guess
-        vector3f.add(0, 0.04f, 0);
+//        vector3f.add(0, 0.04f, 0);
         return vector3f;
     }
 
@@ -151,21 +142,21 @@ public class PCPlayer implements Player
     {
         processMovementAndCamera(userInput, camera);
 
-        if (Keybinds.HOLD_OBJECT.isActive())
+        /*if (Keybinds.HOLD_OBJECT.isActive())
         {
             startHolding(camera);
         } else
         {
             endHolding();
-        }
+        }*/
 
         Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
-        updateHoldPoint(camera, direction);
+        //updateHoldPoint(camera, direction);
 
-        Optional<PhysicsRayTestResult> physicsRayTestResult = client.getRayTrace().rayTraceGetFirst(getEyePos(), direction, REACH, true);
+        Optional<RayCastResult> physicsRayTestResult = client.getRayTrace().rayTraceGetFirst(getEyePos(), direction, REACH, true);
         physicsRayTestResult.ifPresent(res ->
         {
-            Vector3f hitPosition = new Vector3f(getEyePos()).add(new Vector3f(direction).mul(res.getHitFraction() * REACH));
+            Vector3f hitPosition = new Vector3f(getEyePos()).add(new Vector3f(direction).mul(res.getFraction() * REACH));
 
             DebugRender.addDebugObjectForFrame(
                 DebugRender.lineSphere(0.015f, 4, DebugRender.IVORY),
@@ -175,9 +166,9 @@ public class PCPlayer implements Player
 
     private void processMovementAndCamera(UserInput userInput, Camera camera)
     {
-        character.setWalkDirection(jomlToPhys(new Vector3f()));
+//        character.setWalkDirection(jomlToPhys(new Vector3f()));
 
-        double speed = 0.025;
+        double speed = 1;
 
         if (Keybinds.SPRINT.isActive())
         {
@@ -187,7 +178,8 @@ public class PCPlayer implements Player
         double x = 0;
         double z = 0;
 
-        jumpCooldown = Math.max(--jumpCooldown, 0);
+        if (character.isSupported())
+            jumpCooldown = Math.max(--jumpCooldown, 0);
 
         if (Keybinds.FORWARD.isActive())
         {
@@ -213,9 +205,14 @@ public class PCPlayer implements Player
             z += Math.cos(camera.yaw() + Math.PI / 2.0) * speed;
         }
 
-        if (Keybinds.JUMP.isActive() && character.onGround() && jumpCooldown == 0)
+        Vec3 linearVelocity = character.getLinearVelocity();
+        linearVelocity.setX((float) x);
+        linearVelocity.setZ((float) z);
+        character.setLinearVelocity(linearVelocity);
+
+        if (Keybinds.JUMP.isActive() && character.isSupported() && jumpCooldown == 0)
         {
-            character.jump();
+            character.addLinearVelocity(new Vec3(0, 3, 0));
             jumpCooldown = JUMP_COOLDOWN;
         }
 
@@ -225,9 +222,17 @@ public class PCPlayer implements Player
         camera.head(mousePos.x, mousePos.y, Settings.SENSITIVITY.get());
         camera.updateViewMatrix();
 
-        applyMotion(new Vector3f((float) x, 0, (float) z));
-    }
+        RVec3 position = character.getPosition();
+        if (position.y() < -10)
+        {
+            position.setY(2);
+            character.setPosition(position);
+            character.setLinearVelocity(new Vec3(0, 0, 0));
+        }
 
+        //        applyMotion(new Vector3f((float) x, 0, (float) z));
+    }
+/*
     private void updateHoldPoint(Camera camera, Vector3f direction)
     {
         holdPoint.setPhysicsLocation(Convert.jomlToPhys(camera.viewPosition).add(Convert.jomlToPhys(direction).mult(holdPointDistance)));
@@ -280,5 +285,5 @@ public class PCPlayer implements Player
         client.getWorld().physics().remove(holdJoint);
         holdJoint = null;
         holdPointDistance = REACH;
-    }
+    }*/
 }

@@ -82,7 +82,7 @@ public class WorldSystems
 
         // Last
         engine.addSystem(networkSync = new NetworkSync(OrbiterApp.getInstance().getNetwork())); //"Network Sync", ""
-        engine.addSystem(updatePhysics = new UpdatePhysics(world)); // "Update Physics Positions", "Updates Physics Positions with data from last tick ECS Systems"
+//        engine.addSystem(updatePhysics = new UpdatePhysics(world)); // "Update Physics Positions", "Updates Physics Positions with data from last tick ECS Systems"
         engine.addSystem(removeEventComponents = new RemoveEventComponents());
     }
 

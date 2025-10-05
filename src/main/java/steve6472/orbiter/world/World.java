@@ -3,25 +3,28 @@ package steve6472.orbiter.world;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.PooledEngine;
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.PlaneCollisionShape;
-import com.jme3.bullet.objects.PhysicsBody;
-import com.jme3.bullet.objects.PhysicsGhostObject;
-import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.math.Plane;
+import com.github.stephengold.joltjni.*;
+import com.github.stephengold.joltjni.Character;
+import com.github.stephengold.joltjni.enumerate.EActivation;
+import com.github.stephengold.joltjni.enumerate.EMotionType;
+import com.github.stephengold.joltjni.enumerate.EPhysicsUpdateError;
+import com.github.stephengold.joltjni.readonly.ConstPlane;
+import com.github.stephengold.joltjni.readonly.ConstShape;
+import com.github.stephengold.joltjni.readonly.Vec3Arg;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import steve6472.flare.MasterRenderer;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.OrbiterApp;
-import steve6472.orbiter.Registries;
 import steve6472.orbiter.audio.MovingSource;
 import steve6472.orbiter.audio.Source;
 import steve6472.orbiter.audio.WorldSounds;
 import steve6472.orbiter.network.api.NetworkMain;
+import steve6472.orbiter.player.PCPlayer;
+import steve6472.orbiter.player.Player;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.util.FastInt2ObjBiMap;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -35,13 +38,18 @@ import static steve6472.flare.render.debug.DebugRender.*;
  */
 public class World implements EntityControl, EntityModify, WorldSounds
 {
+    // TODO: should be either in constants or configurable (in menu only)
     private static final int MAX_PARTICLES = 32767;
 
     // TODO: split to client & host ?
-    private final Map<UUID, PhysicsRigidBody> bodyMap = new HashMap<>();
-    private final Map<UUID, PhysicsGhostObject> ghostMap = new HashMap<>();
+    // TODO: should be just ids ? ('cause of Jolt)
+    public final FastInt2ObjBiMap<UUID> idUUIDmap = new FastInt2ObjBiMap<>();
+//    private final Map<UUID, PhysicsGhostObject> ghostMap = new HashMap<>();
 
-    private final PhysicsSpace physics;
+    private final PhysicsSystem physics;
+    private final TempAllocator tempAllocator;
+    private final JobSystem jobSystem;
+
     private final Engine ecsEngine;
     private final PooledEngine particleEngine;
     private final WorldSystems systems;
@@ -52,13 +60,54 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
     public World()
     {
-        physics = new PhysicsSpace(Convert.phys(-1000, -1000, -1000), Convert.phys(1000, 1000, 1000), PhysicsSpace.BroadphaseType.DBVT);
-        physics.useDeterministicDispatch(true);
+        physics = createPhysicsSystem();
+
+        tempAllocator = new TempAllocatorMalloc();
+        int numWorkerThreads = Runtime.getRuntime().availableProcessors();
+        jobSystem = new JobSystemThreadPool(Jolt.cMaxPhysicsJobs, Jolt.cMaxPhysicsBarriers, numWorkerThreads);
+
         ecsEngine = new Engine();
         particleEngine = new PooledEngine(MAX_PARTICLES >> 4, MAX_PARTICLES, MAX_PARTICLES >> 4, MAX_PARTICLES);
         systems = new WorldSystems(this, ecsEngine);
         particleSystems = new ParticleSystems(this, particleEngine);
         soundSources = new ArrayList<>(256);
+    }
+
+    private PhysicsSystem createPhysicsSystem()
+    {
+        // For simplicity, use a single broadphase layer:
+        int numBpLayers = 1;
+
+        //noinspection ExtractMethodRecommender
+        ObjectLayerPairFilterTable ovoFilter = new ObjectLayerPairFilterTable(Constants.Physics.NUM_OBJ_LAYERS);
+        // Enable collisions between 2 moving bodies:
+        ovoFilter.enableCollision(Constants.Physics.OBJ_LAYER_MOVING, Constants.Physics.OBJ_LAYER_MOVING);
+        // Enable collisions between a moving body and a non-moving one:
+        ovoFilter.enableCollision(Constants.Physics.OBJ_LAYER_MOVING, Constants.Physics.OBJ_LAYER_NON_MOVING);
+        // Disable collisions between 2 non-moving bodies:
+        ovoFilter.disableCollision(Constants.Physics.OBJ_LAYER_NON_MOVING, Constants.Physics.OBJ_LAYER_NON_MOVING);
+
+        // Map both object layers to broadphase layer 0:
+        BroadPhaseLayerInterfaceTable layerMap = new BroadPhaseLayerInterfaceTable(Constants.Physics.NUM_OBJ_LAYERS, numBpLayers);
+        layerMap.mapObjectToBroadPhaseLayer(Constants.Physics.OBJ_LAYER_MOVING, 0);
+        layerMap.mapObjectToBroadPhaseLayer(Constants.Physics.OBJ_LAYER_NON_MOVING, 0);
+
+        /*
+         * Pre-compute the rules for colliding object layers
+         * with broadphase layers:
+         */
+        ObjectVsBroadPhaseLayerFilter ovbFilter = new ObjectVsBroadPhaseLayerFilterTable(layerMap, numBpLayers, ovoFilter, Constants.Physics.NUM_OBJ_LAYERS);
+
+        PhysicsSystem result = new PhysicsSystem();
+
+        // Set high limits, even though this sample app uses only 2 bodies:
+        int maxBodies = 5_000;
+        int numBodyMutexes = 0; // 0 means "use the default number"
+        int maxBodyPairs = 65_536;
+        int maxContacts = 20_480;
+        result.init(maxBodies, numBodyMutexes, maxBodyPairs, maxContacts, layerMap, ovbFilter, ovoFilter);
+
+        return result;
     }
 
     public void init(MasterRenderer renderer)
@@ -74,7 +123,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
     }
 
     @Override
-    public PhysicsSpace physics()
+    public PhysicsSystem physics()
     {
         return physics;
     }
@@ -91,9 +140,9 @@ public class World implements EntityControl, EntityModify, WorldSounds
     }
 
     @Override
-    public Map<UUID, PhysicsRigidBody> bodyMap()
+    public FastInt2ObjBiMap<UUID> bodyMap()
     {
-        return bodyMap;
+        return idUUIDmap;
     }
 
     @Override
@@ -105,15 +154,25 @@ public class World implements EntityControl, EntityModify, WorldSounds
     public void tick(float frameTime)
     {
         tickSound();
-        shittyGhostPhysicsThing();
-        physics.update(1f / Constants.TICKS_IN_SECOND, 8);
+//        shittyGhostPhysicsThing();
+
+        float timePerStep = 1f / Constants.TICKS_IN_SECOND; // in seconds
+        int collisionSteps = 1;
+
+        int errors = physics.update(timePerStep, collisionSteps, tempAllocator, jobSystem);
+        assert errors == EPhysicsUpdateError.None : errors;
+
+        Player player = OrbiterApp.getInstance().getClient().player();
+        Character character = ((PCPlayer) player).character;
+        character.postSimulation(0.01f);
+
 
         systems.updateStates();
         systems.runTickSystems(frameTime);
         particleSystems.runTickSystems(frameTime);
     }
 
-    private void shittyGhostPhysicsThing()
+/*    private void shittyGhostPhysicsThing()
     {
         Set<UUID> accessed = new HashSet<>();
 
@@ -140,7 +199,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
         }
 
         ghostMap.keySet().removeIf(uuid -> !accessed.contains(uuid));
-    }
+    }*/
 
     public void debugRender(float frameTime)
     {
@@ -191,12 +250,27 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
     private void addPlane(Vector3f normal, float constant)
     {
-        Plane plane = new Plane(Convert.jomlToPhys(normal), constant);
-        CollisionShape planeShape = new PlaneCollisionShape(plane);
-        float mass = PhysicsBody.massForStatic;
-        PhysicsRigidBody floor = new PhysicsRigidBody(planeShape, mass);
-        floor.setUserIndex2(~Constants.PhysicsFlags.NEVER_DEBUG_RENDER);
-        physics.addCollisionObject(floor);
+        BodyInterface bi = physics.getBodyInterface();
+
+        Vec3Arg norm = Convert.jomlToPhys(normal);
+        ConstPlane plane = new Plane(norm, constant);
+        ConstShape floorShape = new PlaneShape(plane);
+
+        BodyCreationSettings bcs = new BodyCreationSettings();
+        bcs.setMotionType(EMotionType.Static);
+        bcs.setObjectLayer(Constants.Physics.OBJ_LAYER_NON_MOVING);
+        bcs.setShape(floorShape);
+        Body floor = bi.createBody(bcs);
+        floor.setUserData(~Constants.PhysicsFlags.NEVER_DEBUG_RENDER);
+        bi.addBody(floor, EActivation.DontActivate);
+
+//        BodyCreationSettings bcs = new BodyCreationSettings();
+//        bcs.setMotionType(EMotionType.Static);
+//        bcs.setObjectLayer(Constants.Physics.OBJ_LAYER_NON_MOVING);
+//        bcs.setShape(new BoxShape(new Vec3(100.0f, 1.0f, 100.0f)));
+//        bcs.setPosition(new RVec3(0, -1, 0));
+//        Body floor = physics.getBodyInterface().createBody(bcs);
+//        physics.getBodyInterface().addBody(floor, EActivation.DontActivate);
     }
 
     @Override
@@ -207,6 +281,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
     public void cleanup()
     {
+        physics.close();
         particleEngine().clearPools();
         clearAllSoundSources();
     }

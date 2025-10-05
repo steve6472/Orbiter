@@ -1,6 +1,7 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
-import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.github.stephengold.joltjni.BodyInterface;
+import com.github.stephengold.joltjni.readonly.Vec3Arg;
 import com.mojang.datafixers.util.Function3;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -99,15 +100,15 @@ abstract class Value3f implements PhysicsProperty
         return String.format("%s{" + "x=%.6f, y=%.6f, z=%.6f" + '}', getClass().getSimpleName(), x, y, z);
     }
 
-    protected abstract Function<com.jme3.math.Vector3f, com.jme3.math.Vector3f> get(PhysicsRigidBody body);
-    protected abstract Consumer<com.jme3.math.Vector3f> set(PhysicsRigidBody body);
+    protected abstract Vec3Arg get(BodyInterface bi, int body);
+    protected abstract void set(BodyInterface bi, int body, Vec3Arg vec);
 
-    private static final Vector3f STORE = new Vector3f();
+    protected static final Vector3f STORE = new Vector3f();
 
     @Override
-    public ModifyState modifyComponent(PhysicsRigidBody body)
+    public ModifyState modifyComponent(BodyInterface bi, int body)
     {
-        Convert.physGetToJoml(get(body), STORE);
+        Convert.physToJoml(get(bi, body), STORE);
 
         if (STORE.x == x && STORE.y == y && STORE.z == z)
             return ModifyState.noModification();
@@ -117,11 +118,8 @@ abstract class Value3f implements PhysicsProperty
     }
 
     @Override
-    public void modifyBody(PhysicsRigidBody body)
+    public void modifyBody(BodyInterface bi, int body)
     {
-//        if (!OrbiterApp.getInstance().getSteam().isHost())
-//            return;
-
-        set(body).accept(Convert.jomlToPhys(toVec3f()));
+        set(bi, body, Convert.jomlToPhys(toVec3f()));
     }
 }

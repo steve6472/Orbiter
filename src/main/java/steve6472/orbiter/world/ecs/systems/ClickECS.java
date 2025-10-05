@@ -3,7 +3,6 @@ package steve6472.orbiter.world.ecs.systems;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.EntitySystem;
 import com.badlogic.ashley.core.Family;
-import com.jme3.bullet.collision.PhysicsCollisionObject;
 import steve6472.flare.struct.Struct;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.OrbiterApp;
@@ -33,7 +32,7 @@ public class ClickECS extends EntitySystem
 
     @Override
     public void update(float deltaTime)
-    {
+    {/*
         if (!Keybinds.INTERACT_OBJECT.isActive())
             return;
 
@@ -60,7 +59,7 @@ public class ClickECS extends EntitySystem
             clickId = -1;
         else
             clickId = orbiterCollisionShape.ids()[client.getRayTrace().getLookAtTriangleIndex()];
-        entity.add(new Click(clickId));
+        entity.add(new Click(clickId));*/
     }
 
     public static Entity findEntity(Client client, UUID uuid)

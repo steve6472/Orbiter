@@ -40,7 +40,7 @@ public class RenderNametag extends IteratingProfiledSystem implements RenderECSS
         float yOffset = 0;
         if (Components.COLLISION.has(entity))
         {
-            yOffset = Components.COLLISION.get(entity).shape().maxRadius();
+//            yOffset = Components.COLLISION.get(entity).shape().maxRadius();
         }
 
         renderer.textRender().line(text, new Matrix4f().translate(position.x(), position.y() + yOffset, position.z()));

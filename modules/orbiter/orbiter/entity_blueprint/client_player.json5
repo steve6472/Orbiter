@@ -1,5 +1,5 @@
 {
-    position: {},
-    model: "blockbench/static/player_capsule",
-    collision: "blockbench/static/player_capsule"
+    physics_body: {
+        model: "blockbench/static/player_capsule"
+    }
 }

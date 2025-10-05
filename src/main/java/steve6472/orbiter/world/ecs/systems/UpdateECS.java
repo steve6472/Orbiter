@@ -2,7 +2,8 @@ package steve6472.orbiter.world.ecs.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.github.stephengold.joltjni.Body;
+import com.github.stephengold.joltjni.BodyInterface;
 import steve6472.core.log.Log;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
@@ -37,13 +38,15 @@ public class UpdateECS extends IteratingProfiledSystem
     {
         UUID uuid = Components.UUID.get(entity).uuid();
 
-        PhysicsRigidBody body = world.bodyMap().get(uuid);
+        int bodyId = world.bodyMap().getByObj(uuid);
 
-        if (body == null)
-        {
-            LOGGER.warning("Body does not exist for entity " + uuid);
-            return;
-        }
+//        if (body == null)
+//        {
+//            LOGGER.warning("Body does not exist for entity " + uuid);
+//            return;
+//        }
+
+        BodyInterface bi = world.physics().getBodyInterface();
 
         for (Class<? extends PhysicsProperty> physicsComponent : PhysicsProperty.PHYSICS_COMPONENTS)
         {
@@ -55,7 +58,7 @@ public class UpdateECS extends IteratingProfiledSystem
             if (physicsProperty == null)
                 continue;
 
-            ModifyState modified = physicsProperty.modifyComponent(body);
+            ModifyState modified = physicsProperty.modifyComponent(bi, bodyId);
 
             if (modified.hasNewComponent())
             {

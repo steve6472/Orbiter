@@ -3,10 +3,9 @@ package steve6472.orbiter.network.packets.game;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.github.stephengold.joltjni.BodyInterface;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
-import steve6472.flare.settings.VisualSettings;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.Registries;
@@ -59,6 +58,7 @@ public class GameClientboundListener extends OrbiterPacketListener
     {
         OrbiterApp orbiter = OrbiterApp.getInstance();
         World world = orbiter.getClient().getWorld();
+        BodyInterface bi = world.physics().getBodyInterface();
         for (Entity entity : world.ecsEngine().getEntitiesFor(UUID_FAMILY))
         {
             if (!Components.UUID.get(entity).uuid().equals(uuid))
@@ -72,13 +72,13 @@ public class GameClientboundListener extends OrbiterPacketListener
 
                 if (hasPhysics && component instanceof PhysicsProperty pp)
                 {
-                    PhysicsRigidBody body = world.bodyMap().get(uuid);
-                    if (body == null)
+                    int byObj = world.bodyMap().getByObj(uuid);
+                    if (!bi.isAdded(byObj))
                     {
                         LOGGER.warning("Body does not exist for entity " + uuid);
                         continue;
                     }
-                    pp.modifyBody(body);
+                    pp.modifyBody(bi, byObj);
                 }
             }
 

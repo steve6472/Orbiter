@@ -32,7 +32,7 @@ public class OrbiterMain
         System.setProperty("dominion.world.size", "LARGE");
         System.setProperty("dominion.show-banner", "false");
 
-        File parentFile = Constants.BULLET_NATIVE.getParentFile();
+        File parentFile = Constants.JOLT_NATIVE.getParentFile();
         if (!parentFile.exists())
         {
             if (!parentFile.mkdirs())
@@ -41,7 +41,7 @@ public class OrbiterMain
                 return;
             }
         }
-        JarExport.exportFile("native/windows/x86_64/bulletjme.dll", Constants.BULLET_NATIVE);
+        JarExport.exportFile("windows/x86-64/com/github/stephengold/joltjni.dll", Constants.JOLT_NATIVE);
 
         if (test())
             return;

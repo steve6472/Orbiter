@@ -1,6 +1,7 @@
 package steve6472.orbiter.world.collision;
 
-import com.jme3.bullet.collision.shapes.*;
+import com.github.stephengold.joltjni.*;
+import com.github.stephengold.joltjni.readonly.Vec3Arg;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
@@ -27,12 +28,12 @@ import java.util.logging.Logger;
  * Date: 10/11/2024
  * Project: Orbiter <br>
  */
-public record OrbiterCollisionShape(Key key, CollisionShape collisionShape, short[] ids) implements Keyable
+public record OrbiterCollisionShape(Key key, Shape collisionShape, short[] ids) implements Keyable
 {
     private static final Logger LOGGER = Log.getLogger(OrbiterCollisionShape.class);
 
     private static final ShapeParser SHAPE_PARSER = new ShapeParser();
-    public static final Map<String, Function<ObjectExp, CollisionShape>> SHAPE_CONSTRUCTORS = new HashMap<>();
+    public static final Map<String, Function<ObjectExp, Shape>> SHAPE_CONSTRUCTORS = new HashMap<>();
     public static final Map<String, BiFunction<ObjectExp, CollisionTransform, CollisionTransform>> PROPERTIES = new HashMap<>();
 
     static
@@ -42,13 +43,14 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape, shor
          */
 
         // sphere(radius)
-        SHAPE_CONSTRUCTORS.put("sphere", obj -> new SphereCollisionShape(obj.params()[0] * 0.5f));
+        SHAPE_CONSTRUCTORS.put("sphere", obj -> new SphereShape(obj.params()[0] * 0.5f));
         // capsule(radius, height)
-        SHAPE_CONSTRUCTORS.put("capsule", obj -> new CapsuleCollisionShape(obj.params()[0] * 0.5f, obj.params()[1] - obj.params()[0]));
+        SHAPE_CONSTRUCTORS.put("capsule", obj -> new CapsuleShape((obj.params()[1] - obj.params()[0]) * 0.5f, obj.params()[0] * 0.5f));
         // box(x, y, z)
-        SHAPE_CONSTRUCTORS.put("box", obj -> new BoxCollisionShape(obj.params()[0] * 0.5f, obj.params()[1] * 0.5f, obj.params()[2] * 0.5f));
-        // cone(radius, height, axis)   cone(radius, height, [1])
-        SHAPE_CONSTRUCTORS.put("cone", obj -> new ConeCollisionShape(obj.params()[0] * 0.5f, obj.params()[1] * 0.5f, obj.params().length == 3 ? (int) obj.params()[2] : 1));
+        // TODO: this one says half extents
+        SHAPE_CONSTRUCTORS.put("box", obj -> new BoxShape(obj.params()[0] * 0.5f, obj.params()[1] * 0.5f, obj.params()[2] * 0.5f));
+//        // cone(radius, height, axis)   cone(radius, height, [1])
+//        SHAPE_CONSTRUCTORS.put("cone", obj -> new ConeCollisionShape(obj.params()[0] * 0.5f, obj.params()[1] * 0.5f, obj.params().length == 3 ? (int) obj.params()[2] : 1));
 
         /*
          * Properties
@@ -68,12 +70,14 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape, shor
     {
         for (Key key : FlareRegistries.STATIC_LOADED_MODEL.keys())
         {
+            LOGGER.finest("Loading '%s'".formatted(key));
             LoadedModel model = FlareRegistries.STATIC_LOADED_MODEL.get(key);
             loadCollisionShape(model);
         }
 
         for (Key key : FlareRegistries.ANIMATED_LOADED_MODEL.keys())
         {
+            LOGGER.finest("Loading '%s'".formatted(key));
             LoadedModel model = FlareRegistries.ANIMATED_LOADED_MODEL.get(key);
             loadCollisionShape(model);
         }
@@ -103,7 +107,7 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape, shor
 
         shapes.removeIf(p -> !p.hasShape());
 
-        CollisionShape compound = compound(shapes);
+        Shape compound = compound(shapes);
 
         if (compound != null)
             Registries.COLLISION.register(new OrbiterCollisionShape(model.key(), compound, toIds(ids)));
@@ -124,7 +128,10 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape, shor
     {
         if (element instanceof CubeElement elm)
         {
-            BoxCollisionShape shape = new BoxCollisionShape(Convert.jomlToPhys(elm.to().sub(elm.from(), new Vector3f()).mul(0.5f).absolute()));
+            // TODO: throw warning
+            // TODO: this may not be correct 'cause half-size
+            Vec3Arg halfExtents = Convert.jomlToPhys(elm.to().sub(elm.from(), new Vector3f()).mul(0.5f).absolute().max(new Vector3f(1 / 16f / 10f, 1 / 16f / 10f, 1 / 16f / 10f)));
+            BoxShape shape = new BoxShape(halfExtents, 1 / 16f / 10f);
             // Offsets, rotations, scaling..., also this from outliner ........
             Vector3f div = new Vector3f(elm.from()).add(elm.to()).div(2f);
             CollisionTransform transform = new CollisionTransform(shape).offset(div.x, div.y, div.z);
@@ -185,7 +192,7 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape, shor
 
         for (ObjectExp objectExp : shapeList)
         {
-            CollisionShape shape = SHAPE_CONSTRUCTORS.get(objectExp.type()).apply(objectExp);
+            Shape shape = SHAPE_CONSTRUCTORS.get(objectExp.type()).apply(objectExp);
             transform = transform.shape(shape);
 
             shapes.add(transform);
@@ -194,7 +201,7 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape, shor
         return shapes;
     }
 
-    private static CollisionShape compound(List<CollisionTransform> shapes)
+    private static Shape compound(List<CollisionTransform> shapes)
     {
         if (shapes.isEmpty())
         {
@@ -207,13 +214,13 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape, shor
             if (col.isPrimitive())
                 return col.shape();
 
-            CompoundCollisionShape shape = new CompoundCollisionShape();
+            MutableCompoundShape shape = new MutableCompoundShape();
             Vector3f offset = col.offset();
-            shape.addChildShape(col.shape(), offset.x, offset.y, offset.z);
+            shape.addShape(Convert.jomlToPhys(offset), new Quat(), col.shape());
             return shape;
         }
 
-        CompoundCollisionShape shape = new CompoundCollisionShape();
+        MutableCompoundShape shape = new MutableCompoundShape();
 
         for (CollisionTransform collisionTransform : shapes)
         {
@@ -221,7 +228,7 @@ public record OrbiterCollisionShape(Key key, CollisionShape collisionShape, shor
                 continue;
 
             Vector3f offset = collisionTransform.offset();
-            shape.addChildShape(collisionTransform.shape(), offset.x, offset.y, offset.z);
+            shape.addShape(Convert.jomlToPhys(offset), new Quat(), collisionTransform.shape());
         }
 
         return shape;

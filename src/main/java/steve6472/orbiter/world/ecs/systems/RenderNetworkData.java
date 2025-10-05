@@ -46,7 +46,7 @@ public class RenderNetworkData extends IteratingProfiledSystem implements Render
         float yOffset = 0;
         if (Components.COLLISION.has(entity))
         {
-            yOffset = Components.COLLISION.get(entity).shape().maxRadius();
+            yOffset = Components.COLLISION.get(entity).shape().getInnerRadius();
         }
 
         renderer.textRender().line(posText, new Matrix4f().translate(position.x(), position.y() + yOffset + 1.2f, position.z()));

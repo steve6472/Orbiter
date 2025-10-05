@@ -1,7 +1,5 @@
 {
-    position: {},
-    rotation: {},
-    model: "blockbench/static/rainbow_in_a_pot",
-    collision: "blockbench/static/rainbow_in_a_pot",
-    tags: ["physics"]
+    physics_body: {
+        model: "blockbench/static/rainbow_in_a_pot"
+    }
 }

@@ -11,6 +11,7 @@ import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.core.Blueprint;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,11 +20,11 @@ import java.util.Optional;
  * Date: 10/10/2024
  * Project: Orbiter <br>
  */
-public record PhysicsBodyBlueprint(Key model, Optional<Key> collision, float mass) implements Blueprint<PhysicsBodyBlueprint>
+public record PhysicsBodyBlueprint(Optional<Key> model, Optional<Key> collision, float mass) implements Blueprint<PhysicsBodyBlueprint>
 {
     public static final Key KEY = Constants.key("physics_body");
     public static final Codec<PhysicsBodyBlueprint> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Constants.KEY_CODEC.fieldOf("model").forGetter(PhysicsBodyBlueprint::model),
+        Constants.KEY_CODEC.optionalFieldOf("model").forGetter(PhysicsBodyBlueprint::model),
         Constants.KEY_CODEC.optionalFieldOf("collision").forGetter(PhysicsBodyBlueprint::collision),
         Codec.FLOAT.optionalFieldOf("mass", 1f).forGetter(PhysicsBodyBlueprint::mass)
     ).apply(instance, PhysicsBodyBlueprint::new));
@@ -31,21 +32,26 @@ public record PhysicsBodyBlueprint(Key model, Optional<Key> collision, float mas
     @Override
     public List<Component> createComponents()
     {
-        return List.of(
-            new Position(),
-            new Rotation(),
-            new AngularVelocity(),
-            new LinearVelocity(),
-            new AngularFactor(),
-            new LinearFactor(),
-            new AngularDamping(0.2f),
-            new LinearDamping(0.2f),
-            new Friction(),
-            new Mass(mass),
-            new IndexModel(FlareRegistries.STATIC_MODEL.get(model)),
-            new Collision(collision.orElse(model)),
-            Tag.PHYSICS
-        );
+        List<Component> components = new ArrayList<>();
+        components.add(new Position());
+        components.add(new Rotation());
+        components.add(new AngularVelocity());
+        components.add(new LinearVelocity());
+        components.add(new Friction());
+        components.add(Tag.PHYSICS);
+
+        if (model.isPresent())
+        {
+            components.add(new IndexModel(FlareRegistries.STATIC_MODEL.get(model.get())));
+            components.add(new Collision(collision.orElse(model.get())));
+        } else
+        {
+            if (collision.isEmpty())
+                throw new RuntimeException("Body without collision. Specify 'collision' and/or 'model'");
+
+            components.add(new Collision(collision.get()));
+        }
+        return components;
     }
 
     @Override

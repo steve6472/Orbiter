@@ -15,11 +15,11 @@ public class CountPhysicsBodies extends Command
 	{
 		dispatcher.register(literal("cpb").executes(c ->
 		{
-			int i = c.getSource().getWorld().physics().countRigidBodies();
+//			int i = c.getSource().getWorld().physics().countRigidBodies();
 
-			c.getSource().sendFeedback("Body count: " + i);
+//			c.getSource().sendFeedback("Body count: " + i);
 
-			return i;
+			return 0;
 		}));
 	}
 }

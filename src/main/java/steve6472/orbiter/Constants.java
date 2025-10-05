@@ -1,6 +1,5 @@
 package steve6472.orbiter;
 
-import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.mojang.serialization.Codec;
 import steve6472.core.registry.Key;
 import steve6472.flare.FlareConstants;
@@ -21,12 +20,12 @@ public final class Constants
 
     public static final float TICKS_IN_SECOND = 60f;
 
-    public static final int MP_PLAYER_MAGIC_CONSTANT = 69;
-    public static final int CLIENT_PLAYER_MAGIC_CONSTANT = 42;
+//    public static final int MP_PLAYER_MAGIC_CONSTANT = 69;
+//    public static final int CLIENT_PLAYER_MAGIC_CONSTANT = 42;
 
     /// Orbiter-generated resources
     public static final File GENERATED_ORBITER = new File(FlareConstants.GENERATED_FOLDER, NAMESPACE);
-    public static final File BULLET_NATIVE = new File(GENERATED_ORBITER, "bulletjme.dll");
+    public static final File JOLT_NATIVE = new File(GENERATED_ORBITER, "joltjni.dll");
 
     /*
      * UI stuff
@@ -54,6 +53,16 @@ public final class Constants
         /// Should be used wisely! <br>
         /// Can still be ignored by a boolean flag in code
         int NEVER_DEBUG_RENDER = 0x1;
+        int MP_PLAYER = 0x2;
+        int CLIENT_PLAYER = 0x4;
+    }
+
+    public interface Physics
+    {
+        int NUM_OBJ_LAYERS = 2;
+
+        int OBJ_LAYER_MOVING = 0;
+        int OBJ_LAYER_NON_MOVING = 1;
     }
 
     public static Key key(String id)

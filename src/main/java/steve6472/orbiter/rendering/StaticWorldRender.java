@@ -3,8 +3,11 @@ package steve6472.orbiter.rendering;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.utils.ImmutableArray;
-import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.github.stephengold.joltjni.BodyInterface;
+import com.github.stephengold.joltjni.Quat;
+import com.github.stephengold.joltjni.RVec3;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import steve6472.core.registry.Key;
 import steve6472.flare.assets.model.Model;
 import steve6472.flare.core.FrameInfo;
@@ -75,8 +78,14 @@ public class StaticWorldRender extends StaticModelRenderImpl
 
         sboTransfromArray.sort(list, entity -> sboTransfromArray.addArea(Components.MODEL.get(entity).model()).index());
 
+        BodyInterface bi = world.physics().getBodyInterface();
+
         var lastArea = sboTransfromArray.getAreaByIndex(0);
         Model lastModel = Components.MODEL.get(list.getFirst()).model();
+        RVec3 pos = new RVec3();
+        Quat rot = new Quat();
+        Matrix4f transform = new Matrix4f();
+
         for (Entity entity : list)
         {
             IndexModel model = Components.MODEL.get(entity);
@@ -87,21 +96,24 @@ public class StaticWorldRender extends StaticModelRenderImpl
                 lastArea = sboTransfromArray.getAreaByType(model.model());
                 lastModel = model.model();
             }
+            transform.identity();
 
-            PhysicsRigidBody body = world.bodyMap().get(uuid);
-            if (body != null)
+            int bodyId = world.bodyMap().getByObj(uuid);
+            if (bi.isAdded(bodyId))
             {
-                Matrix4f jomlMat = Convert.physGetTransformToJoml(body, new Matrix4f());
-                lastArea.updateTransform(jomlMat);
+                bi.getPositionAndRotation(bodyId, pos, rot);
+                transform.translate(pos.x(), pos.y(), pos.z());
+                transform.rotate(Convert.physToJoml(rot, new Quaternionf()));
+
+                lastArea.updateTransform(transform);
             } else
             {
-                Matrix4f primitiveTransform = new Matrix4f();
                 if (Components.POSITION.has(entity))
                 {
                     Position position = Components.POSITION.get(entity);
-                    primitiveTransform.translate(position.toVec3f());
+                    transform.translate(position.toVec3f());
                 }
-                lastArea.updateTransform(primitiveTransform);
+                lastArea.updateTransform(transform);
             }
         }
     }

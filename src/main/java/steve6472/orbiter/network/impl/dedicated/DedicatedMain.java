@@ -2,6 +2,8 @@ package steve6472.orbiter.network.impl.dedicated;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
+import com.github.stephengold.joltjni.BodyInterface;
+import steve6472.core.util.BitUtil;
 import steve6472.flare.registry.FlareRegistries;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
@@ -91,7 +93,8 @@ public class DedicatedMain implements NetworkMain
 
         Entity playerEntity = world.addEntity(Registries.ENTITY_BLUEPRINT.get(Constants.key("mp_player")), sender.uuid(), false);
         world.addComponent(playerEntity, new MPControlled(sender.uuid()));
-        world.bodyMap().get(sender.uuid()).setUserIndex(Constants.MP_PLAYER_MAGIC_CONSTANT);
+        BodyInterface bodyInterface = world.physics().getBodyInterface();
+        bodyInterface.setUserData(world.bodyMap().getByObj(sender.uuid()), Constants.PhysicsFlags.MP_PLAYER);
 
         for (ConnectedUser connectedUser : lobby().getConnectedUsers())
         {

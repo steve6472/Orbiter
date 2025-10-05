@@ -1,7 +1,6 @@
 {
-    position: {},
-    rotation: {},
-    model: "blockbench/static/platform",
-    collision: "blockbench/static/platform",
+    physics_body: {
+        model: "blockbench/static/platform"
+    },
     tags: ["physics"]
 }

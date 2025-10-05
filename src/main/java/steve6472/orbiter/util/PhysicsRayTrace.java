@@ -1,16 +1,13 @@
 package steve6472.orbiter.util;
 
-import com.jme3.bullet.collision.PhysicsCollisionObject;
-import com.jme3.bullet.collision.PhysicsRayTestResult;
+import com.github.stephengold.joltjni.*;
 import org.joml.Vector3f;
 import steve6472.core.util.MathUtil;
 import steve6472.flare.Camera;
 import steve6472.orbiter.Client;
-import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
+import steve6472.orbiter.player.PCPlayer;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,72 +17,55 @@ import java.util.Optional;
  */
 public class PhysicsRayTrace
 {
-    private final List<PhysicsRayTestResult> rayTraceList = new ArrayList<>();
+    private final BroadPhaseLayerFilter broadPhaseLayerFilter = new BroadPhaseLayerFilter();
+    private final ObjectLayerFilter objectLayerFilter = new ObjectLayerFilter();
+    private final AllHitCastRayCollector allHitCollector = new AllHitCastRayCollector();
+    private final ClosestHitCastRayCollector closestHitCollector = new ClosestHitCastRayCollector();
+    private final BodyFilter noBodyFilter = new BodyFilter();
     private final Client client;
-    private PhysicsCollisionObject lookAtObject;
-    private int lookAtTriangleIndex;
+    private int lookAtObject;
+    private int subShapeId;
 
     public PhysicsRayTrace(Client client)
     {
         this.client = client;
     }
 
+    public RRayCast createRay(Vector3f position, Vector3f direction, float distance)
+    {
+        return new RRayCast(Convert.jomlToPhys(position).toRVec3(), Convert.jomlToPhys(new Vector3f(direction).mul(distance)));
+    }
+
     /// @param position Starting position
     /// @param direction Normalized vector
     /// @param distance Max distance
-    /// @param rayTestResults Where to store the results
-    public void rayTrace(Vector3f position, Vector3f direction, float distance, List<PhysicsRayTestResult> rayTestResults)
+    public void rayTrace(Vector3f position, Vector3f direction, float distance, CastRayCollector collector, BodyFilter bodyFilter)
     {
-        client.getWorld().physics().rayTest(
-            Convert.jomlToPhys(position),
-            Convert.jomlToPhys(position).addLocal(direction.x * distance, direction.y * distance, direction.z * distance),
-            rayTestResults);
+        RRayCast ray = createRay(position, direction, distance);
+        collector.reset();
+        client.getWorld().physics().getNarrowPhaseQuery().castRay(ray, new RayCastSettings(), collector, broadPhaseLayerFilter, objectLayerFilter, bodyFilter);
     }
 
-    public Optional<PhysicsRayTestResult> rayTraceGetFirst(Vector3f position, Vector3f direction, float distance, boolean excludeClientPlayer)
+    public Optional<RayCastResult> rayTraceGetFirst(Vector3f position, Vector3f direction, float distance, boolean excludeClientPlayer)
     {
-        rayTraceList.clear();
-        rayTrace(position, direction, distance, rayTraceList);
-        if (rayTraceList.isEmpty())
+        BodyFilter bodyFilter = noBodyFilter;
+        if (excludeClientPlayer)
+        {
+            bodyFilter = new IgnoreMultipleBodiesFilter();
+            ((IgnoreMultipleBodiesFilter) bodyFilter).ignoreBody(((PCPlayer) client.player()).character.getBodyId());
+        }
+
+        rayTrace(position, direction, distance, closestHitCollector, bodyFilter);
+        if (!closestHitCollector.hadHit())
             return Optional.empty();
 
-        if (!excludeClientPlayer)
-            return Optional.of(rayTraceList.getFirst());
-
-        for (PhysicsRayTestResult physicsRayTestResult : rayTraceList)
-        {
-            PhysicsCollisionObject collisionObject = physicsRayTestResult.getCollisionObject();
-            if (collisionObject.userIndex() == Constants.CLIENT_PLAYER_MAGIC_CONSTANT)
-            {
-                continue;
-            }
-            return Optional.of(physicsRayTestResult);
-        }
-        return Optional.empty();
+        return Optional.of(closestHitCollector.getHit());
     }
 
-    public Optional<PhysicsRayTestResult> rayTraceGetFirst(Camera camera, float distance, boolean excludeClientPlayer)
+    public Optional<RayCastResult> rayTraceGetFirst(Camera camera, float distance, boolean excludeClientPlayer)
     {
         Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
-        rayTraceList.clear();
-        rayTrace(camera.viewPosition, direction, distance, rayTraceList);
-
-        if (rayTraceList.isEmpty())
-            return Optional.empty();
-
-        if (!excludeClientPlayer)
-            return Optional.of(rayTraceList.getFirst());
-
-        for (PhysicsRayTestResult physicsRayTestResult : rayTraceList)
-        {
-            PhysicsCollisionObject collisionObject = physicsRayTestResult.getCollisionObject();
-            if (collisionObject.userIndex() == Constants.CLIENT_PLAYER_MAGIC_CONSTANT)
-            {
-                continue;
-            }
-            return Optional.of(physicsRayTestResult);
-        }
-        return Optional.empty();
+        return rayTraceGetFirst(camera.viewPosition, direction, distance, excludeClientPlayer);
     }
 
     public void updateLookAt(Camera camera, float reach)
@@ -94,20 +74,20 @@ public class PhysicsRayTrace
             .ifPresentOrElse(
                 t ->
                 {
-                    lookAtObject = t.getCollisionObject();
-                    lookAtTriangleIndex = t.triangleIndex();
+                    lookAtObject = t.getBodyId();
+                    subShapeId = t.getSubShapeId2();
                 },
-                () -> lookAtObject = null
+                () -> lookAtObject = -1
             );
     }
 
-    public PhysicsCollisionObject getLookAtObject()
+    public int getLookAtObject()
     {
         return lookAtObject;
     }
 
-    public int getLookAtTriangleIndex()
+    public int getSubShapeId()
     {
-        return lookAtTriangleIndex;
+        return subShapeId;
     }
 }

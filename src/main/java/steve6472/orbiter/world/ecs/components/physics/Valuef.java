@@ -1,6 +1,8 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
-import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.github.stephengold.joltjni.Body;
+import com.github.stephengold.joltjni.BodyInterface;
+import com.github.stephengold.joltjni.readonly.Vec3Arg;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -69,13 +71,13 @@ abstract class Valuef implements PhysicsProperty
         return String.format("%s{" + "val=%.6f" + '}', getClass().getSimpleName(), val);
     }
 
-    protected abstract float get(PhysicsRigidBody body);
-    protected abstract Consumer<Float> set(PhysicsRigidBody body);
+    protected abstract float get(BodyInterface bi, int body);
+    protected abstract void set(BodyInterface bi, int body, float value);
 
     @Override
-    public ModifyState modifyComponent(PhysicsRigidBody body)
+    public ModifyState modifyComponent(BodyInterface bi, int body)
     {
-        float v = get(body);
+        float v = get(bi, body);
 
         if (val == v)
             return ModifyState.noModification();
@@ -85,11 +87,8 @@ abstract class Valuef implements PhysicsProperty
     }
 
     @Override
-    public void modifyBody(PhysicsRigidBody body)
+    public void modifyBody(BodyInterface bi, int body)
     {
-//        if (!OrbiterApp.getInstance().getSteam().isHost())
-//            return;
-
-        set(body).accept(val);
+        set(bi, body, val);
     }
 }

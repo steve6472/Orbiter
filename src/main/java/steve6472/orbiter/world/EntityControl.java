@@ -4,12 +4,17 @@ import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.github.stephengold.joltjni.Body;
+import com.github.stephengold.joltjni.BodyCreationSettings;
+import com.github.stephengold.joltjni.BodyInterface;
+import com.github.stephengold.joltjni.PhysicsSystem;
+import com.github.stephengold.joltjni.enumerate.EActivation;
+import com.github.stephengold.joltjni.enumerate.EMotionType;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
 import steve6472.flare.assets.model.blockbench.animation.controller.AnimationController;
 import steve6472.orbiter.Constants;
+import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.audio.Sound;
 import steve6472.orbiter.audio.WorldSounds;
@@ -18,6 +23,7 @@ import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.packets.game.clientbound.CreateCustomEntity;
 import steve6472.orbiter.network.packets.game.clientbound.RemoveEntity;
 import steve6472.orbiter.network.packets.game.clientbound.CreateEntity;
+import steve6472.orbiter.util.FastInt2ObjBiMap;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.blueprints.ParticleEmittersBlueprint;
 import steve6472.orbiter.world.ecs.components.AnimatedModel;
@@ -43,9 +49,9 @@ import java.util.stream.Stream;
 public interface EntityControl extends WorldSounds
 {
     Logger CONTROL_LOGGER = Log.getLogger(EntityControl.class);
-    PhysicsSpace physics();
+    PhysicsSystem physics();
     Engine ecsEngine();
-    Map<UUID, PhysicsRigidBody> bodyMap();
+    FastInt2ObjBiMap<UUID> bodyMap();
     NetworkMain network();
 
     private Connections connections()
@@ -171,16 +177,28 @@ public interface EntityControl extends WorldSounds
         if (collision_ == null)
             throw new RuntimeException("Entity blueprint needs Collision if Physics tag is specified!");
 
-        PhysicsRigidBody body = new PhysicsRigidBody(collision_.shape());
-        body.setUserObject(uuid);
-        bodyMap().put(uuid, body);
-        physics().add(body);
+        Position position = Components.POSITION.get(entity);
+        Rotation rotation = Components.ROTATION.get(entity);
+
+        BodyCreationSettings bcs = new BodyCreationSettings(
+            collision_.shape(),
+            Convert.jomlToPhys(position.toVec3f()).toRVec3(),
+            Convert.jomlToPhys(rotation.toQuat()),
+            EMotionType.Dynamic,
+            Constants.Physics.OBJ_LAYER_MOVING);
+
+        BodyInterface bi = physics().getBodyInterface();
+        Body body = bi.createBody(bcs);
+        int bodyId = body.getId();
+
+        bodyMap().put(bodyId, uuid);
+        bi.addBody(body, EActivation.Activate);
 
         for (Object component : components)
         {
             if (component instanceof PhysicsProperty pp)
             {
-                pp.modifyBody(body);
+                pp.modifyBody(bi, bodyId);
             }
         }
     }
@@ -188,12 +206,11 @@ public interface EntityControl extends WorldSounds
     /// Sends the RemoveEntity packet
     default void removeEntity(UUID uuid, boolean broadcast)
     {
-        PhysicsRigidBody body = bodyMap().get(uuid);
-        if (body != null)
-        {
-            physics().remove(body);
-            bodyMap().remove(uuid);
-        }
+        BodyInterface bodyInterface = physics().getBodyInterface();
+        int id = bodyMap().getByObj(uuid);
+        bodyInterface.removeBody(id);
+        bodyInterface.destroyBody(id);
+        bodyMap().removeByInt(id);
 
         for (Entity entity : ecsEngine().getEntitiesFor(Family.all(UUIDComp.class).get()))
         {

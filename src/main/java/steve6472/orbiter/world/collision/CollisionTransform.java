@@ -1,6 +1,6 @@
 package steve6472.orbiter.world.collision;
 
-import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.github.stephengold.joltjni.Shape;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -13,7 +13,7 @@ public class CollisionTransform
 {
     private final Vector3f offset;
     private final Quaternionf rotation;
-    private final CollisionShape shape;
+    private final Shape shape;
     public short id;
 
     public static final CollisionTransform EMPTY = new CollisionTransform();
@@ -25,14 +25,14 @@ public class CollisionTransform
         this.shape = null;
     }
 
-    public CollisionTransform(CollisionShape shape)
+    public CollisionTransform(Shape shape)
     {
         this.offset = new Vector3f();
         this.rotation = new Quaternionf();
         this.shape = shape;
     }
 
-    public CollisionTransform(Vector3f offset, Quaternionf rotation, CollisionShape shape)
+    public CollisionTransform(Vector3f offset, Quaternionf rotation, Shape shape)
     {
         this.offset = offset;
         this.rotation = rotation;
@@ -49,7 +49,7 @@ public class CollisionTransform
         return offset.equals(0, 0, 0) && rotation.equals(0, 0, 0, 1);
     }
 
-    public CollisionShape shape()
+    public Shape shape()
     {
         return shape;
     }
@@ -69,7 +69,7 @@ public class CollisionTransform
         return new CollisionTransform(new Vector3f(offset).add(x, y, z), new Quaternionf(rotation), shape);
     }
 
-    public CollisionTransform shape(CollisionShape shape)
+    public CollisionTransform shape(Shape shape)
     {
         return new CollisionTransform(new Vector3f(offset), new Quaternionf(rotation), shape);
     }

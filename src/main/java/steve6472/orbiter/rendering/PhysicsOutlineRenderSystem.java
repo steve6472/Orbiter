@@ -1,10 +1,11 @@
 package steve6472.orbiter.rendering;
 
 import com.badlogic.ashley.core.Entity;
-import com.jme3.bullet.collision.PhysicsCollisionObject;
-import com.jme3.bullet.collision.shapes.*;
-import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
+import com.github.stephengold.joltjni.*;
+import com.github.stephengold.joltjni.readonly.ConstShape;
+import com.github.stephengold.joltjni.readonly.ConstSubShape;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
@@ -62,16 +63,16 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         if (client.getWorld() == null)
             return;
 
-        PhysicsCollisionObject lookAtObject = client.getRayTrace().getLookAtObject();
-        if (lookAtObject == null)
+        int lookAtObject = client.getRayTrace().getLookAtObject();
+        if (lookAtObject == -1)
             return;
 
         List<Struct> verticies = new ArrayList<>();
 
-        Object userObject = lookAtObject.getUserObject();
+        UUID uuid = client.getWorld().bodyMap().getByInt(lookAtObject);
 
         // Render only in world objects with assigned entities
-        if (!(userObject instanceof UUID uuid))
+        if (uuid == null)
             return;
 
         Entity entity = ClickECS.findEntity(client, uuid);
@@ -81,7 +82,10 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         Collision collision = Components.COLLISION.get(entity);
         OrbiterCollisionShape orbiterCollisionShape = Registries.COLLISION.get(collision.collisionKey());
 
-        renderOutline(lookAtObject, orbiterCollisionShape.ids(), (short) client.getRayTrace().getLookAtTriangleIndex(), verticies);
+        BodyInterface bi = client.getWorld().physics().getBodyInterface();
+
+        System.out.println(client.getRayTrace().getSubShapeId());
+        renderOutline(lookAtObject, bi, orbiterCollisionShape.ids(), (short) 0, verticies);
 
         VkBuffer buffer = flightFrame.getBuffer(0);
 
@@ -97,18 +101,22 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
     protected void updateData(FlightFrame flightFrame, FrameInfo frameInfo)
     {}
 
-    private void renderOutline(PhysicsCollisionObject lookAtObject, short[] ids, short lookatId, List<Struct> verticies)
+    private void renderOutline(int lookAtObject, BodyInterface bi, short[] ids, short lookatId, List<Struct> verticies)
     {
-        CollisionShape shape = lookAtObject.getCollisionShape();
-        Matrix4f transform = Convert.physGetTransformToJoml(lookAtObject, new Matrix4f());
-        transform.scale(Convert.physGetToJoml(shape::getScale));
+        ShapeRefC shapeRef = bi.getShape(lookAtObject);
+        Matrix4f transform = new Matrix4f();
+        RVec3 pos = new RVec3();
+        Quat rot = new Quat();
+        bi.getPositionAndRotation(lookAtObject, pos, rot);
+        transform.translate(pos.x(), pos.y(), pos.z());
+        transform.rotate(Convert.physToJoml(rot, new Quaternionf()));
 
-        renderShape(shape, ids, lookatId, (short) 0, transform, verticies);
+        renderShape(shapeRef.getPtr(), ids, lookatId, (short) 0, transform, verticies);
     }
 
-    private void renderShape(CollisionShape shape, short[] ids, short lookatId, short currentId, Matrix4f bodyTransform, List<Struct> verticies)
+    private void renderShape(ConstShape shape, short[] ids, short lookatId, short currentId, Matrix4f bodyTransform, List<Struct> verticies)
     {
-        if (!(shape instanceof CompoundCollisionShape) && lookatId != -1)
+        if (!(shape instanceof CompoundShape) && lookatId != -1)
         {
             if (isFocus && (ids[lookatId] == 0 || ids[lookatId] != ids[currentId]))
                 return;
@@ -120,47 +128,47 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         if (isFocus && lookatId == -1)
             return;
 
-        if (shape instanceof BoxCollisionShape box)
+        if (shape instanceof BoxShape box)
         {
             renderBox(box, bodyTransform, verticies);
         }
-        else if (shape instanceof CapsuleCollisionShape shap)
+        else if (shape instanceof CapsuleShape shap)
         {
             renderCapsule(shap, bodyTransform, verticies);
-        } else if (shape instanceof SphereCollisionShape shap)
+        } else if (shape instanceof SphereShape shap)
         {
             renderSphere(shap, bodyTransform, verticies);
-        } else if (shape instanceof CompoundCollisionShape shap)
+        } else if (shape instanceof CompoundShape shap)
         {
-            ChildCollisionShape[] listChildren = shap.listChildren();
+            ConstSubShape[] listChildren = shap.getSubShapes();
             for (int i = 0; i < listChildren.length; i++)
             {
-                ChildCollisionShape childCollisionShape = listChildren[i];
-                CollisionShape shape1 = childCollisionShape.getShape();
-                var offset = Convert.jomlToPhys(new Vector3f());
-                childCollisionShape.copyOffset(offset);
+                ConstSubShape childCollisionShape = listChildren[i];
+                ConstShape shape1 = childCollisionShape.getShape();
+                var offset = Convert.physToJoml(childCollisionShape.getPositionCom());
+//                childCollisionShape.copyOffset(offset);
                 renderShape(shape1, ids, lookatId, (short) i, new Matrix4f(bodyTransform).translate(offset.x, offset.y, offset.z), verticies);
             }
         }
     }
 
-    private void renderBox(BoxCollisionShape shape, Matrix4f bodyTransform, List<Struct> verticies)
+    private void renderBox(BoxShape shape, Matrix4f bodyTransform, List<Struct> verticies)
     {
-        Vector3f halfSizes = Convert.physGetToJoml(shape::getHalfExtents);
+        Vector3f halfSizes = Convert.physGetToJoml((_) -> shape.getHalfExtent());
 
         new DebugCuboid(new Vector3f(), halfSizes.x, halfSizes.y, halfSizes.z, color).addVerticies(verticies, bodyTransform);
     }
 
-    private void renderCapsule(CapsuleCollisionShape shape, Matrix4f bodyTransform, List<Struct> verticies)
+    private void renderCapsule(CapsuleShape shape, Matrix4f bodyTransform, List<Struct> verticies)
     {
         float radius = shape.getRadius();
-        float height = shape.getHeight();
+        float height = shape.getHalfHeightOfCylinder();
         int quality = 13;
 
         new DebugCapsule(radius, height, quality, color).addVerticies(verticies, bodyTransform);
     }
 
-    private void renderSphere(SphereCollisionShape shape, Matrix4f bodyTransform, List<Struct> verticies)
+    private void renderSphere(SphereShape shape, Matrix4f bodyTransform, List<Struct> verticies)
     {
         float radius = shape.getRadius();
         int quality = 13;

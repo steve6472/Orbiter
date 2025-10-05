@@ -1,10 +1,8 @@
 package steve6472.orbiter;
 
 import com.badlogic.ashley.core.Family;
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.bullet.util.NativeLibrary;
-import com.jme3.system.NativeLibraryLoader;
+import com.github.stephengold.joltjni.Jolt;
+import com.github.stephengold.joltjni.JoltPhysicsObject;
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.lwjgl.glfw.GLFW;
@@ -116,11 +114,16 @@ public class OrbiterApp extends FlareApp
     @Override
     protected void preInit()
     {
-        PhysicsSpace.logger.setLevel(Level.WARNING);
-        PhysicsRigidBody.logger2.setLevel(Level.WARNING);
-        NativeLibraryLoader.logger.setLevel(Level.WARNING);
-        System.load(Constants.BULLET_NATIVE.getAbsolutePath());
-        NativeLibrary.setStartupMessageEnabled(false);
+        // Load Jolt native library
+        System.load(Constants.JOLT_NATIVE.getAbsolutePath());
+        //Jolt.setTraceAllocations(true); // to log Jolt-JNI heap allocations
+        JoltPhysicsObject.startCleaner(); // to reclaim native memory
+        Jolt.registerDefaultAllocator(); // tell Jolt Physics to use malloc/free
+        Jolt.installDefaultAssertCallback();
+        Jolt.installDefaultTraceCallback();
+        boolean success = Jolt.newFactory();
+        assert success;
+        Jolt.registerTypes();
 
         client = new Client();
     }
@@ -351,9 +354,6 @@ public class OrbiterApp extends FlareApp
         world.init(masterRenderer());
         this.client.setWorld(world);
         setMouseGrab(true);
-
-        if (!VrData.VR_ON)
-            world.physics().add(((PCPlayer) client.player()).character);
     }
 
     public boolean isMouseGrabbed()

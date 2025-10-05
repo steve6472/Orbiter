@@ -1,10 +1,5 @@
 {
     physics_body: {
         model: "blockbench/static/antigrav_ball"
-    },
-    gravity: {
-        x: 0,
-        y: -1,
-        z: 0
     }
 }

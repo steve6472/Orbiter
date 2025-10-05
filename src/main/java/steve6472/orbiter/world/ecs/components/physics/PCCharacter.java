@@ -1,7 +1,6 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
 import com.badlogic.ashley.core.Component;
-import com.jme3.bullet.objects.PhysicsCharacter;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -45,7 +44,7 @@ public class PCCharacter implements Component
         return jumpSpeed;
     }
 
-    public ModifyState modifyComponent(PhysicsCharacter body)
+   /* public ModifyState modifyComponent(PhysicsCharacter body)
     {
         float bodyJumpSpeed = body.getJumpSpeed();
 
@@ -62,7 +61,7 @@ public class PCCharacter implements Component
 //            return;
 
         body.setJumpSpeed(jumpSpeed);
-    }
+    }*/
 
     @Override
     public String toString()

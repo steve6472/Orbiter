@@ -1,12 +1,11 @@
 {
-    position: {},
-    rotation: {},
-    linear_velocity: {x: 0, y: 0, z: 0},
+    physics_body: {
+        collision: "blockbench/animated/rift_reactor"
+    },
     animated_model: {
         model: "blockbench/animated/rift_reactor",
         controller: "orbiter:rift_reactor"
     },
     environment: {},
-    collision: "blockbench/animated/rift_reactor",
     tags: ["physics"]
 }

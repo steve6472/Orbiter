@@ -2,14 +2,12 @@ package steve6472.orbiter.world.ecs.components.physics;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.utils.Pool;
-import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.math.Vector3f;
+import com.github.stephengold.joltjni.BodyInterface;
+import com.github.stephengold.joltjni.enumerate.EActivation;
+import com.github.stephengold.joltjni.readonly.Vec3Arg;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
-
-import java.util.function.Consumer;
-import java.util.function.Function;
 
 /**
  * Created by steve6472
@@ -32,15 +30,15 @@ public class Position extends Value3f implements Component, Pool.Poolable
     }
 
     @Override
-    protected Function<Vector3f, Vector3f> get(PhysicsRigidBody body)
+    protected Vec3Arg get(BodyInterface bi, int body)
     {
-        return body::getPhysicsLocation;
+        return bi.getPosition(body).toVec3();
     }
 
     @Override
-    protected Consumer<Vector3f> set(PhysicsRigidBody body)
+    protected void set(BodyInterface bi, int body, Vec3Arg vec)
     {
-        return body::setPhysicsLocation;
+        bi.setPosition(body, vec.toRVec3(), EActivation.Activate);
     }
 
     @Override

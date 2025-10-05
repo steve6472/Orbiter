@@ -1,7 +1,7 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
 import com.badlogic.ashley.core.Component;
-import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.github.stephengold.joltjni.BodyInterface;
 
 import java.util.Set;
 
@@ -17,16 +17,10 @@ public interface PhysicsProperty extends Component
         Rotation.class,
         AngularVelocity.class,
         LinearVelocity.class,
-        AngularFactor.class,
-        LinearFactor.class,
-        AngularDamping.class,
-        LinearDamping.class,
-        Friction.class,
-        Mass.class,
-        Collision.class
+        Friction.class
     );
 
-    ModifyState modifyComponent(PhysicsRigidBody body);
+    ModifyState modifyComponent(BodyInterface bi, int body);
 
-    void modifyBody(PhysicsRigidBody body);
+    void modifyBody(BodyInterface bi, int body);
 }

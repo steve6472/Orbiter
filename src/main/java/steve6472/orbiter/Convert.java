@@ -1,16 +1,15 @@
 package steve6472.orbiter;
 
-import com.jme3.bullet.collision.PhysicsCollisionObject;
-import com.jme3.bullet.objects.PhysicsCharacter;
-import com.jme3.bullet.objects.PhysicsGhostObject;
-import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.math.Transform;
+import com.github.stephengold.joltjni.Quat;
+import com.github.stephengold.joltjni.Vec3;
+import com.github.stephengold.joltjni.readonly.Vec3Arg;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Created by steve6472
@@ -19,44 +18,50 @@ import java.util.function.Function;
  */
 public class Convert
 {
-    public static Vector3f physToJoml(com.jme3.math.Vector3f vec, Vector3f store)
+    public static Vector3f physToJoml(Vec3Arg vec, Vector3f store)
     {
-        return store.set(vec.x, vec.y, vec.z);
+        return store.set(vec.getX(), vec.getY(), vec.getZ());
     }
 
-    public static Quaternionf physToJoml(com.jme3.math.Quaternion quat, Quaternionf store)
+    public static Quaternionf physToJoml(Quat quat, Quaternionf store)
     {
         return store.set(quat.getX(), quat.getY(), quat.getZ(), quat.getW());
     }
 
-    public static Vector3f physToJoml(com.jme3.math.Vector3f vec)
+    public static Vector3f physToJoml(Vec3Arg vec)
     {
         return physToJoml(vec, new Vector3f());
     }
 
-    public static Vector3f physGetToJoml(Function<com.jme3.math.Vector3f, com.jme3.math.Vector3f> getter, Vector3f store)
+    public static Vector3f physGetToJoml(Function<Vec3Arg, Vec3Arg> getter, Vector3f store)
     {
-        com.jme3.math.Vector3f apply = getter.apply(new com.jme3.math.Vector3f());
+        Vec3Arg apply = getter.apply(new Vec3());
         return physToJoml(apply, store);
     }
 
-    public static Quaternionf physGetToJoml(Function<com.jme3.math.Quaternion, com.jme3.math.Quaternion> getter, Quaternionf store)
+    public static Quaternionf physGetToJoml(Function<Quat, Quat> getter, Quaternionf store)
     {
-        com.jme3.math.Quaternion apply = getter.apply(new com.jme3.math.Quaternion());
+        Quat apply = getter.apply(new Quat());
         return physToJoml(apply, store);
     }
 
-    public static Vector3f physGetToJoml(Function<com.jme3.math.Vector3f, com.jme3.math.Vector3f> getter)
+    public static Quaternionf physGetToJoml(Supplier<Quat> getter, Quaternionf store)
+    {
+        Quat apply = getter.get();
+        return physToJoml(apply, store);
+    }
+
+    public static Vector3f physGetToJoml(Function<Vec3Arg, Vec3Arg> getter)
     {
         return physGetToJoml(getter, new Vector3f());
     }
 
-    public static Quaternionf physGetToJomlQuat(Function<com.jme3.math.Quaternion, com.jme3.math.Quaternion> getter)
+    public static Quaternionf physGetToJomlQuat(Function<Quat, Quat> getter)
     {
         return physGetToJoml(getter, new Quaternionf());
     }
 
-    public static Matrix4f physToJoml(com.jme3.math.Matrix4f mat, Matrix4f store)
+/*    public static Matrix4f physToJoml(Mat44 mat, Matrix4f store)
     {
         store.set(
             mat.m00, mat.m10, mat.m20, mat.m30,   // First row
@@ -77,63 +82,46 @@ public class Convert
         );
 
         return store;
-    }
-
-    public static Matrix4f physGetTransformToJoml(PhysicsCollisionObject body, Matrix4f store)
-    {
-        Transform transform = new Transform();
-        body.getTransform(transform);
-        return physToJoml(transform.toTransformMatrix(), store);
-    }
-
-    public static Matrix4f physGetTransformToJoml(PhysicsCharacter character, Matrix4f store)
-    {
-        Transform transform = new Transform();
-        character.getTransform(transform);
-        return physToJoml(transform.toTransformMatrix(), store);
-    }
+    }*/
 
     /*
      * JOML to Physics
      */
 
-    public static com.jme3.math.Vector3f jomlToPhys(Vector3f vec, com.jme3.math.Vector3f store)
+    public static Vec3Arg jomlToPhys(Vector3f vec, Vec3 store)
     {
-        return store.set(vec.x, vec.y, vec.z);
-    }
-
-    public static com.jme3.math.Quaternion jomlToPhys(Quaternionf quat, com.jme3.math.Quaternion store)
-    {
-        return store.set(quat.x, quat.y, quat.z, quat.w);
-    }
-
-    public static com.jme3.math.Vector3f jomlToPhys(Vector3f vec)
-    {
-        return jomlToPhys(vec, new com.jme3.math.Vector3f());
-    }
-
-    public static com.jme3.math.Vector3f phys(float x, float y, float z)
-    {
-        return new com.jme3.math.Vector3f(x, y, z);
-    }
-
-    public static com.jme3.math.Quaternion jomlToPhys(Quaternionf quat)
-    {
-        return jomlToPhys(quat, new com.jme3.math.Quaternion());
-    }
-
-    public static com.jme3.math.Matrix3f jomlToPhys(Matrix3f mat, com.jme3.math.Matrix3f store)
-    {
-        store.set(0, 0, mat.m00);
-        store.set(1, 0, mat.m10);
-        store.set(2, 0, mat.m20);
-        store.set(0, 1, mat.m01);
-        store.set(1, 1, mat.m11);
-        store.set(2, 1, mat.m21);
-        store.set(0, 2, mat.m02);
-        store.set(1, 2, mat.m12);
-        store.set(2, 2, mat.m22);
-
+        store.set(vec.x, vec.y, vec.z);
         return store;
     }
+
+    public static Quat jomlToPhys(Quaternionf quat, Quat store)
+    {
+        store.set(quat.x, quat.y, quat.z, quat.w);
+        return store;
+    }
+
+    public static Vec3Arg jomlToPhys(Vector3f vec)
+    {
+        return jomlToPhys(vec, new Vec3());
+    }
+
+    public static Quat jomlToPhys(Quaternionf quat)
+    {
+        return jomlToPhys(quat, new Quat());
+    }
+
+//    public static com.jme3.math.Matrix3f jomlToPhys(Matrix3f mat, com.jme3.math.Matrix3f store)
+//    {
+//        store.set(0, 0, mat.m00);
+//        store.set(1, 0, mat.m10);
+//        store.set(2, 0, mat.m20);
+//        store.set(0, 1, mat.m01);
+//        store.set(1, 1, mat.m11);
+//        store.set(2, 1, mat.m21);
+//        store.set(0, 2, mat.m02);
+//        store.set(1, 2, mat.m12);
+//        store.set(2, 2, mat.m22);
+//
+//        return store;
+//    }
 }

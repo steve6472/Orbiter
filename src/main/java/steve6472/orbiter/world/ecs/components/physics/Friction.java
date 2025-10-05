@@ -1,12 +1,10 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
 import com.badlogic.ashley.core.Component;
-import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.github.stephengold.joltjni.BodyInterface;
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
-
-import java.util.function.Consumer;
 
 /**
  * Created by steve6472
@@ -29,14 +27,14 @@ public class Friction extends Valuef implements Component
     }
 
     @Override
-    protected float get(PhysicsRigidBody body)
+    protected float get(BodyInterface bi, int body)
     {
-        return body.getFriction();
+        return bi.getFriction(body);
     }
 
     @Override
-    protected Consumer<Float> set(PhysicsRigidBody body)
+    protected void set(BodyInterface bi, int body, float value)
     {
-        return body::setFriction;
+        bi.setFriction(body, value);
     }
 }

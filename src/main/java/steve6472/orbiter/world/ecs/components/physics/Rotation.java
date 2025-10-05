@@ -2,7 +2,10 @@ package steve6472.orbiter.world.ecs.components.physics;
 
 import com.badlogic.ashley.core.Component;
 import com.badlogic.gdx.utils.Pool;
-import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.github.stephengold.joltjni.BodyInterface;
+import com.github.stephengold.joltjni.Quat;
+import com.github.stephengold.joltjni.RVec3;
+import com.github.stephengold.joltjni.enumerate.EActivation;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
@@ -89,9 +92,11 @@ public class Rotation implements PhysicsProperty, Component, Pool.Poolable
     private static final Quaternionf STORE = new Quaternionf();
 
     @Override
-    public ModifyState modifyComponent(PhysicsRigidBody body)
+    public ModifyState modifyComponent(BodyInterface bi, int body)
     {
-        Convert.physGetToJoml(body::getPhysicsRotation, STORE);
+        // TODO: make gc happy
+        Quat rotation = bi.getRotation(body);
+        Convert.physToJoml(rotation, STORE);
 
         if (STORE.x == x && STORE.y == y && STORE.z == z && STORE.w == w)
             return ModifyState.noModification();
@@ -101,12 +106,13 @@ public class Rotation implements PhysicsProperty, Component, Pool.Poolable
     }
 
     @Override
-    public void modifyBody(PhysicsRigidBody body)
+    public void modifyBody(BodyInterface bi, int body)
     {
 //        if (!OrbiterApp.getInstance().getSteam().isHost())
 //            return;
 
-        body.setPhysicsRotation(Convert.jomlToPhys(toQuat()));
+        RVec3 position = bi.getPosition(body);
+        bi.setPositionAndRotation(body, position, Convert.jomlToPhys(toQuat()), EActivation.Activate);
     }
 
     @Override

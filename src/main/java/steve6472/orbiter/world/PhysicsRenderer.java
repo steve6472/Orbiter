@@ -1,13 +1,7 @@
 package steve6472.orbiter.world;
 
-import com.jme3.bullet.PhysicsSpace;
-import com.jme3.bullet.collision.shapes.*;
-import com.jme3.bullet.collision.shapes.infos.ChildCollisionShape;
-import com.jme3.bullet.joints.Constraint;
-import com.jme3.bullet.joints.PhysicsJoint;
-import com.jme3.bullet.objects.PhysicsCharacter;
-import com.jme3.bullet.objects.PhysicsGhostObject;
-import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.github.stephengold.joltjni.BodyInterface;
+import com.github.stephengold.joltjni.PhysicsSystem;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -30,8 +24,8 @@ public class PhysicsRenderer
     /// Should be used only when debugging
     public static boolean IGNORE_NEVER_DEBUG_RENDER = false;
 
-    public static void render(PhysicsSpace space)
-    {
+    public static void render(PhysicsSystem space)
+    {/*
         if (Settings.ENABLE_RIGIDBODY.get())
             space.getRigidBodyList().forEach(PhysicsRenderer::renderBody);
 
@@ -42,9 +36,9 @@ public class PhysicsRenderer
             space.getCharacterList().forEach(PhysicsRenderer::renderCharacter);
 
         if (Settings.ENABLE_JOINTS.get())
-            space.getJointList().forEach(PhysicsRenderer::renderJoint);
+            space.getJointList().forEach(PhysicsRenderer::renderJoint);*/
     }
-
+/*
     private static void renderBody(PhysicsRigidBody body)
     {
         if (!IGNORE_NEVER_DEBUG_RENDER && !BitUtil.isBitSet(body.userIndex2(), Constants.PhysicsFlags.NEVER_DEBUG_RENDER >> 1))
@@ -156,5 +150,5 @@ public class PhysicsRenderer
     private static void renderCenter(Matrix4f bodyTransform)
     {
         addDebugObjectForFrame(lineCube(new Vector3f(), 0.05f, DARK_VIOLET), bodyTransform);
-    }
+    }*/
 }

@@ -1,22 +1,11 @@
 package steve6472.orbiter.player;
 
 import com.badlogic.ashley.core.Entity;
-import com.jme3.bullet.collision.PhysicsCollisionObject;
-import com.jme3.bullet.collision.PhysicsRayTestResult;
-import com.jme3.bullet.joints.PhysicsJoint;
-import com.jme3.bullet.joints.SixDofSpringJoint;
-import com.jme3.bullet.objects.PhysicsRigidBody;
-import com.jme3.math.Matrix3f;
-import com.jme3.math.Transform;
-import com.mojang.datafixers.util.Pair;
-import jme3utilities.math.MyMath;
 import org.joml.*;
 import org.lwjgl.openvr.*;
 import steve6472.core.log.Log;
-import steve6472.core.registry.Key;
 import steve6472.flare.Camera;
 import steve6472.flare.input.UserInput;
-import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.render.debug.DebugRender;
 import steve6472.flare.vr.DeviceType;
 import steve6472.flare.vr.VrInput;
@@ -27,12 +16,10 @@ import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.world.EntityModify;
 import steve6472.orbiter.world.ecs.Components;
-import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 /**
@@ -134,7 +121,7 @@ public class VRPlayer implements Player
     }
 
     private void handleHand(VrInput vrInput)
-    {
+    {/*
         Optional<Pair<DeviceType, Matrix4f>> controller = vrInput
             .getPoses()
             .stream()
@@ -158,12 +145,12 @@ public class VRPlayer implements Player
 
             Position posComp = Components.POSITION.get(handEntity);
             posComp.set(position.x, position.y, position.z);
-            posComp.modifyBody(body);
+            posComp.modifyBody(, body);
             EntityModify._markModified(handEntity, Position.class);
 
             Rotation rotComp = Components.ROTATION.get(handEntity);
             rotComp.set(rotation.x, rotation.y, rotation.z, rotation.w);
-            rotComp.modifyBody(body);
+            rotComp.modifyBody(, body);
             EntityModify._markModified(handEntity, Rotation.class);
 
 //            if (OrbiterApp.getInstance().getSteam().connections != null)
@@ -176,7 +163,7 @@ public class VRPlayer implements Player
                 handEntity = null;
                 LOGGER.info("Deleted hand entity");
             }
-        });
+        });*/
     }
 
     boolean jointsExist = false;
@@ -190,7 +177,7 @@ public class VRPlayer implements Player
     }
 
     private void createJoints(VrInput vrInput)
-    {
+    {/*
         if (jointsExist || handEntity == null)
             return;
 
@@ -296,11 +283,11 @@ public class VRPlayer implements Player
                 jointsExist = true;
                 DebugRender.addDebugObjectForS(DebugRender.line(jointPos, endPoint, DebugRender.RED), 3);
             }
-        });
+        });*/
     }
 
     private void removeJoints()
-    {
+    {/*
         if (!jointsExist || handEntity == null)
             return;
 
@@ -310,7 +297,7 @@ public class VRPlayer implements Player
             client.getWorld().physics().removeJoint(physicsJoint);
             body.removeJoint(physicsJoint);
         }
-        jointsExist = false;
+        jointsExist = false;*/
 
 //        PeerConnections<SteamPeer> connections = OrbiterApp.getInstance().getSteam().connections;
 //        if (connections != null)
