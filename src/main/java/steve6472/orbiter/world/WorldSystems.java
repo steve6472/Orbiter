@@ -78,6 +78,7 @@ public class WorldSystems
         engine.addSystem(updateClientData = new UpdateClientData());
 
         engine.addSystem(holdSystem = new HoldSystem());
+        engine.addSystem(new AttractTestSystem());
         engine.addSystem(braodcastClientPosition = new BroadcastClientPosition());
         engine.addSystem(primitiveEmitter = new ParticleEmitterSystem(world));
         engine.addSystem(new ClickConsumerTest());

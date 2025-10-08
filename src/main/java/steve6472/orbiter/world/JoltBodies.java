@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import steve6472.orbiter.util.FastInt2ObjBiMap;
 
+import java.util.Collection;
 import java.util.UUID;
 
 /**
@@ -58,5 +59,10 @@ public class JoltBodies
     public int getIdByUUID(UUID uuid)
     {
         return idUUIDmap.getByObj(uuid);
+    }
+
+    public Collection<Body> getAllBodies()
+    {
+        return idBodyMap.values();
     }
 }

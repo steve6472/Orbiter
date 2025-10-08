@@ -13,6 +13,7 @@ import com.github.stephengold.joltjni.readonly.ConstShape;
 import com.github.stephengold.joltjni.readonly.Vec3Arg;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import steve6472.core.util.Profiler;
 import steve6472.flare.MasterRenderer;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
@@ -45,6 +46,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
     private final TempAllocator tempAllocator;
     private final JobSystem jobSystem;
     private final JoltBodies joltBodies;
+    private final Profiler physicsProfiler;
 
     private final Engine ecsEngine;
     private final PooledEngine particleEngine;
@@ -62,6 +64,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
         int numWorkerThreads = Runtime.getRuntime().availableProcessors();
         jobSystem = new JobSystemThreadPool(Jolt.cMaxPhysicsJobs, Jolt.cMaxPhysicsBarriers, numWorkerThreads);
         joltBodies = new JoltBodies();
+        physicsProfiler = new Profiler(60);
 
         ecsEngine = new Engine();
         particleEngine = new PooledEngine(MAX_PARTICLES >> 4, MAX_PARTICLES, MAX_PARTICLES >> 4, MAX_PARTICLES);
@@ -157,8 +160,12 @@ public class World implements EntityControl, EntityModify, WorldSounds
         int collisionSteps = 1;
         systems.holdSystem.prePhysicsTickUpdate(timePerStep);
 
+        physicsProfiler.start();
         int errors = physics.update(timePerStep, collisionSteps, tempAllocator, jobSystem);
         assert errors == EPhysicsUpdateError.None : errors;
+        physicsProfiler.end();
+
+//        System.out.println("Last sec: %.5f/%.5f    left: %.5f".formatted(physicsProfiler.lastSeconds(), timePerStep, timePerStep - physicsProfiler.lastSeconds()));
 
         Character character = ((PCPlayer) player).character;
         character.postSimulation(0.01f);

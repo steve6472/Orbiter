@@ -47,7 +47,6 @@ public record OrbiterCollisionShape(Key key, Shape collisionShape, short[] ids) 
         // capsule(radius, height)
         SHAPE_CONSTRUCTORS.put("capsule", obj -> new CapsuleShape((obj.params()[1] - obj.params()[0]) * 0.5f, obj.params()[0] * 0.5f));
         // box(x, y, z)
-        // TODO: this one says half extents
         SHAPE_CONSTRUCTORS.put("box", obj -> new BoxShape(obj.params()[0] * 0.5f, obj.params()[1] * 0.5f, obj.params()[2] * 0.5f));
 //        // cone(radius, height, axis)   cone(radius, height, [1])
 //        SHAPE_CONSTRUCTORS.put("cone", obj -> new ConeCollisionShape(obj.params()[0] * 0.5f, obj.params()[1] * 0.5f, obj.params().length == 3 ? (int) obj.params()[2] : 1));
