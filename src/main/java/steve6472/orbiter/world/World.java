@@ -23,8 +23,8 @@ import steve6472.orbiter.audio.WorldSounds;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
+import steve6472.orbiter.rendering.PhysicsDebugRenderer;
 import steve6472.orbiter.settings.Settings;
-import steve6472.orbiter.util.FastInt2ObjBiMap;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -41,14 +41,10 @@ public class World implements EntityControl, EntityModify, WorldSounds
     // TODO: should be either in constants or configurable (in menu only)
     private static final int MAX_PARTICLES = 32767;
 
-    // TODO: split to client & host ?
-    // TODO: should be just ids ? ('cause of Jolt)
-    public final FastInt2ObjBiMap<UUID> idUUIDmap = new FastInt2ObjBiMap<>();
-//    private final Map<UUID, PhysicsGhostObject> ghostMap = new HashMap<>();
-
     private final PhysicsSystem physics;
     private final TempAllocator tempAllocator;
     private final JobSystem jobSystem;
+    private final JoltBodies joltBodies;
 
     private final Engine ecsEngine;
     private final PooledEngine particleEngine;
@@ -65,6 +61,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
         tempAllocator = new TempAllocatorMalloc();
         int numWorkerThreads = Runtime.getRuntime().availableProcessors();
         jobSystem = new JobSystemThreadPool(Jolt.cMaxPhysicsJobs, Jolt.cMaxPhysicsBarriers, numWorkerThreads);
+        joltBodies = new JoltBodies();
 
         ecsEngine = new Engine();
         particleEngine = new PooledEngine(MAX_PARTICLES >> 4, MAX_PARTICLES, MAX_PARTICLES >> 4, MAX_PARTICLES);
@@ -140,9 +137,9 @@ public class World implements EntityControl, EntityModify, WorldSounds
     }
 
     @Override
-    public FastInt2ObjBiMap<UUID> bodyMap()
+    public JoltBodies bodyMap()
     {
-        return idUUIDmap;
+        return joltBodies;
     }
 
     @Override
@@ -154,15 +151,15 @@ public class World implements EntityControl, EntityModify, WorldSounds
     public void tick(float frameTime)
     {
         tickSound();
-//        shittyGhostPhysicsThing();
+        Player player = OrbiterApp.getInstance().getClient().player();
 
         float timePerStep = 1f / Constants.TICKS_IN_SECOND; // in seconds
         int collisionSteps = 1;
+        systems.holdSystem.prePhysicsTickUpdate(timePerStep);
 
         int errors = physics.update(timePerStep, collisionSteps, tempAllocator, jobSystem);
         assert errors == EPhysicsUpdateError.None : errors;
 
-        Player player = OrbiterApp.getInstance().getClient().player();
         Character character = ((PCPlayer) player).character;
         character.postSimulation(0.01f);
 
@@ -171,35 +168,6 @@ public class World implements EntityControl, EntityModify, WorldSounds
         systems.runTickSystems(frameTime);
         particleSystems.runTickSystems(frameTime);
     }
-
-/*    private void shittyGhostPhysicsThing()
-    {
-        Set<UUID> accessed = new HashSet<>();
-
-        for (PhysicsRigidBody body : physics.getRigidBodyList())
-        {
-            if (body.userIndex() == Constants.MP_PLAYER_MAGIC_CONSTANT)
-            {
-                body.activate(true);
-                UUID uuid = (UUID) body.getUserObject();
-                PhysicsGhostObject physicsGhostObject = ghostMap.computeIfAbsent(uuid, _ ->
-                {
-                    CollisionShape shape = Registries.COLLISION
-                        .get(Constants.key("blockbench/static/player_capsule_ghost"))
-                        .collisionShape();
-                    PhysicsGhostObject pgo = new PhysicsGhostObject(shape);
-                    physics.add(pgo);
-                    return pgo;
-                });
-
-                physicsGhostObject.setPhysicsLocation(body.getPhysicsLocation(new com.jme3.math.Vector3f()));
-                physicsGhostObject.activate(true);
-                accessed.add(uuid);
-            }
-        }
-
-        ghostMap.keySet().removeIf(uuid -> !accessed.contains(uuid));
-    }*/
 
     public void debugRender(float frameTime)
     {
@@ -227,6 +195,12 @@ public class World implements EntityControl, EntityModify, WorldSounds
         systems.runRenderSystems(frameTime);
 
         PhysicsRenderer.render(physics());
+        BodyManagerDrawSettings settings = new BodyManagerDrawSettings();
+        // This one makes the thing crash & for now it renders the client shape in their face...
+//        physics().drawBodies(settings, OrbiterApp.getInstance().physicsDebugRenderer);
+        physics().drawConstraints(OrbiterApp.getInstance().physicsDebugRenderer);
+        physics().drawConstraintLimits(OrbiterApp.getInstance().physicsDebugRenderer);
+        physics().drawConstraintReferenceFrame(OrbiterApp.getInstance().physicsDebugRenderer);
         debugSounds();
     }
 
@@ -281,7 +255,6 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
     public void cleanup()
     {
-        physics.close();
         particleEngine().clearPools();
         clearAllSoundSources();
     }

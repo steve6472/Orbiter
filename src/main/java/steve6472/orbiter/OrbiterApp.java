@@ -104,6 +104,8 @@ public class OrbiterApp extends FlareApp
     private Commands commands;
     private boolean isMouseGrabbed = false;
 
+    public PhysicsDebugRenderer physicsDebugRenderer;
+
     OrbiterApp()
     {
         if (instance != null)
@@ -163,6 +165,8 @@ public class OrbiterApp extends FlareApp
     @Override
     protected void createRenderSystems()
     {
+        physicsDebugRenderer = new PhysicsDebugRenderer(masterRenderer());
+
         addRenderSystem(new DebugLineRenderSystem(masterRenderer(), Pipelines.DEBUG_LINE));
         addRenderSystem(new UIRenderSystem(masterRenderer(), new MoonDustUIRender(this), 256f));
         addRenderSystem(new UIFontRender(masterRenderer(), new MoonDustUIFontRender()));

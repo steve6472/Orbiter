@@ -78,6 +78,11 @@ public class Client
         }
     }
 
+    public Camera getCamera()
+    {
+        return camera;
+    }
+
     public Player player()
     {
         return player;

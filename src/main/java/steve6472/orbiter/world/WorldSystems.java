@@ -33,6 +33,7 @@ public class WorldSystems
      */
 
     public UpdateClientData updateClientData;
+    public HoldSystem holdSystem;
     private EntitySystem updateECS;
     private EntitySystem clickECS;
     private EntitySystem updatePhysics;
@@ -76,6 +77,7 @@ public class WorldSystems
         // Needs to be before network sync and physics update
         engine.addSystem(updateClientData = new UpdateClientData());
 
+        engine.addSystem(holdSystem = new HoldSystem());
         engine.addSystem(braodcastClientPosition = new BroadcastClientPosition());
         engine.addSystem(primitiveEmitter = new ParticleEmitterSystem(world));
         engine.addSystem(new ClickConsumerTest());

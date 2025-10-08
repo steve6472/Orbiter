@@ -48,7 +48,7 @@ public class UpdatePhysics extends IteratingProfiledSystem
         if (OrbiterApp.getInstance().getClient().getClientUUID().equals(uuid))
             return;
 
-        int bodyId = world.bodyMap().getByObj(uuid);
+        int bodyId = world.bodyMap().getIdByUUID(uuid);
         if (!bi.isAdded(bodyId))
         {
             LOGGER.warning("Body does not exist for entity " + uuid);

@@ -98,7 +98,7 @@ public class StaticWorldRender extends StaticModelRenderImpl
             }
             transform.identity();
 
-            int bodyId = world.bodyMap().getByObj(uuid);
+            int bodyId = world.bodyMap().getIdByUUID(uuid);
             if (bi.isAdded(bodyId))
             {
                 bi.getPositionAndRotation(bodyId, pos, rot);

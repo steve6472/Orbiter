@@ -23,7 +23,6 @@ import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.packets.game.clientbound.CreateCustomEntity;
 import steve6472.orbiter.network.packets.game.clientbound.RemoveEntity;
 import steve6472.orbiter.network.packets.game.clientbound.CreateEntity;
-import steve6472.orbiter.util.FastInt2ObjBiMap;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.blueprints.ParticleEmittersBlueprint;
 import steve6472.orbiter.world.ecs.components.AnimatedModel;
@@ -51,7 +50,7 @@ public interface EntityControl extends WorldSounds
     Logger CONTROL_LOGGER = Log.getLogger(EntityControl.class);
     PhysicsSystem physics();
     Engine ecsEngine();
-    FastInt2ObjBiMap<UUID> bodyMap();
+    JoltBodies bodyMap();
     NetworkMain network();
 
     private Connections connections()
@@ -191,7 +190,7 @@ public interface EntityControl extends WorldSounds
         Body body = bi.createBody(bcs);
         int bodyId = body.getId();
 
-        bodyMap().put(bodyId, uuid);
+        bodyMap().addBody(uuid, body);
         bi.addBody(body, EActivation.Activate);
 
         for (Object component : components)
@@ -207,10 +206,10 @@ public interface EntityControl extends WorldSounds
     default void removeEntity(UUID uuid, boolean broadcast)
     {
         BodyInterface bodyInterface = physics().getBodyInterface();
-        int id = bodyMap().getByObj(uuid);
+        int id = bodyMap().getIdByUUID(uuid);
         bodyInterface.removeBody(id);
         bodyInterface.destroyBody(id);
-        bodyMap().removeByInt(id);
+        bodyMap().removeBody(id);
 
         for (Entity entity : ecsEngine().getEntitiesFor(Family.all(UUIDComp.class).get()))
         {

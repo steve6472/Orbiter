@@ -72,7 +72,7 @@ public class GameClientboundListener extends OrbiterPacketListener
 
                 if (hasPhysics && component instanceof PhysicsProperty pp)
                 {
-                    int byObj = world.bodyMap().getByObj(uuid);
+                    int byObj = world.bodyMap().getIdByUUID(uuid);
                     if (!bi.isAdded(byObj))
                     {
                         LOGGER.warning("Body does not exist for entity " + uuid);

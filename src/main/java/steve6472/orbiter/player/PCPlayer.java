@@ -4,6 +4,9 @@ import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.github.stephengold.joltjni.*;
 import com.github.stephengold.joltjni.Character;
+import com.github.stephengold.joltjni.enumerate.*;
+import com.github.stephengold.joltjni.readonly.ConstShapeSettings;
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
@@ -13,6 +16,7 @@ import steve6472.flare.Camera;
 import steve6472.flare.input.UserInput;
 import steve6472.flare.render.debug.DebugRender;
 import steve6472.flare.vr.VrInput;
+import steve6472.moondust.widget.component.IBounds;
 import steve6472.orbiter.*;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
@@ -52,10 +56,6 @@ public class PCPlayer implements Player
     public static float REACH = 2;
     public static float STRENGTH = 1;
 
-    private float holdPointDistance = REACH;
-//    private final PhysicsRigidBody holdPoint;
-//    private SixDofSpringJoint holdJoint;
-
     public PCPlayer(UUID uuid, Client client)
     {
         this.client = client;
@@ -78,25 +78,10 @@ public class PCPlayer implements Player
         settings.setShape(convexCollisionShape);
         settings.setLayer(Constants.Physics.OBJ_LAYER_MOVING);
 
-        character = new Character(settings, new RVec3(0, 1, 0), new Quat(), Constants.PhysicsFlags.CLIENT_PLAYER, client.getWorld().physics());
+        PhysicsSystem physics = client.getWorld().physics();
+        character = new Character(settings, new RVec3(0, 1, 0), new Quat(), Constants.PhysicsFlags.CLIENT_PLAYER, physics);
         character.addToPhysicsSystem();
-
-        /*holdPoint = createHoldPoint();
-        OrbiterApp.getInstance().getClient().getWorld().physics().add(holdPoint);*/
     }
-/*
-    private PhysicsRigidBody createHoldPoint()
-    {
-        PhysicsRigidBody body = new PhysicsRigidBody(new CompoundCollisionShape(1));
-        body.setContactResponse(false);
-        body.setProtectGravity(true);
-        body.setGravity(new com.jme3.math.Vector3f(0, 0, 0));
-        body.setLinearDamping(1);
-        body.setAngularDamping(1);
-        body.setMass(STRENGTH);
-        body.setUserIndex2(~Constants.PhysicsFlags.NEVER_DEBUG_RENDER);
-        return body;
-    }*/
 
     @Override
     public void teleport(Vector3f position)
@@ -142,16 +127,7 @@ public class PCPlayer implements Player
     {
         processMovementAndCamera(userInput, camera);
 
-        /*if (Keybinds.HOLD_OBJECT.isActive())
-        {
-            startHolding(camera);
-        } else
-        {
-            endHolding();
-        }*/
-
         Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
-        //updateHoldPoint(camera, direction);
 
         Optional<RayCastResult> physicsRayTestResult = client.getRayTrace().rayTraceGetFirst(getEyePos(), direction, REACH, true);
         physicsRayTestResult.ifPresent(res ->
@@ -232,58 +208,4 @@ public class PCPlayer implements Player
 
         //        applyMotion(new Vector3f((float) x, 0, (float) z));
     }
-/*
-    private void updateHoldPoint(Camera camera, Vector3f direction)
-    {
-        holdPoint.setPhysicsLocation(Convert.jomlToPhys(camera.viewPosition).add(Convert.jomlToPhys(direction).mult(holdPointDistance)));
-
-        if (holdJoint == null)
-            return;
-
-        com.jme3.math.Vector3f pivotA = holdJoint.getPivotA(null);
-        MyMath.transform(holdJoint.getBodyA().getTransform(null), pivotA, pivotA);
-        if (Convert.jomlToPhys(camera.viewPosition).distance(pivotA) > REACH)
-            endHolding();
-    }
-
-    private void startHolding(Camera camera)
-    {
-        // Already holding
-        if (holdJoint != null)
-            return;
-
-        Optional<PhysicsRayTestResult> resultOpt = client.getRayTrace().rayTraceGetFirst(camera, REACH, true);
-        resultOpt.ifPresent(result ->
-        {
-            PhysicsCollisionObject collisionObject = result.getCollisionObject();
-            if (!(collisionObject instanceof PhysicsRigidBody rigidBody))
-                return;
-            if (collisionObject == holdPoint)
-                return;
-
-            collisionObject.activate(true);
-            Transform invertTransform = collisionObject.getTransform(new Transform()).invert();
-            Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
-            float hitFraction = result.getHitFraction();
-            Vector3f hitPosition = new Vector3f(direction).mul(hitFraction * REACH).add(camera.viewPosition);
-
-            com.jme3.math.Vector3f pivot = MyMath.transform(invertTransform, new com.jme3.math.Vector3f(hitPosition.x, hitPosition.y, hitPosition.z), null);
-
-            holdJoint = new SixDofSpringJoint(rigidBody, holdPoint, pivot, new com.jme3.math.Vector3f(0, 0, 0), rigidBody.getPhysicsRotationMatrix(null), new Matrix3f(), false);
-            client.getWorld().physics().add(holdJoint);
-            holdPointDistance = hitFraction * holdPointDistance;
-        });
-    }
-
-    private void endHolding()
-    {
-        // Already not holding
-        if (holdJoint == null)
-            return;
-
-        holdJoint.destroy();
-        client.getWorld().physics().remove(holdJoint);
-        holdJoint = null;
-        holdPointDistance = REACH;
-    }*/
 }

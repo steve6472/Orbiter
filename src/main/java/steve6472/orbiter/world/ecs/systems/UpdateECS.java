@@ -38,7 +38,7 @@ public class UpdateECS extends IteratingProfiledSystem
     {
         UUID uuid = Components.UUID.get(entity).uuid();
 
-        int bodyId = world.bodyMap().getByObj(uuid);
+        int bodyId = world.bodyMap().getIdByUUID(uuid);
 
 //        if (body == null)
 //        {

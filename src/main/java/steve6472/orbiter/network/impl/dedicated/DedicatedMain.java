@@ -94,7 +94,7 @@ public class DedicatedMain implements NetworkMain
         Entity playerEntity = world.addEntity(Registries.ENTITY_BLUEPRINT.get(Constants.key("mp_player")), sender.uuid(), false);
         world.addComponent(playerEntity, new MPControlled(sender.uuid()));
         BodyInterface bodyInterface = world.physics().getBodyInterface();
-        bodyInterface.setUserData(world.bodyMap().getByObj(sender.uuid()), Constants.PhysicsFlags.MP_PLAYER);
+        bodyInterface.setUserData(world.bodyMap().getIdByUUID(sender.uuid()), Constants.PhysicsFlags.MP_PLAYER);
 
         for (ConnectedUser connectedUser : lobby().getConnectedUsers())
         {

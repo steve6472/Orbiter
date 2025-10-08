@@ -69,7 +69,7 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
 
         List<Struct> verticies = new ArrayList<>();
 
-        UUID uuid = client.getWorld().bodyMap().getByInt(lookAtObject);
+        UUID uuid = client.getWorld().bodyMap().getUUIDById(lookAtObject);
 
         // Render only in world objects with assigned entities
         if (uuid == null)
@@ -84,7 +84,7 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
 
         BodyInterface bi = client.getWorld().physics().getBodyInterface();
 
-        System.out.println(client.getRayTrace().getSubShapeId());
+//        System.out.println(client.getRayTrace().getSubShapeId());
         renderOutline(lookAtObject, bi, orbiterCollisionShape.ids(), (short) 0, verticies);
 
         VkBuffer buffer = flightFrame.getBuffer(0);
