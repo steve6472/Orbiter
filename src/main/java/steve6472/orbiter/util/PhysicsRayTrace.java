@@ -23,8 +23,7 @@ public class PhysicsRayTrace
     private final ClosestHitCastRayCollector closestHitCollector = new ClosestHitCastRayCollector();
     private final BodyFilter noBodyFilter = new BodyFilter();
     private final Client client;
-    private int lookAtObject;
-    private int subShapeId;
+    private RayCastResult lookAtObject;
 
     public PhysicsRayTrace(Client client)
     {
@@ -72,22 +71,13 @@ public class PhysicsRayTrace
     {
         rayTraceGetFirst(camera, reach, true)
             .ifPresentOrElse(
-                t ->
-                {
-                    lookAtObject = t.getBodyId();
-                    subShapeId = t.getSubShapeId2();
-                },
-                () -> lookAtObject = -1
+                t -> lookAtObject = t,
+                () -> lookAtObject = null
             );
     }
 
-    public int getLookAtObject()
+    public RayCastResult getLookAtObject()
     {
         return lookAtObject;
-    }
-
-    public int getSubShapeId()
-    {
-        return subShapeId;
     }
 }

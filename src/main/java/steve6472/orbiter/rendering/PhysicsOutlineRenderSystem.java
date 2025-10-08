@@ -63,16 +63,20 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         if (client.getWorld() == null)
             return;
 
-        int lookAtObject = client.getRayTrace().getLookAtObject();
-        if (lookAtObject == -1)
+        RayCastResult lookAtObject = client.getRayTrace().getLookAtObject();
+        if (lookAtObject == null)
             return;
 
         List<Struct> verticies = new ArrayList<>();
 
-        UUID uuid = client.getWorld().bodyMap().getUUIDById(lookAtObject);
+        UUID uuid = client.getWorld().bodyMap().getUUIDById(lookAtObject.getBodyId());
 
         // Render only in world objects with assigned entities
         if (uuid == null)
+            return;
+
+        Body body = client.getWorld().bodyMap().getBodyByUUID(uuid);
+        if (body == null)
             return;
 
         Entity entity = ClickECS.findEntity(client, uuid);
@@ -82,10 +86,8 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         Collision collision = Components.COLLISION.get(entity);
         OrbiterCollisionShape orbiterCollisionShape = Registries.COLLISION.get(collision.collisionKey());
 
-        BodyInterface bi = client.getWorld().physics().getBodyInterface();
-
 //        System.out.println(client.getRayTrace().getSubShapeId());
-        renderOutline(lookAtObject, bi, orbiterCollisionShape.ids(), (short) 0, verticies);
+        renderOutline(body, orbiterCollisionShape.ids(), (short) lookAtObject.getSubShapeId2(), verticies);
 
         VkBuffer buffer = flightFrame.getBuffer(0);
 
@@ -101,17 +103,20 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
     protected void updateData(FlightFrame flightFrame, FrameInfo frameInfo)
     {}
 
-    private void renderOutline(int lookAtObject, BodyInterface bi, short[] ids, short lookatId, List<Struct> verticies)
+    private void renderOutline(Body lookAtBody, short[] ids, short lookatId, List<Struct> verticies)
     {
-        ShapeRefC shapeRef = bi.getShape(lookAtObject);
         Matrix4f transform = new Matrix4f();
         RVec3 pos = new RVec3();
         Quat rot = new Quat();
-        bi.getPositionAndRotation(lookAtObject, pos, rot);
+        lookAtBody.getPositionAndRotation(pos, rot);
         transform.translate(pos.x(), pos.y(), pos.z());
         transform.rotate(Convert.physToJoml(rot, new Quaternionf()));
 
-        renderShape(shapeRef.getPtr(), ids, lookatId, (short) 0, transform, verticies);
+        ConstShape shape = lookAtBody.getShape();
+        if (shape instanceof CompoundShape compoundShape)
+            lookatId = (short) ClickECS.fixSubShapeId(lookatId, compoundShape.getNumSubShapes());
+
+        renderShape(shape, ids, lookatId, (short) 0, transform, verticies);
     }
 
     private void renderShape(ConstShape shape, short[] ids, short lookatId, short currentId, Matrix4f bodyTransform, List<Struct> verticies)

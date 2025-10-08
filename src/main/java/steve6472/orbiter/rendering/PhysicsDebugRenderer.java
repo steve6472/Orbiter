@@ -40,7 +40,7 @@ public class PhysicsDebugRenderer extends CustomDebugRendererSimple
     public void drawLine(double x1, double y1, double z1, double x2, double y2, double z2, int colorInt)
     {
         float[] colors = ColorUtil.getColors(colorInt);
-        addDebugObjectForFrame(line(new Vector3f((float) x1, (float) y1, (float) z1), new Vector3f((float) x2, (float) y2, (float) z2), new Vector4f(colors[1], colors[2], colors[3], colors[0])));
+        addDebugObjectForFrame(line(new Vector3f((float) x1, (float) y1, (float) z1), new Vector3f((float) x2, (float) y2, (float) z2), new Vector4f(colors[0], colors[1], colors[2], colors[3])));
     }
 
     /**
@@ -78,7 +78,7 @@ public class PhysicsDebugRenderer extends CustomDebugRendererSimple
     public void drawTriangle(double x1, double y1, double z1, double x2, double y2, double z2, double x3, double y3, double z3, int colorInt, int ordinal)
     {
         float[] colors = ColorUtil.getColors(colorInt);
-        Vector4f color = new Vector4f(colors[1], colors[2], colors[3], colors[0]);
+        Vector4f color = new Vector4f(colors[0], colors[1], colors[2], colors[3]);
         addDebugObjectForFrame(line(new Vector3f((float) x1, (float) y1, (float) z1), new Vector3f((float) x2, (float) y2, (float) z2), color));
         addDebugObjectForFrame(line(new Vector3f((float) x2, (float) y2, (float) z2), new Vector3f((float) x3, (float) y3, (float) z3), color));
         addDebugObjectForFrame(line(new Vector3f((float) x3, (float) y3, (float) z3), new Vector3f((float) x1, (float) y1, (float) z1), color));
