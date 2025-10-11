@@ -27,6 +27,9 @@ import steve6472.orbiter.player.Player;
 import steve6472.orbiter.settings.Settings;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
 import static steve6472.flare.render.debug.DebugRender.*;
@@ -40,6 +43,8 @@ public class World implements EntityControl, EntityModify, WorldSounds
 {
     // TODO: should be either in constants or configurable (in menu only)
     private static final int MAX_PARTICLES = 32767;
+
+    private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
     private final PhysicsSystem physics;
     private final TempAllocator tempAllocator;
@@ -160,10 +165,25 @@ public class World implements EntityControl, EntityModify, WorldSounds
         int collisionSteps = 1;
         systems.holdSystem.prePhysicsTickUpdate(timePerStep);
 
-        physicsProfiler.start();
-        int errors = physics.update(timePerStep, collisionSteps, tempAllocator, jobSystem);
-        assert errors == EPhysicsUpdateError.None : errors;
-        physicsProfiler.end();
+        var a = executor.submit(() -> {
+            physicsProfiler.start();
+            int errors = physics.update(timePerStep, collisionSteps, tempAllocator, jobSystem);
+            assert errors == EPhysicsUpdateError.None : errors;
+            physicsProfiler.end();
+        });
+
+        var b = executor.submit(() -> {
+            particleSystems.runTickSystems(frameTime);
+        });
+
+        try
+        {
+            a.get();
+            b.get();
+        } catch (InterruptedException | ExecutionException e)
+        {
+            throw new RuntimeException(e);
+        }
 
 //        System.out.println("Bodies: %s, Last: %.4fms (%.4fms left) Avg: %.4fms Max: %.4fms".formatted(
 //            physics.getNumBodies(),
@@ -173,21 +193,11 @@ public class World implements EntityControl, EntityModify, WorldSounds
 //            physicsProfiler.maxEverMilli()
 //        ));
 
-//        BodyInterface bodyInterface = physics.getBodyInterface();
-//        for (Body body : joltBodies.getAllBodies())
-//        {
-//            bodyInterface.activateBody(body.getId());
-//            body.resetSleepTimer();
-//            bodyInterface.getPositionAndRotation(body.getId(), new RVec3(), new Quat());
-//        }
-
         Character character = ((PCPlayer) player).character;
         character.postSimulation(0.01f);
 
-
         systems.updateStates();
         systems.runTickSystems(frameTime);
-        particleSystems.runTickSystems(frameTime);
     }
 
     public void debugRender(float frameTime)
@@ -273,6 +283,8 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
     public void cleanup()
     {
+        executor.close();
+
         physics.removeAllBodies();
         bodyMap().clear();
 

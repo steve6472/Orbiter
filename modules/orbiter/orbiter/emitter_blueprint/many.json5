@@ -1,0 +1,35 @@
+{
+    environment: {
+    },
+    lifetime: {
+        lifetime_type: "looping",
+        active_time: 0
+    },
+    rate: {
+        rate_type: "instant",
+        count: 1000
+    },
+    shape: {
+        shape_type: "sphere",
+        radius: 0.5
+    },
+    offset: [3, 1, 0],
+
+    particle: {
+        plane_model: {
+            texture: "orbiter:particle/load",
+            texture_size: [8, 64],
+            uv: [0, 8],
+            uv_size: [8, 8]
+        },
+        rotation: {
+            initial: "math.random(0, 45)",
+            rate: "math.random(45, 135)"
+        },
+        scale: [0.05, 0.05, 1],
+        billboard: "rotate_xyz",
+        max_age: 1,
+        direction: "outwards",
+        initial_speed: 1
+    }
+}

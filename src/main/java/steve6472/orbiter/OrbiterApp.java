@@ -348,8 +348,11 @@ public class OrbiterApp extends FlareApp
 
     public void clearWorld()
     {
-        client.getWorld().cleanup();
-        client.setWorld(null);
+        if (client.getWorld() != null)
+        {
+            client.getWorld().cleanup();
+            client.setWorld(null);
+        }
         setMouseGrab(false);
     }
 
@@ -417,6 +420,7 @@ public class OrbiterApp extends FlareApp
     {
         if (networkMain != null)
             networkMain.shutdown();
+        clearWorld();
         client.getSoundMaster().cleanup();
     }
 

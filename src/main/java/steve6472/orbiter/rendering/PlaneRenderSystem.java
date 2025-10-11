@@ -8,6 +8,7 @@ import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
+import steve6472.core.util.Profiler;
 import steve6472.flare.FlareConstants;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.VkBuffer;
@@ -21,6 +22,7 @@ import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.struct.Struct;
 import steve6472.orbiter.Client;
+import steve6472.orbiter.util.ProfilerPrint;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.particle.ParticleComponents;
 import steve6472.orbiter.world.particle.components.PlaneModel;
@@ -54,6 +56,7 @@ public class PlaneRenderSystem extends CommonRenderSystem
     private final Map<Entity, VkBuffer> buffers = new HashMap<>();
     private final Client client;
     private final RenderPipeline.Enum particlePipeline;
+    private final Profiler profiler = new Profiler(60);
 
     private static TextureSampler atlasSampler()
     {
@@ -107,6 +110,11 @@ public class PlaneRenderSystem extends CommonRenderSystem
         Vector4f color = new Vector4f(1, 1, 1, 1);
         Matrix4f transform = new Matrix4f();
 
+        LongBuffer vertexBuffers = stack.longs(0);
+        LongBuffer offsets = stack.longs(0);
+
+        profiler.start();
+        int e = 0;
         for (Entity entity : sorted)
         {
             VkBuffer buffer = buffers.computeIfAbsent(entity, _ ->
@@ -145,13 +153,13 @@ public class PlaneRenderSystem extends CommonRenderSystem
             structList[4] = br;
             structList[5] = tr;
 
+            vertexBuffers.put(0, buffer.getBuffer());
             buffer.writeToBuffer(vertex()::memcpy, structList);
-
-            LongBuffer vertexBuffers = stack.longs(buffer.getBuffer());
-            LongBuffer offsets = stack.longs(0);
             vkCmdBindVertexBuffers(frameInfo.commandBuffer(), 0, vertexBuffers, offsets);
             vkCmdDraw(frameInfo.commandBuffer(), VERTEX_COUNT, 1, 0, 0);
+            e++;
         }
+        profiler.end();
     }
 
     @Override
