@@ -160,7 +160,7 @@ public class OrbiterApp extends FlareApp
         SettingsLoader.loadFromJsonFile(MoonDustRegistries.SETTINGS, MoonDustConstants.SETTINGS_FILE);
 
         MoonDust.getInstance().setPixelScale(Settings.UI_SCALE.get());
-        VisualSettings.USERNAME.set(RandomNameGenerator.generateFullName());
+//        VisualSettings.USERNAME.set(RandomNameGenerator.generateFullName());
     }
 
     @Override
