@@ -65,4 +65,10 @@ public class JoltBodies
     {
         return idBodyMap.values();
     }
+
+    public void clear()
+    {
+        idBodyMap.clear();
+        idUUIDmap.clear();
+    }
 }

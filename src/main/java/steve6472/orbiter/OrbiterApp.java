@@ -9,6 +9,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.registry.Key;
 import steve6472.core.setting.SettingsLoader;
+import steve6472.core.util.Profiler;
 import steve6472.flare.Camera;
 import steve6472.flare.core.Flare;
 import steve6472.flare.core.FlareApp;
@@ -42,7 +43,6 @@ import steve6472.orbiter.rendering.particle.JustTransform;
 import steve6472.orbiter.rendering.particle.TintedTransform;
 import steve6472.orbiter.scheduler.Scheduler;
 import steve6472.orbiter.settings.Keybinds;
-import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.ui.MDUtil;
 import steve6472.orbiter.ui.OrbiterUIRender;
@@ -57,7 +57,6 @@ import steve6472.test.DebugUILines;
 import java.util.Optional;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
-import java.util.logging.Level;
 
 /**
  * Created by steve6472
@@ -104,6 +103,8 @@ public class OrbiterApp extends FlareApp
     private Commands commands;
     private boolean isMouseGrabbed = false;
 
+    public Profiler tickProfiler = new Profiler(60);
+    public Profiler fpsProfiler = new Profiler(144);
     public PhysicsDebugRenderer physicsDebugRenderer;
 
     OrbiterApp()
@@ -243,6 +244,7 @@ public class OrbiterApp extends FlareApp
     @Override
     public void render(FrameInfo frameInfo, MemoryStack memoryStack)
     {
+        fpsProfiler.start();
         frameInfo.camera().setPerspectiveProjection(Settings.FOV.get(), aspectRatio(), 0.1f, 1024f);
 
         float frameTime = frameInfo.frameTime();
@@ -259,10 +261,12 @@ public class OrbiterApp extends FlareApp
         }
 
         client.render(frameInfo, memoryStack);
+        fpsProfiler.end();
     }
 
     private void tick(float frameTime)
     {
+        tickProfiler.start();
         //noinspection deprecation
         Scheduler.instance().tick();
 
@@ -282,6 +286,7 @@ public class OrbiterApp extends FlareApp
                 });
             });
         }
+        tickProfiler.end();
     }
 
     private void processEscape()

@@ -32,8 +32,7 @@ import java.util.List;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 
-import static org.lwjgl.vulkan.VK10.VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT;
-import static org.lwjgl.vulkan.VK10.VK_SHADER_STAGE_VERTEX_BIT;
+import static org.lwjgl.vulkan.VK10.*;
 
 /**
  * Created by steve6472
@@ -96,21 +95,22 @@ public class CommonParticleRenderSystem<E extends SBOModelArray.Entry> extends C
         VkBuffer buffer = flightFrame.getBuffer(1);
 
         transfromArray.start();
-        updateTransformArray(transfromArray, frameInfo);
-
-        var sbo = struct.create(transfromArray.getEntriesArray());
-        buffer.writeToBuffer(struct::memcpy, sbo);
+        if (updateTransformArray(transfromArray, frameInfo))
+        {
+            var sbo = struct.create(transfromArray.getEntriesArray());
+            buffer.writeToBuffer(struct::memcpy, sbo);
+        }
     }
 
-    public void updateTransformArray(SBOModelArray<Model, E> sboTransfromArray, FrameInfo frameInfo)
+    public boolean updateTransformArray(SBOModelArray<Model, E> sboTransfromArray, FrameInfo frameInfo)
     {
         World world = client.getWorld();
         if (world == null)
-            return;
+            return false;
 
         ImmutableArray<Entity> particle = world.particleEngine().getEntitiesFor(family);
         if (particle.size() == 0)
-            return;
+            return false;
 
         List<Entity> list = new ArrayList<>(particle.size());
         for (Entity entity : particle)
@@ -121,12 +121,12 @@ public class CommonParticleRenderSystem<E extends SBOModelArray.Entry> extends C
         }
 
         if (list.isEmpty())
-            return;
+            return false;
 
         sboTransfromArray.sort(list, entity -> sboTransfromArray.addArea(ParticleComponents.MODEL.get(entity).model).index());
 
         if (sboTransfromArray.getAreas().isEmpty())
-            return;
+            return false;
 
         var lastArea = sboTransfromArray.getAreaByIndex(0);
         Model lastModel = ParticleComponents.MODEL.get(list.getFirst()).model;
@@ -148,5 +148,6 @@ public class CommonParticleRenderSystem<E extends SBOModelArray.Entry> extends C
 
             lastArea.moveIndex();
         }
+        return true;
     }
 }

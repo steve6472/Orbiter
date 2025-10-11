@@ -26,6 +26,8 @@ public class Settings extends SettingRegister
     public static final EnumSetting<MultiplayerBackend> MULTIPLAYER_BACKEND = registerEnum("multiplayer_beckend", MultiplayerBackend.DEDICATED);
 
     public static final BoolSetting TRACK_BANDWIDTH = registerBool("track_bandwidth", false);
+    public static final BoolSetting PROFILE_TICK = registerBool("profile_tick", false);
+    public static final BoolSetting PROFILE_FPS = registerBool("profile_fps", false);
     public static final BoolSetting LOG_PACKETS = registerBool("log_packets", false);
     public static final BoolSetting VISUAL_SOUNDS = registerBool("visual_sounds", false);
 

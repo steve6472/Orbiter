@@ -24,7 +24,6 @@ import steve6472.orbiter.audio.WorldSounds;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
-import steve6472.orbiter.rendering.PhysicsDebugRenderer;
 import steve6472.orbiter.settings.Settings;
 
 import java.util.*;
@@ -47,6 +46,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
     private final JobSystem jobSystem;
     private final JoltBodies joltBodies;
     private final Profiler physicsProfiler;
+    private final BodyManagerDrawSettings settings = new BodyManagerDrawSettings();
 
     private final Engine ecsEngine;
     private final PooledEngine particleEngine;
@@ -165,7 +165,21 @@ public class World implements EntityControl, EntityModify, WorldSounds
         assert errors == EPhysicsUpdateError.None : errors;
         physicsProfiler.end();
 
-//        System.out.println("Last sec: %.5f/%.5f    left: %.5f".formatted(physicsProfiler.lastSeconds(), timePerStep, timePerStep - physicsProfiler.lastSeconds()));
+//        System.out.println("Bodies: %s, Last: %.4fms (%.4fms left) Avg: %.4fms Max: %.4fms".formatted(
+//            physics.getNumBodies(),
+//            physicsProfiler.lastMilli(),
+//            ((1f / 60f) * 1e3) - physicsProfiler.lastMilli(),
+//            physicsProfiler.averageMilli(),
+//            physicsProfiler.maxEverMilli()
+//        ));
+
+//        BodyInterface bodyInterface = physics.getBodyInterface();
+//        for (Body body : joltBodies.getAllBodies())
+//        {
+//            bodyInterface.activateBody(body.getId());
+//            body.resetSleepTimer();
+//            bodyInterface.getPositionAndRotation(body.getId(), new RVec3(), new Quat());
+//        }
 
         Character character = ((PCPlayer) player).character;
         character.postSimulation(0.01f);
@@ -201,9 +215,6 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
         systems.runRenderSystems(frameTime);
 
-        PhysicsRenderer.render(physics());
-        BodyManagerDrawSettings settings = new BodyManagerDrawSettings();
-        // This one makes the thing crash & for now it renders the client shape in their face...
 //        physics().drawBodies(settings, OrbiterApp.getInstance().physicsDebugRenderer);
         physics().drawConstraints(OrbiterApp.getInstance().physicsDebugRenderer);
         physics().drawConstraintLimits(OrbiterApp.getInstance().physicsDebugRenderer);
@@ -262,6 +273,9 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
     public void cleanup()
     {
+        physics.removeAllBodies();
+        bodyMap().clear();
+
         particleEngine().clearPools();
         clearAllSoundSources();
     }

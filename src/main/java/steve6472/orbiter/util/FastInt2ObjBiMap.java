@@ -12,14 +12,14 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
  */
 public class FastInt2ObjBiMap<T>
 {
-    private final Int2ObjectMap<T> intToUuid = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<T> intToObj = new Int2ObjectOpenHashMap<>();
     private final Object2IntMap<T> objToInt = new Object2IntOpenHashMap<>();
 
     public void put(int key, T value)
     {
         // Optionally, you may want to check for collisions / existing entries
         // Remove old mapping from reverse if replacing, etc.
-        T old = intToUuid.put(key, value);
+        T old = intToObj.put(key, value);
         if (old != null)
         {
             objToInt.removeInt(old);
@@ -29,7 +29,7 @@ public class FastInt2ObjBiMap<T>
 
     public T getByInt(int key)
     {
-        return intToUuid.get(key);
+        return intToObj.get(key);
     }
 
     public int getByObj(T obj)
@@ -40,7 +40,7 @@ public class FastInt2ObjBiMap<T>
 
     public void removeByInt(int key)
     {
-        T value = intToUuid.remove(key);
+        T value = intToObj.remove(key);
         if (value != null)
         {
             objToInt.removeInt(value);
@@ -52,7 +52,13 @@ public class FastInt2ObjBiMap<T>
         int key = objToInt.removeInt(obj);
         if (key != objToInt.defaultReturnValue())
         {
-            intToUuid.remove(key);
+            intToObj.remove(key);
         }
+    }
+
+    public void clear()
+    {
+        objToInt.clear();
+        intToObj.clear();
     }
 }

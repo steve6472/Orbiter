@@ -55,9 +55,9 @@ public class PhysicsDebugRenderer extends CustomDebugRendererSimple
      */
     public void drawText3d(double xx, double yy, double zz, String text, int colorInt, float height)
     {
-        System.out.println("Rendering " + text);
-        var textLine = TextLine.fromText(text + " (" + colorInt + ")", 0.1f);
-        renderer.textRender().line(textLine, new Matrix4f().translate((float) xx, (float) (yy) + height, (float) zz));
+//        System.out.println("Rendering " + text);
+//        var textLine = TextLine.fromText(text + " (" + colorInt + ")", 0.1f);
+//        renderer.textRender().line(textLine, new Matrix4f().translate((float) xx, (float) (yy) + height, (float) zz));
     }
 
     /**

@@ -10,8 +10,10 @@ import com.github.stephengold.joltjni.BodyInterface;
 import com.github.stephengold.joltjni.PhysicsSystem;
 import com.github.stephengold.joltjni.enumerate.EActivation;
 import com.github.stephengold.joltjni.enumerate.EMotionType;
+import org.joml.Vector3f;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
+import steve6472.core.util.RandomUtil;
 import steve6472.flare.assets.model.blockbench.animation.controller.AnimationController;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
@@ -58,7 +60,13 @@ public interface EntityControl extends WorldSounds
         return network().connections();
     }
 
+
     default Entity addEntity(EntityBlueprint entityBlueprint, UUID uuid, boolean broadcast)
+    {
+        return addEntity(entityBlueprint, uuid, broadcast, new Vector3f(RandomUtil.randomFloat(-1, 1), RandomUtil.randomFloat(0.5f, 1.5f), RandomUtil.randomFloat(-1, 1)));
+    }
+
+    default Entity addEntity(EntityBlueprint entityBlueprint, UUID uuid, boolean broadcast, Vector3f pos)
     {
         List<Component> components = entityBlueprint.createEntityComponents(uuid);
         Entity entity = createEntity(components);
@@ -137,7 +145,7 @@ public interface EntityControl extends WorldSounds
         }
 
         // Special physics tag handling
-        handlePhysics(entity, components);
+        handlePhysics(entity, components, pos);
 
         // Broadcast new entity to peers
         if (broadcast && connections() != null && network().lobby().isHost())
@@ -151,8 +159,13 @@ public interface EntityControl extends WorldSounds
         components.add(new UUIDComp(uuid));
         Entity entity = createEntity(components);
 
+        Vector3f pos = new Vector3f();
+        Position position = Components.POSITION.get(entity);
+        if (position != null)
+            pos.set(position.x(), position.y(), position.z());
+
         // Special physics tag handling
-        handlePhysics(entity, components);
+        handlePhysics(entity, components, pos);
 
         // Broadcast new entity to peers
         if (broadcast && connections() != null && network().lobby().isHost())
@@ -164,7 +177,7 @@ public interface EntityControl extends WorldSounds
         return entity;
     }
 
-    private void handlePhysics(Entity entity, Collection<Component> components)
+    private void handlePhysics(Entity entity, Collection<Component> components, Vector3f pos)
     {
         if (!Components.TAG_PHYSICS.has(entity))
             return;
@@ -177,6 +190,7 @@ public interface EntityControl extends WorldSounds
             throw new RuntimeException("Entity blueprint needs Collision if Physics tag is specified!");
 
         Position position = Components.POSITION.get(entity);
+        position.set(pos.x, pos.y, pos.z);
         Rotation rotation = Components.ROTATION.get(entity);
 
         BodyCreationSettings bcs = new BodyCreationSettings(

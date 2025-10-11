@@ -2,6 +2,7 @@ package steve6472.orbiter.ui;
 
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
+import steve6472.core.util.Profiler;
 import steve6472.flare.render.impl.UIRenderImpl;
 import steve6472.moondust.MoonDust;
 import steve6472.orbiter.Constants;
@@ -32,6 +33,47 @@ public class OrbiterUIRender extends UIRenderImpl
     @Override
     public void render()
     {
+        trackBandwidth();
+        profileTick();
+        profileFps();
+    }
+
+    private void profileTick()
+    {
+        if (!Settings.PROFILE_TICK.get())
+            return;
+
+        int pixelScale = (int) MoonDust.getInstance().getPixelScale();
+        int windowHeight = orbiter.window().getHeight() / pixelScale;
+
+        Profiler profiler = OrbiterApp.getInstance().tickProfiler;
+        sprite(0, windowHeight - 16, 0, profiler.getTotalMeasurements() + 4, 1, READ_SPRITE);
+        for (int i = 0; i < profiler.getTotalMeasurements(); i++)
+        {
+            int height = (int) (profiler.getMeasurementAt(i) / 1e6);
+            sprite(i, windowHeight - height, 0, 1, height, SEND_SPRITE);
+        }
+    }
+
+    private void profileFps()
+    {
+        if (!Settings.PROFILE_FPS.get())
+            return;
+
+        int pixelScale = (int) MoonDust.getInstance().getPixelScale();
+        int windowHeight = orbiter.window().getHeight() / pixelScale;
+
+        Profiler profiler = OrbiterApp.getInstance().fpsProfiler;
+        sprite(0, windowHeight - 30, 0, profiler.getTotalMeasurements() + 4, 1, READ_SPRITE);
+        for (int i = 0; i < profiler.getTotalMeasurements(); i++)
+        {
+            int sampleHeight = (int)Math.round(profiler.getMeasurementAt(i) / 1e6 * 60.0 / 33.333333333333336);
+            sprite(i, windowHeight - sampleHeight, 0, 1, sampleHeight, SEND_SPRITE);
+        }
+    }
+
+    private void trackBandwidth()
+    {
         if (!Settings.TRACK_BANDWIDTH.get())
             return;
 
@@ -58,8 +100,8 @@ public class OrbiterUIRender extends UIRenderImpl
             sprite(i, windowHeight - readHeight - sendHeight, 0, 1, readHeight, READ_SPRITE);
         }
 
-//        if (!tracker.getSendMemory().isEmpty())
-//            LOGGER.info("Read: " + tracker.getReadMemory().getLast() + "B, Send: " + tracker.getSendMemory().getLast());
+        //        if (!tracker.getSendMemory().isEmpty())
+        //            LOGGER.info("Read: " + tracker.getReadMemory().getLast() + "B, Send: " + tracker.getSendMemory().getLast());
     }
 
     private static final double log2 = Math.log(2);
