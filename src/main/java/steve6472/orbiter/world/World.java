@@ -24,10 +24,11 @@ import steve6472.orbiter.audio.WorldSounds;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
+import steve6472.orbiter.rendering.snapshot.SnapshotPools;
+import steve6472.orbiter.rendering.snapshot.WorldSnapshot;
 import steve6472.orbiter.settings.Settings;
 
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
@@ -42,7 +43,7 @@ import static steve6472.flare.render.debug.DebugRender.*;
 public class World implements EntityControl, EntityModify, WorldSounds
 {
     // TODO: should be either in constants or configurable (in menu only)
-    private static final int MAX_PARTICLES = 32767;
+    public static final int MAX_PARTICLES = 32767;
 
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
@@ -165,25 +166,24 @@ public class World implements EntityControl, EntityModify, WorldSounds
         int collisionSteps = 1;
         systems.holdSystem.prePhysicsTickUpdate(timePerStep);
 
-        var a = executor.submit(() -> {
+//        var a = executor.submit(() -> {
             physicsProfiler.start();
             int errors = physics.update(timePerStep, collisionSteps, tempAllocator, jobSystem);
             assert errors == EPhysicsUpdateError.None : errors;
             physicsProfiler.end();
-        });
-
-        var b = executor.submit(() -> {
-            particleSystems.runTickSystems(frameTime);
-        });
-
-        try
-        {
-            a.get();
-            b.get();
-        } catch (InterruptedException | ExecutionException e)
-        {
-            throw new RuntimeException(e);
-        }
+//        });
+//
+//        var b = executor.submit(() -> {
+//        });
+//
+//        try
+//        {
+//            a.get();
+//            b.get();
+//        } catch (InterruptedException | ExecutionException e)
+//        {
+//            throw new RuntimeException(e);
+//        }
 
 //        System.out.println("Bodies: %s, Last: %.4fms (%.4fms left) Avg: %.4fms Max: %.4fms".formatted(
 //            physics.getNumBodies(),
@@ -198,6 +198,15 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
         systems.updateStates();
         systems.runTickSystems(frameTime);
+        particleSystems.runTickSystems(frameTime);
+    }
+
+    public WorldSnapshot createSnapshot(SnapshotPools pools)
+    {
+        WorldSnapshot snapshot = new WorldSnapshot();
+        snapshot.planeParticleSnapshot.createSnapshot(pools, particleEngine);
+
+        return snapshot;
     }
 
     public void debugRender(float frameTime)

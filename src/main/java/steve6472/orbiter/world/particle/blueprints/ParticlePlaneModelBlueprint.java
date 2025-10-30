@@ -41,7 +41,7 @@ public record ParticlePlaneModelBlueprint(Key texture, Vector2f uv, Vector2f uvS
     public ParticleComponent create(PooledEngine particleEngine, OrlangEnvironment environment)
     {
         PlaneModel component = particleEngine.createComponent(PlaneModel.class);
-        Vector4f uvRect = FlareRegistries.ATLAS.get(FlareConstants.ATLAS_BLOCKBENCH).getSprite(texture).uv();
+        Vector4f uvRect = FlareRegistries.ATLAS.get(Constants.ATLAS_PARTICLE).getSprite(texture).uv();
 
         float newStartX = mapUV(uv.x, textureSize.x, uvRect.x, uvRect.z);
         float newStartY = mapUV(uv.y, textureSize.y, uvRect.y, uvRect.w);

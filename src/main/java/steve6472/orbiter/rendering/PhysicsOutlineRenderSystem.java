@@ -67,8 +67,6 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         if (lookAtObject == null)
             return;
 
-        List<Struct> verticies = new ArrayList<>();
-
         UUID uuid = client.getWorld().bodyMap().getUUIDById(lookAtObject.getBodyId());
 
         // Render only in world objects with assigned entities
@@ -82,6 +80,8 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         Entity entity = ClickECS.findEntity(client, uuid);
         if (entity == null)
             return;
+
+        List<Struct> verticies = new ArrayList<>();
 
         Collision collision = Components.COLLISION.get(entity);
         OrbiterCollisionShape orbiterCollisionShape = Registries.COLLISION.get(collision.collisionKey());

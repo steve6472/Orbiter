@@ -53,7 +53,7 @@
             initial: 90
         },
         flipbook: {
-            texture: "orbiter:particle/electric_spark",
+            texture: "orbiter:electric_spark",
             stretch_to_max_age: true
         },
         local_space: {
@@ -69,6 +69,9 @@
             y: 0.06,
             z: 1
         },
-        max_age: "math.random(0.23, 0.28)"
+        max_age: "math.random(0.23, 0.28)",
+        material: {
+            transparency: "alpha_test"
+        }
     }
 }

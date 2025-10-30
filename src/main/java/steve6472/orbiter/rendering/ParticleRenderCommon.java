@@ -5,7 +5,6 @@ import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import steve6472.core.log.Log;
 import steve6472.flare.Camera;
 import steve6472.flare.assets.model.blockbench.animation.controller.AnimationController;
 import steve6472.orbiter.world.ecs.Components;
@@ -81,8 +80,16 @@ public final class ParticleRenderCommon
         ParticleBillboard particleBillboard = ParticleComponents.BILLBOARD.get(entity);
         if (particleBillboard != null)
         {
-            Matrix4f matrix4f = BillboardUtil.makeBillboard(position, entity, camera, particleBillboard);
-            transform.mul(matrix4f);
+            Matrix4f mat = new Matrix4f();
+            Velocity velocity = ParticleComponents.VELOCITY.get(entity);
+            if (velocity != null)
+            {
+                BillboardUtil.makeBillboard(mat, position, velocity.x, velocity.y, velocity.z, camera, particleBillboard.billboard);
+            } else
+            {
+                BillboardUtil.makeBillboard(mat, position, 0, 0, 0, camera, particleBillboard.billboard);
+            }
+            transform.mul(mat);
         } else
         {
             transform.translate(position.x, position.y, position.z);

@@ -7,7 +7,7 @@
     },
     rate: {
         rate_type: "instant",
-        count: 1000
+        count: 100
     },
     shape: {
         shape_type: "sphere",
@@ -17,7 +17,7 @@
 
     particle: {
         plane_model: {
-            texture: "orbiter:particle/load",
+            texture: "orbiter:load",
             texture_size: [8, 64],
             uv: [0, 8],
             uv_size: [8, 8]
@@ -25,6 +25,9 @@
         rotation: {
             initial: "math.random(0, 45)",
             rate: "math.random(45, 135)"
+        },
+        material: {
+            transparency: "alpha_test"
         },
         scale: [0.05, 0.05, 1],
         billboard: "rotate_xyz",

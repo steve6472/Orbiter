@@ -20,6 +20,7 @@ import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.struct.Struct;
 import steve6472.orbiter.Client;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.particle.ParticleComponents;
 import steve6472.orbiter.world.particle.components.FlipbookModel;
@@ -51,7 +52,7 @@ public class FlipbookRenderSystem extends CommonRenderSystem
 
     private static TextureSampler atlasSampler()
     {
-        Atlas atlas = FlareRegistries.ATLAS.get(FlareConstants.ATLAS_BLOCKBENCH);
+        Atlas atlas = FlareRegistries.ATLAS.get(Constants.ATLAS_PARTICLE);
         if (atlas instanceof SpriteAtlas spriteAtlas)
         {
             return spriteAtlas.getAnimationAtlas().getSampler();

@@ -12,6 +12,7 @@ import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.struct.Struct;
 import steve6472.flare.ui.textures.SpriteEntry;
 import steve6472.flare.ui.textures.animation.SpriteAnimation;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.rendering.OrbiterPush;
 import steve6472.orbiter.world.particle.core.ParticleComponent;
 
@@ -47,7 +48,7 @@ public class FlipbookModel implements ParticleComponent
     // TODO: make this safe
     public void setup(Key texture, boolean stretchToMaxAge)
     {
-        AnimationAtlas animationAtlas = ((SpriteAtlas) FlareRegistries.ATLAS.get(FlareConstants.ATLAS_BLOCKBENCH)).getAnimationAtlas();
+        AnimationAtlas animationAtlas = ((SpriteAtlas) FlareRegistries.ATLAS.get(Constants.ATLAS_PARTICLE)).getAnimationAtlas();
         this.spriteEntry = animationAtlas.getSprite(texture);
         Objects.requireNonNull(spriteEntry, "No animated sprite for '%s' was found".formatted(texture));
         this.stretchToMaxAge = stretchToMaxAge;

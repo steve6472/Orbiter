@@ -6,6 +6,8 @@ import steve6472.flare.pipeline.builder.PipelineConstructor;
 import steve6472.flare.struct.def.Push;
 import steve6472.flare.struct.def.Vertex;
 
+import java.util.function.Function;
+
 import static org.lwjgl.vulkan.VK10.*;
 
 /**
@@ -198,12 +200,11 @@ public interface OrbiterPipelines
             .done()
         .build(renderPass, setLayouts);
 
-
     PipelineConstructor PLANE = (device, extent, renderPass, setLayouts) -> PipelineBuilder
         .create(device)
         .shaders()
-            .addShader(ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER, "orbiter/shaders/particle/plane.vert", VK_SHADER_STAGE_VERTEX_BIT)
-            .addShader(ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER, "orbiter/shaders/particle/plane.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
+            .addShader(ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER, "orbiter/shaders/particle/plane_tinted.vert", VK_SHADER_STAGE_VERTEX_BIT)
+            .addShader(ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER, "orbiter/shaders/particle/plane_tinted.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
             .done()
         .vertexInputInfo(Vertex.POS3F_COL4F_UV)
         .inputAssembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, false)
@@ -234,11 +235,48 @@ public interface OrbiterPipelines
             .done()
         .build(renderPass, setLayouts);
 
+
+    Function<Boolean, PipelineConstructor> PLANE_ALPHA_TEST = (tinted) -> (device, extent, renderPass, setLayouts) -> PipelineBuilder
+        .create(device)
+        .shaders()
+            .addShader(ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER, "orbiter/shaders/particle/plane" + (tinted ? "_tinted" : "") + ".vert", VK_SHADER_STAGE_VERTEX_BIT)
+            .addShader(ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER, "orbiter/shaders/particle/plane_alpha_test" + (tinted ? "_tinted" : "") + ".frag", VK_SHADER_STAGE_FRAGMENT_BIT)
+            .done()
+        .vertexInputInfo(tinted ? Vertex.POS3F_COL4F_UV : Vertex.POS3F_UV)
+        .inputAssembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, false)
+        .viewport()
+            .viewportBounds(0.0f, extent.height(), extent.width(), -extent.height())
+            .viewportDepths(0.0f, 1.0f)
+            .scissorOffset(0, 0)
+            .scissorExtent(extent)
+            .done()
+        .rasterization()
+            .flags(false, false, false)
+            .polygonInfo(VK_POLYGON_MODE_FILL, VK_CULL_MODE_BACK_BIT, VK_FRONT_FACE_COUNTER_CLOCKWISE)
+            .done()
+        .multisampling()
+            .sampleShading(false)
+            .rasterizationSamples(VK_SAMPLE_COUNT_1_BIT)
+            .done()
+        .depthStencil()
+            .depthEnableFlags(true, true)
+            .depthCompareOp(VK_COMPARE_OP_LESS)
+            .bounds(0.0f, 1.0f, false)
+            .stencilTestEnable(false)
+            .done()
+        .colorBlend(false, VK_LOGIC_OP_COPY, 0f, 0f, 0f, 0f)
+            .attachment(VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT, false)
+            .done()
+        .pushConstants()
+            .done()
+        .build(renderPass, setLayouts);
+
+
     PipelineConstructor PLANE_ADDITIVE = (device, extent, renderPass, setLayouts) -> PipelineBuilder
         .create(device)
         .shaders()
-            .addShader(ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER, "orbiter/shaders/particle/plane.vert", VK_SHADER_STAGE_VERTEX_BIT)
-            .addShader(ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER, "orbiter/shaders/particle/plane.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
+            .addShader(ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER, "orbiter/shaders/particle/plane_tinted.vert", VK_SHADER_STAGE_VERTEX_BIT)
+            .addShader(ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER, "orbiter/shaders/particle/plane_tinted.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
             .done()
         .vertexInputInfo(Vertex.POS3F_COL4F_UV)
         .inputAssembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, false)

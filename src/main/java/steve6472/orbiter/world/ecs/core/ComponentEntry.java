@@ -11,6 +11,8 @@ import steve6472.core.registry.Key;
 import steve6472.core.registry.Keyable;
 import steve6472.core.registry.Serializable;
 
+import java.util.function.Consumer;
+
 /**
  * Created by steve6472
  * Date: 5/3/2024
@@ -49,6 +51,13 @@ public class ComponentEntry<T extends Component> implements Keyable, Serializabl
     public boolean has(Entity entity)
     {
         return mapper.has(entity);
+    }
+
+    public void ifPresent(Entity entity, Consumer<T> func)
+    {
+        T t = get(entity);
+        if (t != null)
+            func.accept(t);
     }
 
     public T create(PooledEngine engine)

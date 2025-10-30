@@ -60,7 +60,7 @@
             initial: 0
         },
         plane_model: {
-            texture: "orbiter:particle/load",
+            texture: "orbiter:load",
             texture_size: [8, 64],
             uv: [0, 8],
             uv_size: [8, 8]
@@ -81,6 +81,9 @@
         },
         max_age: 0.8,
         tint: [0.14, 0.43, 0.16, 0.6],
-        render_pipeline: "model_additive"
+        material: {
+            transparency: "additive",
+            tinted: true
+        }
     }
 }

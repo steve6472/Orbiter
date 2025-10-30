@@ -20,6 +20,9 @@
             y: 1,
             z: "1 + v.age"
         },
-        max_age: 2
+        max_age: 2,
+        material: {
+            transparency: "blend"
+        }
     }
 }

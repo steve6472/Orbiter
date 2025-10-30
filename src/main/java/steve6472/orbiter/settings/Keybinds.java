@@ -25,6 +25,8 @@ public class Keybinds
     public static final Keybind INTERACT_OBJECT = registerOnceMouse("interact_object", GLFW.GLFW_MOUSE_BUTTON_RIGHT);
     public static final Keybind TEST_ATTRACT = registerRepeatKey("test_attract", GLFW.GLFW_KEY_G);
 
+    public static final Keybind TEST_SWAP = registerOnceKey("test_swap", GLFW.GLFW_KEY_F);
+
     public static final Keybind ESCAPE = registerOnceKey("escape", GLFW.GLFW_KEY_ESCAPE);
     public static final Keybind CHAT = registerOnceKey("chat", GLFW.GLFW_KEY_GRAVE_ACCENT);
     public static final Keybind KEEP_CHAT_OPEN = registerRepeatKey("keep_chat_open", GLFW.GLFW_KEY_LEFT_SHIFT);

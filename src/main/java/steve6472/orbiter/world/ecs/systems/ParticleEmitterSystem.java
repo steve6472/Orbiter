@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.core.PooledEngine;
+import com.badlogic.ashley.utils.ImmutableArray;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
 import steve6472.flare.assets.model.blockbench.animation.controller.AnimationController;
@@ -113,6 +114,12 @@ public class ParticleEmitterSystem extends IteratingProfiledSystem
     private void createParticle(Entity holder, int holderId, ParticleEmitter emitter, Position emitterPosition)
     {
         emitter.particleTick();
+
+        ImmutableArray<Entity> entities = particleEngine.getEntities();
+        if (entities.size() >= World.MAX_PARTICLES)
+        {
+            return;
+        }
 
         Entity entity = particleEngine.createEntity();
         ParticleBlueprint blueprint = emitter.particleData.get();

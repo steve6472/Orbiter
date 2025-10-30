@@ -27,6 +27,9 @@ public final class Constants
     public static final File GENERATED_ORBITER = new File(FlareConstants.GENERATED_FOLDER, NAMESPACE);
     public static final File JOLT_NATIVE = new File(GENERATED_ORBITER, "joltjni.dll");
 
+    /// Particle Atlas key reference
+    public static final Key ATLAS_PARTICLE = key("particle");
+
     /*
      * UI stuff
      */
