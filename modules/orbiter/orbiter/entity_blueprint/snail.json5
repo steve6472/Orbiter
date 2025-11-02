@@ -1,0 +1,10 @@
+{
+    physics_body: {
+        collision: "blockbench/static/cube/50_cm"
+    },
+    animated_model: {
+        model: "blockbench/animated/snail",
+        controller: "orbiter:snail"
+    },
+    environment: {}
+}

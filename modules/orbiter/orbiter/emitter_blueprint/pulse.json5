@@ -22,7 +22,8 @@
         },
         max_age: 2,
         material: {
-            transparency: "blend"
+            transparency: "blend",
+            tinted: true
         }
     }
 }

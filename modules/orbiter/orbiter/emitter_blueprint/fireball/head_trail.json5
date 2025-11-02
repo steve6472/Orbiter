@@ -1,0 +1,68 @@
+{
+    lifetime: {
+        lifetime_type: "looping",
+        active_time: 10
+    },
+    rate: {
+        rate_type: "steady",
+        spawn_rate: 400,
+        max_count: 4000
+    },
+    shape: {
+        shape_type: "sphere",
+        radius: 0.1
+    },
+    particle: {
+        environment: {
+            curves: {
+                "v.modifier": {
+                    type: "bezier_chain",
+                    input: "v.age",
+                    nodes: {
+                        "0.09": {
+                            value: 0,
+                            slope: 8
+                        },
+                        "0.37": {
+                            value: 0,
+                            slope: -0.05
+                        }
+                    }
+                }
+            }
+        },
+
+        max_age: 0.4,
+        model: "orbiter:blockbench/static/particle/fireball/head_trail",
+        scale: {
+            x: "0.2 * v.modifier",
+            y: "0.2 * v.modifier",
+            z: "0.2 * v.modifier"
+        },
+        direction: {
+            x: "(math.random(0, 1) + -0.5) * 0.5",
+            y: "(math.random(0, 1) + -0.5) * 0.5",
+            z: "math.random(0, 1) * 0.1"
+        },
+        rotation: {
+            initial: 45,
+            rate: "math.random(-200, 200)"
+        },
+        initial_speed: 2,
+        linear_acceleration: [0, 0, 6],
+        linear_drag_coefficient: 1,
+        billboard: "lookat_y",
+        tint: {
+            "interpolant": "v.age / v.max_age",
+            "gradient": {
+                "0.0": "#00FFDE99",
+                "0.64": "#F0FEB73B",
+                "1.0": "#00E59611"
+            }
+        },
+        material: {
+            transparency: "additive",
+            tinted: true
+        }
+    }
+}

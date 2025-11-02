@@ -1,0 +1,10 @@
+{
+    physics_body: {
+        collision: "blockbench/static/cube/25_cm"
+    },
+    animated_model: {
+        model: "blockbench/animated/holy_explosion",
+        controller: "orbiter:explode"
+    },
+    environment: {}
+}

@@ -1,0 +1,17 @@
+{
+    physics_body: {
+        model: "blockbench/static/gizmo",
+        collision: "blockbench/static/cube/meter"
+    },
+
+    particle_emitters: [
+        // head_trail
+        "orbiter:fireball/head_trail",
+        // body_trail
+        "orbiter:fireball/body_trail",
+        // head_main
+        "orbiter:fireball/head_main",
+        // body_spark
+        "orbiter:fireball/body_spark"
+    ]
+}

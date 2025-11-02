@@ -1,0 +1,93 @@
+{
+    physics_body: {
+        model: "blockbench/static/cube/25_cm"
+    },
+
+    particle_emitters: [
+        {
+            environment: {
+                init: "v.radius = 0.6;"
+            },
+            lifetime: {
+                lifetime_type: "looping",
+                active_time: 1,
+                sleep_time: 0
+            },
+            rate: {
+                rate_type: "steady",
+                spawn_rate: 30,
+                max_count: 60
+            },
+            shape: {
+                shape_type: "point"
+            },
+            offset: {
+                x: "v.radius * -math.sin(v.emitter_age * 360)",
+                y: "v.radius * math.cos(v.emitter_age * 360) + v.radius + 0.2",
+                z: 0
+            },
+            particle: {
+                environment: {
+                    init: "v.scale_mult = 0.7;",
+
+                    // Curves are evaluated before frame
+                    curves: {
+                        "v.size": {
+                            type: "linear",
+                            input: "v.age",
+                            horizontal_range: "v.max_age",
+                            nodes: [1, 0]
+                        }
+                    },
+                    frame: "v.scaled_size = v.size * v.scale_mult"
+                },
+
+                model: "orbiter:blockbench/static/particle/dot",
+                max_age: 1,
+                billboard: "rotate_xyz",
+                scale: ["v.scaled_size", "v.scaled_size", "v.scaled_size"]
+            }
+        },
+        {
+            lifetime: {
+                lifetime_type: "looping",
+                active_time: 1,
+                sleep_time: 0
+            },
+            rate: {
+                rate_type: "steady",
+                spawn_rate: 1,
+                max_count: 2
+            },
+            shape: {
+                shape_type: "point"
+            },
+            offset: [0, 0.8, 0],
+            particle: {
+                environment: {
+                    init: "v.scale_mult = 0.5;",
+
+                    // Curves are evaluated before frame
+                    curves: {
+                        "v.size": {
+                            type: "bezier",
+                            input: "v.age",
+                            horizontal_range: "v.max_age",
+                            nodes: [0, 0, 5, 0]
+                        }
+                    },
+                    frame: "v.scaled_size = v.size * v.scale_mult"
+                },
+
+                rotation: {
+                    initial: 45,
+                    rate: "math.random(-200, 200)"
+                },
+                model: "orbiter:blockbench/static/particle/fireball/head_trail",
+                max_age: 1,
+                billboard: "rotate_xyz",
+                scale: ["v.scaled_size", "v.scaled_size", "v.scaled_size"]
+            }
+        }
+    ]
+}

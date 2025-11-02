@@ -1,0 +1,10 @@
+{
+    physics_body: {
+        collision: "blockbench/static/cube/meter"
+    },
+    animated_model: {
+        model: "blockbench/animated/debug_model_rotations",
+        controller: "orbiter:run_idle"
+    },
+    environment: {}
+}

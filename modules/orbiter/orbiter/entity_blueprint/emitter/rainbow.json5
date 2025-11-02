@@ -1,0 +1,73 @@
+{
+    physics_body: {
+        model: "blockbench/static/cube/25_cm",
+        mass: 10
+    },
+
+    particle_emitters: [
+        {
+            environment: {
+                particle: "v.rng = math.random(0, 1)"
+            },
+            lifetime: {
+                lifetime_type: "looping",
+                active_time: 2
+            },
+            rate: {
+                rate_type: "steady",
+                spawn_rate: 250,
+                max_count: 500
+            },
+            shape: {
+                shape_type: "point"
+            },
+            offset: {
+                x: "math.cos(v.emitter_age * 90) * (2.5 - v.rng)",
+                y: "math.sin(v.emitter_age * 90) * (2.5 - v.rng)",
+                z: 0
+            },
+            particle: {
+                environment: {
+                    pass_variables: {
+                        "v.rng": "v.rng"
+                    },
+                    // Need environment for emitter & a way to pass variables (a copy list of variables ?)
+                    init: "v.radius = 0.25;",
+                    curves: {
+                        "v.rainbow": {
+                            type: "catmull_rom",
+                            input: "v.rng",
+                            horizontal_range: 1,
+                            nodes: [1, 0, 1, 1.18]
+                        },
+                        "v.psize": {
+                            type: "catmull_rom",
+                            input: "v.age",
+                            horizontal_range: "v.max_age",
+                            nodes: [0, 0, 0.2, 0, 0]
+                        }
+                    }
+                },
+
+                linear_acceleration: [0, 1, 0],
+
+                plane_model: "orbiter:particle/dot_white",
+                max_age: 1,
+                billboard: "rotate_xyz",
+                scale: ["v.psize", "v.psize", 1],
+                tint: {
+                    "interpolant": "v.rainbow",
+                    "gradient": {
+                        "0.0": "#ffd71c1c",
+                        "0.16": "#ffffdf00",
+                        "0.33": "#ff08ff00",
+                        "0.5": "#ff00ffff",
+                        "0.67": "#ff0000ff",
+                        "0.83": "#ffff00ff",
+                        "1.0": "#ffe21111"
+                    }
+                }
+            }
+        }
+    ]
+}

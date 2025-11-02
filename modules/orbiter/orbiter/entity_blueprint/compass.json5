@@ -1,0 +1,10 @@
+{
+    physics_body: {
+        collision: "blockbench/static/coll/compass"
+    },
+    animated_model: {
+        model: "blockbench/animated/compass",
+        controller: "orbiter:compass"
+    },
+    environment: {}
+}

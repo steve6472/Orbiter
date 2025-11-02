@@ -1,0 +1,79 @@
+{
+    physics_body: {
+        model: "blockbench/static/antigrav_ball"
+    },
+
+    particle_emitters: [
+        {
+            lifetime: {
+                lifetime_type: "looping",
+                active_time: 0,
+                sleep_time: 2
+            },
+            rate: {
+                rate_type: "instant",
+                count: 1
+            },
+            shape: {
+                shape_type: "point"
+            },
+            particle: {
+                max_age: 2,
+                model: "orbiter:blockbench/static/particle/spinny_disc_slow",
+                scale: {
+                    x: "1 + v.age",
+                    y: 1,
+                    z: "1 + v.age"
+                },
+                local_space: {
+                    position: true
+                }
+            }
+        },
+        {
+            environment: {
+                init: "v.cycle_time = 2.5"
+            },
+            lifetime: {
+                lifetime_type: "looping",
+                active_time: "v.cycle_time"
+            },
+            rate: {
+                rate_type: "steady",
+                spawn_rate: 20,
+                max_count: 99
+            },
+            shape: {
+                shape_type: "point"
+            },
+            offset: [0, "math.sin(v.emitter_age * (360 / v.cycle_time)) * 0.2", 0],
+            particle: {
+                model: "orbiter:blockbench/static/particle/spinny_disc",
+                local_space: {
+                    position: true
+                },
+                max_age: 0.15
+            }
+        },
+        {
+            environment: {
+                init: "v.cycle_time = 5"
+            },
+            lifetime: {
+                lifetime_type: "looping",
+                active_time: "v.cycle_time"
+            },
+            rate: {
+                rate_type: "steady",
+                spawn_rate: 100,
+                max_count: 9999
+            },
+            shape: {
+                shape_type: "sphere",
+                radius: "math.sin(v.emitter_age * (360 / v.cycle_time)) * 0.2 + 2",
+                surface_only: true
+            },
+            particle: "orbiter:white_box"
+        }
+    ]
+}

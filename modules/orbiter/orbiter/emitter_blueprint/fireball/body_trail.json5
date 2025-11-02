@@ -1,0 +1,89 @@
+{
+    lifetime: {
+        lifetime_type: "looping",
+        active_time: 999
+    },
+    rate: {
+        rate_type: "steady",
+        spawn_rate: 40,
+        max_count: 400
+    },
+    shape: {
+        shape_type: "sphere",
+        radius: 0.1
+    },
+    particle: {
+        environment: {
+            init: "v.rng1 = math.random(0, 1);v.rng2 = math.random(0, 1);v.rng3 = math.random(0, 1); v.length = 1.0;",
+            // Difference between snowstorm: the last nodes right value is always 0
+            curves: {
+                "v.modifier": {
+                    type: "bezier_chain",
+                    input: "v.age",
+                    nodes: {
+                        "0.08": {
+                            value: 2.06,
+                            slope: 0
+                        },
+                        "1.0": {
+                            value: 1.38,
+                            slope: 0.15
+                        }
+                    }
+                },
+                "v.length": {
+                    "type": "bezier_chain",
+                    "input": "v.age / v.max_age",
+                    "nodes": {
+                        "0.0": {
+                            "value": 1,
+                            "slope": 0
+                        },
+                        "0.4": {
+                            "value": 1,
+                            "slope": 0
+                        },
+                        "1.0": {
+                            "value": 0,
+                            "slope": 0
+                        }
+                    }
+                }
+            },
+            frame: "v.oscillate = (v.rng2 < 0.5 ? -1 : 1) * math.cos(20 + v.age * 500) * 20 * v.length;  v.oscillate2 = (v.rng3 < 0.5 ? -1 : 1) * math.cos(20 + v.age * 500) * 20 * v.length;"
+        },
+
+        max_age: 1.5,
+        model: "orbiter:blockbench/static/particle/fireball/head_trail",
+        scale: {
+            x: "0.2 * v.modifier",
+            y: "0.2 * v.modifier",
+            z: "0.2 * v.modifier"
+        },
+        direction: {
+            x: "(math.random(0, 1) + -0.5) * 0.5",
+            y: 0,
+            z: "-math.random(0, 1) * 10"
+        },
+        rotation: {
+            initial: 45,
+            rate: "math.random(-200, 200)"
+        },
+        initial_speed: 2,
+        linear_acceleration: ["v.oscillate2", "v.oscillate", 6],
+        linear_drag_coefficient: 1,
+        billboard: "lookat_y",
+        tint: {
+            "interpolant": "(v.age / v.max_age) / 6",
+            "gradient": {
+                "0.0": "#7AFFCD5F",
+                "0.09": "#F0FF8816",
+                "0.16": "#618A2106"
+            }
+        },
+        material: {
+            transparency: "additive",
+            tinted: true
+        }
+    }
+}

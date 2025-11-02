@@ -1,0 +1,10 @@
+{
+    physics_body: {
+        collision: "blockbench/static/coll/matter_compressor"
+    },
+    animated_model: {
+        model: "blockbench/animated/matter_compressor",
+        controller: "orbiter:matter_compressor"
+    },
+    environment: {}
+}

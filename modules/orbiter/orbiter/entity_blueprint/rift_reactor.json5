@@ -6,6 +6,5 @@
         model: "blockbench/animated/rift_reactor",
         controller: "orbiter:rift_reactor"
     },
-    environment: {},
-    tags: ["physics"]
+    environment: {}
 }

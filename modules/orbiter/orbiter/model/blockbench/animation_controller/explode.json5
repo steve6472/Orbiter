@@ -1,0 +1,18 @@
+{
+    controllers: {
+        main: {
+            initial_state: "explode",
+            states: {
+                explode: {
+                    animations: ["explode"],
+                    transitions: [
+                        {
+                            state: "explode",
+                            condition: "q.all_animations_finished"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
