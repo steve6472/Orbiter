@@ -1,0 +1,10 @@
+{
+    physics_body: {
+        collision: "blockbench/animated/magic_tower"
+    },
+    animated_model: {
+        model: "blockbench/animated/magic_tower",
+        controller: "orbiter:magic_tower"
+    },
+    environment: {}
+}

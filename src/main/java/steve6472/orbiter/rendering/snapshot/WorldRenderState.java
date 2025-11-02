@@ -4,13 +4,17 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.Array;
 import org.joml.Vector3f;
 import steve6472.orbiter.rendering.ParticleMaterial;
-import steve6472.orbiter.rendering.snapshot.pairs.ParticlePair;
+import steve6472.orbiter.rendering.snapshot.pairs.FlipbookParticlePair;
+import steve6472.orbiter.rendering.snapshot.pairs.RenderPair;
+import steve6472.orbiter.rendering.snapshot.pairs.PlaneParticlePair;
+import steve6472.orbiter.rendering.snapshot.pairs.PlaneTintedParticlePair;
 import steve6472.orbiter.rendering.snapshot.snapshots.ParticleSnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 
 /**
  * Created by steve6472
@@ -22,8 +26,13 @@ public class WorldRenderState
     public boolean created = false;
     public final WorldSnapshot lastSnapshot, currentSnapshot;
 
-    private final List<ParticlePair> unsortedParticles = new ArrayList<>();
-    public Map<ParticleMaterial, List<ParticlePair>> particles = new HashMap<>();
+    private final List<PlaneParticlePair> unsortedParticles = new ArrayList<>();
+    private final List<PlaneTintedParticlePair> unsortedTintedParticles = new ArrayList<>();
+    private final List<FlipbookParticlePair> unsortedFlipbookParticles = new ArrayList<>();
+
+    public Map<ParticleMaterial, List<PlaneParticlePair>> particles = new HashMap<>();
+    public Map<ParticleMaterial, List<PlaneTintedParticlePair>> tintedParticles = new HashMap<>();
+    public Map<ParticleMaterial, List<FlipbookParticlePair>> flipbookParticles = new HashMap<>();
 
     public WorldRenderState(WorldSnapshot lastSnapshot, WorldSnapshot currentSnapshot)
     {
@@ -31,40 +40,50 @@ public class WorldRenderState
         this.currentSnapshot = currentSnapshot;
     }
 
+    // Runs once after tick
     public void createRenderPairs()
     {
         if (created)
             return;
 
-        createParticlePairs(lastSnapshot.planeParticleSnapshot.particles, currentSnapshot.planeParticleSnapshot.particles, false);
-        createParticlePairs(lastSnapshot.planeParticleSnapshot.tintedParticles, currentSnapshot.planeParticleSnapshot.tintedParticles, true);
+        createParticlePairs(lastSnapshot.particleSnapshots.planeParticles, currentSnapshot.particleSnapshots.planeParticles, PlaneParticlePair::new, unsortedParticles);
+        createParticlePairs(lastSnapshot.particleSnapshots.planeTintedParticles, currentSnapshot.particleSnapshots.planeTintedParticles, PlaneTintedParticlePair::new, unsortedTintedParticles);
+        createParticlePairs(lastSnapshot.particleSnapshots.flipbookParticles, currentSnapshot.particleSnapshots.flipbookParticles, FlipbookParticlePair::new, unsortedFlipbookParticles);
 
         created = true;
     }
 
     public void prepareParticles(Vector3f cameraPos, float partialTicks)
     {
-        particles.forEach((_, list) -> list.clear());
+        prepareParticles(cameraPos, partialTicks, particles, unsortedParticles);
+        prepareParticles(cameraPos, partialTicks, tintedParticles, unsortedTintedParticles);
+        prepareParticles(cameraPos, partialTicks, flipbookParticles, unsortedFlipbookParticles);
+    }
+
+    private <T extends ParticleSnapshot, P extends RenderPair<T>> void
+    prepareParticles(Vector3f cameraPos, float partialTicks, Map<ParticleMaterial, List<P>> sortedResult, List<P> unsortedSource)
+    {
+        sortedResult.forEach((_, list) -> list.clear());
 
         // Calculate interpolated position
-        for (ParticlePair pair : unsortedParticles)
+        for (RenderPair<T> pair : unsortedSource)
         {
-            ParticleSnapshot last = pair.previous();
-            ParticleSnapshot current = pair.current();
+            T last = pair.previous();
+            T current = pair.current();
 
             current.rx = lerp(last.x, current.x, partialTicks);
             current.ry = lerp(last.y, current.y, partialTicks);
             current.rz = lerp(last.z, current.z, partialTicks);
         }
 
-        for (ParticlePair pair : unsortedParticles)
+        for (P pair : unsortedSource)
         {
-            List<ParticlePair> list = particles.computeIfAbsent(pair.current().material, _ -> new ArrayList<>(16));
+            List<P> list = sortedResult.computeIfAbsent(pair.current().material, _ -> new ArrayList<>(16));
             list.add(pair);
         }
 
         // Sort based on interpolated position
-        particles.forEach((material, list) -> {
+        sortedResult.forEach((material, list) -> {
             // Skip unsorted particles
             if (!material.renderSettings().transparency().sorted)
                 return;
@@ -82,7 +101,8 @@ public class WorldRenderState
         });
     }
 
-    protected void createParticlePairs(Array<? extends ParticleSnapshot> lastSnapshots, Array<? extends ParticleSnapshot> currentSnapshots, boolean tinted)
+    protected <T extends ParticleSnapshot, P extends RenderPair<T>> void
+    createParticlePairs(Array<? extends ParticleSnapshot> lastSnapshots, Array<? extends ParticleSnapshot> currentSnapshots, BiFunction<T, T, P> pairConstructor, List<P> store)
     {
         // Create map for speed
         Map<Entity, ParticleSnapshot> last = new HashMap<>(lastSnapshots.size);
@@ -94,13 +114,13 @@ public class WorldRenderState
         // Iterate over current particles
         for (ParticleSnapshot currentSnapshot : currentSnapshots)
         {
-            // Add newly created particles to old snapshot
             ParticleSnapshot lastSnapshot = last.remove(currentSnapshot.entity);
             if (lastSnapshot == null)
                 lastSnapshot = currentSnapshot;
 
             // Create pair for rendering
-            unsortedParticles.add(new ParticlePair(lastSnapshot, currentSnapshot, tinted));
+            //noinspection unchecked
+            store.add(pairConstructor.apply((T) lastSnapshot, (T) currentSnapshot));
         }
     }
 

@@ -81,6 +81,7 @@ void main()
         {
             outColor = mix(colFrom, colTo, push.transition);
         }
+        if (outColor.a == 0) discard;
     } else
     {
         vec2 indicies = vec2(push.indexFrom % int(scale.x), push.indexFrom / int(scale.x));
@@ -90,5 +91,6 @@ void main()
         theUv.y = map(theUv.y, -indicies.y, scale.y - indicies.y, push.dimensions.y, push.dimensions.w);
 
         outColor = texture(texSampler, theUv);
+        if (outColor.a == 0) discard;
     }
 }

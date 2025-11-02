@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.Pool;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import steve6472.flare.assets.model.blockbench.animation.controller.AnimationController;
 import steve6472.orbiter.rendering.Billboard;
 import steve6472.orbiter.rendering.ParticleMaterial;
@@ -29,7 +28,6 @@ public class ParticleSnapshot implements Pool.Poolable
     public Billboard billboard = Billboard.FIXED;
     public ParticleMaterial material = ParticleMaterial.BLEND;
     public final Quaternionf parentRotation = new Quaternionf();
-    public final Vector4f uv = new Vector4f(0, 0, 1, 1);
 
     public Entity entity;
 
@@ -51,9 +49,8 @@ public class ParticleSnapshot implements Pool.Poolable
         scaleX = 1;
         scaleY = 1;
         billboard = Billboard.FIXED;
-        material = ParticleMaterial.BLEND;
+        material = ParticleMaterial.OPAQUE;
         parentRotation.identity();
-        uv.set(0, 0, 1, 1);
         rx = 0;
         ry = 0;
         rz = 0;
@@ -62,9 +59,6 @@ public class ParticleSnapshot implements Pool.Poolable
     public void fromEntity(Entity entity)
     {
         this.entity = entity;
-
-        PlaneModel planeModel = ParticleComponents.PLANE_MODEL.get(entity);
-        uv.set(planeModel.uv);
 
         OrlangEnvironment env = ParticleRenderCommon.updateEnvironment(entity);
         LocalSpace localSpace = ParticleComponents.LOCAL_SPACE.get(entity);

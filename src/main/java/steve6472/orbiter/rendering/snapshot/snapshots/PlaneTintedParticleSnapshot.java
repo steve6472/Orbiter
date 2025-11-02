@@ -12,7 +12,7 @@ import steve6472.orlang.OrlangEnvironment;
  * Date: 10/28/2025
  * Project: Orbiter <br>
  */
-public class TintedParticleSnapshot extends ParticleSnapshot implements Pool.Poolable
+public class PlaneTintedParticleSnapshot extends PlaneParticleSnapshot implements Pool.Poolable
 {
     public float r, g, b, a;
 

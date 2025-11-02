@@ -1,6 +1,5 @@
 package steve6472.orbiter.rendering.snapshot.system;
 
-import com.badlogic.ashley.core.Family;
 import org.joml.*;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.util.Profiler;
@@ -20,14 +19,11 @@ import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.rendering.BillboardUtil;
 import steve6472.orbiter.rendering.ParticleMaterial;
-import steve6472.orbiter.rendering.snapshot.pairs.ParticlePair;
+import steve6472.orbiter.rendering.snapshot.pairs.PlaneParticlePair;
 import steve6472.orbiter.rendering.snapshot.snapshots.ParticleSnapshot;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
+import steve6472.orbiter.rendering.snapshot.snapshots.PlaneParticleSnapshot;
 import steve6472.orbiter.world.World;
-import steve6472.orbiter.world.particle.components.PlaneModel;
-import steve6472.orbiter.world.particle.components.Position;
-import steve6472.orbiter.world.particle.components.TintGradient;
-import steve6472.orbiter.world.particle.components.TintRGBA;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
@@ -82,7 +78,7 @@ public class PlaneParticleRenderSystem extends CommonRenderSystem
         if (currentRenderState == null || currentRenderState.particles.isEmpty())
             return;
 
-        List<ParticlePair> list = currentRenderState.particles.get(material);
+        List<PlaneParticlePair> list = currentRenderState.particles.get(material);
         if (list == null || list.isEmpty())
             return;
 
@@ -102,15 +98,15 @@ public class PlaneParticleRenderSystem extends CommonRenderSystem
             .getByteBuffer(0, size);
 
         int renderedCount = 0;
-        for (ParticlePair snapshotPair : list)
+        for (PlaneParticlePair snapshotPair : list)
         {
             position.set(0, 0, 0);
             rotation.identity();
 
-            ParticleSnapshot previousSnapshot = snapshotPair.previous();
-            ParticleSnapshot currentSnapshot = snapshotPair.current();
+            PlaneParticleSnapshot previousSnapshot = snapshotPair.previous();
+            PlaneParticleSnapshot currentSnapshot = snapshotPair.current();
 
-            // Reset transform and color
+            // Reset transform
             transform.identity();
 
             updateTransformation(previousSnapshot, currentSnapshot, transform, rotation, frameInfo.camera(), position, partial);

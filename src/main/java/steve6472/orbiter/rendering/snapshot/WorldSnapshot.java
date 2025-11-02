@@ -1,6 +1,6 @@
 package steve6472.orbiter.rendering.snapshot;
 
-import steve6472.orbiter.rendering.snapshot.snapshots.PlaneParticleSnapshots;
+import steve6472.orbiter.rendering.snapshot.snapshots.group.ParticleSnapshots;
 
 /**
  * Created by steve6472
@@ -9,11 +9,12 @@ import steve6472.orbiter.rendering.snapshot.snapshots.PlaneParticleSnapshots;
  */
 public class WorldSnapshot
 {
-    public PlaneParticleSnapshots planeParticleSnapshot = new PlaneParticleSnapshots();
+    public ParticleSnapshots particleSnapshots = new ParticleSnapshots();
 
     public void free(SnapshotPools pools)
     {
-        pools.particlePool.freeAll(planeParticleSnapshot.particles);
-        pools.tintedParticlePool.freeAll(planeParticleSnapshot.tintedParticles);
+        pools.planeparticlePool.freeAll(particleSnapshots.planeParticles);
+        pools.planeTintedParticlePool.freeAll(particleSnapshots.planeTintedParticles);
+        pools.flipbookParticlePool.freeAll(particleSnapshots.flipbookParticles);
     }
 }

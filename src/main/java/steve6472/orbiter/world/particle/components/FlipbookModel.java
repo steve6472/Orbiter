@@ -5,7 +5,6 @@ import org.joml.Vector2i;
 import org.joml.Vector4f;
 import steve6472.core.registry.Key;
 import steve6472.core.util.BitUtil;
-import steve6472.flare.FlareConstants;
 import steve6472.flare.assets.atlas.AnimationAtlas;
 import steve6472.flare.assets.atlas.SpriteAtlas;
 import steve6472.flare.registry.FlareRegistries;

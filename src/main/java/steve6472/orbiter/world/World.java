@@ -204,7 +204,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
     public WorldSnapshot createSnapshot(SnapshotPools pools)
     {
         WorldSnapshot snapshot = new WorldSnapshot();
-        snapshot.planeParticleSnapshot.createSnapshot(pools, particleEngine);
+        snapshot.particleSnapshots.createSnapshot(pools, particleEngine);
 
         return snapshot;
     }

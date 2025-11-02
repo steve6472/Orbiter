@@ -1,6 +1,5 @@
 package steve6472.orbiter.rendering.snapshot.system;
 
-import com.badlogic.ashley.core.Family;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -24,14 +23,10 @@ import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.rendering.BillboardUtil;
 import steve6472.orbiter.rendering.ParticleMaterial;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
-import steve6472.orbiter.rendering.snapshot.pairs.ParticlePair;
+import steve6472.orbiter.rendering.snapshot.pairs.PlaneTintedParticlePair;
 import steve6472.orbiter.rendering.snapshot.snapshots.ParticleSnapshot;
-import steve6472.orbiter.rendering.snapshot.snapshots.TintedParticleSnapshot;
+import steve6472.orbiter.rendering.snapshot.snapshots.PlaneTintedParticleSnapshot;
 import steve6472.orbiter.world.World;
-import steve6472.orbiter.world.particle.components.PlaneModel;
-import steve6472.orbiter.world.particle.components.Position;
-import steve6472.orbiter.world.particle.components.TintGradient;
-import steve6472.orbiter.world.particle.components.TintRGBA;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
@@ -83,10 +78,10 @@ public class PlaneTintedParticleRenderSystem extends CommonRenderSystem
             return;
 
         WorldRenderState currentRenderState = OrbiterApp.getInstance().currentRenderState;
-        if (currentRenderState == null || currentRenderState.particles.isEmpty())
+        if (currentRenderState == null || currentRenderState.tintedParticles.isEmpty())
             return;
 
-        List<ParticlePair> list = currentRenderState.particles.get(material);
+        List<PlaneTintedParticlePair> list = currentRenderState.tintedParticles.get(material);
         if (list == null || list.isEmpty())
             return;
 
@@ -107,13 +102,13 @@ public class PlaneTintedParticleRenderSystem extends CommonRenderSystem
             .getByteBuffer(0, size);
 
         int renderedCount = 0;
-        for (ParticlePair snapshotPair : list)
+        for (PlaneTintedParticlePair snapshotPair : list)
         {
             position.set(0, 0, 0);
             rotation.identity();
 
-            TintedParticleSnapshot previousSnapshot = (TintedParticleSnapshot) snapshotPair.previous();
-            TintedParticleSnapshot currentSnapshot = (TintedParticleSnapshot) snapshotPair.current();
+            PlaneTintedParticleSnapshot previousSnapshot = snapshotPair.previous();
+            PlaneTintedParticleSnapshot currentSnapshot = snapshotPair.current();
 
             // Reset transform and color
             transform.identity();
