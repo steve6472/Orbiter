@@ -1,7 +1,6 @@
 package steve6472.orbiter.rendering.snapshot.snapshots;
 
 import com.badlogic.ashley.core.Entity;
-import com.badlogic.gdx.utils.Pool;
 import org.joml.Vector4f;
 import steve6472.orbiter.rendering.ParticleRenderCommon;
 import steve6472.orbiter.world.particle.ParticleComponents;
@@ -9,10 +8,10 @@ import steve6472.orlang.OrlangEnvironment;
 
 /**
  * Created by steve6472
- * Date: 10/28/2025
+ * Date: 11/4/2025
  * Project: Orbiter <br>
  */
-public class PlaneTintedParticleSnapshot extends PlaneParticleSnapshot
+public class FlipbookTintedParticleSnapshot extends FlipbookParticleSnapshot
 {
     public float r, g, b, a;
 

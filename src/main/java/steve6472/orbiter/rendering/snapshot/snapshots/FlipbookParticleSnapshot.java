@@ -12,7 +12,7 @@ import steve6472.orbiter.world.particle.components.FlipbookModel;
  * Date: 10/28/2025
  * Project: Orbiter <br>
  */
-public class FlipbookParticleSnapshot extends ParticleSnapshot implements Pool.Poolable
+public class FlipbookParticleSnapshot extends ParticleSnapshot
 {
     public final Vector4f uv = new Vector4f(0, 0, 1, 1);
     public int flags;
@@ -20,22 +20,27 @@ public class FlipbookParticleSnapshot extends ParticleSnapshot implements Pool.P
     public Vector2f pixelSize = new Vector2f(1, 1);
     public int[] framesIndex;
     public long[] framesTime;
-    public int frameIndex;
-    public int nextFrameIndex;
-    // float progress
+    public long creationTimestamp;
 
     @Override
     public void reset()
     {
         super.reset();
+        framesIndex = null;
+        framesTime = null;
     }
 
-    public void fromEntity(Entity entity, long now)
+    public void fromEntity(Entity entity)
     {
         super.fromEntity(entity);
 
         FlipbookModel flipbook = ParticleComponents.FLIPBOOK_MODEL.get(entity);
-        flipbook.tick(now);
-//        uv.set(flipbook.uv)
+        uv.set(flipbook.uv);
+        singleSize.set(flipbook.singleSize);
+        pixelSize.set(flipbook.pixelSize);
+        framesIndex = flipbook.framesIndex;
+        framesTime = flipbook.framesTime;
+        flags = flipbook.flags;
+        creationTimestamp = flipbook.creationTimestamp;
     }
 }

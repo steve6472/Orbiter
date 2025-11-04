@@ -1,13 +1,15 @@
 package steve6472.orbiter.rendering.snapshot.system;
 
-import org.joml.*;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.util.Profiler;
-import steve6472.flare.Camera;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.VkBuffer;
 import steve6472.flare.assets.TextureSampler;
 import steve6472.flare.assets.atlas.Atlas;
+import steve6472.flare.assets.atlas.SpriteAtlas;
 import steve6472.flare.core.FrameInfo;
 import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.render.common.CommonBuilder;
@@ -18,12 +20,11 @@ import steve6472.flare.struct.def.Vertex;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
-import steve6472.orbiter.rendering.BillboardUtil;
+import steve6472.orbiter.rendering.OrbiterSBO;
 import steve6472.orbiter.rendering.ParticleMaterial;
-import steve6472.orbiter.rendering.snapshot.pairs.PlaneParticlePair;
-import steve6472.orbiter.rendering.snapshot.snapshots.ParticleSnapshot;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
-import steve6472.orbiter.rendering.snapshot.snapshots.PlaneParticleSnapshot;
+import steve6472.orbiter.rendering.snapshot.pairs.FlipbookParticlePair;
+import steve6472.orbiter.rendering.snapshot.snapshots.FlipbookParticleSnapshot;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.world.World;
 
@@ -38,7 +39,7 @@ import static org.lwjgl.vulkan.VK10.*;
  * Date: 9/22/2025
  * Project: Orbiter <br>
  */
-public class PlaneParticleRenderSystem extends CommonRenderSystem
+public class FlipbookRenderSystem extends CommonRenderSystem
 {
     private static final int VERTEX_COUNT = 6;
 
@@ -54,15 +55,21 @@ public class PlaneParticleRenderSystem extends CommonRenderSystem
     private static TextureSampler atlasSampler()
     {
         Atlas atlas = FlareRegistries.ATLAS.get(Constants.ATLAS_PARTICLE);
-        return atlas.getSampler();
+        if (atlas instanceof SpriteAtlas spriteAtlas)
+        {
+            return spriteAtlas.getAnimationAtlas().getSampler();
+        }
+
+        throw new RuntimeException();
     }
 
-    public PlaneParticleRenderSystem(MasterRenderer masterRenderer, ParticleMaterial material, Client client)
+    public FlipbookRenderSystem(MasterRenderer masterRenderer, ParticleMaterial material, Client client)
     {
-        super(masterRenderer, material.planePipeline(),
+        super(masterRenderer, material.flipbookPipeline(),
             CommonBuilder
                 .create()
                 .entryImage(atlasSampler())
+                .entrySBO(OrbiterSBO.PARTICLE_FLIPBOOK_ENTRIES.sizeof(), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, VK_SHADER_STAGE_FRAGMENT_BIT)
                 .vertexBuffer(Vertex.POS3F_UV.sizeof(), World.MAX_PARTICLES * VERTEX_COUNT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
         );
         this.material = material;
@@ -72,17 +79,8 @@ public class PlaneParticleRenderSystem extends CommonRenderSystem
     @Override
     protected void render(FlightFrame flightFrame, FrameInfo frameInfo, MemoryStack stack)
     {
-        World world = client.getWorld();
-        if (world == null)
-            return;
-
         WorldRenderState currentRenderState = OrbiterApp.getInstance().currentRenderState;
-        if (currentRenderState == null || currentRenderState.particles.isEmpty())
-            return;
-
-        List<PlaneParticlePair> list = currentRenderState.particles.get(material);
-        if (list == null || list.isEmpty())
-            return;
+        List<FlipbookParticlePair> list = currentRenderState.flipbookParticles.get(material);
 
         float partial = OrbiterApp.getInstance().partialTicks;
 
@@ -93,25 +91,25 @@ public class PlaneParticleRenderSystem extends CommonRenderSystem
         Quaternionf rotation = new Quaternionf();
         Vector3f position = new Vector3f();
 
-        VkBuffer buffer = flightFrame.getBuffer(1);
+        VkBuffer buffer = flightFrame.getBuffer(2);
         int size = list.size() * vertex().sizeof() * VERTEX_COUNT;
         ByteBuffer byteBuffer = buffer
             .getMappedMemory()
             .getByteBuffer(0, size);
 
         int renderedCount = 0;
-        for (PlaneParticlePair snapshotPair : list)
+        for (FlipbookParticlePair snapshotPair : list)
         {
             position.set(0, 0, 0);
             rotation.identity();
 
-            PlaneParticleSnapshot previousSnapshot = snapshotPair.previous();
-            PlaneParticleSnapshot currentSnapshot = snapshotPair.current();
+            FlipbookParticleSnapshot previousSnapshot = snapshotPair.previous();
+            FlipbookParticleSnapshot currentSnapshot = snapshotPair.current();
 
             // Reset transform
             transform.identity();
 
-            updateTransformation(previousSnapshot, currentSnapshot, transform, rotation, frameInfo.camera(), position, partial);
+            PlaneParticleRenderSystem.updateTransformation(previousSnapshot, currentSnapshot, transform, rotation, frameInfo.camera(), position, partial);
 
             if (Settings.INTERPOL_PARTICLES.get())
             {
@@ -119,8 +117,7 @@ public class PlaneParticleRenderSystem extends CommonRenderSystem
                 DebugRender.addDebugObjectForFrame(DebugRender.lineCube(new Vector3f(currentSnapshot.x, currentSnapshot.y, currentSnapshot.z), 0.01f, DebugRender.GREEN));
             }
 
-            Vector4f uv = currentSnapshot.uv;
-            addParticlePair(byteBuffer, transform, uv);
+            addParticlePair(byteBuffer, transform);
             renderedCount++;
         }
 
@@ -129,12 +126,10 @@ public class PlaneParticleRenderSystem extends CommonRenderSystem
 
         vkCmdBindVertexBuffers(frameInfo.commandBuffer(), 0, vertexBuffers, offsets);
         vkCmdDraw(frameInfo.commandBuffer(), renderedCount * VERTEX_COUNT, 1, 0, 0);
-
         profiler.end();
-//        ProfilerPrint.sout(profiler, "Count", renderedCount);
     }
 
-    private void addParticlePair(ByteBuffer buffer, Matrix4f transform, Vector4f uv)
+    private void addParticlePair(ByteBuffer buffer, Matrix4f transform)
     {
         Vector3f tr = new Vector3f(VERT_TR).mulPosition(transform);
         Vector3f tl = new Vector3f(VERT_TL).mulPosition(transform);
@@ -142,51 +137,77 @@ public class PlaneParticleRenderSystem extends CommonRenderSystem
         Vector3f br = new Vector3f(VERT_BR).mulPosition(transform);
 
         buffer.putFloat(tr.x).putFloat(tr.y).putFloat(tr.z);
-        buffer.putFloat(uv.x).putFloat(uv.w);
-
         buffer.putFloat(tl.x).putFloat(tl.y).putFloat(tl.z);
-        buffer.putFloat(uv.x).putFloat(uv.y);
-
         buffer.putFloat(bl.x).putFloat(bl.y).putFloat(bl.z);
-        buffer.putFloat(uv.z).putFloat(uv.y);
-
         buffer.putFloat(bl.x).putFloat(bl.y).putFloat(bl.z);
-        buffer.putFloat(uv.z).putFloat(uv.y);
-
         buffer.putFloat(br.x).putFloat(br.y).putFloat(br.z);
-        buffer.putFloat(uv.z).putFloat(uv.w);
-
         buffer.putFloat(tr.x).putFloat(tr.y).putFloat(tr.z);
-        buffer.putFloat(uv.x).putFloat(uv.w);
-    }
-
-    public static void updateTransformation(ParticleSnapshot previousSnapshot, ParticleSnapshot currentSnapshot, Matrix4f transform, Quaternionf rotation, Camera camera, Vector3f position, float partialTicks)
-    {
-        position.set(currentSnapshot.rx, currentSnapshot.ry, currentSnapshot.rz);
-
-        BillboardUtil.makeBillboard(
-            transform,
-            position,
-            previousSnapshot.x - currentSnapshot.x,
-            previousSnapshot.y - currentSnapshot.y,
-            previousSnapshot.z - currentSnapshot.z,
-            camera,
-            currentSnapshot.billboard);
-
-        transform.setTranslation(position);
-        rotation.set(previousSnapshot.parentRotation);
-        rotation.slerp(currentSnapshot.parentRotation, partialTicks);
-        transform.rotate(rotation);
-        transform.rotateZ(lerp(previousSnapshot.rotation, currentSnapshot.rotation, partialTicks));
-        transform.scale(lerp(previousSnapshot.scaleX, currentSnapshot.scaleX, partialTicks), lerp(previousSnapshot.scaleY, currentSnapshot.scaleY, partialTicks), 1);
-    }
-
-    public static float lerp(float start, float end, float value)
-    {
-        return start + value * (end - start);
     }
 
     @Override
     protected void updateData(FlightFrame flightFrame, FrameInfo frameInfo)
-    {}
+    {
+        WorldRenderState currentRenderState = OrbiterApp.getInstance().currentRenderState;
+        List<FlipbookParticlePair> list = currentRenderState.flipbookParticles.get(material);
+
+        VkBuffer buffer = flightFrame.getBuffer(1);
+        int size = list.size() * OrbiterSBO.PARTICLE_FLIPBOOK_ENTRY.sizeof() * VERTEX_COUNT;
+        ByteBuffer byteBuffer = buffer
+            .getMappedMemory()
+            .getByteBuffer(0, size);
+
+        long now = System.currentTimeMillis();
+        float partial = OrbiterApp.getInstance().partialTicks;
+
+        for (FlipbookParticlePair flipbookParticlePair : list)
+        {
+            FlipbookParticleSnapshot snapshot = flipbookParticlePair.current();
+            int timeIndex = snapshot.framesTime.length - 1;
+            for (int i = 0; i < snapshot.framesTime.length; i++)
+            {
+                long time = snapshot.framesTime[i];
+                if (now < time)
+                {
+                    timeIndex = i;
+                    break;
+                }
+            }
+            int frameIndex, nextFrameIndex;
+            frameIndex = snapshot.framesIndex[timeIndex];
+            nextFrameIndex = snapshot.framesIndex[Math.min(timeIndex + 1, snapshot.framesIndex.length - 1)];
+
+            byteBuffer.putFloat(snapshot.uv.x).putFloat(snapshot.uv.y).putFloat(snapshot.uv.z).putFloat(snapshot.uv.w);
+            byteBuffer.putFloat(snapshot.singleSize.x).putFloat(snapshot.singleSize.y);
+            byteBuffer.putInt(frameIndex);
+            byteBuffer.putInt(nextFrameIndex);
+            byteBuffer.putFloat(partial);
+            byteBuffer.putInt(snapshot.flags);
+            byteBuffer.putFloat(snapshot.pixelSize.x).putFloat(snapshot.pixelSize.y);
+        }
+    }
+
+    @Override
+    protected boolean shouldRender()
+    {
+        World world = client.getWorld();
+        if (world == null)
+            return false;
+
+        WorldRenderState currentRenderState = OrbiterApp.getInstance().currentRenderState;
+        if (currentRenderState == null || currentRenderState.flipbookParticles.isEmpty())
+            return false;
+
+        List<FlipbookParticlePair> list = currentRenderState.flipbookParticles.get(material);
+        //noinspection RedundantIfStatement
+        if (list == null || list.isEmpty())
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public void cleanup()
+    {
+        super.cleanup();
+    }
 }

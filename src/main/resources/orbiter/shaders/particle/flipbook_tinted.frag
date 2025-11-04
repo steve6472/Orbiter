@@ -20,6 +20,7 @@ struct SingleData {
     float transition;// 4
     int flags;       // 4
     vec2 pixelScale; // 4 * 2
+    vec4 color;      // 4 * 4
 };
 
 layout(std140, set = 0, binding = 2) readonly buffer AnimDataPlural
@@ -88,6 +89,7 @@ void main()
         {
             outColor = mix(colFrom, colTo, data.transition);
         }
+        outColor *= data.color;
         if (outColor.a == 0) discard;
     } else
     {
@@ -98,6 +100,7 @@ void main()
         theUv.y = map(theUv.y, -indicies.y, scale.y - indicies.y, data.dimensions.y, data.dimensions.w);
 
         outColor = texture(texSampler, theUv);
+        outColor *= data.color;
         if (outColor.a == 0) discard;
     }
 }

@@ -4,10 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.Array;
 import org.joml.Vector3f;
 import steve6472.orbiter.rendering.ParticleMaterial;
-import steve6472.orbiter.rendering.snapshot.pairs.FlipbookParticlePair;
-import steve6472.orbiter.rendering.snapshot.pairs.RenderPair;
-import steve6472.orbiter.rendering.snapshot.pairs.PlaneParticlePair;
-import steve6472.orbiter.rendering.snapshot.pairs.PlaneTintedParticlePair;
+import steve6472.orbiter.rendering.snapshot.pairs.*;
 import steve6472.orbiter.rendering.snapshot.snapshots.ParticleSnapshot;
 
 import java.util.ArrayList;
@@ -29,10 +26,12 @@ public class WorldRenderState
     private final List<PlaneParticlePair> unsortedParticles = new ArrayList<>();
     private final List<PlaneTintedParticlePair> unsortedTintedParticles = new ArrayList<>();
     private final List<FlipbookParticlePair> unsortedFlipbookParticles = new ArrayList<>();
+    private final List<FlipbookTintedParticlePair> unsortedFlipbookTintedParticles = new ArrayList<>();
 
     public Map<ParticleMaterial, List<PlaneParticlePair>> particles = new HashMap<>();
     public Map<ParticleMaterial, List<PlaneTintedParticlePair>> tintedParticles = new HashMap<>();
     public Map<ParticleMaterial, List<FlipbookParticlePair>> flipbookParticles = new HashMap<>();
+    public Map<ParticleMaterial, List<FlipbookTintedParticlePair>> flipbookTintedParticles = new HashMap<>();
 
     public WorldRenderState(WorldSnapshot lastSnapshot, WorldSnapshot currentSnapshot)
     {
@@ -49,6 +48,7 @@ public class WorldRenderState
         createParticlePairs(lastSnapshot.particleSnapshots.planeParticles, currentSnapshot.particleSnapshots.planeParticles, PlaneParticlePair::new, unsortedParticles);
         createParticlePairs(lastSnapshot.particleSnapshots.planeTintedParticles, currentSnapshot.particleSnapshots.planeTintedParticles, PlaneTintedParticlePair::new, unsortedTintedParticles);
         createParticlePairs(lastSnapshot.particleSnapshots.flipbookParticles, currentSnapshot.particleSnapshots.flipbookParticles, FlipbookParticlePair::new, unsortedFlipbookParticles);
+        createParticlePairs(lastSnapshot.particleSnapshots.flipbookTintedParticles, currentSnapshot.particleSnapshots.flipbookTintedParticles, FlipbookTintedParticlePair::new, unsortedFlipbookTintedParticles);
 
         created = true;
     }
@@ -58,6 +58,7 @@ public class WorldRenderState
         prepareParticles(cameraPos, partialTicks, particles, unsortedParticles);
         prepareParticles(cameraPos, partialTicks, tintedParticles, unsortedTintedParticles);
         prepareParticles(cameraPos, partialTicks, flipbookParticles, unsortedFlipbookParticles);
+        prepareParticles(cameraPos, partialTicks, flipbookTintedParticles, unsortedFlipbookTintedParticles);
     }
 
     private <T extends ParticleSnapshot, P extends RenderPair<T>> void

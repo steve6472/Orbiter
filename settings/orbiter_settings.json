@@ -1,5 +1,6 @@
 {
   "orbiter:fov": 80.0,
+  "orbiter:interpol_particles": false,
   "orbiter:log_packets": false,
   "orbiter:master_volume": 0.025,
   "orbiter:multiplayer_beckend": "dedicated",

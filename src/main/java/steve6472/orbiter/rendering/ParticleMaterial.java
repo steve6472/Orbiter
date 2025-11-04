@@ -15,17 +15,17 @@ import java.util.Locale;
  * Date: 10/28/2025
  * Project: Orbiter <br>
  */
-public record ParticleMaterial(Settings renderSettings, PipelineConstructor pipeline)
+public record ParticleMaterial(Settings renderSettings, PipelineConstructor planePipeline, PipelineConstructor flipbookPipeline)
 {
     private static final List<ParticleMaterial> MATERIALS = new ArrayList<>(6);
 
-    public static final ParticleMaterial OPAQUE = new ParticleMaterial(new Settings(Transparency.OPAQUE, false, false), OrbiterPipelines.PLANE_ALPHA_TEST.apply(false));
-    public static final ParticleMaterial OPAQUE_TINT = new ParticleMaterial(new Settings(Transparency.OPAQUE, false, true), OrbiterPipelines.PLANE_ALPHA_TEST.apply(true));
-    public static final ParticleMaterial ALPHA_TEST = new ParticleMaterial(new Settings(Transparency.ALPHA_TEST, false, false), OrbiterPipelines.PLANE_ALPHA_TEST.apply(false));
-    public static final ParticleMaterial ALPHA_TEST_TINT = new ParticleMaterial(new Settings(Transparency.ALPHA_TEST, false, true), OrbiterPipelines.PLANE_ALPHA_TEST.apply(true));
+    public static final ParticleMaterial OPAQUE = new ParticleMaterial(new Settings(Transparency.OPAQUE, false, false), OrbiterPipelines.PLANE_ALPHA_TEST.apply(false), OrbiterPipelines.FLIPBOOK.apply(false));
+    public static final ParticleMaterial OPAQUE_TINT = new ParticleMaterial(new Settings(Transparency.OPAQUE, false, true), OrbiterPipelines.PLANE_ALPHA_TEST.apply(true), OrbiterPipelines.FLIPBOOK.apply(true));
+    public static final ParticleMaterial ALPHA_TEST = new ParticleMaterial(new Settings(Transparency.ALPHA_TEST, false, false), OrbiterPipelines.PLANE_ALPHA_TEST.apply(false), OrbiterPipelines.FLIPBOOK.apply(false));
+    public static final ParticleMaterial ALPHA_TEST_TINT = new ParticleMaterial(new Settings(Transparency.ALPHA_TEST, false, true), OrbiterPipelines.PLANE_ALPHA_TEST.apply(true), OrbiterPipelines.FLIPBOOK.apply(true));
 
-    public static final ParticleMaterial BLEND = new ParticleMaterial(new Settings(Transparency.BLEND, false, true), OrbiterPipelines.PLANE);
-    public static final ParticleMaterial ADDITIVE = new ParticleMaterial(new Settings(Transparency.ADDITIVE, false, true), OrbiterPipelines.PLANE_ADDITIVE);
+    public static final ParticleMaterial BLEND = new ParticleMaterial(new Settings(Transparency.BLEND, false, true), OrbiterPipelines.PLANE, null);
+    public static final ParticleMaterial ADDITIVE = new ParticleMaterial(new Settings(Transparency.ADDITIVE, false, true), OrbiterPipelines.PLANE_ADDITIVE, null);
 
     public ParticleMaterial
     {

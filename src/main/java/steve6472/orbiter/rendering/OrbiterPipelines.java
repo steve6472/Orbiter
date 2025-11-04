@@ -312,11 +312,11 @@ public interface OrbiterPipelines
      */
 
 
-    PipelineConstructor FLIPBOOK = (device, extent, renderPass, setLayouts) -> PipelineBuilder
+    Function<Boolean, PipelineConstructor> FLIPBOOK = (tinted) -> (device, extent, renderPass, setLayouts) -> PipelineBuilder
         .create(device)
         .shaders()
             .addShader(ShaderSPIRVUtils.ShaderKind.VERTEX_SHADER, "orbiter/shaders/particle/flipbook.vert", VK_SHADER_STAGE_VERTEX_BIT)
-            .addShader(ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER, "orbiter/shaders/particle/flipbook.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
+            .addShader(ShaderSPIRVUtils.ShaderKind.FRAGMENT_SHADER, "orbiter/shaders/particle/flipbook" + (tinted ? "_tinted" : "") + ".frag", VK_SHADER_STAGE_FRAGMENT_BIT)
             .done()
         .vertexInputInfo(OrbiterVertex.POS3F)
         .inputAssembly(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST, false)

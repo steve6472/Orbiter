@@ -31,6 +31,8 @@ public class Settings extends SettingRegister
     public static final BoolSetting LOG_PACKETS = registerBool("log_packets", false);
     public static final BoolSetting VISUAL_SOUNDS = registerBool("visual_sounds", false);
 
+    public static final BoolSetting INTERPOL_PARTICLES = registerBool("interpol_particles", false);
+
     public static final BoolSetting ENABLE_CHARACTERS = registerBool("physics_render_characters", false);
     public static final BoolSetting ENABLE_RIGIDBODY = registerBool("physics_render_rigidbody", false);
     public static final BoolSetting ENABLE_GHOSTS = registerBool("physics_render_ghosts", false);

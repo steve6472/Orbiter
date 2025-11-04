@@ -4,6 +4,7 @@
 layout (location = 0) in vec3 inPosition;
 
 layout (location = 0) out vec2 uv;
+layout (location = 1) out uint index;
 
 layout(set = 0, binding = 0) uniform GlobalUbo {
     mat4 projection;
@@ -22,4 +23,5 @@ const vec2 uvCoords[6] = vec2[](
 void main() {
     gl_Position = camera.projection * camera.view * vec4(inPosition, 1.0);
     uv = uvCoords[gl_VertexIndex % 6];
+    index = gl_VertexIndex / 6;
 }

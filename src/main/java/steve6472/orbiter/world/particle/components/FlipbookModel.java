@@ -29,20 +29,23 @@ import java.util.Optional;
 public class FlipbookModel implements ParticleComponent
 {
     private SpriteEntry spriteEntry;
-    private int[] framesIndex;
-    private long[] framesTime;
     private boolean stretchToMaxAge;
 
+    public int[] framesIndex;
+    public long[] framesTime;
+
     // For struct
-    private Vector4f uv;
-    private int flags;
-    private Vector2f singleSize;
-    private Vector2f pixelSize;
+    public Vector4f uv;
+    public int flags;
+    public Vector2f singleSize;
+    public Vector2f pixelSize;
 
     // millisecond resolution
     public long start = -1, end = -1;
     int totalFrames;
     int frameIndex;
+
+    public long creationTimestamp;
 
     // TODO: make this safe
     public void setup(Key texture, boolean stretchToMaxAge)
@@ -71,6 +74,8 @@ public class FlipbookModel implements ParticleComponent
 
     public void finishSetup(double maxAge)
     {
+        creationTimestamp = System.currentTimeMillis();
+
         long totalLoopTime = countTotalMilli(spriteEntry);
         Optional<SpriteAnimation> animationOpt = spriteEntry.data().animation();
         if (animationOpt.isEmpty())
@@ -87,7 +92,7 @@ public class FlipbookModel implements ParticleComponent
             for (int i = 0; i < totalFrames; i++)
             {
                 framesIndex[i] = i;
-                framesTime[i] = scaleFrame(totalLoopTime / totalFrames, totalLoopTime, maxAge);
+                addFramesTime(i, scaleFrame(totalLoopTime / totalFrames, totalLoopTime, maxAge));
             }
         } else
         {
@@ -96,16 +101,21 @@ public class FlipbookModel implements ParticleComponent
             {
                 SpriteAnimation.Frame frame = frames.get(i);
                 Optional<Long> time = frame.time();
-                if (time.isPresent())
-                {
-                    framesIndex[i] = frame.index();
-                    framesTime[i] = scaleFrame(time.get(), totalLoopTime, maxAge);
-                } else
-                {
-                    framesIndex[i] = frame.index();
-                    framesTime[i] = scaleFrame(animation.frametime(), totalLoopTime, maxAge);
-                }
+                long l = time.orElseGet(animation::frametime);
+                framesIndex[i] = frame.index();
+                addFramesTime(i, scaleFrame(l, totalLoopTime, maxAge));
             }
+        }
+    }
+
+    private void addFramesTime(int index, long time)
+    {
+        if (index == 0)
+        {
+            framesTime[index] = creationTimestamp + time;
+        } else
+        {
+            framesTime[index] = framesTime[index - 1] + time;
         }
     }
 

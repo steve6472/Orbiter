@@ -6,7 +6,6 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.util.Profiler;
-import steve6472.flare.Camera;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.VkBuffer;
 import steve6472.flare.assets.TextureSampler;
@@ -16,16 +15,16 @@ import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.render.common.CommonBuilder;
 import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
+import steve6472.flare.render.debug.DebugRender;
 import steve6472.flare.struct.def.Vertex;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
-import steve6472.orbiter.rendering.BillboardUtil;
 import steve6472.orbiter.rendering.ParticleMaterial;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.rendering.snapshot.pairs.PlaneTintedParticlePair;
-import steve6472.orbiter.rendering.snapshot.snapshots.ParticleSnapshot;
 import steve6472.orbiter.rendering.snapshot.snapshots.PlaneTintedParticleSnapshot;
+import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.world.World;
 
 import java.nio.ByteBuffer;
@@ -60,7 +59,7 @@ public class PlaneTintedParticleRenderSystem extends CommonRenderSystem
 
     public PlaneTintedParticleRenderSystem(MasterRenderer masterRenderer, ParticleMaterial material, Client client)
     {
-        super(masterRenderer, material.pipeline(),
+        super(masterRenderer, material.planePipeline(),
             CommonBuilder
                 .create()
                 .entryImage(atlasSampler())
@@ -114,7 +113,13 @@ public class PlaneTintedParticleRenderSystem extends CommonRenderSystem
             transform.identity();
             color.set(1, 1, 1, 1);
 
-            updateTransformation(previousSnapshot, currentSnapshot, transform, rotation, frameInfo.camera(), position, partial);
+            PlaneParticleRenderSystem.updateTransformation(previousSnapshot, currentSnapshot, transform, rotation, frameInfo.camera(), position, partial);
+
+            if (Settings.INTERPOL_PARTICLES.get())
+            {
+                DebugRender.addDebugObjectForFrame(DebugRender.lineCube(new Vector3f(previousSnapshot.x, previousSnapshot.y, previousSnapshot.z), 0.01f, DebugRender.RED));
+                DebugRender.addDebugObjectForFrame(DebugRender.lineCube(new Vector3f(currentSnapshot.x, currentSnapshot.y, currentSnapshot.z), 0.01f, DebugRender.GREEN));
+            }
 
             // TODO: interpolate properly
             color.set(currentSnapshot.r, currentSnapshot.g, currentSnapshot.b, currentSnapshot.a);
@@ -164,32 +169,6 @@ public class PlaneTintedParticleRenderSystem extends CommonRenderSystem
         buffer.putFloat(tr.x).putFloat(tr.y).putFloat(tr.z);
         buffer.putFloat(color.x).putFloat(color.y).putFloat(color.z).putFloat(color.w);
         buffer.putFloat(uv.x).putFloat(uv.w);
-    }
-
-    private void updateTransformation(ParticleSnapshot previousSnapshot, ParticleSnapshot currentSnapshot, Matrix4f transform, Quaternionf rotation, Camera camera, Vector3f position, float partialTicks)
-    {
-        position.set(currentSnapshot.rx, currentSnapshot.ry, currentSnapshot.rz);
-
-        BillboardUtil.makeBillboard(
-            transform,
-            position,
-            previousSnapshot.x - currentSnapshot.x,
-            previousSnapshot.y - currentSnapshot.y,
-            previousSnapshot.z - currentSnapshot.z,
-            camera,
-            currentSnapshot.billboard);
-
-        transform.setTranslation(position);
-        rotation.set(previousSnapshot.parentRotation);
-        rotation.slerp(currentSnapshot.parentRotation, partialTicks);
-        transform.rotate(rotation);
-        transform.rotateZ(lerp(previousSnapshot.rotation, currentSnapshot.rotation, partialTicks));
-        transform.scale(lerp(previousSnapshot.scaleX, currentSnapshot.scaleX, partialTicks), lerp(previousSnapshot.scaleY, currentSnapshot.scaleY, partialTicks), 1);
-    }
-
-    public static float lerp(float start, float end, float value)
-    {
-        return start + value * (end - start);
     }
 
     @Override

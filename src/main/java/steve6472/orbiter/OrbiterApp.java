@@ -32,6 +32,8 @@ import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
+import steve6472.orbiter.rendering.snapshot.system.FlipbookRenderSystem;
+import steve6472.orbiter.rendering.snapshot.system.FlipbookTintedRenderSystem;
 import steve6472.orbiter.rendering.snapshot.system.PlaneParticleRenderSystem;
 import steve6472.orbiter.rendering.*;
 import steve6472.orbiter.rendering.snapshot.system.PlaneTintedParticleRenderSystem;
@@ -171,12 +173,12 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new PhysicsOutlineRenderSystem(masterRenderer(), false, client));
         addRenderSystem(new PhysicsOutlineRenderSystem(masterRenderer(), true, client));
 
-        addRenderSystem(new FlipbookRenderSystem(masterRenderer(), OrbiterPipelines.FLIPBOOK, client));
-
         addRenderSystem(new PlaneParticleRenderSystem(masterRenderer(), ParticleMaterial.OPAQUE, client));
         addRenderSystem(new PlaneTintedParticleRenderSystem(masterRenderer(), ParticleMaterial.OPAQUE_TINT, client));
         addRenderSystem(new PlaneParticleRenderSystem(masterRenderer(), ParticleMaterial.ALPHA_TEST, client));
+        addRenderSystem(new FlipbookRenderSystem(masterRenderer(), ParticleMaterial.ALPHA_TEST, client));
         addRenderSystem(new PlaneTintedParticleRenderSystem(masterRenderer(), ParticleMaterial.ALPHA_TEST_TINT, client));
+        addRenderSystem(new FlipbookTintedRenderSystem(masterRenderer(), ParticleMaterial.ALPHA_TEST_TINT, client));
         addRenderSystem(new PlaneTintedParticleRenderSystem(masterRenderer(), ParticleMaterial.BLEND, client));
 
         // Additive
