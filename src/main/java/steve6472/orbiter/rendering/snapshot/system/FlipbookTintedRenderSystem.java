@@ -23,11 +23,9 @@ import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.rendering.OrbiterSBO;
 import steve6472.orbiter.rendering.ParticleMaterial;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
-import steve6472.orbiter.rendering.snapshot.pairs.FlipbookParticlePair;
 import steve6472.orbiter.rendering.snapshot.pairs.FlipbookTintedParticlePair;
 import steve6472.orbiter.rendering.snapshot.snapshots.FlipbookTintedParticleSnapshot;
 import steve6472.orbiter.settings.Settings;
-import steve6472.orbiter.util.ProfilerPrint;
 import steve6472.orbiter.world.World;
 
 import java.nio.ByteBuffer;

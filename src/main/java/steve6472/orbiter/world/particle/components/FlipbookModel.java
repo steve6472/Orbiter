@@ -119,72 +119,9 @@ public class FlipbookModel implements ParticleComponent
         }
     }
 
-    public Struct toStruct(long now)
-    {
-        return OrbiterPush.FLIPBOOK_ANIM_DATA.create(
-            uv,
-
-            singleSize,
-            getSpriteIndex(),
-            getNextFrameIndex(),
-
-            calculateProgress(now),
-            flags,
-            pixelSize
-        );
-    }
-
     /*
      * Animation ticker
      */
-
-    public void tick(long now)
-    {
-        if (frameIndex + 1 >= totalFrames)
-            return;
-
-        float progress = calculateProgress(now);
-        if (progress > 1.0)
-        {
-            increaseFrameIndex(now);
-        }
-    }
-
-    public void startAnimAfterReset(long now)
-    {
-        if (start == -1 && end == -1)
-        {
-            start = now;
-            end = now + framesTime[frameIndex];
-        }
-    }
-
-    private float calculateProgress(long now)
-    {
-        return (float) (now - start) / (end - start);
-    }
-
-    private void increaseFrameIndex(long now)
-    {
-        frameIndex++;
-
-        start = now;
-        end = now + framesTime[frameIndex];
-    }
-
-    private int getSpriteIndex()
-    {
-        if (frameIndex >= totalFrames - 1)
-            return framesIndex[totalFrames - 1];
-        return framesIndex[frameIndex];
-    }
-
-    private int getNextFrameIndex()
-    {
-        if (frameIndex + 1> totalFrames - 1)
-            return framesIndex[totalFrames - 1];
-        return framesIndex[frameIndex + 1];
-    }
 
     private long countTotalMilli(SpriteEntry spriteEntry)
     {
@@ -207,7 +144,7 @@ public class FlipbookModel implements ParticleComponent
         return totalTime[0];
     }
 
-    public long scaleFrame(long frameMillis, long totalFrameMillis, double totalSeconds)
+    private long scaleFrame(long frameMillis, long totalFrameMillis, double totalSeconds)
     {
         if (!stretchToMaxAge)
             return frameMillis;

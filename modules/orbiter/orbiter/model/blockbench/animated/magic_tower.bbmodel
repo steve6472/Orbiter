@@ -971,7 +971,14 @@
                             "channel": "particle",
                             "data_points": [
                                 {
-                                    "effect": "orbiter:magic_spark",
+                                    "effect": "orbiter:magic_tower/type_1",
+                                    "locator": "locator",
+                                    "script": "",
+                                    "file": "",
+                                    "bind_to_actor": true
+                                },
+                                {
+                                    "effect": "orbiter:magic_tower/type_2",
                                     "locator": "locator",
                                     "script": "",
                                     "file": "",

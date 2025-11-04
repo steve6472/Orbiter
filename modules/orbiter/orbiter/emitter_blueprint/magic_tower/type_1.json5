@@ -1,0 +1,21 @@
+{
+    environment: {
+    },
+    lifetime: {
+        lifetime_type: "looping",
+        active_time: 0.3,
+        sleep_time: 0.1
+    },
+    rate: {
+        rate_type: "steady",
+        spawn_rate: 15,
+        max_count: 128
+    },
+    shape: {
+        shape_type: "sphere",
+        radius: 0.5,
+        surface_only: true
+    },
+
+    particle: "orbiter:magic_tower/type_1"
+}
