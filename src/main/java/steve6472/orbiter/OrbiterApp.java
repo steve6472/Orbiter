@@ -32,11 +32,8 @@ import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
-import steve6472.orbiter.rendering.snapshot.system.FlipbookRenderSystem;
-import steve6472.orbiter.rendering.snapshot.system.FlipbookTintedRenderSystem;
-import steve6472.orbiter.rendering.snapshot.system.PlaneParticleRenderSystem;
+import steve6472.orbiter.rendering.snapshot.system.*;
 import steve6472.orbiter.rendering.*;
-import steve6472.orbiter.rendering.snapshot.system.PlaneTintedParticleRenderSystem;
 import steve6472.orbiter.scheduler.Scheduler;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
@@ -167,7 +164,7 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new UILineRender(masterRenderer(), new DebugWidgetUILines()));
         addRenderSystem(new UILineRender(masterRenderer(), new DebugUILines()));
 
-        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticWorldRender(client), Pipelines.BLOCKBENCH_STATIC));
+        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticWorldRenderSystem(client), Pipelines.BLOCKBENCH_STATIC));
         addRenderSystem(new AnimatedModelRenderSystem(masterRenderer(), Pipelines.SKIN, client));
 
         addRenderSystem(new PhysicsOutlineRenderSystem(masterRenderer(), false, client));
@@ -242,7 +239,7 @@ public class OrbiterApp extends FlareApp
         if (currentRenderState != null)
         {
             currentRenderState.createRenderPairs();
-            currentRenderState.prepareParticles(frameInfo.camera().viewPosition, partialTicks);
+            currentRenderState.prepare(frameInfo.camera().viewPosition, partialTicks);
         }
 
         client.render(frameInfo, memoryStack);

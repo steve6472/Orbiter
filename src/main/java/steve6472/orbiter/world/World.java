@@ -201,10 +201,11 @@ public class World implements EntityControl, EntityModify, WorldSounds
         particleSystems.runTickSystems(frameTime);
     }
 
-    public WorldSnapshot createSnapshot(SnapshotPools pools)
+    public WorldSnapshot createSnapshot(SnapshotPools pools, UUID clientUUID)
     {
         WorldSnapshot snapshot = new WorldSnapshot();
         snapshot.particleSnapshots.createSnapshot(pools, particleEngine);
+        snapshot.modelSnapshots.createSnapshot(pools, ecsEngine, this, clientUUID);
 
         return snapshot;
     }

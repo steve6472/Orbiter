@@ -1,9 +1,6 @@
 package steve6472.orbiter.rendering.snapshot;
 
-import steve6472.orbiter.rendering.snapshot.pools.FlipbookParticlePool;
-import steve6472.orbiter.rendering.snapshot.pools.FlipbookTintedParticlePool;
-import steve6472.orbiter.rendering.snapshot.pools.PlaneParticlePool;
-import steve6472.orbiter.rendering.snapshot.pools.PlaneTintedParticlePool;
+import steve6472.orbiter.rendering.snapshot.pools.*;
 import steve6472.orbiter.world.World;
 
 /**
@@ -14,9 +11,12 @@ import steve6472.orbiter.world.World;
 public class SnapshotPools
 {
     private static final int INITIAL_CAPACITY = 64;
+    private static final int MAX_STATIC = 1024;
 
     public final PlaneParticlePool planeparticlePool = new PlaneParticlePool(INITIAL_CAPACITY, World.MAX_PARTICLES);
     public final PlaneTintedParticlePool planeTintedParticlePool = new PlaneTintedParticlePool(INITIAL_CAPACITY, World.MAX_PARTICLES);
     public final FlipbookParticlePool flipbookParticlePool = new FlipbookParticlePool(INITIAL_CAPACITY, World.MAX_PARTICLES);
     public final FlipbookTintedParticlePool flipbookTintedParticlePool = new FlipbookTintedParticlePool(INITIAL_CAPACITY, World.MAX_PARTICLES);
+
+    public final StaticModelPool staticModelPool = new StaticModelPool(INITIAL_CAPACITY, MAX_STATIC);
 }

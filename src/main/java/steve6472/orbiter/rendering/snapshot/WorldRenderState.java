@@ -6,11 +6,9 @@ import org.joml.Vector3f;
 import steve6472.orbiter.rendering.ParticleMaterial;
 import steve6472.orbiter.rendering.snapshot.pairs.*;
 import steve6472.orbiter.rendering.snapshot.snapshots.ParticleSnapshot;
+import steve6472.orbiter.rendering.snapshot.snapshots.UUIDSnapshot;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 
 /**
@@ -28,10 +26,14 @@ public class WorldRenderState
     private final List<FlipbookParticlePair> unsortedFlipbookParticles = new ArrayList<>();
     private final List<FlipbookTintedParticlePair> unsortedFlipbookTintedParticles = new ArrayList<>();
 
+    // This one is sorted directly in the render system due to the need for the transform array
+    public final List<StaticModelPair> unsortedStaticModels = new ArrayList<>();
+
     public Map<ParticleMaterial, List<PlaneParticlePair>> particles = new HashMap<>();
     public Map<ParticleMaterial, List<PlaneTintedParticlePair>> tintedParticles = new HashMap<>();
     public Map<ParticleMaterial, List<FlipbookParticlePair>> flipbookParticles = new HashMap<>();
     public Map<ParticleMaterial, List<FlipbookTintedParticlePair>> flipbookTintedParticles = new HashMap<>();
+    public List<StaticModelPair> staticModels = new ArrayList<>();
 
     public WorldRenderState(WorldSnapshot lastSnapshot, WorldSnapshot currentSnapshot)
     {
@@ -49,8 +51,14 @@ public class WorldRenderState
         createParticlePairs(lastSnapshot.particleSnapshots.planeTintedParticles, currentSnapshot.particleSnapshots.planeTintedParticles, PlaneTintedParticlePair::new, unsortedTintedParticles);
         createParticlePairs(lastSnapshot.particleSnapshots.flipbookParticles, currentSnapshot.particleSnapshots.flipbookParticles, FlipbookParticlePair::new, unsortedFlipbookParticles);
         createParticlePairs(lastSnapshot.particleSnapshots.flipbookTintedParticles, currentSnapshot.particleSnapshots.flipbookTintedParticles, FlipbookTintedParticlePair::new, unsortedFlipbookTintedParticles);
+        createUUIDPairs(lastSnapshot.modelSnapshots.staticEntities, currentSnapshot.modelSnapshots.staticEntities, StaticModelPair::new, unsortedStaticModels);
 
         created = true;
+    }
+
+    public void prepare(Vector3f viewPosition, float partialTicks)
+    {
+        prepareParticles(viewPosition, partialTicks);
     }
 
     public void prepareParticles(Vector3f cameraPos, float partialTicks)
@@ -100,6 +108,29 @@ public class WorldRenderState
                 return Float.compare(d2, d1);
             });
         });
+    }
+
+    protected <T extends UUIDSnapshot, P extends RenderPair<T>> void
+    createUUIDPairs(Array<? extends UUIDSnapshot> lastSnapshots, Array<? extends UUIDSnapshot> currentSnapshots, BiFunction<T, T, P> pairConstructor, List<P> store)
+    {
+        // Create map for speed
+        Map<UUID, UUIDSnapshot> last = new HashMap<>(lastSnapshots.size);
+        for (UUIDSnapshot particle : lastSnapshots)
+        {
+            last.put(particle.uuid(), particle);
+        }
+
+        // Iterate over current particles
+        for (UUIDSnapshot currentSnapshot : currentSnapshots)
+        {
+            UUIDSnapshot lastSnapshot = last.remove(currentSnapshot.uuid());
+            if (lastSnapshot == null)
+                lastSnapshot = currentSnapshot;
+
+            // Create pair for rendering
+            //noinspection unchecked
+            store.add(pairConstructor.apply((T) lastSnapshot, (T) currentSnapshot));
+        }
     }
 
     protected <T extends ParticleSnapshot, P extends RenderPair<T>> void

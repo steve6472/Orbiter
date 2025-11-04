@@ -138,7 +138,7 @@ public class Client
         WorldRenderState previousRenderState = worldRenderState.get();
 
         WorldSnapshot previousSnapshot;
-        WorldSnapshot currentSnapshot = world.createSnapshot(pools);
+        WorldSnapshot currentSnapshot = world.createSnapshot(pools, clientUUID);
 
         // First frame of the world - use current snapshot as previous as well.
         if (previousRenderState == null)

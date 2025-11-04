@@ -10,6 +10,7 @@ import steve6472.core.network.BufferCodecs;
 import steve6472.core.registry.Key;
 import steve6472.flare.assets.model.Model;
 import steve6472.flare.registry.FlareRegistries;
+import steve6472.orbiter.Constants;
 
 /**
  * Created by steve6472
@@ -19,7 +20,7 @@ import steve6472.flare.registry.FlareRegistries;
 public class IndexModel implements Component, Pool.Poolable
 {
     public static final Codec<IndexModel> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-        Key.CODEC.fieldOf("key").forGetter(e -> e.model().key())
+        Constants.KEY_CODEC.fieldOf("key").forGetter(e -> e.model().key())
     ).apply(instance, key -> new IndexModel(FlareRegistries.STATIC_MODEL.get(key))));
 
     public static final BufferCodec<ByteBuf, IndexModel> BUFFER_CODEC = BufferCodec.of(

@@ -1,14 +1,10 @@
 package steve6472.orbiter.rendering;
 
-import com.badlogic.ashley.core.Entity;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import steve6472.flare.Camera;
 import steve6472.flare.FlareConstants;
-import steve6472.orbiter.world.particle.ParticleComponents;
-import steve6472.orbiter.world.particle.components.ParticleBillboard;
-import steve6472.orbiter.world.particle.components.Velocity;
 
 public class BillboardUtil
 {
@@ -48,17 +44,5 @@ public class BillboardUtil
             }
             default -> throw new IllegalArgumentException("Unsupported billboard mode: " + billboard);
         }
-
-        // Apply translation
-        // TODO: remove once flipbook is snapshottable
-        mat.m30(position.x);
-        mat.m31(position.y);
-        mat.m32(position.z);
-    }
-
-    public static void applySpin(Matrix4f billboardMat, float angleRadians)
-    {
-        Matrix4f spin = new Matrix4f().rotate(angleRadians, 0, 0, 1);
-        billboardMat.mul(spin);
     }
 }
