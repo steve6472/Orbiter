@@ -33,6 +33,11 @@ public class Scheduler
 
     private final List<DelayTask> tasks = new ArrayList<>(64);
 
+    public static void clearAllTasks()
+    {
+        instance.tasks.clear();
+    }
+
     private static class DelayTask
     {
         private final ScheduledTask task;

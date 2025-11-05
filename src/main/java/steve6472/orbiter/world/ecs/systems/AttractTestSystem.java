@@ -96,7 +96,7 @@ public class AttractTestSystem extends EntitySystem
             bodyInterface.activateBody(body.getId());
             body.addForce(force);
         }
-
-        DebugRender.addDebugObjectForMs(DebugRender.lineSphere(0.5f, 3, DebugRender.LIGHT_GRAY), 15, new Matrix4f().translate(add));
+        // TODO: concurrency issue
+//        DebugRender.addDebugObjectForMs(DebugRender.lineSphere(0.5f, 3, DebugRender.LIGHT_GRAY), 15, new Matrix4f().translate(add));
     }
 }

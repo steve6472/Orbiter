@@ -13,6 +13,8 @@ import steve6472.orbiter.player.Player;
 import steve6472.orbiter.rendering.snapshot.SnapshotPools;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.rendering.snapshot.WorldSnapshot;
+import steve6472.orbiter.tracy.IProfiler;
+import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.util.PhysicsRayTrace;
 import steve6472.orbiter.world.World;
 
@@ -37,6 +39,7 @@ public class Client
 
     private final SnapshotPools pools = new SnapshotPools();
     public AtomicReference<WorldRenderState> worldRenderState = new AtomicReference<>();
+    private WorldSnapshot freeableSnapshot;
 
     public Client()
     {
@@ -49,14 +52,20 @@ public class Client
 
     public void handleInput(UserInput userInput, VrInput vrInput, float frameTime)
     {
+        IProfiler profiler = OrbiterProfiler.frame();
+        profiler.push("player input");
         if (world != null && player != null)
             player.handleInput(userInput, vrInput, camera, frameTime);
 
+        profiler.popPush("raytrace update look at");
+
         rayTrace.updateLookAt(camera, PCPlayer.REACH);
+        profiler.popPush("soundmaster");
 
         soundMaster.setListenerOrientation(camera.getViewMatrix());
         Vector3f eyePos = player.getEyePos();
         soundMaster.setListenerPosition(eyePos.x, eyePos.y, eyePos.z);
+        profiler.pop();
     }
 
     public void render(FrameInfo frameInfo, MemoryStack memoryStack)
@@ -79,6 +88,7 @@ public class Client
         {
             this.player = new PCPlayer(clientUUID, this);
             world.ecsEngine().addEntity(player.ecsEntity());
+            world.startTicking();
         } else
         {
             this.player = null;
@@ -122,16 +132,14 @@ public class Client
         return soundMaster;
     }
 
-    public void tickClient(float frameTime)
-    {
-        if (world != null)
-        {
-            world.tick(frameTime);
-        }
-    }
-
     public void snapshotWorldState()
     {
+        if (freeableSnapshot != null)
+        {
+            freeableSnapshot.free(pools);
+            freeableSnapshot = null;
+        }
+
         if (world == null)
             return;
 
@@ -147,10 +155,12 @@ public class Client
         } else
         {
             // Subsequent frames of the world - use previous snapshot
-            previousRenderState.lastSnapshot.free(pools);
+            freeableSnapshot = previousRenderState.lastSnapshot;
             previousSnapshot = previousRenderState.currentSnapshot;
         }
 
-        worldRenderState.set(new WorldRenderState(previousSnapshot, currentSnapshot));
+        WorldRenderState renderState = new WorldRenderState(previousSnapshot, currentSnapshot);
+        renderState.lastSnapshotTimeNano = System.nanoTime();
+        worldRenderState.set(renderState);
     }
 }

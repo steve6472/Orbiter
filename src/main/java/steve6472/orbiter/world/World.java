@@ -13,6 +13,7 @@ import com.github.stephengold.joltjni.readonly.ConstShape;
 import com.github.stephengold.joltjni.readonly.Vec3Arg;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import steve6472.core.log.Log;
 import steve6472.core.util.Profiler;
 import steve6472.flare.MasterRenderer;
 import steve6472.orbiter.Constants;
@@ -26,12 +27,21 @@ import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
 import steve6472.orbiter.rendering.snapshot.SnapshotPools;
 import steve6472.orbiter.rendering.snapshot.WorldSnapshot;
+import steve6472.orbiter.scheduler.Scheduler;
+import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.tracy.IProfiler;
+import steve6472.orbiter.tracy.OrbiterProfiler;
+import steve6472.orbiter.util.ProfilerPrint;
+import steve6472.orbiter.world.collision.ShapeExp;
 
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 import static steve6472.flare.render.debug.DebugRender.*;
 
@@ -42,23 +52,28 @@ import static steve6472.flare.render.debug.DebugRender.*;
  */
 public class World implements EntityControl, EntityModify, WorldSounds
 {
+    private static final Logger LOGGER = Log.getLogger(World.class);
     // TODO: should be either in constants or configurable (in menu only)
     public static final int MAX_PARTICLES = 32767;
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(2);
-
     private final PhysicsSystem physics;
-    private final TempAllocator tempAllocator;
-    private final JobSystem jobSystem;
+    final TempAllocator tempAllocator;
+    final JobSystem jobSystem;
     private final JoltBodies joltBodies;
-    private final Profiler physicsProfiler;
+    final Profiler physicsProfiler, tickProfiler;
     private final BodyManagerDrawSettings settings = new BodyManagerDrawSettings();
 
     private final Engine ecsEngine;
     private final PooledEngine particleEngine;
     private final WorldSystems systems;
-    private final ParticleSystems particleSystems;
+    final ParticleSystems particleSystems;
     private final List<Source> soundSources;
+
+    private final ScheduledExecutorService tickExecutor;
+    public boolean shouldStopTicking = false;
+    private float timeToNextTick = 0;
+    public float partialTicks = 0;
+//    public final ExecutorService tickExecutor;
 
     private static final boolean RENDER_X_WALL = false;
 
@@ -71,12 +86,46 @@ public class World implements EntityControl, EntityModify, WorldSounds
         jobSystem = new JobSystemThreadPool(Jolt.cMaxPhysicsJobs, Jolt.cMaxPhysicsBarriers, numWorkerThreads);
         joltBodies = new JoltBodies();
         physicsProfiler = new Profiler(60);
+        tickProfiler = new Profiler(60);
 
         ecsEngine = new Engine();
         particleEngine = new PooledEngine(MAX_PARTICLES >> 4, MAX_PARTICLES, MAX_PARTICLES >> 4, MAX_PARTICLES);
         systems = new WorldSystems(this, ecsEngine);
         particleSystems = new ParticleSystems(this, particleEngine);
         soundSources = new ArrayList<>(256);
+
+        tickExecutor = Executors.newSingleThreadScheduledExecutor();
+    }
+
+    public void startTicking()
+    {
+        tickExecutor.scheduleAtFixedRate(() ->
+        {
+            try
+            {
+                IProfiler profiler = OrbiterProfiler.world();
+                profiler.start();
+                tickProfiler.start();
+                profiler.push("tick schedulers");
+                //noinspection deprecation
+                Scheduler.instance().tick();
+                profiler.popPush("main tick");
+
+                tick(1f / Constants.TICKS_IN_SECOND);
+
+                profiler.popPush("snapshot world state");
+                OrbiterApp.getInstance().getClient().snapshotWorldState();
+                profiler.pop();
+
+                tickProfiler.end();
+                profiler.end();
+            } catch (Exception exception)
+            {
+                LOGGER.severe("Exception thrown while ticking");
+                exception.printStackTrace();
+                throw new RuntimeException(exception);
+            }
+        }, 0, (long) (1000 / Constants.TICKS_IN_SECOND), TimeUnit.MILLISECONDS);
     }
 
     private PhysicsSystem createPhysicsSystem()
@@ -159,46 +208,46 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
     public void tick(float frameTime)
     {
+        IProfiler profiler = OrbiterProfiler.world();
+        if (Keybinds.TEST_SWAP.isActive() && OrbiterApp.getInstance().isMouseGrabbed())
+        {
+            systems.sequential = !systems.sequential;
+            CONTROL_LOGGER.info("Sequential: " + systems.sequential);
+        }
+
+        profiler.push("sound");
         tickSound();
-        Player player = OrbiterApp.getInstance().getClient().player();
+        profiler.popPush("hold system pre physics");
 
         float timePerStep = 1f / Constants.TICKS_IN_SECOND; // in seconds
         int collisionSteps = 1;
         systems.holdSystem.prePhysicsTickUpdate(timePerStep);
 
-//        var a = executor.submit(() -> {
-            physicsProfiler.start();
-            int errors = physics.update(timePerStep, collisionSteps, tempAllocator, jobSystem);
-            assert errors == EPhysicsUpdateError.None : errors;
-            physicsProfiler.end();
-//        });
-//
-//        var b = executor.submit(() -> {
-//        });
-//
-//        try
-//        {
-//            a.get();
-//            b.get();
-//        } catch (InterruptedException | ExecutionException e)
-//        {
-//            throw new RuntimeException(e);
-//        }
+        profiler.popPush("physics");
 
-//        System.out.println("Bodies: %s, Last: %.4fms (%.4fms left) Avg: %.4fms Max: %.4fms".formatted(
-//            physics.getNumBodies(),
-//            physicsProfiler.lastMilli(),
-//            ((1f / 60f) * 1e3) - physicsProfiler.lastMilli(),
-//            physicsProfiler.averageMilli(),
-//            physicsProfiler.maxEverMilli()
-//        ));
+        physicsProfiler.start();
+        int errors = physics.update(timePerStep, collisionSteps, tempAllocator, jobSystem);
+        assert errors == EPhysicsUpdateError.None : errors;
+        physicsProfiler.end();
 
+        profiler.popPush("player post sim");
+
+//        ProfilerPrint.sout(physicsProfiler, "Bodies", physics.getNumBodies());
+
+        Player player = OrbiterApp.getInstance().getClient().player();
         Character character = ((PCPlayer) player).character;
         character.postSimulation(0.01f);
 
+        profiler.popPush("systems");
+
+        profiler.push("states");
         systems.updateStates();
+        profiler.popPush("tick systems");
         systems.runTickSystems(frameTime);
+        profiler.popPush("particle systems");
         particleSystems.runTickSystems(frameTime);
+        profiler.pop();
+        profiler.pop();
     }
 
     public WorldSnapshot createSnapshot(SnapshotPools pools, UUID clientUUID)
@@ -293,8 +342,8 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
     public void cleanup()
     {
-        executor.close();
-
+        Scheduler.clearAllTasks();
+        tickExecutor.shutdown();
         physics.removeAllBodies();
         bodyMap().clear();
 

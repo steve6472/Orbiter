@@ -26,6 +26,7 @@ public final class Constants
     /// Orbiter-generated resources
     public static final File GENERATED_ORBITER = new File(FlareConstants.GENERATED_FOLDER, NAMESPACE);
     public static final File JOLT_NATIVE = new File(GENERATED_ORBITER, "joltjni.dll");
+    public static final File TRACY_NATIVE = new File(GENERATED_ORBITER, "tracy-jni-amd64.dll");
 
     /// Particle Atlas key reference
     public static final Key ATLAS_PARTICLE = key("particle");

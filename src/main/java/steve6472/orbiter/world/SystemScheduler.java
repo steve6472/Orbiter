@@ -1,10 +1,14 @@
 package steve6472.orbiter.world;
 
+import com.badlogic.ashley.core.Engine;
 import com.badlogic.ashley.core.EntitySystem;
+import steve6472.orbiter.world.ecs.core.RunSystem;
 
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class SystemScheduler
 {
@@ -12,11 +16,19 @@ public class SystemScheduler
     private final Map<Integer, Set<Integer>> dependencies = new HashMap<>();
 
     private final ExecutorService executor;
+    private final Engine engine;
     private boolean finalized = false;
+    private OperationProcessor operationProcessor;
 
-    public SystemScheduler(int threadCount)
+    public SystemScheduler(int threadCount, Engine engine)
     {
         this.executor = Executors.newFixedThreadPool(threadCount);
+        this.engine = engine;
+    }
+
+    public void setOperationProcessor(OperationProcessor operationProcessor)
+    {
+        this.operationProcessor = operationProcessor;
     }
 
     // Register a system with an ID
@@ -26,6 +38,12 @@ public class SystemScheduler
             throw new IllegalStateException("Cannot add systems after finalize()");
         systems.put(id, system);
         dependencies.putIfAbsent(id, new HashSet<>());
+        engine.addSystem(system);
+    }
+
+    public void addSystem(int id, Consumer<Float> run)
+    {
+        addSystem(id, new RunSystem(run));
     }
 
     // Define dependency: systemId depends on dependencyId
@@ -100,6 +118,9 @@ public class SystemScheduler
         {
             Thread.currentThread().interrupt();
         }
+
+        if (operationProcessor != null)
+            operationProcessor.process();
     }
 
     public void shutdown()
@@ -109,7 +130,7 @@ public class SystemScheduler
 
     // ---- Internal utility: topological sort ----
     /// Check for circular dependency
-    private void topologicalSort()
+    public List<Integer> topologicalSort()
     {
         Map<Integer, Integer> inDegree = new HashMap<>();
         for (int id : dependencies.keySet())
@@ -144,5 +165,40 @@ public class SystemScheduler
         {
             throw new IllegalStateException("Circular dependency detected!");
         }
+
+        return order;
+    }
+
+    public void runSequential(float deltaTime)
+    {
+        if (!finalized)
+            throw new IllegalStateException("Call finalizeGraph() before runSequential()");
+
+        List<Integer> sortedOrder = topologicalSort();
+
+        for (int id : sortedOrder)
+        {
+            EntitySystem system = systems.get(id);
+            if (system.checkProcessing())
+            {
+                try
+                {
+                    system.update(deltaTime);
+                } catch (Exception ex)
+                {
+                    System.err.println(system.getClass().getCanonicalName());
+                    throw ex;
+                }
+            }
+
+            if (operationProcessor != null)
+                operationProcessor.process();
+        }
+    }
+
+    @FunctionalInterface
+    public interface OperationProcessor
+    {
+        void process();
     }
 }

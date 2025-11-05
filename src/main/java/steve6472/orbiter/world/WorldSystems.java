@@ -22,6 +22,8 @@ public class WorldSystems
     private final Engine engine;
     private final List<EntitySystem> renderSystems = new ArrayList<>();
 
+    public boolean sequential = true;
+
     public WorldSystems(World world, Engine engine)
     {
         this.world = world;
@@ -59,21 +61,6 @@ public class WorldSystems
         // First
         engine.addSystem(updateECS = new UpdateECS(world)); // "Update ECS Positions", "Updates ECS Positions with data from last tick of Physics Simulation"
         engine.addSystem(clickECS = new ClickECS());
-        /*systems.registerSystem(new ComponentSystem()
-        {
-            @Override
-            public void tick(Dominion dominion, World world)
-            {
-//                if (!steam.isHost())
-//                    return;
-
-                dominion.findEntitiesWith(Tag.FireflyAI.class, Position.class).forEach(e ->
-                {
-                    Position position = e.comp2();
-                    modifyComponent(e.entity(), position, p -> p.add(RandomUtil.randomFloat(-0.01f, 0.01f), RandomUtil.randomFloat(-0.01f, 0.01f), RandomUtil.randomFloat(-0.01f, 0.01f)));
-                });
-            }
-        }, "Firefly AI", "Test firefly entity");*/
         // Needs to be before network sync and physics update
         engine.addSystem(updateClientData = new UpdateClientData());
 

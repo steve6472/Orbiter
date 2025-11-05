@@ -18,6 +18,7 @@ import java.util.function.BiFunction;
  */
 public class WorldRenderState
 {
+    public long lastSnapshotTimeNano;
     public boolean created = false;
     public final WorldSnapshot lastSnapshot, currentSnapshot;
 

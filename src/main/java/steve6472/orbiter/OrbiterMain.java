@@ -42,6 +42,7 @@ public class OrbiterMain
             }
         }
         JarExport.exportFile("windows/x86-64/com/github/stephengold/joltjni.dll", Constants.JOLT_NATIVE);
+        JarExport.exportFile("windows/tracy-jni-amd64.dll", Constants.TRACY_NATIVE);
 
         if (test())
             return;

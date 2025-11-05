@@ -60,7 +60,8 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
     @Override
     protected void render(FlightFrame flightFrame, FrameInfo frameInfo, MemoryStack stack)
     {
-        if (client.getWorld() == null)
+        // TODO: concurrency issue
+        if (client.getWorld() == null || true)
             return;
 
         RayCastResult lookAtObject = client.getRayTrace().getLookAtObject();

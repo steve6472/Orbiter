@@ -45,11 +45,11 @@ public class Spawn extends Command
 				{
 					EntityBlueprint blueprint = EntityBlueprintArgument.getEntityBlueprint(c, "blueprint");
 
-					List<Vector3f> vector3fs = JoltApp.generatePositions(getInteger(c, "count"), 0.5f, 0.3f);
+					List<Vector3f> vector3fs = JoltApp.generatePositions(getInteger(c, "count"), 0.1f, 0.3f);
 					for (int i = 0; i < vector3fs.size(); i++)
 					{
 						Vector3f v = vector3fs.get(i);
-						Scheduler.runTaskLater(() -> c.getSource().getWorld().addEntity(blueprint, UUID.randomUUID(), true, v), i);
+						Scheduler.runTaskLater(() -> c.getSource().getWorld().addEntity(blueprint, UUID.randomUUID(), true, v), i / 8);
 					}
 //					for (int i = 0; i < getInteger(c, "count"); i++)
 //					{
