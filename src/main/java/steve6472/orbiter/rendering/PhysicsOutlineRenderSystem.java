@@ -23,6 +23,8 @@ import steve6472.flare.struct.def.Vertex;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
+import steve6472.orbiter.tracy.IProfiler;
+import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.world.collision.OrbiterCollisionShape;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
@@ -55,6 +57,15 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         this.isFocus = isFocus;
         this.color = isFocus ? WHITE : BLACK;
         this.client = client;
+    }
+
+    @Override
+    public void render(FrameInfo frameInfo, MemoryStack stack)
+    {
+        IProfiler profiler = OrbiterProfiler.frame();
+        profiler.push("PhysicsOutlineRenderSystem focus=" + isFocus);
+        super.render(frameInfo, stack);
+        profiler.pop();
     }
 
     @Override

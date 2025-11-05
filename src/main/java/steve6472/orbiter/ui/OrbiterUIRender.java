@@ -2,7 +2,6 @@ package steve6472.orbiter.ui;
 
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
-import steve6472.core.util.Profiler;
 import steve6472.flare.render.impl.UIRenderImpl;
 import steve6472.moondust.MoonDust;
 import steve6472.orbiter.Constants;
@@ -46,13 +45,13 @@ public class OrbiterUIRender extends UIRenderImpl
         int pixelScale = (int) MoonDust.getInstance().getPixelScale();
         int windowHeight = orbiter.window().getHeight() / pixelScale;
 
-        Profiler profiler = OrbiterApp.getInstance().tickProfiler;
+        /*Profiler profiler = OrbiterApp.getInstance().tickProfiler;
         sprite(0, windowHeight - 16, 0, profiler.getTotalMeasurements() + 4, 1, READ_SPRITE);
         for (int i = 0; i < profiler.getTotalMeasurements(); i++)
         {
             int height = (int) (profiler.getMeasurementAt(i) / 1e6);
             sprite(i, windowHeight - height, 0, 1, height, SEND_SPRITE);
-        }
+        }*/
     }
 
     private void profileFps()
@@ -63,13 +62,13 @@ public class OrbiterUIRender extends UIRenderImpl
         int pixelScale = (int) MoonDust.getInstance().getPixelScale();
         int windowHeight = orbiter.window().getHeight() / pixelScale;
 
-        Profiler profiler = OrbiterApp.getInstance().fpsProfiler;
+        /*Profiler profiler = OrbiterApp.getInstance().fpsProfiler;
         sprite(0, windowHeight - 30, 0, profiler.getTotalMeasurements() + 4, 1, READ_SPRITE);
         for (int i = 0; i < profiler.getTotalMeasurements(); i++)
         {
             int sampleHeight = (int)Math.round(profiler.getMeasurementAt(i) / 1e6 * 60.0 / 33.333333333333336);
             sprite(i, windowHeight - sampleHeight, 0, 1, sampleHeight, SEND_SPRITE);
-        }
+        }*/
     }
 
     private void trackBandwidth()

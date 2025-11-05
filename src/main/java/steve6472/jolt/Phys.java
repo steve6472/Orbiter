@@ -8,13 +8,11 @@ import com.github.stephengold.joltjni.readonly.ConstPlane;
 import com.github.stephengold.joltjni.readonly.ConstShape;
 import com.github.stephengold.joltjni.readonly.Vec3Arg;
 import org.joml.Vector3f;
-import steve6472.core.util.Profiler;
 import steve6472.core.util.RandomUtil;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.world.JoltBodies;
 
-import javax.swing.*;
 import java.util.UUID;
 
 /**
@@ -28,7 +26,6 @@ class Phys
     public final TempAllocator tempAllocator;
     public final JobSystem jobSystem;
     public final JoltBodies joltBodies;
-    public final Profiler physicsProfiler;
 
     public Phys()
     {
@@ -38,7 +35,6 @@ class Phys
         int numWorkerThreads = Runtime.getRuntime().availableProcessors();
         jobSystem = new JobSystemThreadPool(Jolt.cMaxPhysicsJobs, Jolt.cMaxPhysicsBarriers, numWorkerThreads);
         joltBodies = new JoltBodies();
-        physicsProfiler = new Profiler(60);
         addPlane(new Vector3f(0, 1f, 0), 0);
     }
 
@@ -84,10 +80,8 @@ class Phys
         float timePerStep = 1f / Constants.TICKS_IN_SECOND; // in seconds
         int collisionSteps = 1;
 
-        physicsProfiler.start();
         int errors = physics.update(timePerStep, collisionSteps, tempAllocator, jobSystem);
         assert errors == EPhysicsUpdateError.None : errors;
-        physicsProfiler.end();
     }
 
     private void addPlane(Vector3f normal, float constant)

@@ -1,32 +1,24 @@
 package steve6472.jolt;
 
-import com.badlogic.gdx.math.Vector3;
 import com.github.stephengold.joltjni.*;
 import com.github.stephengold.joltjni.enumerate.EActivation;
 import org.joml.Vector3f;
 import org.lwjgl.system.MemoryStack;
-import steve6472.core.util.Profiler;
-import steve6472.flare.Camera;
 import steve6472.flare.core.Flare;
-import steve6472.flare.core.FlareApp;
 import steve6472.flare.core.FrameInfo;
 import steve6472.flare.pipeline.Pipelines;
 import steve6472.flare.render.*;
-import steve6472.flare.settings.VisualSettings;
 import steve6472.flare.util.PackerUtil;
 import steve6472.moondust.*;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
-import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.rendering.*;
 import steve6472.orbiter.scheduler.Scheduler;
-import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.world.JoltBodies;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -86,7 +78,6 @@ public class JoltApp extends SimpleApp
 
     private float timeToNextTick = 0;
 
-    Profiler debugDraw = new Profiler(60);
     boolean titleDraw = false;
     boolean doDebugDraw = true;
 
@@ -185,37 +176,12 @@ public class JoltApp extends SimpleApp
         }
 
         // This one makes the thing crash & for now it renders the client shape in their face...
-        debugDraw.start();
         if (doDebugDraw)
         {
             phys.physics.drawBodies(settings, physicsDebugRenderer);
             phys.physics.drawConstraints(physicsDebugRenderer);
             phys.physics.drawConstraintLimits(physicsDebugRenderer);
             phys.physics.drawConstraintReferenceFrame(physicsDebugRenderer);
-        }
-        debugDraw.end();
-
-        if (titleDraw)
-        {
-            masterRenderer().getWindow().setWindowTitle(
-                "Last: %.4fms (%.4fms left) Avg: %.4fms Max: %.4fms".formatted(
-                    debugDraw.lastMilli(),
-                    ((1f / 60f) * 1e3) - debugDraw.lastMilli(),
-                    debugDraw.averageMilli(),
-                    debugDraw.maxEverMilli()
-                )
-            );
-        } else
-        {
-            masterRenderer().getWindow().setWindowTitle(
-                "Bodies: %s, Last: %.4fms (%.4fms left) Avg: %.4fms Max: %.4fms".formatted(
-                    phys.physics.getNumBodies(),
-                    phys.physicsProfiler.lastMilli(),
-                    ((1f / 60f) * 1e3) - phys.physicsProfiler.lastMilli(),
-                    phys.physicsProfiler.averageMilli(),
-                    phys.physicsProfiler.maxEverMilli()
-                )
-            );
         }
     }
 

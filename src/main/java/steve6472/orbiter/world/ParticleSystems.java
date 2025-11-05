@@ -1,8 +1,8 @@
 package steve6472.orbiter.world;
 
 import com.badlogic.ashley.core.PooledEngine;
-import steve6472.core.util.Profiler;
-import steve6472.orbiter.util.ProfilerPrint;
+import steve6472.orbiter.tracy.IProfiler;
+import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.world.particle.systems.*;
 
 /**
@@ -14,7 +14,6 @@ public class ParticleSystems
 {
     private final World world;
     private final PooledEngine engine;
-    public final Profiler profiler = new Profiler(60);
 
     public ParticleSystems(World world, PooledEngine engine)
     {
@@ -39,10 +38,6 @@ public class ParticleSystems
 
     public void runTickSystems(float frameTime)
     {
-        profiler.start();
         engine.update(frameTime);
-        profiler.end();
-
-//        ProfilerPrint.sout(profiler, "Count", engine.getEntities().size());
     }
 }

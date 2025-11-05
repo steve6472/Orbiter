@@ -19,6 +19,8 @@ import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.rendering.snapshot.pairs.AnimatedModelPair;
 import steve6472.orbiter.rendering.snapshot.snapshots.AnimatedModelSnapshot;
+import steve6472.orbiter.tracy.IProfiler;
+import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.world.World;
 
 import java.util.List;
@@ -41,6 +43,15 @@ public class AnimatedModelRenderSystem extends CommonRenderSystem
             .entrySBO(SBO.BONES.sizeof(), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, VK_SHADER_STAGE_VERTEX_BIT)
             .entryImage(FlareRegistries.ATLAS.get(FlareConstants.ATLAS_BLOCKBENCH).getSampler()));
         this.client = client;
+    }
+
+    @Override
+    public void render(FrameInfo frameInfo, MemoryStack stack)
+    {
+        IProfiler profiler = OrbiterProfiler.frame();
+        profiler.push("AnimatedModelRenderSystem");
+        super.render(frameInfo, stack);
+        profiler.pop();
     }
 
     @Override

@@ -9,7 +9,6 @@ import org.lwjgl.system.Configuration;
 import org.lwjgl.system.MemoryStack;
 import steve6472.core.registry.Key;
 import steve6472.core.setting.SettingsLoader;
-import steve6472.core.util.Profiler;
 import steve6472.flare.Camera;
 import steve6472.flare.core.Flare;
 import steve6472.flare.core.FlareApp;
@@ -92,8 +91,6 @@ public class OrbiterApp extends FlareApp
     private Commands commands;
     private boolean isMouseGrabbed = false;
 
-    public Profiler tickProfiler = new Profiler(60);
-    public Profiler fpsProfiler = new Profiler(144);
     public PhysicsDebugRenderer physicsDebugRenderer;
 
     OrbiterApp()
@@ -171,7 +168,7 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new UILineRender(masterRenderer(), new DebugWidgetUILines()));
         addRenderSystem(new UILineRender(masterRenderer(), new DebugUILines()));
 
-        addRenderSystem(new StaticModelRenderSystem(masterRenderer(), new StaticWorldRenderSystem(client), Pipelines.BLOCKBENCH_STATIC));
+        addRenderSystem(new StaticModelRenderSystemProfiled(masterRenderer(), new StaticWorldRenderSystem(client), Pipelines.BLOCKBENCH_STATIC));
         addRenderSystem(new AnimatedModelRenderSystem(masterRenderer(), Pipelines.SKIN, client));
 
         addRenderSystem(new PhysicsOutlineRenderSystem(masterRenderer(), false, client));
@@ -217,12 +214,18 @@ public class OrbiterApp extends FlareApp
     public WorldRenderState currentRenderState;
 
     @Override
-    public void render(FrameInfo frameInfo, MemoryStack memoryStack)
+    public void beginFrame()
     {
         IProfiler profiler = OrbiterProfiler.frame();
         profiler.start();
+    }
+
+    @Override
+    public void render(FrameInfo frameInfo, MemoryStack memoryStack)
+    {
+        IProfiler profiler = OrbiterProfiler.frame();
+//        profiler.start();
         profiler.push("set perspective");
-        fpsProfiler.start();
         frameInfo.camera().setPerspectiveProjection(Settings.FOV.get(), aspectRatio(), 0.1f, 1024f);
 
         float frameTime = frameInfo.frameTime();
@@ -255,11 +258,15 @@ public class OrbiterApp extends FlareApp
         }
 
 //        client.render(frameInfo, memoryStack);
-        fpsProfiler.end();
         profiler.pop();
         profiler.end();
+//        OrbiterProfiler.endFrame();
+    }
+
+    @Override
+    public void endFrame()
+    {
         OrbiterProfiler.endFrame();
-//        ProfilerPrint.sout(fpsProfiler);
     }
 
     private float computePartialTicks(WorldRenderState state)
@@ -276,8 +283,6 @@ public class OrbiterApp extends FlareApp
 
     private void tick(float frameTime)
     {
-        tickProfiler.start();
-
         IProfiler profiler = OrbiterProfiler.frame();
         profiler.push("network tick");
         if (networkMain != null)
@@ -296,7 +301,6 @@ public class OrbiterApp extends FlareApp
             });
         }
         profiler.pop();
-        tickProfiler.end();
     }
 
     private void processEscape()

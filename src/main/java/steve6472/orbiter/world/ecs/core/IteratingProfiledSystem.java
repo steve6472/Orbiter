@@ -2,7 +2,6 @@ package steve6472.orbiter.world.ecs.core;
 
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import steve6472.core.util.Profiler;
 import steve6472.orbiter.tracy.IProfiler;
 import steve6472.orbiter.tracy.OrbiterProfiler;
 

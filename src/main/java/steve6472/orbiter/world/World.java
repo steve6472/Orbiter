@@ -14,7 +14,6 @@ import com.github.stephengold.joltjni.readonly.Vec3Arg;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
-import steve6472.core.util.Profiler;
 import steve6472.flare.MasterRenderer;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
@@ -32,11 +31,8 @@ import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.tracy.IProfiler;
 import steve6472.orbiter.tracy.OrbiterProfiler;
-import steve6472.orbiter.util.ProfilerPrint;
-import steve6472.orbiter.world.collision.ShapeExp;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -60,7 +56,6 @@ public class World implements EntityControl, EntityModify, WorldSounds
     final TempAllocator tempAllocator;
     final JobSystem jobSystem;
     private final JoltBodies joltBodies;
-    final Profiler physicsProfiler, tickProfiler;
     private final BodyManagerDrawSettings settings = new BodyManagerDrawSettings();
 
     private final Engine ecsEngine;
@@ -85,8 +80,6 @@ public class World implements EntityControl, EntityModify, WorldSounds
         int numWorkerThreads = Runtime.getRuntime().availableProcessors();
         jobSystem = new JobSystemThreadPool(Jolt.cMaxPhysicsJobs, Jolt.cMaxPhysicsBarriers, numWorkerThreads);
         joltBodies = new JoltBodies();
-        physicsProfiler = new Profiler(60);
-        tickProfiler = new Profiler(60);
 
         ecsEngine = new Engine();
         particleEngine = new PooledEngine(MAX_PARTICLES >> 4, MAX_PARTICLES, MAX_PARTICLES >> 4, MAX_PARTICLES);
@@ -105,7 +98,6 @@ public class World implements EntityControl, EntityModify, WorldSounds
             {
                 IProfiler profiler = OrbiterProfiler.world();
                 profiler.start();
-                tickProfiler.start();
                 profiler.push("tick schedulers");
                 //noinspection deprecation
                 Scheduler.instance().tick();
@@ -117,7 +109,6 @@ public class World implements EntityControl, EntityModify, WorldSounds
                 OrbiterApp.getInstance().getClient().snapshotWorldState();
                 profiler.pop();
 
-                tickProfiler.end();
                 profiler.end();
             } catch (Exception exception)
             {
@@ -224,11 +215,8 @@ public class World implements EntityControl, EntityModify, WorldSounds
         systems.holdSystem.prePhysicsTickUpdate(timePerStep);
 
         profiler.popPush("physics");
-
-        physicsProfiler.start();
         int errors = physics.update(timePerStep, collisionSteps, tempAllocator, jobSystem);
         assert errors == EPhysicsUpdateError.None : errors;
-        physicsProfiler.end();
 
         profiler.popPush("player post sim");
 

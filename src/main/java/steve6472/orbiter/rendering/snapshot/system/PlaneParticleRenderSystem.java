@@ -2,7 +2,6 @@ package steve6472.orbiter.rendering.snapshot.system;
 
 import org.joml.*;
 import org.lwjgl.system.MemoryStack;
-import steve6472.core.util.Profiler;
 import steve6472.flare.Camera;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.VkBuffer;
@@ -25,6 +24,8 @@ import steve6472.orbiter.rendering.snapshot.snapshots.ParticleSnapshot;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.rendering.snapshot.snapshots.PlaneParticleSnapshot;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.tracy.IProfiler;
+import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.world.World;
 
 import java.nio.ByteBuffer;
@@ -48,7 +49,6 @@ public class PlaneParticleRenderSystem extends CommonRenderSystem
     private static final Vector3f VERT_BR = new Vector3f(1, -1, 0);
 
     private final Client client;
-    private final Profiler profiler = new Profiler(60);
     private final ParticleMaterial material;
 
     private static TextureSampler atlasSampler()
@@ -70,6 +70,15 @@ public class PlaneParticleRenderSystem extends CommonRenderSystem
     }
 
     @Override
+    public void render(FrameInfo frameInfo, MemoryStack stack)
+    {
+        IProfiler profiler = OrbiterProfiler.frame();
+        profiler.push("PlaneParticleRenderSystem");
+        super.render(frameInfo, stack);
+        profiler.pop();
+    }
+
+    @Override
     protected void render(FlightFrame flightFrame, FrameInfo frameInfo, MemoryStack stack)
     {
         World world = client.getWorld();
@@ -85,8 +94,6 @@ public class PlaneParticleRenderSystem extends CommonRenderSystem
             return;
 
         float partial = OrbiterApp.getInstance().partialTicks;
-
-        profiler.start();
 
         // Let's make GC happy
         Matrix4f transform = new Matrix4f();
@@ -129,9 +136,6 @@ public class PlaneParticleRenderSystem extends CommonRenderSystem
 
         vkCmdBindVertexBuffers(frameInfo.commandBuffer(), 0, vertexBuffers, offsets);
         vkCmdDraw(frameInfo.commandBuffer(), renderedCount * VERTEX_COUNT, 1, 0, 0);
-
-        profiler.end();
-//        ProfilerPrint.sout(profiler, "Count", renderedCount);
     }
 
     private void addParticlePair(ByteBuffer buffer, Matrix4f transform, Vector4f uv)

@@ -5,7 +5,6 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
-import steve6472.core.util.Profiler;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.VkBuffer;
 import steve6472.flare.assets.TextureSampler;
@@ -25,6 +24,8 @@ import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.rendering.snapshot.pairs.PlaneTintedParticlePair;
 import steve6472.orbiter.rendering.snapshot.snapshots.PlaneTintedParticleSnapshot;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.tracy.IProfiler;
+import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.world.World;
 
 import java.nio.ByteBuffer;
@@ -48,7 +49,6 @@ public class PlaneTintedParticleRenderSystem extends CommonRenderSystem
     private static final Vector3f VERT_BR = new Vector3f(1, -1, 0);
 
     private final Client client;
-    private final Profiler profiler = new Profiler(60);
     private final ParticleMaterial material;
 
     private static TextureSampler atlasSampler()
@@ -70,6 +70,15 @@ public class PlaneTintedParticleRenderSystem extends CommonRenderSystem
     }
 
     @Override
+    public void render(FrameInfo frameInfo, MemoryStack stack)
+    {
+        IProfiler profiler = OrbiterProfiler.frame();
+        profiler.push("PlaneTintedParticleRenderSystem");
+        super.render(frameInfo, stack);
+        profiler.pop();
+    }
+
+    @Override
     protected void render(FlightFrame flightFrame, FrameInfo frameInfo, MemoryStack stack)
     {
         World world = client.getWorld();
@@ -85,8 +94,6 @@ public class PlaneTintedParticleRenderSystem extends CommonRenderSystem
             return;
 
         float partial = OrbiterApp.getInstance().partialTicks;
-
-        profiler.start();
 
         // Let's make GC happy
         Vector4f color = new Vector4f(1, 1, 1, 1);
@@ -134,9 +141,6 @@ public class PlaneTintedParticleRenderSystem extends CommonRenderSystem
 
         vkCmdBindVertexBuffers(frameInfo.commandBuffer(), 0, vertexBuffers, offsets);
         vkCmdDraw(frameInfo.commandBuffer(), renderedCount * VERTEX_COUNT, 1, 0, 0);
-
-        profiler.end();
-//        ProfilerPrint.sout(profiler, "Count", renderedCount);
     }
 
     private void addParticlePair(ByteBuffer buffer, Matrix4f transform, Vector4f color, Vector4f uv)
