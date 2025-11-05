@@ -1,6 +1,5 @@
 package steve6472.orbiter.rendering.snapshot.system;
 
-import com.github.stephengold.joltjni.BodyInterface;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import steve6472.core.registry.Key;

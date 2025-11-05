@@ -20,5 +20,6 @@ public class WorldSnapshot
         pools.flipbookParticlePool.freeAll(particleSnapshots.flipbookParticles);
         pools.flipbookTintedParticlePool.freeAll(particleSnapshots.flipbookTintedParticles);
         pools.staticModelPool.freeAll(modelSnapshots.staticEntities);
+        pools.animatedModelPool.freeAll(modelSnapshots.animatedEntities);
     }
 }

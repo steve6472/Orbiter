@@ -34,6 +34,7 @@ public class WorldRenderState
     public Map<ParticleMaterial, List<FlipbookParticlePair>> flipbookParticles = new HashMap<>();
     public Map<ParticleMaterial, List<FlipbookTintedParticlePair>> flipbookTintedParticles = new HashMap<>();
     public List<StaticModelPair> staticModels = new ArrayList<>();
+    public List<AnimatedModelPair> animatedModels = new ArrayList<>();
 
     public WorldRenderState(WorldSnapshot lastSnapshot, WorldSnapshot currentSnapshot)
     {
@@ -52,6 +53,7 @@ public class WorldRenderState
         createParticlePairs(lastSnapshot.particleSnapshots.flipbookParticles, currentSnapshot.particleSnapshots.flipbookParticles, FlipbookParticlePair::new, unsortedFlipbookParticles);
         createParticlePairs(lastSnapshot.particleSnapshots.flipbookTintedParticles, currentSnapshot.particleSnapshots.flipbookTintedParticles, FlipbookTintedParticlePair::new, unsortedFlipbookTintedParticles);
         createUUIDPairs(lastSnapshot.modelSnapshots.staticEntities, currentSnapshot.modelSnapshots.staticEntities, StaticModelPair::new, unsortedStaticModels);
+        createUUIDPairs(lastSnapshot.modelSnapshots.animatedEntities, currentSnapshot.modelSnapshots.animatedEntities, AnimatedModelPair::new, animatedModels);
 
         created = true;
     }
