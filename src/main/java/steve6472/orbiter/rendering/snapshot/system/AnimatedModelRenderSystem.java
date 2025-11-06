@@ -14,13 +14,13 @@ import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.struct.Struct;
 import steve6472.flare.struct.def.Push;
 import steve6472.flare.struct.def.SBO;
+import steve6472.flare.tracy.FlareProfiler;
+import steve6472.flare.tracy.Profiler;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.rendering.snapshot.pairs.AnimatedModelPair;
 import steve6472.orbiter.rendering.snapshot.snapshots.AnimatedModelSnapshot;
-import steve6472.orbiter.tracy.IProfiler;
-import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.world.World;
 
 import java.util.List;
@@ -48,7 +48,7 @@ public class AnimatedModelRenderSystem extends CommonRenderSystem
     @Override
     public void render(FrameInfo frameInfo, MemoryStack stack)
     {
-        IProfiler profiler = OrbiterProfiler.frame();
+        Profiler profiler = FlareProfiler.frame();
         profiler.push("AnimatedModelRenderSystem");
         super.render(frameInfo, stack);
         profiler.pop();

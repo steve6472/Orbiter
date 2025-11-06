@@ -20,11 +20,11 @@ import steve6472.flare.render.debug.objects.DebugCuboid;
 import steve6472.flare.render.debug.objects.DebugSphere;
 import steve6472.flare.struct.Struct;
 import steve6472.flare.struct.def.Vertex;
+import steve6472.flare.tracy.FlareProfiler;
+import steve6472.flare.tracy.Profiler;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.tracy.IProfiler;
-import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.world.collision.OrbiterCollisionShape;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
@@ -62,7 +62,7 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
     @Override
     public void render(FrameInfo frameInfo, MemoryStack stack)
     {
-        IProfiler profiler = OrbiterProfiler.frame();
+        Profiler profiler = FlareProfiler.frame();
         profiler.push("PhysicsOutlineRenderSystem focus=" + isFocus);
         super.render(frameInfo, stack);
         profiler.pop();

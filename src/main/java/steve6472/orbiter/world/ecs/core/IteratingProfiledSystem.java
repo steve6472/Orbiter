@@ -2,8 +2,8 @@ package steve6472.orbiter.world.ecs.core;
 
 import com.badlogic.ashley.core.Family;
 import com.badlogic.ashley.systems.IteratingSystem;
-import steve6472.orbiter.tracy.IProfiler;
-import steve6472.orbiter.tracy.OrbiterProfiler;
+import steve6472.flare.tracy.FlareProfiler;
+import steve6472.flare.tracy.Profiler;
 
 /**
  * Created by steve6472
@@ -25,7 +25,7 @@ public abstract class IteratingProfiledSystem extends IteratingSystem
     @Override
     public void update(float deltaTime)
     {
-        IProfiler profiler = OrbiterProfiler.world();
+        Profiler profiler = FlareProfiler.world();
         profiler.push(name());
         super.update(deltaTime);
         profiler.pop();

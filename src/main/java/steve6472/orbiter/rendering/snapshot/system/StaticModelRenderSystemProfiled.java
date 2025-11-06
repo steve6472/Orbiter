@@ -6,8 +6,8 @@ import steve6472.flare.core.FrameInfo;
 import steve6472.flare.pipeline.builder.PipelineConstructor;
 import steve6472.flare.render.StaticModelRenderImpl;
 import steve6472.flare.render.StaticModelRenderSystem;
-import steve6472.orbiter.tracy.IProfiler;
-import steve6472.orbiter.tracy.OrbiterProfiler;
+import steve6472.flare.tracy.FlareProfiler;
+import steve6472.flare.tracy.Profiler;
 
 /**
  * Created by steve6472
@@ -24,7 +24,7 @@ public class StaticModelRenderSystemProfiled extends StaticModelRenderSystem
     @Override
     public void render(FrameInfo frameInfo, MemoryStack stack)
     {
-        IProfiler profiler = OrbiterProfiler.frame();
+        Profiler profiler = FlareProfiler.frame();
         profiler.push("StaticModelRenderSystemProfiled");
         super.render(frameInfo, stack);
         profiler.pop();

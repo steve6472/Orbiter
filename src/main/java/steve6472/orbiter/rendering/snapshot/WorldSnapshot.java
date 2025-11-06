@@ -1,5 +1,6 @@
 package steve6472.orbiter.rendering.snapshot;
 
+import org.joml.Vector3f;
 import steve6472.orbiter.rendering.snapshot.snapshots.group.ModelSnapshots;
 import steve6472.orbiter.rendering.snapshot.snapshots.group.ParticleSnapshots;
 
@@ -10,8 +11,11 @@ import steve6472.orbiter.rendering.snapshot.snapshots.group.ParticleSnapshots;
  */
 public class WorldSnapshot
 {
+    public long snapshotTimeNano;
+
     public ParticleSnapshots particleSnapshots = new ParticleSnapshots();
     public ModelSnapshots modelSnapshots = new ModelSnapshots();
+    public Vector3f cameraPosition = new Vector3f();
 
     public void free(SnapshotPools pools)
     {

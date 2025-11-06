@@ -16,6 +16,8 @@ import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.render.debug.DebugRender;
 import steve6472.flare.struct.def.Vertex;
+import steve6472.flare.tracy.FlareProfiler;
+import steve6472.flare.tracy.Profiler;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
@@ -25,8 +27,6 @@ import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.rendering.snapshot.pairs.FlipbookTintedParticlePair;
 import steve6472.orbiter.rendering.snapshot.snapshots.FlipbookTintedParticleSnapshot;
 import steve6472.orbiter.settings.Settings;
-import steve6472.orbiter.tracy.IProfiler;
-import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.world.World;
 
 import java.nio.ByteBuffer;
@@ -79,7 +79,7 @@ public class FlipbookTintedRenderSystem extends CommonRenderSystem
     @Override
     public void render(FrameInfo frameInfo, MemoryStack stack)
     {
-        IProfiler profiler = OrbiterProfiler.frame();
+        Profiler profiler = FlareProfiler.frame();
         profiler.push("FlipbookTintedRenderSystem", 0xb28c4a);
         super.render(frameInfo, stack);
         profiler.pop();

@@ -2,8 +2,8 @@ package steve6472.orbiter;
 
 import com.github.stephengold.joltjni.Jolt;
 import com.github.stephengold.joltjni.JoltPhysicsObject;
-import io.github.benjaminamos.tracy.Tracy;
 import org.joml.Vector2i;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.Configuration;
 import org.lwjgl.system.MemoryStack;
@@ -16,6 +16,8 @@ import steve6472.flare.core.FrameInfo;
 import steve6472.flare.input.KeybindUpdater;
 import steve6472.flare.pipeline.Pipelines;
 import steve6472.flare.render.*;
+import steve6472.flare.tracy.FlareProfiler;
+import steve6472.flare.tracy.Profiler;
 import steve6472.flare.vr.VrData;
 import steve6472.moondust.*;
 import steve6472.moondust.builtin.BuiltinEventCalls;
@@ -36,8 +38,6 @@ import steve6472.orbiter.rendering.snapshot.system.*;
 import steve6472.orbiter.rendering.*;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
-import steve6472.orbiter.tracy.IProfiler;
-import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.ui.MDUtil;
 import steve6472.orbiter.ui.OrbiterUIRender;
 import steve6472.orbiter.ui.panel.*;
@@ -113,11 +113,6 @@ public class OrbiterApp extends FlareApp
         boolean success = Jolt.newFactory();
         assert success;
         Jolt.registerTypes();
-
-        // Load Tracy
-        // TODO: only enable if a system env is passed
-        System.setProperty("org.terasology.librarypath", Constants.TRACY_NATIVE.getParentFile().getAbsolutePath());
-        Tracy.startupProfiler();
 
         client = new Client();
     }
@@ -214,17 +209,10 @@ public class OrbiterApp extends FlareApp
     public WorldRenderState currentRenderState;
 
     @Override
-    public void beginFrame()
-    {
-        IProfiler profiler = OrbiterProfiler.frame();
-        profiler.start();
-    }
-
-    @Override
     public void render(FrameInfo frameInfo, MemoryStack memoryStack)
     {
-        IProfiler profiler = OrbiterProfiler.frame();
-//        profiler.start();
+        Profiler profiler = FlareProfiler.frame();
+        profiler.push("orbiter render");
         profiler.push("set perspective");
         frameInfo.camera().setPerspectiveProjection(Settings.FOV.get(), aspectRatio(), 0.1f, 1024f);
 
@@ -238,8 +226,7 @@ public class OrbiterApp extends FlareApp
         timeToNextTick -= frameTime;
         while (timeToNextTick < 0)
         {
-            // TODO: if some lag is detected, look here
-            tick(tickDuration);
+            frameTick();
             timeToNextTick += tickDuration;
         }
 
@@ -255,36 +242,47 @@ public class OrbiterApp extends FlareApp
             profiler.popPush("prepare");
             currentRenderState.prepare(frameInfo.camera().viewPosition, partialTicks);
             profiler.pop();
+            camera().viewPosition.set(currentRenderState.lastSnapshot.cameraPosition.lerp(currentRenderState.currentSnapshot.cameraPosition, partialTicks, new Vector3f()));
         }
 
 //        client.render(frameInfo, memoryStack);
         profiler.pop();
-        profiler.end();
-//        OrbiterProfiler.endFrame();
+        profiler.pop();
     }
 
-    @Override
-    public void endFrame()
+    public enum PartialTicksType
     {
-        OrbiterProfiler.endFrame();
+        PREDICT_NEXT_TICK, LERP_BETWEEN_SNAPSHOTS
     }
+
+    public static PartialTicksType partialTicksType = PartialTicksType.LERP_BETWEEN_SNAPSHOTS;
 
     private float computePartialTicks(WorldRenderState state)
     {
-        long now = System.nanoTime();
-        long tickTime = state.lastSnapshotTimeNano;
+        float alpha;
+        if (partialTicksType == PartialTicksType.PREDICT_NEXT_TICK)
+        {
+            long now = System.nanoTime();
+            long tickTime = state.lastSnapshotTimeNano;
 
-        float elapsed = (now - tickTime);
-        float alpha = elapsed / Constants.TICKS_IN_SECOND;
+            float elapsed = (now - tickTime);
+            alpha = elapsed / (1e9f / Constants.TICKS_IN_SECOND);
+        } else
+        {
+            long previousTickTime = state.lastSnapshot.snapshotTimeNano;
+            long currentTickTime  = state.currentSnapshot.snapshotTimeNano;
+            long now = System.nanoTime();
+            alpha = (now - currentTickTime) / (float) (currentTickTime - previousTickTime);
+        }
 
-        // Clamp to [0, 1] so it doesn’t overshoot if the next tick hasn’t come yet
         return Math.clamp(alpha, 0f, 1f);
     }
 
-    private void tick(float frameTime)
+    private void frameTick()
     {
-        IProfiler profiler = OrbiterProfiler.frame();
+        Profiler profiler = FlareProfiler.frame();
         profiler.push("network tick");
+        // TODO: move to game thread probably
         if (networkMain != null)
             networkMain.tick();
         profiler.popPush("keybinds processing");
@@ -436,7 +434,6 @@ public class OrbiterApp extends FlareApp
             networkMain.shutdown();
         clearWorld();
         client.getSoundMaster().cleanup();
-        Tracy.shutdownProfiler();
     }
 
     @Override

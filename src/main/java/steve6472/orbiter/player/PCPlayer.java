@@ -10,12 +10,12 @@ import steve6472.core.registry.Key;
 import steve6472.core.util.MathUtil;
 import steve6472.flare.Camera;
 import steve6472.flare.input.UserInput;
+import steve6472.flare.tracy.FlareProfiler;
+import steve6472.flare.tracy.Profiler;
 import steve6472.flare.vr.VrInput;
 import steve6472.orbiter.*;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
-import steve6472.orbiter.tracy.IProfiler;
-import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.ui.GlobalProperties;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
@@ -120,9 +120,9 @@ public class PCPlayer implements Player
     @Override
     public void handleInput(UserInput userInput, VrInput vrInput, Camera camera, float frameTime)
     {
-        IProfiler profiler = OrbiterProfiler.frame();
-        profiler.push("movement and camera");
-        processMovementAndCamera(userInput, camera);
+        Profiler profiler = FlareProfiler.frame();
+        profiler.push("camera loook");
+        processCameraLook(userInput, camera);
         profiler.pop();
 
         Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
@@ -139,12 +139,16 @@ public class PCPlayer implements Player
         });*/
     }
 
-    private void processMovementAndCamera(UserInput userInput, Camera camera)
+    private void processCameraLook(UserInput userInput, Camera camera)
     {
-        IProfiler profiler = OrbiterProfiler.frame();
-//        character.setWalkDirection(jomlToPhys(new Vector3f()));
-        profiler.push("basic movement calc");
+        Vector2i mousePos = userInput.getMousePositionRelativeToTopLeftOfTheWindow();
+        camera.head(mousePos.x, mousePos.y, Settings.SENSITIVITY.get());
+        camera.updateViewMatrix();
+    }
 
+    public void worldTick(Camera camera)
+    {
+        Profiler profiler = FlareProfiler.world();
         double speed = 1;
 
         if (Keybinds.SPRINT.isActive())
@@ -182,33 +186,19 @@ public class PCPlayer implements Player
             z += Math.cos(camera.yaw() + Math.PI / 2.0) * speed;
         }
 
-        profiler.popPush("character linear vel set");
-
         // TODO: this HAS to run on world tick, it blocks render thread
         profiler.push("get");
         Vec3 linearVelocity = character.getLinearVelocity();
-        profiler.popPush("setX");
         linearVelocity.setX((float) x);
-        profiler.popPush("setZ");
         linearVelocity.setZ((float) z);
-        profiler.popPush("set");
         character.setLinearVelocity(linearVelocity);
         profiler.pop();
 
-        profiler.popPush("jump");
         if (Keybinds.JUMP.isActive() && character.isSupported() && jumpCooldown == 0)
         {
             character.addLinearVelocity(new Vec3(0, 3, 0));
             jumpCooldown = JUMP_COOLDOWN;
         }
-        profiler.popPush("camera view pos");
-
-        Vector2i mousePos = userInput.getMousePositionRelativeToTopLeftOfTheWindow();
-        Vector3f eyePos = getEyePos();
-        camera.viewPosition.set(eyePos.x, eyePos.y, eyePos.z);
-        camera.head(mousePos.x, mousePos.y, Settings.SENSITIVITY.get());
-        camera.updateViewMatrix();
-        profiler.popPush("below -1 check");
 
         RVec3 position = character.getPosition();
         if (position.y() < -10)
@@ -217,8 +207,5 @@ public class PCPlayer implements Player
             character.setPosition(position);
             character.setLinearVelocity(new Vec3(0, 0, 0));
         }
-        profiler.pop();
-
-        //        applyMotion(new Vector3f((float) x, 0, (float) z));
     }
 }

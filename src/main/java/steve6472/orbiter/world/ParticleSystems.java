@@ -1,8 +1,6 @@
 package steve6472.orbiter.world;
 
 import com.badlogic.ashley.core.PooledEngine;
-import steve6472.orbiter.tracy.IProfiler;
-import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.world.particle.systems.*;
 
 /**

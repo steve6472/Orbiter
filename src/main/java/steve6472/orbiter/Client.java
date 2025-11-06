@@ -6,6 +6,8 @@ import steve6472.core.log.Log;
 import steve6472.flare.Camera;
 import steve6472.flare.core.FrameInfo;
 import steve6472.flare.input.UserInput;
+import steve6472.flare.tracy.FlareProfiler;
+import steve6472.flare.tracy.Profiler;
 import steve6472.flare.vr.VrInput;
 import steve6472.orbiter.audio.SoundMaster;
 import steve6472.orbiter.player.PCPlayer;
@@ -13,8 +15,6 @@ import steve6472.orbiter.player.Player;
 import steve6472.orbiter.rendering.snapshot.SnapshotPools;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.rendering.snapshot.WorldSnapshot;
-import steve6472.orbiter.tracy.IProfiler;
-import steve6472.orbiter.tracy.OrbiterProfiler;
 import steve6472.orbiter.util.PhysicsRayTrace;
 import steve6472.orbiter.world.World;
 
@@ -52,7 +52,7 @@ public class Client
 
     public void handleInput(UserInput userInput, VrInput vrInput, float frameTime)
     {
-        IProfiler profiler = OrbiterProfiler.frame();
+        Profiler profiler = FlareProfiler.frame();
         profiler.push("player input");
         if (world != null && player != null)
             player.handleInput(userInput, vrInput, camera, frameTime);
@@ -63,7 +63,7 @@ public class Client
         profiler.popPush("soundmaster");
 
         soundMaster.setListenerOrientation(camera.getViewMatrix());
-        Vector3f eyePos = player.getEyePos();
+        Vector3f eyePos = camera.viewPosition;
         soundMaster.setListenerPosition(eyePos.x, eyePos.y, eyePos.z);
         profiler.pop();
     }
@@ -147,6 +147,8 @@ public class Client
 
         WorldSnapshot previousSnapshot;
         WorldSnapshot currentSnapshot = world.createSnapshot(pools, clientUUID);
+        currentSnapshot.snapshotTimeNano = System.nanoTime();
+        currentSnapshot.cameraPosition.set(player.getEyePos());
 
         // First frame of the world - use current snapshot as previous as well.
         if (previousRenderState == null)
@@ -160,7 +162,7 @@ public class Client
         }
 
         WorldRenderState renderState = new WorldRenderState(previousSnapshot, currentSnapshot);
-        renderState.lastSnapshotTimeNano = System.nanoTime();
+        renderState.lastSnapshotTimeNano = currentSnapshot.snapshotTimeNano;
         worldRenderState.set(renderState);
     }
 }
