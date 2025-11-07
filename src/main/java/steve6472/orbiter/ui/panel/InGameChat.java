@@ -8,6 +8,7 @@ import io.github.benjaminamos.tracy.Tracy;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
 import steve6472.flare.registry.FlareRegistries;
+import steve6472.flare.tracy.FlareProfiler;
 import steve6472.flare.ui.font.render.Text;
 import steve6472.flare.ui.font.render.TextPart;
 import steve6472.moondust.MoonDust;
@@ -21,6 +22,7 @@ import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.commands.CommandSource;
 import steve6472.orbiter.commands.Commands;
+import steve6472.orbiter.scheduler.Scheduler;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.ui.MDUtil;
 import steve6472.radiant.LuauTable;
@@ -113,21 +115,24 @@ public class InGameChat extends PanelView
         addCommandListener(Constants.key("execute_command"), _ ->
         {
             String commandText = chatFieldText.get();
-            Tracy.message("Executing command: " + commandText);
-            LOGGER.info("Executing command: " + commandText);
 
-            boolean error = false;
+            // Hack it to run on game thread
+            Scheduler.runTaskLater(() -> {
+                if (FlareProfiler.ENABLE_TRACY)
+                    Tracy.message("Executing command: " + commandText);
 
-            try
-            {
-                commands.dispatcher.execute(commandText, createSource());
-            } catch (CommandSyntaxException e)
-            {
-                appendToLog(e.getMessage(), CommandSource.ResponseStyle.ERROR);
-                error = true;
-            }
+                LOGGER.info("Executing command: " + commandText);
 
-            if (!Keybinds.KEEP_CHAT_OPEN.isActive() && !error)
+                try
+                {
+                    commands.dispatcher.execute(commandText, createSource());
+                } catch (CommandSyntaxException e)
+                {
+                    appendToLog(e.getMessage(), CommandSource.ResponseStyle.ERROR);
+                }
+            });
+
+            if (!Keybinds.KEEP_CHAT_OPEN.isActive())
             {
                 MDUtil.removePanel(Constants.UI.IN_GAME_CHAT);
                 OrbiterApp.getInstance().setMouseGrab(true);

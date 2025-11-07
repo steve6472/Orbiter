@@ -3,6 +3,7 @@ package steve6472.orbiter.scheduler;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by steve6472
@@ -30,12 +31,18 @@ public class Scheduler
     /*
      * Instance stuff
      */
-
     private final List<DelayTask> tasks = new ArrayList<>(64);
+    private final List<DelayTask> pendingTasks = new ArrayList<>(32); // tasks added during tick
+
+    private boolean ticking = false; // flag to prevent direct modification during iteration
 
     public static void clearAllTasks()
     {
-        instance.tasks.clear();
+        synchronized (instance.tasks)
+        {
+            instance.tasks.clear();
+            instance.pendingTasks.clear();
+        }
     }
 
     private static class DelayTask
@@ -52,25 +59,44 @@ public class Scheduler
 
     public void tick()
     {
-        for (Iterator<DelayTask> iterator = tasks.iterator(); iterator.hasNext(); )
+        synchronized (tasks)
         {
-            DelayTask task = iterator.next();
-            task.delayTicks--;
-
-            if (task.task.isCancelled())
+            ticking = true;
+            try
             {
-                iterator.remove();
-                continue;
+                for (Iterator<DelayTask> iterator = tasks.iterator(); iterator.hasNext(); )
+                {
+                    DelayTask task = iterator.next();
+                    task.delayTicks--;
+
+                    if (task.task.isCancelled())
+                    {
+                        iterator.remove();
+                        continue;
+                    }
+
+                    if (task.delayTicks <= 0)
+                    {
+                        if (task.task.isRepeating())
+                            task.delayTicks = task.task.repeatInterval();
+                        else
+                            iterator.remove();
+
+                        // Run the actual task (may create new tasks)
+                        task.task.runnable.run();
+                    }
+                }
             }
-
-            if (task.delayTicks <= 0)
+            finally
             {
-                if (task.task.isRepeating())
-                    task.delayTicks = task.task.repeatInterval();
-                else
-                    iterator.remove();
+                ticking = false;
 
-                task.task.runnable.run();
+                // Merge new tasks safely
+                if (!pendingTasks.isEmpty())
+                {
+                    tasks.addAll(pendingTasks);
+                    pendingTasks.clear();
+                }
             }
         }
     }
@@ -78,10 +104,18 @@ public class Scheduler
     /*
      * Runner methods
      */
-
     private static Task addTaskWithDelay(ScheduledTask task, int runDelay)
     {
-        instance().tasks.add(new DelayTask(task, runDelay));
+        DelayTask delayTask = new DelayTask(task, runDelay);
+
+        synchronized (instance.tasks)
+        {
+            if (instance.ticking)
+                instance.pendingTasks.add(delayTask);
+            else
+                instance.tasks.add(delayTask);
+        }
+
         return task;
     }
 

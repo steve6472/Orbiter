@@ -112,7 +112,8 @@ public class World implements EntityControl, EntityModify, WorldSounds
             } catch (Exception exception)
             {
                 LOGGER.severe("Exception thrown while ticking");
-                Tracy.message("Exception thrown: " + exception.getMessage());
+                if (FlareProfiler.ENABLE_TRACY)
+                    Tracy.message("Exception thrown: " + exception.getMessage());
                 exception.printStackTrace();
                 throw new RuntimeException(exception);
             } finally
