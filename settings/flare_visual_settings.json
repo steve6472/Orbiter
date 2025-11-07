@@ -6,7 +6,7 @@
   "flare:generate_startup_atlas_data": false,
   "flare:global_camera_count": 3,
   "flare:line_width": 1.0,
-  "flare:present_mode": "FIFO",
+  "flare:present_mode": "Mailbox",
   "flare:render_center_point": false,
   "flare:title_fps": true,
   "flare:username": "Elise Ashberg",

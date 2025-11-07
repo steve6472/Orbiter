@@ -16,8 +16,6 @@ import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.render.debug.DebugRender;
 import steve6472.flare.struct.def.Vertex;
-import steve6472.flare.tracy.FlareProfiler;
-import steve6472.flare.tracy.Profiler;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.OrbiterApp;
@@ -74,15 +72,6 @@ public class FlipbookTintedRenderSystem extends CommonRenderSystem
         );
         this.material = material;
         this.client = client;
-    }
-
-    @Override
-    public void render(FrameInfo frameInfo, MemoryStack stack)
-    {
-        Profiler profiler = FlareProfiler.frame();
-        profiler.push("FlipbookTintedRenderSystem", 0xb28c4a);
-        super.render(frameInfo, stack);
-        profiler.pop();
     }
 
     @Override

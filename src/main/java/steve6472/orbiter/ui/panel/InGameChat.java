@@ -4,6 +4,7 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
+import io.github.benjaminamos.tracy.Tracy;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
 import steve6472.flare.registry.FlareRegistries;
@@ -112,6 +113,7 @@ public class InGameChat extends PanelView
         addCommandListener(Constants.key("execute_command"), _ ->
         {
             String commandText = chatFieldText.get();
+            Tracy.message("Executing command: " + commandText);
             LOGGER.info("Executing command: " + commandText);
 
             boolean error = false;

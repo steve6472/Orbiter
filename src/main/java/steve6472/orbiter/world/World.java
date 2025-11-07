@@ -11,6 +11,7 @@ import com.github.stephengold.joltjni.enumerate.EPhysicsUpdateError;
 import com.github.stephengold.joltjni.readonly.ConstPlane;
 import com.github.stephengold.joltjni.readonly.ConstShape;
 import com.github.stephengold.joltjni.readonly.Vec3Arg;
+import io.github.benjaminamos.tracy.Tracy;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
@@ -37,6 +38,7 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -91,11 +93,11 @@ public class World implements EntityControl, EntityModify, WorldSounds
     {
         tickExecutor.scheduleAtFixedRate(() ->
         {
+            Profiler profiler = FlareProfiler.world();
+            profiler.start();
+
             try
             {
-                Profiler profiler = FlareProfiler.world();
-                profiler.start();
-
                 profiler.push("tick schedulers");
                 //noinspection deprecation
                 Scheduler.instance().tick();
@@ -107,13 +109,15 @@ public class World implements EntityControl, EntityModify, WorldSounds
                 OrbiterApp.getInstance().getClient().snapshotWorldState();
 
                 profiler.pop();
-
-                profiler.end();
             } catch (Exception exception)
             {
                 LOGGER.severe("Exception thrown while ticking");
+                Tracy.message("Exception thrown: " + exception.getMessage());
                 exception.printStackTrace();
                 throw new RuntimeException(exception);
+            } finally
+            {
+                profiler.end();
             }
         }, 0, (long) (1000 / Constants.TICKS_IN_SECOND), TimeUnit.MILLISECONDS);
     }

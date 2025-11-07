@@ -14,8 +14,6 @@ import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.struct.Struct;
 import steve6472.flare.struct.def.Push;
 import steve6472.flare.struct.def.SBO;
-import steve6472.flare.tracy.FlareProfiler;
-import steve6472.flare.tracy.Profiler;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
@@ -43,15 +41,6 @@ public class AnimatedModelRenderSystem extends CommonRenderSystem
             .entrySBO(SBO.BONES.sizeof(), VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, VK_SHADER_STAGE_VERTEX_BIT)
             .entryImage(FlareRegistries.ATLAS.get(FlareConstants.ATLAS_BLOCKBENCH).getSampler()));
         this.client = client;
-    }
-
-    @Override
-    public void render(FrameInfo frameInfo, MemoryStack stack)
-    {
-        Profiler profiler = FlareProfiler.frame();
-        profiler.push("AnimatedModelRenderSystem");
-        super.render(frameInfo, stack);
-        profiler.pop();
     }
 
     @Override

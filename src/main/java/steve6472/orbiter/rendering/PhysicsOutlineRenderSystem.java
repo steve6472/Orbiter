@@ -63,7 +63,7 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
     public void render(FrameInfo frameInfo, MemoryStack stack)
     {
         Profiler profiler = FlareProfiler.frame();
-        profiler.push("PhysicsOutlineRenderSystem focus=" + isFocus);
+        profiler.push("focus=" + isFocus);
         super.render(frameInfo, stack);
         profiler.pop();
     }
