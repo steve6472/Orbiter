@@ -38,7 +38,6 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.logging.Logger;
 
@@ -103,6 +102,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
                 Scheduler.instance().tick();
                 profiler.popPush("main tick");
 
+                // TODO: probably calculate the actual delta here?
                 tick(1f / Constants.TICKS_IN_SECOND);
 
                 profiler.popPush("snapshot world state");
@@ -162,7 +162,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
     public void init(MasterRenderer renderer)
     {
-        addPlane(new Vector3f(0, 1f, 0), 0);
+        addGroundPlane();
         systems.init(renderer);
         particleSystems.init();
     }
@@ -229,11 +229,11 @@ public class World implements EntityControl, EntityModify, WorldSounds
         assert errors == EPhysicsUpdateError.None : errors;
 
         profiler.popPush("player post sim");
-
-//        ProfilerPrint.sout(physicsProfiler, "Bodies", physics.getNumBodies());
-
         Character character = ((PCPlayer) player).character;
         character.postSimulation(0.01f);
+
+        profiler.popPush("updateRayTrace");
+        client.getRayTrace().updateLookAt(client.getCamera(), PCPlayer.REACH);
 
         profiler.popPush("systems");
 
@@ -306,12 +306,12 @@ public class World implements EntityControl, EntityModify, WorldSounds
         }
     }
 
-    private void addPlane(Vector3f normal, float constant)
+    private void addGroundPlane()
     {
         BodyInterface bi = physics.getBodyInterface();
 
-        Vec3Arg norm = Convert.jomlToPhys(normal);
-        ConstPlane plane = new Plane(norm, constant);
+        Vec3Arg norm = Convert.jomlToPhys(new Vector3f(0, 1f, 0));
+        ConstPlane plane = new Plane(norm, (float) 0);
         ConstShape floorShape = new PlaneShape(plane);
 
         BodyCreationSettings bcs = new BodyCreationSettings();

@@ -124,19 +124,6 @@ public class PCPlayer implements Player
         profiler.push("camera loook");
         processCameraLook(userInput, camera);
         profiler.pop();
-
-        Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
-        // TODO: concurrency issue
-/*
-        Optional<RayCastResult> physicsRayTestResult = client.getRayTrace().rayTraceGetFirst(getEyePos(), direction, REACH, true);
-        physicsRayTestResult.ifPresent(res ->
-        {
-            Vector3f hitPosition = new Vector3f(getEyePos()).add(new Vector3f(direction).mul(res.getFraction() * REACH));
-
-            DebugRender.addDebugObjectForFrame(
-                DebugRender.lineSphere(0.015f, 4, DebugRender.IVORY),
-                new Matrix4f().translate(hitPosition));
-        });*/
     }
 
     private void processCameraLook(UserInput userInput, Camera camera)

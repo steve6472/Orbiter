@@ -9,12 +9,15 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
+import steve6472.core.util.MathUtil;
+import steve6472.flare.Camera;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.VkBuffer;
 import steve6472.flare.core.FrameInfo;
 import steve6472.flare.render.common.CommonBuilder;
 import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
+import steve6472.flare.render.debug.DebugRender;
 import steve6472.flare.render.debug.objects.DebugCapsule;
 import steve6472.flare.render.debug.objects.DebugCuboid;
 import steve6472.flare.render.debug.objects.DebugSphere;
@@ -25,6 +28,7 @@ import steve6472.flare.tracy.Profiler;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
+import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.world.collision.OrbiterCollisionShape;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
@@ -71,13 +75,27 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
     @Override
     protected void render(FlightFrame flightFrame, FrameInfo frameInfo, MemoryStack stack)
     {
-        // TODO: concurrency issue
-        if (client.getWorld() == null || true)
+        if (client.getWorld() == null)
             return;
 
         RayCastResult lookAtObject = client.getRayTrace().getLookAtObject();
         if (lookAtObject == null)
             return;
+
+        /*
+         * Hack in the look at thing from PCPlayer
+         * todo: use tick gizmo
+         */
+        if (isFocus)
+        {
+            Camera camera = frameInfo.camera();
+            Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
+            Vector3f hitPosition = new Vector3f(camera.viewPosition).add(new Vector3f(direction).mul(lookAtObject.getFraction() * PCPlayer.REACH));
+
+            DebugRender.addDebugObjectForFrame(
+                DebugRender.lineSphere(0.015f, 4, DebugRender.IVORY),
+                new Matrix4f().translate(hitPosition));
+        }
 
         UUID uuid = client.getWorld().bodyMap().getUUIDById(lookAtObject.getBodyId());
 

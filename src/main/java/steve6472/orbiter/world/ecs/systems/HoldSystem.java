@@ -6,6 +6,8 @@ import com.github.stephengold.joltjni.enumerate.*;
 import org.joml.Vector3f;
 import steve6472.core.util.MathUtil;
 import steve6472.flare.Camera;
+import steve6472.flare.tracy.FlareProfiler;
+import steve6472.flare.tracy.Profiler;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
@@ -186,6 +188,8 @@ public class HoldSystem extends EntitySystem
     @Override
     public void update(float deltaTime)
     {
+        Profiler profiler = FlareProfiler.world();
+        profiler.push("holdSystem");
         if (holdPoint == null)
             holdPoint = createHoldPoint();
 
@@ -196,5 +200,6 @@ public class HoldSystem extends EntitySystem
         {
             endHolding();
         }
+        profiler.pop();
     }
 }

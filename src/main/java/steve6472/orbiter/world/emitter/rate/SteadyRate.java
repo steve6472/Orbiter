@@ -2,6 +2,7 @@ package steve6472.orbiter.world.emitter.rate;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import steve6472.orbiter.Constants;
 import steve6472.orbiter.world.emitter.ParticleEmitter;
 import steve6472.orlang.codec.OrNumValue;
 
@@ -38,7 +39,7 @@ public class SteadyRate extends EmitterRate
     {
         // rate is in particles/second
         double r = spawnRate.evaluateAndGet(emitter.environment);
-        double perTick = r / 60.0; // emitter ticks 60 times per second
+        double perTick = r / Constants.TICKS_IN_SECOND; // emitter ticks 60 times per second
 
         accumulator += perTick;
         int toSpawn = (int) accumulator; // whole particles to spawn this tick

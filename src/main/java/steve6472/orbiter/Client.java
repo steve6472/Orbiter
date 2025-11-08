@@ -57,11 +57,7 @@ public class Client
         if (world != null && player != null)
             player.handleInput(userInput, vrInput, camera, frameTime);
 
-        profiler.popPush("raytrace update look at");
-
-        rayTrace.updateLookAt(camera, PCPlayer.REACH);
         profiler.popPush("soundmaster");
-
         soundMaster.setListenerOrientation(camera.getViewMatrix());
         Vector3f eyePos = camera.viewPosition;
         soundMaster.setListenerPosition(eyePos.x, eyePos.y, eyePos.z);

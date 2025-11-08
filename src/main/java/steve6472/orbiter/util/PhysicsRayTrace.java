@@ -17,7 +17,6 @@ import java.util.Optional;
  */
 public class PhysicsRayTrace
 {
-    // TODO: concurrency issue, whole class was disabled so I don't need to go everywhere
     private final BroadPhaseLayerFilter broadPhaseLayerFilter = new BroadPhaseLayerFilter();
     private final ObjectLayerFilter objectLayerFilter = new ObjectLayerFilter();
     private final AllHitCastRayCollector allHitCollector = new AllHitCastRayCollector();
@@ -41,25 +40,25 @@ public class PhysicsRayTrace
     /// @param distance Max distance
     public void rayTrace(Vector3f position, Vector3f direction, float distance, CastRayCollector collector, BodyFilter bodyFilter)
     {
-//        RRayCast ray = createRay(position, direction, distance);
-//        collector.reset();
-//        client.getWorld().physics().getNarrowPhaseQuery().castRay(ray, new RayCastSettings(), collector, broadPhaseLayerFilter, objectLayerFilter, bodyFilter);
+        RRayCast ray = createRay(position, direction, distance);
+        collector.reset();
+        client.getWorld().physics().getNarrowPhaseQuery().castRay(ray, new RayCastSettings(), collector, broadPhaseLayerFilter, objectLayerFilter, bodyFilter);
     }
 
     public Optional<RayCastResult> rayTraceGetFirst(Vector3f position, Vector3f direction, float distance, boolean excludeClientPlayer)
     {
-//        BodyFilter bodyFilter = noBodyFilter;
-//        if (excludeClientPlayer)
-//        {
-//            bodyFilter = new IgnoreMultipleBodiesFilter();
-//            ((IgnoreMultipleBodiesFilter) bodyFilter).ignoreBody(((PCPlayer) client.player()).character.getBodyId());
-//        }
-//
-//        rayTrace(position, direction, distance, closestHitCollector, bodyFilter);
-//        if (!closestHitCollector.hadHit())
+        BodyFilter bodyFilter = noBodyFilter;
+        if (excludeClientPlayer)
+        {
+            bodyFilter = new IgnoreMultipleBodiesFilter();
+            ((IgnoreMultipleBodiesFilter) bodyFilter).ignoreBody(((PCPlayer) client.player()).character.getBodyId());
+        }
+
+        rayTrace(position, direction, distance, closestHitCollector, bodyFilter);
+        if (!closestHitCollector.hadHit())
             return Optional.empty();
 
-//        return Optional.of(closestHitCollector.getHit());
+        return Optional.of(closestHitCollector.getHit());
     }
 
     public Optional<RayCastResult> rayTraceGetFirst(Camera camera, float distance, boolean excludeClientPlayer)
@@ -70,11 +69,11 @@ public class PhysicsRayTrace
 
     public void updateLookAt(Camera camera, float reach)
     {
-//        rayTraceGetFirst(camera, reach, true)
-//            .ifPresentOrElse(
-//                t -> lookAtObject = t,
-//                () -> lookAtObject = null
-//            );
+        rayTraceGetFirst(camera, reach, true)
+            .ifPresentOrElse(
+                t -> lookAtObject = t,
+                () -> lookAtObject = null
+            );
     }
 
     public RayCastResult getLookAtObject()

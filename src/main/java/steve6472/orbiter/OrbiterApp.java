@@ -282,7 +282,7 @@ public class OrbiterApp extends FlareApp
     {
         Profiler profiler = FlareProfiler.frame();
         profiler.push("network tick");
-        // TODO: move to game thread probably
+        // TODO: move to game thread 100%
         if (networkMain != null)
             networkMain.tick();
         profiler.popPush("keybinds processing");
