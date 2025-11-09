@@ -33,7 +33,10 @@ import steve6472.moondust.widget.component.ViewController;
 import steve6472.orbiter.commands.Commands;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
+import steve6472.orbiter.rendering.gizmo.DrawableGizmoPrimitives;
+import steve6472.orbiter.rendering.gizmo.GizmoInstance;
 import steve6472.orbiter.rendering.gizmo.GizmoMaterial;
+import steve6472.orbiter.rendering.gizmo.Gizmos;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.rendering.snapshot.system.*;
 import steve6472.orbiter.rendering.*;
@@ -96,6 +99,8 @@ public class OrbiterApp extends FlareApp
     private boolean isMouseGrabbed = false;
 
     public PhysicsDebugRenderer physicsDebugRenderer;
+    public DrawableGizmoPrimitives drawableGizmoPrimitives = new DrawableGizmoPrimitives();
+    public DrawableGizmoPrimitives drawableGizmoPrimitivesAlwaysOnTop = new DrawableGizmoPrimitives();
 
     OrbiterApp()
     {
@@ -237,6 +242,11 @@ public class OrbiterApp extends FlareApp
         profiler.push("set perspective");
         frameInfo.camera().setPerspectiveProjection(Settings.FOV.get(), aspectRatio(), 0.1f, 1024f);
 
+        profiler.popPush("clearPerFrameGizmos");
+        drawableGizmoPrimitives.clearAll();
+        drawableGizmoPrimitivesAlwaysOnTop.clearAll();
+        // Gizmos can be added from here on out
+
         float frameTime = frameInfo.frameTime();
         float tickDuration = 1f / Constants.TICKS_IN_SECOND;
         profiler.popPush("handle input");
@@ -266,9 +276,29 @@ public class OrbiterApp extends FlareApp
             camera().viewPosition.set(currentRenderState.lastSnapshot.cameraPosition.lerp(currentRenderState.currentSnapshot.cameraPosition, partialTicks, new Vector3f()));
         }
 
+        profiler.popPush("prepareRenderGizmos");
+        prepareRenderGizmos(frameInfo.camera().viewPosition);
+
 //        client.render(frameInfo, memoryStack);
         profiler.pop();
         profiler.pop();
+    }
+
+    private void prepareRenderGizmos(Vector3f viewPosition)
+    {
+        for (GizmoInstance gizmo : Gizmos.getGizmosForRender())
+        {
+            if (gizmo.isAlwaysOnTop())
+            {
+                drawableGizmoPrimitivesAlwaysOnTop.createPrimitives(gizmo);
+            } else
+            {
+                drawableGizmoPrimitives.createPrimitives(gizmo);
+            }
+        }
+
+        drawableGizmoPrimitivesAlwaysOnTop.sortPrimitives(viewPosition, partialTicks);
+        drawableGizmoPrimitives.sortPrimitives(viewPosition, partialTicks);
     }
 
     public enum PartialTicksType

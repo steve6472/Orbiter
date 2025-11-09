@@ -9,15 +9,12 @@ import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.struct.def.Vertex;
 import steve6472.orbiter.Client;
-import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.rendering.gizmo.DrawableGizmoPrimitives;
 import steve6472.orbiter.rendering.gizmo.GizmoMaterial;
-import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.world.World;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
-import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -48,15 +45,7 @@ public class TriGizmoRenderSystem extends CommonRenderSystem
     @Override
     protected boolean shouldRender()
     {
-        World world = client.getWorld();
-        if (world == null)
-            return false;
-
-        WorldRenderState currentRenderState = OrbiterApp.getInstance().currentRenderState;
-        if (currentRenderState == null)
-            return false;
-
-        var tris = select(currentRenderState, material);
+        var tris = Select.select(material, p -> p.tris, p -> p.blendTris);
         //noinspection RedundantIfStatement
         if (tris == null || tris.isEmpty())
             return false;
@@ -71,11 +60,7 @@ public class TriGizmoRenderSystem extends CommonRenderSystem
         if (world == null)
             return;
 
-        WorldRenderState currentRenderState = OrbiterApp.getInstance().currentRenderState;
-        if (currentRenderState == null)
-            return;
-
-        var tris = select(currentRenderState, material);
+        var tris = Select.select(material, p -> p.tris, p -> p.blendTris);
         if (tris == null || tris.isEmpty())
             return;
 
@@ -100,26 +85,6 @@ public class TriGizmoRenderSystem extends CommonRenderSystem
 
         vkCmdBindVertexBuffers(frameInfo.commandBuffer(), 0, vertexBuffers, offsets);
         vkCmdDraw(frameInfo.commandBuffer(), tris.size() * DrawableGizmoPrimitives.TRI_VERTEX_COUNT, 1, 0, 0);
-    }
-
-    private List<DrawableGizmoPrimitives.Tri> select(WorldRenderState renderState, GizmoMaterial material)
-    {
-        GizmoMaterial.Settings settings = material.settings();
-        if (settings.alwaysOnTop())
-        {
-            DrawableGizmoPrimitives drawableGizmoPrimitivesAlwaysOnTop = renderState.drawableGizmoPrimitivesAlwaysOnTop;
-            if (settings.hasAlpha())
-                return drawableGizmoPrimitivesAlwaysOnTop.blendTris;
-            else
-                return drawableGizmoPrimitivesAlwaysOnTop.tris;
-        } else
-        {
-            DrawableGizmoPrimitives drawableGizmoPrimitives = renderState.drawableGizmoPrimitives;
-            if (settings.hasAlpha())
-                return drawableGizmoPrimitives.blendTris;
-            else
-                return drawableGizmoPrimitives.tris;
-        }
     }
 
     private boolean addTri(ByteBuffer buffer, DrawableGizmoPrimitives.Tri tri, long now)

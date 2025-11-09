@@ -104,6 +104,16 @@ public class DrawableGizmoPrimitives implements GizmoPrimitives
         });
     }
 
+    public void clearAll()
+    {
+        lines.clear();
+        blendLines.clear();
+        points.clear();
+        blendPoints.clear();
+        tris.clear();
+        blendTris.clear();
+    }
+
     public record Line(Vector3f start, Vector3f end, float r, float g, float b, float a, AlphaMultiplier alpha, float width) implements MidpointSortable
     {
         @Override

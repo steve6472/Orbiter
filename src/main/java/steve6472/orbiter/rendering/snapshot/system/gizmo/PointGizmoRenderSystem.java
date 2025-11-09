@@ -8,16 +8,13 @@ import steve6472.flare.render.common.CommonBuilder;
 import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
 import steve6472.orbiter.Client;
-import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.rendering.OrbiterVertex;
 import steve6472.orbiter.rendering.gizmo.DrawableGizmoPrimitives;
 import steve6472.orbiter.rendering.gizmo.GizmoMaterial;
-import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.world.World;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
-import java.util.List;
 
 import static org.lwjgl.vulkan.VK10.*;
 
@@ -48,15 +45,7 @@ public class PointGizmoRenderSystem extends CommonRenderSystem
     @Override
     protected boolean shouldRender()
     {
-        World world = client.getWorld();
-        if (world == null)
-            return false;
-
-        WorldRenderState currentRenderState = OrbiterApp.getInstance().currentRenderState;
-        if (currentRenderState == null)
-            return false;
-
-        var points = select(currentRenderState, material);
+        var points = Select.select(material, p -> p.points, p -> p.blendPoints);
         //noinspection RedundantIfStatement
         if (points == null || points.isEmpty())
             return false;
@@ -67,20 +56,12 @@ public class PointGizmoRenderSystem extends CommonRenderSystem
     @Override
     protected void render(FlightFrame flightFrame, FrameInfo frameInfo, MemoryStack stack)
     {
-        World world = client.getWorld();
-        if (world == null)
-            return;
-
-        WorldRenderState currentRenderState = OrbiterApp.getInstance().currentRenderState;
-        if (currentRenderState == null)
-            return;
-
-        var points = select(currentRenderState, material);
+        var points = Select.select(material, p -> p.points, p -> p.blendPoints);
         if (points == null || points.isEmpty())
             return;
 
         if (points.size() > DrawableGizmoPrimitives.POINT_COUNT)
-            throw new RuntimeException("Too many points");
+            throw new RuntimeException("Too many points (" + points.size() + " > " + DrawableGizmoPrimitives.POINT_COUNT + ")");
 
         VkBuffer buffer = flightFrame.getBuffer(0);
         int size = points.size() * vertex().sizeof() * DrawableGizmoPrimitives.POINT_VERTEX_COUNT;
@@ -100,26 +81,6 @@ public class PointGizmoRenderSystem extends CommonRenderSystem
 
         vkCmdBindVertexBuffers(frameInfo.commandBuffer(), 0, vertexBuffers, offsets);
         vkCmdDraw(frameInfo.commandBuffer(), points.size(), 1, 0, 0);
-    }
-
-    private List<DrawableGizmoPrimitives.Point> select(WorldRenderState renderState, GizmoMaterial material)
-    {
-        GizmoMaterial.Settings settings = material.settings();
-        if (settings.alwaysOnTop())
-        {
-            DrawableGizmoPrimitives drawableGizmoPrimitivesAlwaysOnTop = renderState.drawableGizmoPrimitivesAlwaysOnTop;
-            if (settings.hasAlpha())
-                return drawableGizmoPrimitivesAlwaysOnTop.blendPoints;
-            else
-                return drawableGizmoPrimitivesAlwaysOnTop.points;
-        } else
-        {
-            DrawableGizmoPrimitives drawableGizmoPrimitives = renderState.drawableGizmoPrimitives;
-            if (settings.hasAlpha())
-                return drawableGizmoPrimitives.blendPoints;
-            else
-                return drawableGizmoPrimitives.points;
-        }
     }
 
     private boolean addPoint(ByteBuffer buffer, DrawableGizmoPrimitives.Point point, long now)

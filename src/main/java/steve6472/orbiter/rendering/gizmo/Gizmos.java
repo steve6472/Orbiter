@@ -13,7 +13,7 @@ import java.util.List;
  * Date: 11/9/2025
  * Project: Orbiter <br>
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 public class Gizmos
 {
     private static final ThreadLocal<GizmoList> GIZMOS = ThreadLocal.withInitial(GizmoList::new);

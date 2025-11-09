@@ -292,7 +292,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
         float yOffset = (float) (Math.sin(Math.toRadians((System.currentTimeMillis() % 3600) / 10d)) * 0.4f);
         Gizmos.filledLineCuboid(new Vector3f(0.5f, 1.5f + yOffset, 0.5f), 0.3f, 0xffa0a0a0, 0x6080cc30, 2f);
-        Gizmos.filledLineCuboid(new Vector3f(1.5f, 1.5f + -yOffset, 0.5f), 0.3f, 0x60cc3080, 1f);
+        Gizmos.filledLineCuboid(new Vector3f(1.5f, 1.5f - yOffset, 0.5f), 0.3f, 0x60cc3080, 1f);
     }
 
     public void debugRender(float frameTime)

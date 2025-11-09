@@ -78,6 +78,7 @@ public class WorldRenderState
     public void prepare(Vector3f viewPosition, float partialTicks)
     {
         prepareParticles(viewPosition, partialTicks);
+        drawableGizmoPrimitivesAlwaysOnTop.sortPrimitives(viewPosition, partialTicks);
         drawableGizmoPrimitives.sortPrimitives(viewPosition, partialTicks);
     }
 

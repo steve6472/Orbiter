@@ -1,6 +1,5 @@
 package steve6472.orbiter.rendering.snapshot.system.gizmo;
 
-import it.unimi.dsi.fastutil.floats.Float2ObjectMap;
 import org.lwjgl.system.MemoryStack;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.VkBuffer;
@@ -10,10 +9,8 @@ import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.struct.def.Vertex;
 import steve6472.orbiter.Client;
-import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.rendering.gizmo.GizmoMaterial;
 import steve6472.orbiter.rendering.gizmo.DrawableGizmoPrimitives;
-import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.world.World;
 
 import java.nio.ByteBuffer;
@@ -49,15 +46,7 @@ public class LineGizmoRenderSystem extends CommonRenderSystem
     @Override
     protected boolean shouldRender()
     {
-        World world = client.getWorld();
-        if (world == null)
-            return false;
-
-        WorldRenderState currentRenderState = OrbiterApp.getInstance().currentRenderState;
-        if (currentRenderState == null)
-            return false;
-
-        var linesByWidth = select(currentRenderState, material);
+        var linesByWidth = Select.select(material, p -> p.lines, p -> p.blendLines);
         //noinspection RedundantIfStatement
         if (linesByWidth == null || linesByWidth.isEmpty())
             return false;
@@ -72,11 +61,7 @@ public class LineGizmoRenderSystem extends CommonRenderSystem
         if (world == null)
             return;
 
-        WorldRenderState currentRenderState = OrbiterApp.getInstance().currentRenderState;
-        if (currentRenderState == null)
-            return;
-
-        var linesByWidth = select(currentRenderState, material);
+        var linesByWidth = Select.select(material, p -> p.lines, p -> p.blendLines);
         if (linesByWidth == null || linesByWidth.isEmpty())
             return;
 
@@ -123,26 +108,6 @@ public class LineGizmoRenderSystem extends CommonRenderSystem
             vkCmdDraw(frameInfo.commandBuffer(), vertexCount, 1, vertexOffset, 0);
 
             vertexOffset += vertexCount;
-        }
-    }
-
-    private Float2ObjectMap<List<DrawableGizmoPrimitives.Line>> select(WorldRenderState renderState, GizmoMaterial material)
-    {
-        GizmoMaterial.Settings settings = material.settings();
-        if (settings.alwaysOnTop())
-        {
-            DrawableGizmoPrimitives drawableGizmoPrimitivesAlwaysOnTop = renderState.drawableGizmoPrimitivesAlwaysOnTop;
-            if (settings.hasAlpha())
-                return drawableGizmoPrimitivesAlwaysOnTop.blendLines;
-            else
-                return drawableGizmoPrimitivesAlwaysOnTop.lines;
-        } else
-        {
-            DrawableGizmoPrimitives drawableGizmoPrimitives = renderState.drawableGizmoPrimitives;
-            if (settings.hasAlpha())
-                return drawableGizmoPrimitives.blendLines;
-            else
-                return drawableGizmoPrimitives.lines;
         }
     }
 
