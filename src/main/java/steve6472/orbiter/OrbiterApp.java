@@ -38,6 +38,8 @@ import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.rendering.snapshot.system.*;
 import steve6472.orbiter.rendering.*;
 import steve6472.orbiter.rendering.snapshot.system.gizmo.LineGizmoRenderSystem;
+import steve6472.orbiter.rendering.snapshot.system.gizmo.PointGizmoRenderSystem;
+import steve6472.orbiter.rendering.snapshot.system.gizmo.TriGizmoRenderSystem;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.ui.MDUtil;
@@ -179,8 +181,12 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new PlaneTintedParticleRenderSystem(masterRenderer(), ParticleMaterial.ALPHA_TEST_TINT, client));
         addRenderSystem(new FlipbookTintedRenderSystem(masterRenderer(), ParticleMaterial.ALPHA_TEST_TINT, client));
 
+        addRenderSystem(new PointGizmoRenderSystem(masterRenderer(), GizmoMaterial.OPAQUE, client));
+        addRenderSystem(new PointGizmoRenderSystem(masterRenderer(), GizmoMaterial.OPAQUE_ON_TOP, client));
         addRenderSystem(new LineGizmoRenderSystem(masterRenderer(), GizmoMaterial.OPAQUE, client));
         addRenderSystem(new LineGizmoRenderSystem(masterRenderer(), GizmoMaterial.OPAQUE_ON_TOP, client));
+        addRenderSystem(new TriGizmoRenderSystem(masterRenderer(), GizmoMaterial.OPAQUE, client));
+        addRenderSystem(new TriGizmoRenderSystem(masterRenderer(), GizmoMaterial.OPAQUE_ON_TOP, client));
 
         // Blend
         addRenderSystem(new PlaneTintedParticleRenderSystem(masterRenderer(), ParticleMaterial.BLEND, client));
@@ -188,8 +194,12 @@ public class OrbiterApp extends FlareApp
         // Additive
         addRenderSystem(new PlaneTintedParticleRenderSystem(masterRenderer(), ParticleMaterial.ADDITIVE, client));
 
+        addRenderSystem(new PointGizmoRenderSystem(masterRenderer(), GizmoMaterial.BLEND, client));
+        addRenderSystem(new PointGizmoRenderSystem(masterRenderer(), GizmoMaterial.BLEND_ON_TOP, client));
         addRenderSystem(new LineGizmoRenderSystem(masterRenderer(), GizmoMaterial.BLEND, client));
         addRenderSystem(new LineGizmoRenderSystem(masterRenderer(), GizmoMaterial.BLEND_ON_TOP, client));
+        addRenderSystem(new TriGizmoRenderSystem(masterRenderer(), GizmoMaterial.BLEND, client));
+        addRenderSystem(new TriGizmoRenderSystem(masterRenderer(), GizmoMaterial.BLEND_ON_TOP, client));
 
         new MoonDustCallbacks().init(window().callbacks(), input());
     }

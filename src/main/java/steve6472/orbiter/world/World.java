@@ -29,6 +29,7 @@ import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
 import steve6472.orbiter.rendering.gizmo.Gizmos;
+import steve6472.orbiter.rendering.gizmo.shapes.FilledLineCuboid;
 import steve6472.orbiter.rendering.snapshot.SnapshotPools;
 import steve6472.orbiter.rendering.snapshot.WorldSnapshot;
 import steve6472.orbiter.scheduler.Scheduler;
@@ -288,6 +289,10 @@ public class World implements EntityControl, EntityModify, WorldSounds
         Gizmos.line(new Vector3f(0, 0, 0), new Vector3f(1, 0, 0), 0xffff0000, 3f);
         Gizmos.line(new Vector3f(0, 0, 0), new Vector3f(0, 1, 0), 0xff00ff00, 3f);
         Gizmos.line(new Vector3f(0, 0, 0), new Vector3f(0, 0, 1), 0xff0000ff, 3f);
+
+        float yOffset = (float) (Math.sin(Math.toRadians((System.currentTimeMillis() % 3600) / 10d)) * 0.4f);
+        Gizmos.filledLineCuboid(new Vector3f(0.5f, 1.5f + yOffset, 0.5f), 0.3f, 0xffa0a0a0, 0x6080cc30, 2f);
+        Gizmos.filledLineCuboid(new Vector3f(1.5f, 1.5f + -yOffset, 0.5f), 0.3f, 0x60cc3080, 1f);
     }
 
     public void debugRender(float frameTime)

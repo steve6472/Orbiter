@@ -28,6 +28,12 @@ public interface OrbiterVertex
         .addMember(VEC_3F)  // position
         .build(StructVertex::new);
 
+    StructVertex POS3F_COL4F_FLOAT = builder()
+        .addMember(VEC_3F)  // position
+        .addMember(VEC_4F)  // lineColor
+        .addMember(FLOAT)  // point size
+        .build(StructVertex::new);
+
     StructVertex POS3F_COL3F_NOR3F_UV = builder()
         .addMember(VEC_3F)  // position
         .addMember(VEC_3F)  // color

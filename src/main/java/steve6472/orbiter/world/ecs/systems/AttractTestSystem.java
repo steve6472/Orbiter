@@ -3,11 +3,9 @@ package steve6472.orbiter.world.ecs.systems;
 import com.badlogic.ashley.core.EntitySystem;
 import com.github.stephengold.joltjni.*;
 import com.github.stephengold.joltjni.readonly.Vec3Arg;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import steve6472.core.util.MathUtil;
 import steve6472.flare.Camera;
-import steve6472.flare.render.debug.DebugRender;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.OrbiterApp;
@@ -99,6 +97,8 @@ public class AttractTestSystem extends EntitySystem
         }
         // TODO: use sphere
         Gizmos.lineCuboid(add, 0.3f, 0xffa0a0a0, 2f).stayForMs(250).fadeOut();
+        Gizmos.point(add, 0x80a0a0a0, 5f);
+//        Gizmos.addGizmo(new FilledLineCuboid(add, 0.3f, 0xffa0a0a0, 0x6080cc30, 2f)).stayForMs(250).fadeOut();
 //        DebugRender.addDebugObjectForMs(DebugRender.lineSphere(0.5f, 3, DebugRender.LIGHT_GRAY), 15, new Matrix4f().translate(add));
     }
 }

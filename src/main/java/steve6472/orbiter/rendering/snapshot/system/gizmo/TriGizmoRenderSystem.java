@@ -1,6 +1,5 @@
 package steve6472.orbiter.rendering.snapshot.system.gizmo;
 
-import it.unimi.dsi.fastutil.floats.Float2ObjectMap;
 import org.lwjgl.system.MemoryStack;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.VkBuffer;
@@ -11,8 +10,8 @@ import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.struct.def.Vertex;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.OrbiterApp;
-import steve6472.orbiter.rendering.gizmo.GizmoMaterial;
 import steve6472.orbiter.rendering.gizmo.DrawableGizmoPrimitives;
+import steve6472.orbiter.rendering.gizmo.GizmoMaterial;
 import steve6472.orbiter.rendering.snapshot.WorldRenderState;
 import steve6472.orbiter.world.World;
 
@@ -27,19 +26,19 @@ import static org.lwjgl.vulkan.VK10.*;
  * Date: 9/22/2025
  * Project: Orbiter <br>
  */
-public class LineGizmoRenderSystem extends CommonRenderSystem
+public class TriGizmoRenderSystem extends CommonRenderSystem
 {
     private final Client client;
     private final GizmoMaterial material;
 
-    public LineGizmoRenderSystem(MasterRenderer masterRenderer, GizmoMaterial material, Client client)
+    public TriGizmoRenderSystem(MasterRenderer masterRenderer, GizmoMaterial material, Client client)
     {
-        super(masterRenderer, material.linePipeline(),
+        super(masterRenderer, material.triPipeline(),
             CommonBuilder
                 .create()
                 .vertexBuffer(
                     Vertex.POS3F_COL4F.sizeof(),
-                    DrawableGizmoPrimitives.LINE_COUNT * DrawableGizmoPrimitives.LINE_VERTEX_COUNT,
+                    DrawableGizmoPrimitives.TRI_COUNT * DrawableGizmoPrimitives.TRI_VERTEX_COUNT,
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
         );
         this.material = material;
@@ -57,9 +56,9 @@ public class LineGizmoRenderSystem extends CommonRenderSystem
         if (currentRenderState == null)
             return false;
 
-        var linesByWidth = select(currentRenderState, material);
+        var tris = select(currentRenderState, material);
         //noinspection RedundantIfStatement
-        if (linesByWidth == null || linesByWidth.isEmpty())
+        if (tris == null || tris.isEmpty())
             return false;
 
         return true;
@@ -76,98 +75,83 @@ public class LineGizmoRenderSystem extends CommonRenderSystem
         if (currentRenderState == null)
             return;
 
-        var linesByWidth = select(currentRenderState, material);
-        if (linesByWidth == null || linesByWidth.isEmpty())
+        var tris = select(currentRenderState, material);
+        if (tris == null || tris.isEmpty())
             return;
 
-        int totalMaxLinesCount = 0;
-
-        for (float width : linesByWidth.keySet())
-        {
-            List<DrawableGizmoPrimitives.Line> lines = linesByWidth.get(width);
-            totalMaxLinesCount += lines.size();
-        }
-
-        if (totalMaxLinesCount > DrawableGizmoPrimitives.LINE_COUNT)
-            throw new RuntimeException("Too many lines");
+        if (tris.size() > DrawableGizmoPrimitives.TRI_COUNT)
+            throw new RuntimeException("Too many tris");
 
         VkBuffer buffer = flightFrame.getBuffer(0);
-        int size = totalMaxLinesCount * vertex().sizeof() * DrawableGizmoPrimitives.LINE_VERTEX_COUNT;
+        int size = tris.size() * vertex().sizeof() * DrawableGizmoPrimitives.TRI_VERTEX_COUNT;
         ByteBuffer byteBuffer = buffer
             .getMappedMemory()
             .getByteBuffer(0, size);
 
         long now = System.currentTimeMillis();
-        for (float width : linesByWidth.keySet())
+
+        for (DrawableGizmoPrimitives.Tri point : tris)
         {
-            List<DrawableGizmoPrimitives.Line> lines = linesByWidth.get(width);
-            for (DrawableGizmoPrimitives.Line line : lines)
-            {
-                addLine(byteBuffer, line, now);
-            }
+            addTri(byteBuffer, point, now);
         }
 
         LongBuffer vertexBuffers = stack.longs(buffer.getBuffer());
         LongBuffer offsets = stack.longs(0);
 
         vkCmdBindVertexBuffers(frameInfo.commandBuffer(), 0, vertexBuffers, offsets);
-
-        int vertexOffset = 0;
-        for (var entry : linesByWidth.float2ObjectEntrySet())
-        {
-            float width = entry.getFloatKey();
-            List<DrawableGizmoPrimitives.Line> group = entry.getValue();
-            int vertexCount = group.size() * DrawableGizmoPrimitives.LINE_VERTEX_COUNT;
-
-            vkCmdSetLineWidth(frameInfo.commandBuffer(), width);
-            vkCmdDraw(frameInfo.commandBuffer(), vertexCount, 1, vertexOffset, 0);
-
-            vertexOffset += vertexCount;
-        }
+        vkCmdDraw(frameInfo.commandBuffer(), tris.size() * DrawableGizmoPrimitives.TRI_VERTEX_COUNT, 1, 0, 0);
     }
 
-    private Float2ObjectMap<List<DrawableGizmoPrimitives.Line>> select(WorldRenderState renderState, GizmoMaterial material)
+    private List<DrawableGizmoPrimitives.Tri> select(WorldRenderState renderState, GizmoMaterial material)
     {
         GizmoMaterial.Settings settings = material.settings();
         if (settings.alwaysOnTop())
         {
             DrawableGizmoPrimitives drawableGizmoPrimitivesAlwaysOnTop = renderState.drawableGizmoPrimitivesAlwaysOnTop;
             if (settings.hasAlpha())
-                return drawableGizmoPrimitivesAlwaysOnTop.blendLines;
+                return drawableGizmoPrimitivesAlwaysOnTop.blendTris;
             else
-                return drawableGizmoPrimitivesAlwaysOnTop.lines;
+                return drawableGizmoPrimitivesAlwaysOnTop.tris;
         } else
         {
             DrawableGizmoPrimitives drawableGizmoPrimitives = renderState.drawableGizmoPrimitives;
             if (settings.hasAlpha())
-                return drawableGizmoPrimitives.blendLines;
+                return drawableGizmoPrimitives.blendTris;
             else
-                return drawableGizmoPrimitives.lines;
+                return drawableGizmoPrimitives.tris;
         }
     }
 
-    private boolean addLine(ByteBuffer buffer, DrawableGizmoPrimitives.Line line, long now)
+    private boolean addTri(ByteBuffer buffer, DrawableGizmoPrimitives.Tri tri, long now)
     {
-        float alphaMultiplier = line.alpha().get(now);
+        float alphaMultiplier = tri.alpha().get(now);
         //TODO: finish this
 //        if (alphaMultiplier == 0)
 //            return false;
 
-        buffer.putFloat(line.start().x);
-        buffer.putFloat(line.start().y);
-        buffer.putFloat(line.start().z);
-        buffer.putFloat(line.r());
-        buffer.putFloat(line.g());
-        buffer.putFloat(line.b());
-        buffer.putFloat(line.a() * alphaMultiplier);
+        buffer.putFloat(tri.posA().x);
+        buffer.putFloat(tri.posA().y);
+        buffer.putFloat(tri.posA().z);
+        buffer.putFloat(tri.r());
+        buffer.putFloat(tri.g());
+        buffer.putFloat(tri.b());
+        buffer.putFloat(tri.a() * alphaMultiplier);
 
-        buffer.putFloat(line.end().x);
-        buffer.putFloat(line.end().y);
-        buffer.putFloat(line.end().z);
-        buffer.putFloat(line.r());
-        buffer.putFloat(line.g());
-        buffer.putFloat(line.b());
-        buffer.putFloat(line.a() * alphaMultiplier);
+        buffer.putFloat(tri.posB().x);
+        buffer.putFloat(tri.posB().y);
+        buffer.putFloat(tri.posB().z);
+        buffer.putFloat(tri.r());
+        buffer.putFloat(tri.g());
+        buffer.putFloat(tri.b());
+        buffer.putFloat(tri.a() * alphaMultiplier);
+
+        buffer.putFloat(tri.posC().x);
+        buffer.putFloat(tri.posC().y);
+        buffer.putFloat(tri.posC().z);
+        buffer.putFloat(tri.r());
+        buffer.putFloat(tri.g());
+        buffer.putFloat(tri.b());
+        buffer.putFloat(tri.a() * alphaMultiplier);
 
         return true;
     }

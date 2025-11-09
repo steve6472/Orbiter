@@ -7,9 +7,7 @@ import steve6472.core.util.ColorUtil;
 import steve6472.orbiter.rendering.gizmo.alpha.AlphaMultiplier;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by steve6472
@@ -24,14 +22,33 @@ public class DrawableGizmoPrimitives implements GizmoPrimitives
 
     public static final int POINT_COUNT = 1024;
     public static final int POINT_VERTEX_COUNT = 1;
-    public static final int POINT_FLOAT_COUNT = 3 + 4;
+    public static final int POINT_FLOAT_COUNT = 3 + 4 + 1;
+
+    public static final int TRI_COUNT = 8192;
+    public static final int TRI_VERTEX_COUNT = 3;
+    public static final int TRI_FLOAT_COUNT = 3 + 4;
 
     public final Float2ObjectMap<List<Line>> lines = new Float2ObjectArrayMap<>();
     public final Float2ObjectMap<List<Line>> blendLines = new Float2ObjectArrayMap<>();
 
+    public final List<Point> points = new ArrayList<>();
+    public final List<Point> blendPoints = new ArrayList<>();
+
+    public final List<Tri> tris = new ArrayList<>();
+    public final List<Tri> blendTris = new ArrayList<>();
+
     @Override
     public void point(Vector3f pos, int color, AlphaMultiplier alpha, float size)
     {
+        float r = (float) ColorUtil.getRed(color) / 255f;
+        float g = (float) ColorUtil.getGreen(color) / 255f;
+        float b = (float) ColorUtil.getBlue(color) / 255f;
+        float a = (float) ColorUtil.getAlpha(color) / 255f;
+        Point line = new Point(pos, r, g, b, a, alpha, size);
+        if (AlphaMultiplier.isBlend(a, alpha))
+            blendPoints.add(line);
+        else
+            points.add(line);
     }
 
     @Override
@@ -49,9 +66,17 @@ public class DrawableGizmoPrimitives implements GizmoPrimitives
     }
 
     @Override
-    public void tri(Vector3f a, Vector3f b, Vector3f c, int color, AlphaMultiplier alpha)
+    public void tri(Vector3f posA, Vector3f posB, Vector3f posC, int color, AlphaMultiplier alpha)
     {
-
+        float r = (float) ColorUtil.getRed(color) / 255f;
+        float g = (float) ColorUtil.getGreen(color) / 255f;
+        float b = (float) ColorUtil.getBlue(color) / 255f;
+        float a = (float) ColorUtil.getAlpha(color) / 255f;
+        Tri tri = new Tri(posA, posB, posC, r, g, b, a, alpha);
+        if (AlphaMultiplier.isBlend(a, alpha))
+            blendTris.add(tri);
+        else
+            tris.add(tri);
     }
 
     public void createPrimitives(GizmoInstance instance)
@@ -62,6 +87,8 @@ public class DrawableGizmoPrimitives implements GizmoPrimitives
     public void sortPrimitives(Vector3f viewPosition, float partialTicks)
     {
         blendLines.forEach((_, lines) -> sortMidpointSortable(lines, viewPosition));
+        sortMidpointSortable(blendPoints, viewPosition);
+        sortMidpointSortable(blendTris, viewPosition);
     }
 
     private void sortMidpointSortable(List<? extends MidpointSortable> list, Vector3f viewPosition)
@@ -79,14 +106,30 @@ public class DrawableGizmoPrimitives implements GizmoPrimitives
 
     public record Line(Vector3f start, Vector3f end, float r, float g, float b, float a, AlphaMultiplier alpha, float width) implements MidpointSortable
     {
+        @Override
         public Vector3f midpoint(Vector3f store)
         {
             return store.set(start).add(end).mul(0.5f);
         }
     }
 
-    public record Point(Vector3f pos, float r, float g, float b, float a, AlphaMultiplier alpha, float size) { }
-    public record Tri(Vector3f posA, Vector3f posB, Vector3f posC, float r, float g, float b, float a, AlphaMultiplier alpha) { }
+    public record Point(Vector3f pos, float r, float g, float b, float a, AlphaMultiplier alpha, float size) implements MidpointSortable
+    {
+        @Override
+        public Vector3f midpoint(Vector3f store)
+        {
+            return store.set(pos);
+        }
+    }
+
+    public record Tri(Vector3f posA, Vector3f posB, Vector3f posC, float r, float g, float b, float a, AlphaMultiplier alpha)  implements MidpointSortable
+    {
+        @Override
+        public Vector3f midpoint(Vector3f store)
+        {
+            return store.set(posA).add(posB).add(posC).mul(0.33333334f);
+        }
+    }
 
     private interface MidpointSortable
     {

@@ -1,6 +1,7 @@
 package steve6472.orbiter.rendering.gizmo;
 
 import org.joml.Vector3f;
+import steve6472.orbiter.rendering.gizmo.shapes.FilledLineCuboid;
 import steve6472.orbiter.rendering.gizmo.shapes.LineCuboid;
 import steve6472.orbiter.rendering.gizmo.shapes.LineGizmo;
 import steve6472.orbiter.rendering.gizmo.shapes.PointGizmo;
@@ -84,5 +85,88 @@ public class Gizmos
     public static GizmoRenderSettings lineCuboid(Vector3f center, float halfWidth, float halfHeight, float halfDepth, int color)
     {
         return addGizmo(new LineCuboid(center, halfWidth, halfHeight, halfDepth, color, DEFAULT_LINE_WIDTH));
+    }
+
+    /*
+     * Filled line cuboid
+     */
+
+    public static GizmoRenderSettings filledLineCuboid(Vector3f start, Vector3f end, int lineColor, int fillColor, float lineWidth)
+    {
+        return addGizmo(new FilledLineCuboid(start, end, lineColor, fillColor, lineWidth));
+    }
+
+    public static GizmoRenderSettings filledLineCuboid(Vector3f start, Vector3f end, int lineColor, int fillColor)
+    {
+        return addGizmo(new FilledLineCuboid(start, end, lineColor, fillColor, DEFAULT_LINE_WIDTH));
+    }
+
+    public static GizmoRenderSettings filledLineCuboid(Vector3f center, float halfSize, int lineColor, int fillColor, float lineWidth)
+    {
+        return addGizmo(new FilledLineCuboid(center, halfSize, lineColor, fillColor, lineWidth));
+    }
+
+    public static GizmoRenderSettings filledLineCuboid(Vector3f center, float halfSize, int lineColor, int fillColor)
+    {
+        return addGizmo(new FilledLineCuboid(center, halfSize, lineColor, fillColor, DEFAULT_LINE_WIDTH));
+    }
+
+    public static GizmoRenderSettings filledLineCuboid(Vector3f center, float halfWidth, float halfHeight, float halfDepth, int lineColor, int fillColor, float lineWidth)
+    {
+        return addGizmo(new FilledLineCuboid(center, halfWidth, halfHeight, halfDepth, lineColor, fillColor, lineWidth));
+    }
+
+    public static GizmoRenderSettings filledLineCuboid(Vector3f center, float halfWidth, float halfHeight, float halfDepth, int lineColor, int fillColor)
+    {
+        return addGizmo(new FilledLineCuboid(center, halfWidth, halfHeight, halfDepth, lineColor, fillColor, DEFAULT_LINE_WIDTH));
+    }
+
+    public static GizmoRenderSettings filledLineCuboid(Vector3f center, float halfSize, int color)
+    {
+        return addGizmo(new FilledLineCuboid(center, halfSize, color, color, DEFAULT_LINE_WIDTH));
+    }
+
+    public static GizmoRenderSettings filledLineCuboidFromSize(Vector3f center, float width, float height, float depth, int lineColor, int fillColor, float lineWidth)
+    {
+        return addGizmo(new FilledLineCuboid(center, width / 2f, height / 2f, depth / 2f, lineColor, fillColor, lineWidth));
+    }
+
+    public static GizmoRenderSettings filledLineCuboidFromSize(Vector3f center, float width, float height, float depth, int lineColor, int fillColor)
+    {
+        return addGizmo(new FilledLineCuboid(center, width / 2f, height / 2f, depth / 2f, lineColor, fillColor, DEFAULT_LINE_WIDTH));
+    }
+
+    public static GizmoRenderSettings filledLineCuboid(Vector3f start, Vector3f end, int color, float lineWidth)
+    {
+        return addGizmo(new FilledLineCuboid(start, end, color, color, lineWidth));
+    }
+
+    public static GizmoRenderSettings filledLineCuboid(Vector3f start, Vector3f end, int color)
+    {
+        return addGizmo(new FilledLineCuboid(start, end, color, color, DEFAULT_LINE_WIDTH));
+    }
+
+    public static GizmoRenderSettings filledLineCuboid(Vector3f center, float halfSize, int color, float lineWidth)
+    {
+        return addGizmo(new FilledLineCuboid(center, halfSize, color, color, lineWidth));
+    }
+
+    public static GizmoRenderSettings filledLineCuboid(Vector3f center, float halfWidth, float halfHeight, float halfDepth, int color, float lineWidth)
+    {
+        return addGizmo(new FilledLineCuboid(center, halfWidth, halfHeight, halfDepth, color, color, lineWidth));
+    }
+
+    public static GizmoRenderSettings filledLineCuboid(Vector3f center, float halfWidth, float halfHeight, float halfDepth, int color)
+    {
+        return addGizmo(new FilledLineCuboid(center, halfWidth, halfHeight, halfDepth, color, color, DEFAULT_LINE_WIDTH));
+    }
+    public static GizmoRenderSettings filledLineCuboidFromSize(Vector3f center, float width, float height, float depth, int color)
+    {
+        return addGizmo(new FilledLineCuboid(center, width / 2f, height / 2f, depth / 2f, color, color, DEFAULT_LINE_WIDTH));
+    }
+
+    public static GizmoRenderSettings filledLineCuboidFromSize(Vector3f center, float width, float height, float depth, int color, float lineWidth)
+    {
+        return addGizmo(new FilledLineCuboid(center, width / 2f, height / 2f, depth / 2f, color, color, lineWidth));
     }
 }
