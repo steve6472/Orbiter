@@ -1,10 +1,8 @@
 package steve6472.orbiter;
 
 import org.joml.Vector3f;
-import org.lwjgl.system.MemoryStack;
 import steve6472.core.log.Log;
 import steve6472.flare.Camera;
-import steve6472.flare.core.FrameInfo;
 import steve6472.flare.input.UserInput;
 import steve6472.flare.tracy.FlareProfiler;
 import steve6472.flare.tracy.Profiler;
@@ -64,14 +62,6 @@ public class Client
         profiler.pop();
     }
 
-    public void render(FrameInfo frameInfo, MemoryStack memoryStack)
-    {
-        if (world != null)
-        {
-            world.debugRender(frameInfo.frameTime());
-        }
-    }
-
     public void setCamera(Camera camera)
     {
         this.camera = camera;
@@ -94,6 +84,12 @@ public class Client
                 renderState.lastSnapshot.free(pools);
                 renderState.currentSnapshot.free(pools);
                 worldRenderState.set(null);
+
+                if (freeableSnapshot != null)
+                {
+                    freeableSnapshot.free(pools);
+                    freeableSnapshot = null;
+                }
             }
         }
     }
@@ -144,6 +140,7 @@ public class Client
         WorldSnapshot previousSnapshot;
         WorldSnapshot currentSnapshot = world.createSnapshot(pools, clientUUID);
         currentSnapshot.snapshotTimeNano = System.nanoTime();
+        currentSnapshot.snapshotTimeMilli = System.currentTimeMillis();
         currentSnapshot.cameraPosition.set(player.getEyePos());
 
         // First frame of the world - use current snapshot as previous as well.

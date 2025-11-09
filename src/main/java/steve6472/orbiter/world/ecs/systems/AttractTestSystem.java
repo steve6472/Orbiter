@@ -11,6 +11,7 @@ import steve6472.flare.render.debug.DebugRender;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.OrbiterApp;
+import steve6472.orbiter.rendering.gizmo.Gizmos;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.world.World;
 
@@ -96,7 +97,8 @@ public class AttractTestSystem extends EntitySystem
             bodyInterface.activateBody(body.getId());
             body.addForce(force);
         }
-        // TODO: use gizmo
+        // TODO: use sphere
+        Gizmos.lineCuboid(add, 0.3f, 0xffa0a0a0, 2f).stayForMs(250).fadeOut();
 //        DebugRender.addDebugObjectForMs(DebugRender.lineSphere(0.5f, 3, DebugRender.LIGHT_GRAY), 15, new Matrix4f().translate(add));
     }
 }

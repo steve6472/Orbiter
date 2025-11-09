@@ -28,6 +28,7 @@ import steve6472.orbiter.audio.WorldSounds;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
+import steve6472.orbiter.rendering.gizmo.Gizmos;
 import steve6472.orbiter.rendering.snapshot.SnapshotPools;
 import steve6472.orbiter.rendering.snapshot.WorldSnapshot;
 import steve6472.orbiter.scheduler.Scheduler;
@@ -104,6 +105,9 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
                 // TODO: probably calculate the actual delta here?
                 tick(1f / Constants.TICKS_IN_SECOND);
+
+                profiler.popPush("renderGizmoFloor");
+                renderGizmoFloor();
 
                 profiler.popPush("snapshot world state");
                 OrbiterApp.getInstance().getClient().snapshotWorldState();
@@ -249,14 +253,20 @@ public class World implements EntityControl, EntityModify, WorldSounds
 
     public WorldSnapshot createSnapshot(SnapshotPools pools, UUID clientUUID)
     {
+        Profiler profiler = FlareProfiler.world();
         WorldSnapshot snapshot = new WorldSnapshot();
+        profiler.push("particles");
         snapshot.particleSnapshots.createSnapshot(pools, particleEngine);
+        profiler.popPush("models");
         snapshot.modelSnapshots.createSnapshot(pools, ecsEngine, this, clientUUID);
+        profiler.popPush("gizmos");
+        snapshot.gizmos = Gizmos.getGizmosForRender();
+        profiler.pop();
 
         return snapshot;
     }
 
-    public void debugRender(float frameTime)
+    private void renderGizmoFloor()
     {
         // Debug render of plane
         float density = 1f;
@@ -265,22 +275,26 @@ public class World implements EntityControl, EntityModify, WorldSounds
         float x = 0;
         for (int i = -range; i < range; i++)
         {
-            addDebugObjectForFrame(line(new Vector3f(i * density, y, -range * density), new Vector3f(i * density, y, range * density), DARK_GRAY));
-            addDebugObjectForFrame(line(new Vector3f(-range * density, y, i * density), new Vector3f(range * density, y, i * density), DARK_GRAY));
+            Gizmos.line(new Vector3f(i * density, y, -range * density), new Vector3f(i * density, y, range * density), 0xff404040, 1f);
+            Gizmos.line(new Vector3f(-range * density, y, i * density), new Vector3f(range * density, y, i * density), 0xff404040, 1f);
 
             if (RENDER_X_WALL)
             {
-                addDebugObjectForFrame(line(new Vector3f(x, i * density, -range * density), new Vector3f(x, i * density, range * density), RED));
-                addDebugObjectForFrame(line(new Vector3f(x, -range * density, i * density), new Vector3f(x, range * density, i * density), RED));
+                Gizmos.line(new Vector3f(x, i * density, -range * density), new Vector3f(x, i * density, range * density), 0xffff0000, 1f);
+                Gizmos.line(new Vector3f(x, -range * density, i * density), new Vector3f(x, range * density, i * density), 0xffff0000, 1f);
             }
         }
 
-        addDebugObjectForFrame(line(new Vector3f(0, 0, 0), new Vector3f(1, 0, 0), RED));
-        addDebugObjectForFrame(line(new Vector3f(0, 0, 0), new Vector3f(0, 1, 0), GREEN));
-        addDebugObjectForFrame(line(new Vector3f(0, 0, 0), new Vector3f(0, 0, 1), BLUE));
+        Gizmos.line(new Vector3f(0, 0, 0), new Vector3f(1, 0, 0), 0xffff0000, 3f);
+        Gizmos.line(new Vector3f(0, 0, 0), new Vector3f(0, 1, 0), 0xff00ff00, 3f);
+        Gizmos.line(new Vector3f(0, 0, 0), new Vector3f(0, 0, 1), 0xff0000ff, 3f);
+    }
 
+    public void debugRender(float frameTime)
+    {
         systems.runRenderSystems(frameTime);
 
+        // TODO: I don't fucking know about this one lol
 //        physics().drawBodies(settings, OrbiterApp.getInstance().physicsDebugRenderer);
         physics().drawConstraints(OrbiterApp.getInstance().physicsDebugRenderer);
         physics().drawConstraintLimits(OrbiterApp.getInstance().physicsDebugRenderer);
@@ -341,6 +355,18 @@ public class World implements EntityControl, EntityModify, WorldSounds
     {
         Scheduler.clearAllTasks();
         tickExecutor.shutdown();
+        try
+        {
+            if (tickExecutor.awaitTermination(20, TimeUnit.SECONDS))
+            {
+                LOGGER.finest("World exit successful");
+                // TODO: enable entering world here or in catch(?)
+            }
+        } catch (InterruptedException e)
+        {
+            LOGGER.severe("World shutdown took longer than 20 seconds!");
+            throw new RuntimeException(e);
+        }
         physics.removeAllBodies();
         bodyMap().clear();
 

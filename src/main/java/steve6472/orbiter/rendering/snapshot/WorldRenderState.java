@@ -4,6 +4,8 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.utils.Array;
 import org.joml.Vector3f;
 import steve6472.orbiter.rendering.ParticleMaterial;
+import steve6472.orbiter.rendering.gizmo.DrawableGizmoPrimitives;
+import steve6472.orbiter.rendering.gizmo.GizmoInstance;
 import steve6472.orbiter.rendering.snapshot.pairs.*;
 import steve6472.orbiter.rendering.snapshot.snapshots.ParticleSnapshot;
 import steve6472.orbiter.rendering.snapshot.snapshots.UUIDSnapshot;
@@ -36,6 +38,8 @@ public class WorldRenderState
     public Map<ParticleMaterial, List<FlipbookTintedParticlePair>> flipbookTintedParticles = new HashMap<>();
     public List<StaticModelPair> staticModels = new ArrayList<>();
     public List<AnimatedModelPair> animatedModels = new ArrayList<>();
+    public DrawableGizmoPrimitives drawableGizmoPrimitives = new DrawableGizmoPrimitives();
+    public DrawableGizmoPrimitives drawableGizmoPrimitivesAlwaysOnTop = new DrawableGizmoPrimitives();
 
     public WorldRenderState(WorldSnapshot lastSnapshot, WorldSnapshot currentSnapshot)
     {
@@ -56,12 +60,25 @@ public class WorldRenderState
         createUUIDPairs(lastSnapshot.modelSnapshots.staticEntities, currentSnapshot.modelSnapshots.staticEntities, StaticModelPair::new, unsortedStaticModels);
         createUUIDPairs(lastSnapshot.modelSnapshots.animatedEntities, currentSnapshot.modelSnapshots.animatedEntities, AnimatedModelPair::new, animatedModels);
 
+        for (GizmoInstance gizmo : currentSnapshot.gizmos)
+        {
+            if (gizmo.isAlwaysOnTop())
+            {
+                drawableGizmoPrimitivesAlwaysOnTop.createPrimitives(gizmo);
+            } else
+            {
+                drawableGizmoPrimitives.createPrimitives(gizmo);
+            }
+        }
+
         created = true;
     }
 
+    // Runs every frame, before render systems
     public void prepare(Vector3f viewPosition, float partialTicks)
     {
         prepareParticles(viewPosition, partialTicks);
+        drawableGizmoPrimitives.sortPrimitives(viewPosition, partialTicks);
     }
 
     public void prepareParticles(Vector3f cameraPos, float partialTicks)
