@@ -8,10 +8,8 @@ import steve6472.flare.render.common.CommonBuilder;
 import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.struct.def.Vertex;
-import steve6472.orbiter.Client;
 import steve6472.orbiter.rendering.gizmo.GizmoMaterial;
 import steve6472.orbiter.rendering.gizmo.DrawableGizmoPrimitives;
-import steve6472.orbiter.world.World;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
@@ -26,10 +24,9 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class LineGizmoRenderSystem extends CommonRenderSystem
 {
-    private final Client client;
     private final GizmoMaterial material;
 
-    public LineGizmoRenderSystem(MasterRenderer masterRenderer, GizmoMaterial material, Client client)
+    public LineGizmoRenderSystem(MasterRenderer masterRenderer, GizmoMaterial material)
     {
         super(masterRenderer, material.linePipeline(),
             CommonBuilder
@@ -40,7 +37,6 @@ public class LineGizmoRenderSystem extends CommonRenderSystem
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
         );
         this.material = material;
-        this.client = client;
     }
 
     @Override
@@ -57,10 +53,6 @@ public class LineGizmoRenderSystem extends CommonRenderSystem
     @Override
     protected void render(FlightFrame flightFrame, FrameInfo frameInfo, MemoryStack stack)
     {
-        World world = client.getWorld();
-        if (world == null)
-            return;
-
         var linesByWidth = Select.select(material, p -> p.lines, p -> p.blendLines);
         if (linesByWidth == null || linesByWidth.isEmpty())
             return;

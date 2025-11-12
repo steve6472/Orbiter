@@ -8,10 +8,8 @@ import steve6472.flare.render.common.CommonBuilder;
 import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
 import steve6472.flare.struct.def.Vertex;
-import steve6472.orbiter.Client;
 import steve6472.orbiter.rendering.gizmo.DrawableGizmoPrimitives;
 import steve6472.orbiter.rendering.gizmo.GizmoMaterial;
-import steve6472.orbiter.world.World;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
@@ -25,10 +23,9 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class TriGizmoRenderSystem extends CommonRenderSystem
 {
-    private final Client client;
     private final GizmoMaterial material;
 
-    public TriGizmoRenderSystem(MasterRenderer masterRenderer, GizmoMaterial material, Client client)
+    public TriGizmoRenderSystem(MasterRenderer masterRenderer, GizmoMaterial material)
     {
         super(masterRenderer, material.triPipeline(),
             CommonBuilder
@@ -39,7 +36,6 @@ public class TriGizmoRenderSystem extends CommonRenderSystem
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
         );
         this.material = material;
-        this.client = client;
     }
 
     @Override
@@ -56,10 +52,6 @@ public class TriGizmoRenderSystem extends CommonRenderSystem
     @Override
     protected void render(FlightFrame flightFrame, FrameInfo frameInfo, MemoryStack stack)
     {
-        World world = client.getWorld();
-        if (world == null)
-            return;
-
         var tris = Select.select(material, p -> p.tris, p -> p.blendTris);
         if (tris == null || tris.isEmpty())
             return;

@@ -7,11 +7,9 @@ import steve6472.flare.core.FrameInfo;
 import steve6472.flare.render.common.CommonBuilder;
 import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
-import steve6472.orbiter.Client;
 import steve6472.orbiter.rendering.OrbiterVertex;
 import steve6472.orbiter.rendering.gizmo.DrawableGizmoPrimitives;
 import steve6472.orbiter.rendering.gizmo.GizmoMaterial;
-import steve6472.orbiter.world.World;
 
 import java.nio.ByteBuffer;
 import java.nio.LongBuffer;
@@ -25,10 +23,9 @@ import static org.lwjgl.vulkan.VK10.*;
  */
 public class PointGizmoRenderSystem extends CommonRenderSystem
 {
-    private final Client client;
     private final GizmoMaterial material;
 
-    public PointGizmoRenderSystem(MasterRenderer masterRenderer, GizmoMaterial material, Client client)
+    public PointGizmoRenderSystem(MasterRenderer masterRenderer, GizmoMaterial material)
     {
         super(masterRenderer, material.pointPipeline(),
             CommonBuilder
@@ -39,7 +36,6 @@ public class PointGizmoRenderSystem extends CommonRenderSystem
                     VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT)
         );
         this.material = material;
-        this.client = client;
     }
 
     @Override

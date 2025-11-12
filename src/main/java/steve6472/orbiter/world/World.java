@@ -29,7 +29,6 @@ import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
 import steve6472.orbiter.rendering.gizmo.Gizmos;
-import steve6472.orbiter.rendering.gizmo.shapes.FilledLineCuboid;
 import steve6472.orbiter.rendering.snapshot.SnapshotPools;
 import steve6472.orbiter.rendering.snapshot.WorldSnapshot;
 import steve6472.orbiter.scheduler.Scheduler;
