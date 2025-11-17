@@ -2,6 +2,7 @@ package steve6472.orbiter.rendering.snapshot.system;
 
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
+import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
 import steve6472.flare.assets.model.Model;
 import steve6472.flare.core.FrameInfo;
@@ -16,6 +17,7 @@ import steve6472.orbiter.rendering.snapshot.snapshots.StaticModelSnapshot;
 import steve6472.orbiter.world.World;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import static steve6472.orbiter.rendering.snapshot.system.PlaneParticleRenderSystem.lerp;
 
@@ -26,6 +28,8 @@ import static steve6472.orbiter.rendering.snapshot.system.PlaneParticleRenderSys
  */
 public class StaticWorldRenderSystem extends StaticModelRenderImpl
 {
+    private static final Logger LOGGER = Log.getLogger(StaticWorldRenderSystem.class);
+
     private final Client client;
 
     public StaticWorldRenderSystem(Client client)
@@ -74,6 +78,11 @@ public class StaticWorldRenderSystem extends StaticModelRenderImpl
             {
                 lastArea = sboTransfromArray.getAreaByType(model);
                 lastModel = model;
+                if (lastArea == null)
+                {
+                    LOGGER.severe("No area found for model " + model);
+                    continue;
+                }
             }
 
             transform.identity();

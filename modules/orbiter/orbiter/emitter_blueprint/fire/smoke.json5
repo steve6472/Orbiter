@@ -1,0 +1,50 @@
+{
+    environment: {
+    },
+    lifetime: {
+        lifetime_type: "looping",
+        active_time: 0,
+        sleep_time: 0.9
+    },
+    rate: {
+        rate_type: "instant",
+        count: 1
+    },
+    shape: {
+        shape_type: "box",
+        half_dimensions: [0.05, 0, 0.05]
+    },
+    offset: [0, 1.2, 0],
+
+    particle: {
+        environment: {
+            init: [
+                "v.rngFlag1 = math.random(0, 1) > 0.5;",
+                "v.accX = math.random(0, 1) > 0.5 ? math.random(-0.4, -0.2) : math.random(0.2, 0.4)",
+                "v.accY = math.random(0, 1) > 0.5 ? math.random(-0.4, -0.2) : math.random(0.2, 0.4)",
+                "v.accZ = math.random(0, 1) > 0.5 ? math.random(-0.4, -0.2) : math.random(0.2, 0.4)",
+                "v.r = math.clamp(0.94 * (0.875 + math.random(0, 1) * 0.25), 0, 1)",
+                "v.g = math.clamp(0.87 * (0.875 + math.random(0, 1) * 0.25), 0, 1)",
+                "v.b = math.clamp(0.21 * (0.875 + math.random(0, 1) * 0.25), 0, 1)"
+            ]
+        },
+        plane_model: {
+            texture: "orbiter:pixel_fire/smoke_5",
+            texture_size: [64, 144],
+            uv: [0, 0],
+            uv_size: [64, 144]
+        },
+        rotation: {
+            initial: -90
+        },
+        material: {
+            transparency: "alpha_test"
+        },
+        local_space: {
+            position: true
+        },
+        scale: [1.5, 0.6, 1],
+        billboard: "lookat_y",
+        max_age: 0.96
+    }
+}

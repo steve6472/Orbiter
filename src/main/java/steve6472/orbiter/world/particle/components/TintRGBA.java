@@ -24,7 +24,7 @@ public class TintRGBA implements ParticleComponent
         OrNumValue.CODEC.fieldOf("a").forGetter(o -> o.a)
     ).apply(instance, TintRGBA::new));
 
-    private static final Codec<TintRGBA> CODEC_LIST = OrNumValue.CODEC.listOf().flatXmap(list -> {
+    private static final Codec<TintRGBA> CODEC_LIST = OrNumValue.CODEC.listOf(4, 4).flatXmap(list -> {
         if (list.size() != 4)
             return DataResult.error(() -> "List size incorrect, has to be 4");
         return DataResult.success(new TintRGBA(list.get(0), list.get(1), list.get(2), list.get(3)));

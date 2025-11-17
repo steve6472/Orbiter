@@ -9,13 +9,10 @@ import steve6472.orbiter.network.packets.configuration.clientbound.FinishConfigu
 import steve6472.orbiter.network.packets.configuration.clientbound.HeartbeatClientbound;
 import steve6472.orbiter.network.packets.configuration.hostbound.HeartbeatHostbound;
 import steve6472.orbiter.network.packets.game.clientbound.UpdateEntityComponents;
+import steve6472.orbiter.network.packets.game.hostbound.*;
 import steve6472.orbiter.network.packets.login.clientbound.LoginResponse;
 import steve6472.orbiter.network.packets.login.hostbound.LoginStart;
 import steve6472.orbiter.network.packets.game.clientbound.*;
-import steve6472.orbiter.network.packets.game.hostbound.Disconnect;
-import steve6472.orbiter.network.packets.game.hostbound.GameHeartbeatHostbound;
-import steve6472.orbiter.network.packets.game.hostbound.JunkData;
-import steve6472.orbiter.network.packets.game.hostbound.PlayerMove;
 
 /**
  * Created by steve6472
@@ -50,6 +47,7 @@ public class Packets
         registerPacket(KickUser.KEY, KickUser.BUFFER_CODEC);
         // Hostbound
         registerPacket(GameHeartbeatHostbound.KEY, GameHeartbeatHostbound.BUFFER_CODEC);
+        registerPacket(ConfirmEnterWorld.KEY, ConfirmEnterWorld.BUFFER_CODEC);
         registerPacket(JunkData.KEY, JunkData.BUFFER_CODEC);
         registerPacket(PlayerMove.KEY, PlayerMove.BUFFER_CODEC);
         registerPacket(Disconnect.KEY, Disconnect.BUFFER_CODEC);

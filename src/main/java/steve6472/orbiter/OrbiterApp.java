@@ -31,6 +31,7 @@ import steve6472.moondust.widget.Panel;
 import steve6472.moondust.widget.Widget;
 import steve6472.moondust.widget.component.ViewController;
 import steve6472.orbiter.commands.Commands;
+import steve6472.orbiter.network.NetworkTicker;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.impl.dedicated.DedicatedMain;
 import steve6472.orbiter.rendering.gizmo.DrawableGizmoPrimitives;
@@ -93,7 +94,7 @@ public class OrbiterApp extends FlareApp
 
     private static OrbiterApp instance;
 
-    private NetworkMain networkMain;
+    public final NetworkTicker networkTicker = new NetworkTicker();
     private Client client;
     private Commands commands;
     private boolean isMouseGrabbed = false;
@@ -332,10 +333,8 @@ public class OrbiterApp extends FlareApp
     private void frameTick()
     {
         Profiler profiler = FlareProfiler.frame();
-        profiler.push("network tick");
-        // TODO: move to game thread 100%
-        if (networkMain != null)
-            networkMain.tick();
+        profiler.push("networkFrameTick");
+        networkTicker.frameTick();
         profiler.popPush("keybinds processing");
 
         if (Keybinds.ESCAPE.isActive()) processEscape();
@@ -402,11 +401,9 @@ public class OrbiterApp extends FlareApp
     public void swapNetworkBackend(Settings.MultiplayerBackend backend)
     {
         if (backend == Settings.MultiplayerBackend.DEDICATED)
-            networkMain = new DedicatedMain();
+            networkTicker.setNetwork(new DedicatedMain());
         else
             throw new IllegalStateException("Steam backend not implemented yet!");
-
-        networkMain.setup();
     }
 
     public void clearWorld()
@@ -463,7 +460,7 @@ public class OrbiterApp extends FlareApp
 
     public NetworkMain getNetwork()
     {
-        return networkMain;
+        return networkTicker.getNetwork();
     }
 
     public static OrbiterApp getInstance()
@@ -481,8 +478,7 @@ public class OrbiterApp extends FlareApp
     @Override
     public void cleanup()
     {
-        if (networkMain != null)
-            networkMain.shutdown();
+        networkTicker.shutdown();
         clearWorld();
         client.getSoundMaster().cleanup();
     }

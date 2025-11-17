@@ -32,7 +32,7 @@ public class OrbiterUIRender extends UIRenderImpl
     @Override
     public void render()
     {
-        trackBandwidth();
+//        trackBandwidth();
         profileTick();
         profileFps();
     }

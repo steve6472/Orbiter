@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.github.stephengold.joltjni.BodyInterface;
+import com.mojang.datafixers.util.Pair;
 import steve6472.core.log.Log;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.world.World;
@@ -11,6 +12,7 @@ import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
+import steve6472.orbiter.world.ecs.core.ComponentEntry;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 
 import java.util.UUID;
@@ -55,9 +57,9 @@ public class UpdatePhysics extends IteratingProfiledSystem
             return;
         }
 
-        for (Class<? extends PhysicsProperty> physicsComponent : PhysicsProperty.PHYSICS_COMPONENTS)
+        for (Pair<Class<? extends PhysicsProperty>, ComponentEntry<?>> physicsComponent : PhysicsProperty.PHYSICS_COMPONENTS)
         {
-            PhysicsProperty physicsProperty = ComponentMapper.getFor(physicsComponent).get(entity);
+            PhysicsProperty physicsProperty = (PhysicsProperty) physicsComponent.getSecond().get(entity);
             if (physicsProperty == null)
                 continue;
 

@@ -11,10 +11,11 @@ import com.github.stephengold.joltjni.enumerate.EPhysicsUpdateError;
 import com.github.stephengold.joltjni.readonly.ConstPlane;
 import com.github.stephengold.joltjni.readonly.ConstShape;
 import com.github.stephengold.joltjni.readonly.Vec3Arg;
-import io.github.benjaminamos.tracy.Tracy;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import steve6472.core.log.Log;
+import steve6472.core.util.MathUtil;
+import steve6472.flare.Camera;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.tracy.FlareProfiler;
 import steve6472.flare.tracy.Profiler;
@@ -25,6 +26,7 @@ import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.audio.MovingSource;
 import steve6472.orbiter.audio.Source;
 import steve6472.orbiter.audio.WorldSounds;
+import steve6472.orbiter.network.NetworkTicker;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
@@ -101,6 +103,10 @@ public class World implements EntityControl, EntityModify, WorldSounds
                 profiler.push("tick schedulers");
                 //noinspection deprecation
                 Scheduler.instance().tick();
+
+                profiler.popPush("networkTick");
+                OrbiterApp.getInstance().networkTicker.worldTick();
+
                 profiler.popPush("main tick");
 
                 // TODO: probably calculate the actual delta here?
@@ -116,8 +122,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
             } catch (Exception exception)
             {
                 LOGGER.severe("Exception thrown while ticking");
-                if (FlareProfiler.ENABLE_TRACY)
-                    Tracy.message("Exception thrown: " + exception.getMessage());
+                FlareProfiler.message("Exception thrown: " + exception.getMessage());
                 exception.printStackTrace();
                 throw new RuntimeException(exception);
             } finally
@@ -125,6 +130,8 @@ public class World implements EntityControl, EntityModify, WorldSounds
                 profiler.end();
             }
         }, 0, (long) (1000 / Constants.TICKS_IN_SECOND), TimeUnit.MILLISECONDS);
+
+        OrbiterApp.getInstance().networkTicker.tickResponsibility = NetworkTicker.TickResponsibility.WORLD;
     }
 
     private PhysicsSystem createPhysicsSystem()
@@ -292,6 +299,17 @@ public class World implements EntityControl, EntityModify, WorldSounds
         float yOffset = (float) (Math.sin(Math.toRadians((System.currentTimeMillis() % 3600) / 10d)) * 0.4f);
         Gizmos.filledLineCuboid(new Vector3f(0.5f, 1.5f + yOffset, 0.5f), 0.3f, 0xffa0a0a0, 0x6080cc30, 2f);
         Gizmos.filledLineCuboid(new Vector3f(1.5f, 1.5f - yOffset, 0.5f), 0.3f, 0x60cc3080, 1f);
+
+        // Temporary "crosshair"
+        RayCastResult lookAtObject = OrbiterApp.getInstance().getClient().getRayTrace().getLookAtObject();
+        if (lookAtObject != null)
+        {
+            Camera camera = OrbiterApp.getInstance().camera();
+            Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
+            Vector3f hitPosition = new Vector3f(camera.viewPosition).add(new Vector3f(direction).mul(lookAtObject.getFraction() * PCPlayer.REACH));
+
+            Gizmos.filledLineCuboidFromSize(hitPosition, 0.02f, 0.02f, 0.02f, 0xffa0a0a0, 0x80a0a0a0, 1f);
+        }
     }
 
     public void debugRender(float frameTime)

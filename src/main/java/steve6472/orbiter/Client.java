@@ -8,6 +8,7 @@ import steve6472.flare.tracy.FlareProfiler;
 import steve6472.flare.tracy.Profiler;
 import steve6472.flare.vr.VrInput;
 import steve6472.orbiter.audio.SoundMaster;
+import steve6472.orbiter.network.NetworkTicker;
 import steve6472.orbiter.player.PCPlayer;
 import steve6472.orbiter.player.Player;
 import steve6472.orbiter.rendering.snapshot.SnapshotPools;
@@ -91,6 +92,7 @@ public class Client
                     freeableSnapshot = null;
                 }
             }
+            OrbiterApp.getInstance().networkTicker.tickResponsibility = NetworkTicker.TickResponsibility.FRAME;
         }
     }
 

@@ -1,12 +1,8 @@
 package steve6472.orbiter.network.impl.dedicated;
 
-import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.github.stephengold.joltjni.BodyInterface;
-import steve6472.core.util.BitUtil;
-import steve6472.flare.registry.FlareRegistries;
 import steve6472.orbiter.Constants;
-import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.api.*;
 import steve6472.orbiter.network.packets.configuration.ConfigurationClientboundListener;
@@ -24,12 +20,7 @@ import steve6472.orbiter.network.packets.game.clientbound.KickUser;
 import steve6472.orbiter.network.packets.game.hostbound.Disconnect;
 import steve6472.orbiter.network.packets.game.hostbound.GameHeartbeatHostbound;
 import steve6472.orbiter.world.World;
-import steve6472.orbiter.world.ecs.Components;
-import steve6472.orbiter.world.ecs.components.IndexModel;
 import steve6472.orbiter.world.ecs.components.MPControlled;
-import steve6472.orbiter.world.ecs.components.physics.Position;
-
-import java.util.List;
 
 /**
  * Created by steve6472
@@ -65,31 +56,6 @@ public class DedicatedMain implements NetworkMain
     public void newPlayer(World world, User sender)
     {
         connections().sendPacket(sender, new EnterWorld());
-
-        for (Entity entity : world.ecsEngine().getEntities())
-        {
-            // Replace host entity
-            if (entity == OrbiterApp.getInstance().getClient().player().ecsEntity())
-            {
-                Entity fakeEntity = new Entity();
-                List<Component> components = Registries.ENTITY_BLUEPRINT.get(Constants.key("mp_player")).createEntityComponents(OrbiterApp.getInstance().getClient().getClientUUID());
-                for (Component component : components)
-                {
-                    fakeEntity.add(component);
-                }
-                // Add host hat
-                fakeEntity.add(new IndexModel(FlareRegistries.STATIC_MODEL.get(Constants.key("blockbench/static/player_capsule_host"))));
-                // Copy at least position
-                Position position = Components.POSITION.get(entity);
-                if (position != null)
-                    fakeEntity.add(position);
-
-                connections().sendPacket(sender, new CreateCustomEntity(fakeEntity));
-            } else
-            {
-                connections().sendPacket(sender, new CreateCustomEntity(entity));
-            }
-        }
 
         Entity playerEntity = world.addEntity(Registries.ENTITY_BLUEPRINT.get(Constants.key("mp_player")), sender.uuid(), false);
         world.addComponent(playerEntity, new MPControlled(sender.uuid()));

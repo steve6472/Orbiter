@@ -29,6 +29,7 @@ import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.player.PCPlayer;
+import steve6472.orbiter.rendering.gizmo.Gizmos;
 import steve6472.orbiter.world.collision.OrbiterCollisionShape;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
@@ -36,6 +37,7 @@ import steve6472.orbiter.world.ecs.systems.ClickECS;
 
 import java.nio.LongBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -82,21 +84,6 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         if (lookAtObject == null)
             return;
 
-        /*
-         * Hack in the look at thing from PCPlayer
-         * todo: use tick gizmo
-         */
-        if (isFocus)
-        {
-            Camera camera = frameInfo.camera();
-            Vector3f direction = MathUtil.yawPitchToVector(camera.yaw() + (float) (Math.PI * 0.5f), camera.pitch());
-            Vector3f hitPosition = new Vector3f(camera.viewPosition).add(new Vector3f(direction).mul(lookAtObject.getFraction() * PCPlayer.REACH));
-
-            DebugRender.addDebugObjectForFrame(
-                DebugRender.lineSphere(0.015f, 4, DebugRender.IVORY),
-                new Matrix4f().translate(hitPosition));
-        }
-
         UUID uuid = client.getWorld().bodyMap().getUUIDById(lookAtObject.getBodyId());
 
         // Render only in world objects with assigned entities
@@ -117,7 +104,8 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         OrbiterCollisionShape orbiterCollisionShape = Registries.COLLISION.get(collision.collisionKey());
 
 //        System.out.println(client.getRayTrace().getSubShapeId());
-        renderOutline(body, orbiterCollisionShape.ids(), (short) lookAtObject.getSubShapeId2(), verticies);
+//        renderOutline(body, orbiterCollisionShape.ids(), (short) lookAtObject.getSubShapeId2(), verticies);
+        renderOutline(body, orbiterCollisionShape.ids(), (short) 0, verticies);
 
         VkBuffer buffer = flightFrame.getBuffer(0);
 

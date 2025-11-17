@@ -11,6 +11,7 @@ import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.network.OrbiterPacketListener;
 import steve6472.orbiter.network.api.User;
+import steve6472.orbiter.network.packets.game.hostbound.ConfirmEnterWorld;
 import steve6472.orbiter.ui.MDUtil;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
@@ -44,6 +45,7 @@ public class GameClientboundListener extends OrbiterPacketListener
         MDUtil.removePanel(Constants.UI.MAIN_MENU);
         MDUtil.removePanel(Constants.UI.SETTINGS);
         MDUtil.removePanel(Constants.UI.LOBBY_MENU_DEDICATED);
+        network().connections().sendPacket(sender(), new ConfirmEnterWorld());
     }
 
     public void createEntity(UUID uuid, Key entityType)

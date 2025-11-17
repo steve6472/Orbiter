@@ -122,6 +122,9 @@ public class HoldSystem extends EntitySystem
             if (heldBody == null)
                 return;
 
+            if (heldBody.isSensor())
+                return;
+
             previousState.storeState(heldBody);
 
             heldBody.setAllowSleeping(false);

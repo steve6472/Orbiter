@@ -1,0 +1,79 @@
+{
+    environment: {
+    },
+    lifetime: {
+        lifetime_type: "looping",
+        active_time: 1
+    },
+    rate: {
+        rate_type: "steady",
+        spawn_rate: "math.random(8, 19)",
+        max_count: -1
+    },
+    shape: {
+        shape_type: "box",
+        half_dimensions: [0.5, 0.7, 0.5]
+    },
+    offset: [0, 0.6, 0],
+
+    particle: {
+        environment: {
+            init: [
+                "v.rngFlag1 = math.random(0, 1) > 0.5;",
+                "v.accX = math.random(0, 1) > 0.5 ? math.random(-0.4, -0.2) : math.random(0.2, 0.4)",
+                "v.accY = math.random(0, 1) > 0.5 ? math.random(-0.4, -0.2) : math.random(0.2, 0.4)",
+                "v.accZ = math.random(0, 1) > 0.5 ? math.random(-0.4, -0.2) : math.random(0.2, 0.4)",
+                "v.r = math.clamp(0.94 * (0.875 + math.random(0, 1) * 0.25), 0, 1)",
+                "v.g = math.clamp(0.87 * (0.875 + math.random(0, 1) * 0.25), 0, 1)",
+                "v.b = math.clamp(0.21 * (0.875 + math.random(0, 1) * 0.25), 0, 1)"
+            ],
+            "curves": {
+                "variable.size": {
+                    "type": "bezier_chain",
+                    "input": "v.age / v.max_age",
+                    "nodes": {
+                        "0.0": {
+                            "value": 0,
+                            "slope": 0
+                        },
+                        "0.2": {
+                            "value": 1,
+                            "slope": 0
+                        },
+                        "1.0": {
+                            "value": 0,
+                            "slope": 0
+                        },
+                        "0.75": {
+                            "value": 1,
+                            "slope": 0
+                        }
+                    }
+                }
+            }
+        },
+        plane_model: {
+            texture: "orbiter:dot_white",
+            texture_size: [8, 8],
+            uv: [0, 0],
+            uv_size: [5, 5]
+        },
+        rotation: {
+            initial: "math.random(0, 45)",
+            rate: "math.random(45, 135)"
+        },
+        material: {
+            transparency: "alpha_test",
+            tinted: true
+        },
+        tint: ["v.r", "v.g", "v.b", 1],
+        scale: ["0.015 * v.size", "0.015 * v.size", 1],
+        billboard: "lookat_direction",
+        max_age: 1,
+        direction: "outwards",
+
+        initial_speed: 0.5,
+        linear_acceleration: ["v.accX", "v.accY", "v.accZ"],
+        linear_drag_coefficient: 1
+    }
+}

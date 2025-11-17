@@ -118,9 +118,7 @@ public class InGameChat extends PanelView
 
             // Hack it to run on game thread
             Scheduler.runTaskLater(() -> {
-                if (FlareProfiler.ENABLE_TRACY)
-                    Tracy.message("Executing command: " + commandText);
-
+                FlareProfiler.message("Executing command: " + commandText);
                 LOGGER.info("Executing command: " + commandText);
 
                 try

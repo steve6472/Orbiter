@@ -1,0 +1,73 @@
+{
+    environment: {
+    },
+    lifetime: {
+        lifetime_type: "looping",
+        active_time: 1
+    },
+    rate: {
+        rate_type: "steady",
+        spawn_rate: "math.random(8, 12)",
+        max_count: -1
+    },
+    shape: {
+        shape_type: "box",
+        half_dimensions: [0.2, 0.2, 0.2]
+    },
+    offset: [0, 0.6, 0],
+
+    particle: {
+        environment: {
+            init: [
+                "v.rngFlag1 = math.random(0, 1) > 0.5;",
+                "v.accX = math.random(0, 1) > 0.5 ? math.random(-0.4, -0.2) : math.random(0.2, 0.4)",
+                "v.accY = math.random(0, 1) > 0.5 ? math.random(-0.4, -0.2) : math.random(0.2, 0.4)",
+                "v.accZ = math.random(0, 1) > 0.5 ? math.random(-0.4, -0.2) : math.random(0.2, 0.4)",
+                "v.r = math.clamp(0.94 * (0.875 + math.random(0, 1) * 0.25), 0, 1)",
+                "v.g = math.clamp(0.87 * (0.875 + math.random(0, 1) * 0.25), 0, 1)",
+                "v.b = math.clamp(0.21 * (0.875 + math.random(0, 1) * 0.25), 0, 1)"
+            ],
+            "curves": {
+                "variable.transparency": {
+                    "type": "bezier_chain",
+                    "input": "v.age / v.max_age",
+                    "nodes": {
+                        "0.0": {
+                            "value": 0,
+                            "slope": 0
+                        },
+                        "0.2": {
+                            "value": 1,
+                            "slope": 0
+                        },
+                        "1.0": {
+                            "value": 0,
+                            "slope": 0
+                        },
+                        "0.75": {
+                            "value": 1,
+                            "slope": 0
+                        }
+                    }
+                }
+            }
+        },
+        plane_model: {
+            texture: "orbiter:pixel_fire/fire_5_2",
+            texture_size: [64, 144],
+            uv: [0, 0],
+            uv_size: [64, 144]
+        },
+        rotation: {
+            initial: -90
+        },
+        material: {
+            transparency: "additive",
+            tinted: true
+        },
+        tint: [1, 1, 1, "0.8 * v.transparency"],
+        scale: [0.6, 0.3, 1],
+        billboard: "lookat_y",
+        max_age: 0.96
+    }
+}

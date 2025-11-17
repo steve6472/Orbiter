@@ -4,6 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.github.stephengold.joltjni.Body;
 import com.github.stephengold.joltjni.BodyInterface;
+import com.mojang.datafixers.util.Pair;
 import steve6472.core.log.Log;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
@@ -11,6 +12,7 @@ import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.ModifyState;
 import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
+import steve6472.orbiter.world.ecs.core.ComponentEntry;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 
 import java.util.UUID;
@@ -48,13 +50,9 @@ public class UpdateECS extends IteratingProfiledSystem
 
         BodyInterface bi = world.physics().getBodyInterface();
 
-        for (Class<? extends PhysicsProperty> physicsComponent : PhysicsProperty.PHYSICS_COMPONENTS)
+        for (Pair<Class<? extends PhysicsProperty>, ComponentEntry<?>> physicsComponent : PhysicsProperty.PHYSICS_COMPONENTS)
         {
-            var componentByClass = Components.getComponentByClass(physicsComponent);
-            if (componentByClass.isEmpty())
-                continue;
-
-            PhysicsProperty physicsProperty = componentByClass.get().get(entity);
+            PhysicsProperty physicsProperty = (PhysicsProperty) physicsComponent.getSecond().get(entity);
             if (physicsProperty == null)
                 continue;
 
@@ -63,10 +61,10 @@ public class UpdateECS extends IteratingProfiledSystem
             if (modified.hasNewComponent())
             {
                 entity.add(modified.getComponent());
-                world.markModified(entity, physicsComponent);
+                world.markModified(entity, physicsComponent.getFirst());
             } else if (modified.hasModifiedComponent())
             {
-                world.markModified(entity, physicsComponent);
+                world.markModified(entity, physicsComponent.getFirst());
             }
         }
     }
