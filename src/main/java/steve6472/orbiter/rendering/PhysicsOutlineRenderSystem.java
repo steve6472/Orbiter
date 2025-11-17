@@ -97,7 +97,7 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         Collision collision = Components.COLLISION.get(entity);
         OrbiterCollisionShape orbiterCollisionShape = Registries.COLLISION.get(collision.collisionKey());
 
-        renderOutline(body, orbiterCollisionShape.ids(), (short) client.getRayTrace().getLookAtSubshapeOrdinal(), verticies);
+        renderOutline(body, orbiterCollisionShape.ids(), client.getRayTrace().getLookAtSubshapeOrdinal(), verticies);
 
         VkBuffer buffer = flightFrame.getBuffer(0);
 
@@ -113,7 +113,7 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
     protected void updateData(FlightFrame flightFrame, FrameInfo frameInfo)
     {}
 
-    private void renderOutline(Body lookAtBody, short[] ids, short lookatId, List<Struct> verticies)
+    private void renderOutline(Body lookAtBody, String[] ids, int lookatId, List<Struct> verticies)
     {
         Matrix4f transform = new Matrix4f();
         RVec3 pos = new RVec3();
@@ -126,14 +126,14 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         renderShape(shape, ids, lookatId, (short) 0, transform, verticies);
     }
 
-    private void renderShape(ConstShape shape, short[] ids, short lookatId, short currentId, Matrix4f bodyTransform, List<Struct> verticies)
+    private void renderShape(ConstShape shape, String[] ids, int lookatId, short currentId, Matrix4f bodyTransform, List<Struct> verticies)
     {
         if (!(shape instanceof CompoundShape) && lookatId != -1)
         {
-            if (isFocus && (ids[lookatId] == 0 || ids[lookatId] != ids[currentId]))
+            if (isFocus && (ids[lookatId].isEmpty() || !ids[lookatId].equals(ids[currentId])))
                 return;
 
-            if (!isFocus && ids[lookatId] != 0 && ids[lookatId] == ids[currentId])
+            if (!isFocus && !ids[lookatId].isEmpty() && ids[lookatId].equals(ids[currentId]))
                 return;
         }
 

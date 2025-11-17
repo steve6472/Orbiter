@@ -14,7 +14,7 @@ public class CollisionTransform
     private final Vector3f offset;
     private final Quaternionf rotation;
     private final Shape shape;
-    public short id;
+    public String id = "";
 
     public static final CollisionTransform EMPTY = new CollisionTransform();
 

@@ -7,6 +7,6 @@ import com.badlogic.ashley.core.Component;
  * Date: 9/17/2025
  * Project: Orbiter <br>
  */
-public record Click(int id) implements Component
+public record Click(String id) implements Component
 {
 }

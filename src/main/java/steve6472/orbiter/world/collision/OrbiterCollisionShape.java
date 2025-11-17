@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  * Date: 10/11/2024
  * Project: Orbiter <br>
  */
-public record OrbiterCollisionShape(Key key, Shape collisionShape, short[] ids) implements Keyable
+public record OrbiterCollisionShape(Key key, Shape collisionShape, String[] ids) implements Keyable
 {
     private static final Logger LOGGER = Log.getLogger(OrbiterCollisionShape.class);
 
@@ -43,11 +43,11 @@ public record OrbiterCollisionShape(Key key, Shape collisionShape, short[] ids) 
          */
 
         // sphere(radius)
-        SHAPE_CONSTRUCTORS.put("sphere", obj -> new SphereShape(obj.params()[0] * 0.5f));
+        SHAPE_CONSTRUCTORS.put("sphere", obj -> new SphereShape(obj.getF(0) * 0.5f));
         // capsule(radius, height)
-        SHAPE_CONSTRUCTORS.put("capsule", obj -> new CapsuleShape((obj.params()[1] - obj.params()[0]) * 0.5f, obj.params()[0] * 0.5f));
+        SHAPE_CONSTRUCTORS.put("capsule", obj -> new CapsuleShape((obj.getF(1) - obj.getF(0)) * 0.5f, obj.getF(0) * 0.5f));
         // box(x, y, z)
-        SHAPE_CONSTRUCTORS.put("box", obj -> new BoxShape(obj.params()[0] * 0.5f, obj.params()[1] * 0.5f, obj.params()[2] * 0.5f));
+        SHAPE_CONSTRUCTORS.put("box", obj -> new BoxShape(obj.getF(0) * 0.5f, obj.getF(1) * 0.5f, obj.getF(2) * 0.5f));
 //        // cone(radius, height, axis)   cone(radius, height, [1])
 //        SHAPE_CONSTRUCTORS.put("cone", obj -> new ConeCollisionShape(obj.params()[0] * 0.5f, obj.params()[1] * 0.5f, obj.params().length == 3 ? (int) obj.params()[2] : 1));
 
@@ -56,11 +56,9 @@ public record OrbiterCollisionShape(Key key, Shape collisionShape, short[] ids) 
          */
 
         // offset(x, y, z)
-        PROPERTIES.put("offset", (obj, transform) -> transform.offset(obj.params()[0], obj.params()[1], obj.params()[2]));
+        PROPERTIES.put("offset", (obj, transform) -> transform.offset(obj.getF(0), obj.getF(1), obj.getF(2)));
         PROPERTIES.put("id", (obj, transform) -> {
-            if (obj.params()[0] > Short.MAX_VALUE)
-                throw new RuntimeException("Collision ID is bigger than " + Short.MAX_VALUE);
-            transform.id = (short) obj.params()[0];
+            transform.id = obj.getS(0);
             return transform;
         });
     }
@@ -85,7 +83,7 @@ public record OrbiterCollisionShape(Key key, Shape collisionShape, short[] ids) 
     private static void loadCollisionShape(LoadedModel model)
     {
         List<CollisionTransform> shapes = new ArrayList<>();
-        List<Short> ids = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
 
         model
             .elements()
@@ -109,18 +107,7 @@ public record OrbiterCollisionShape(Key key, Shape collisionShape, short[] ids) 
         Shape compound = compound(shapes);
 
         if (compound != null)
-            Registries.COLLISION.register(new OrbiterCollisionShape(model.key(), compound, toIds(ids)));
-    }
-
-    private static short[] toIds(List<Short> list)
-    {
-        short[] ids = new short[list.size()];
-        for (int i = 0; i < list.size(); i++)
-        {
-            Short s = list.get(i);
-            ids[i] = s;
-        }
-        return ids;
+            Registries.COLLISION.register(new OrbiterCollisionShape(model.key(), compound, ids.toArray(String[]::new)));
     }
 
     private static Collection<CollisionTransform> createCollisionShape(Element element)

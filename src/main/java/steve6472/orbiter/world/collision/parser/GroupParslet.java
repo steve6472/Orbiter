@@ -7,9 +7,7 @@ import steve6472.core.tokenizer.Tokenizer;
 import steve6472.orbiter.world.collision.ShapeExp;
 import steve6472.orbiter.world.collision.ShapeToken;
 import steve6472.orbiter.world.collision.expression.GroupExp;
-import steve6472.orbiter.world.collision.expression.NumberExp;
 import steve6472.orbiter.world.collision.expression.ObjectExp;
-import steve6472.orbiter.world.collision.expression.ParameterExp;
 
 import java.util.ArrayList;
 import java.util.List;

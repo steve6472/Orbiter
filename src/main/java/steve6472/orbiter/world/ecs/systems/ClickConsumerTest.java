@@ -26,7 +26,7 @@ public class ClickConsumerTest extends IteratingProfiledSystem implements Render
     protected void processEntity(Entity entity, float deltaTime)
     {
         Click click = Components.CLICK.get(entity);
-        if (click.id() == 0)
+        if (click.id().isEmpty())
             return;
 
         AnimatedModel animatedModel = Components.ANIMATED_MODEL.get(entity);

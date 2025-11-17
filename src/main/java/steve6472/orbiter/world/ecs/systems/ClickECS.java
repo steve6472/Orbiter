@@ -63,7 +63,7 @@ public class ClickECS extends EntitySystem
             entity.add(new Click(orbiterCollisionShape.ids()[client.getRayTrace().getLookAtSubshapeOrdinal()]));
         } else
         {
-            entity.add(new Click(-1));
+            entity.add(new Click(""));
         }
     }
 

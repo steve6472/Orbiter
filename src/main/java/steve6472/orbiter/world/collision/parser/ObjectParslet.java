@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.collision.parser;
 
+import com.mojang.datafixers.util.Either;
 import steve6472.core.tokenizer.PrefixParselet;
 import steve6472.core.tokenizer.TokenParser;
 import steve6472.core.tokenizer.Tokenizer;
@@ -19,7 +20,7 @@ public class ObjectParslet implements PrefixParselet<ShapeExp>
     public ShapeExp parse(Tokenizer tokenizer, TokenParser<ShapeExp> tokenParser)
     {
         String name = tokenizer.getCurrentToken().sval();
-        float[] params;
+        Either<Float, String>[] params;
 
         if (tokenizer.matchToken(ShapeToken.PARAMETERS_START, false))
         {
@@ -27,7 +28,8 @@ public class ObjectParslet implements PrefixParselet<ShapeExp>
             params = parse.parameters();
         } else
         {
-            params = new float[0];
+            //noinspection unchecked
+            params = new Either[0];
         }
 
         return new ObjectExp(name, params);

@@ -34,6 +34,7 @@ public class ShapeParser
     {
         parser.prefixParslet(MainTokens.NUMBER_DOUBLE, new NumberParslet());
         parser.prefixParslet(MainTokens.NUMBER_INT, new NumberParslet());
+        parser.prefixParslet(MainTokens.STRING, new StringParslet());
 
         parser.prefixParslet(ShapeToken.COLLISION, new CollisionParslet());
 

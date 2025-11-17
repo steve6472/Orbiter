@@ -1,5 +1,6 @@
 package steve6472.orbiter.world.collision.expression;
 
+import com.mojang.datafixers.util.Either;
 import steve6472.orbiter.world.collision.ShapeExp;
 
 import java.util.Arrays;
@@ -9,7 +10,7 @@ import java.util.Arrays;
  * Date: 10/19/2024
  * Project: Orbiter <br>
  */
-public record ParameterExp(float[] parameters) implements ShapeExp
+public record ParameterExp(Either<Float, String>[] parameters) implements ShapeExp
 {
     @Override
     public String toString()

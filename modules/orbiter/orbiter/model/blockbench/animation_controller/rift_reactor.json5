@@ -8,7 +8,7 @@
                 }
             }
         },
-        button_1: {
+        button_left: {
             initial_state: "unpressed",
             states: {
                 unpressed: {},
@@ -23,7 +23,7 @@
                 }
             }
         },
-        button_2: {
+        button_right: {
             initial_state: "unpressed",
             states: {
                 unpressed: {},

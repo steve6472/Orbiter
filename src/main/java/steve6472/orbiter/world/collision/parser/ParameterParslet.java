@@ -1,13 +1,12 @@
 package steve6472.orbiter.world.collision.parser;
 
-import steve6472.core.tokenizer.MainTokens;
-import steve6472.core.tokenizer.PrefixParselet;
-import steve6472.core.tokenizer.TokenParser;
-import steve6472.core.tokenizer.Tokenizer;
+import com.mojang.datafixers.util.Either;
+import steve6472.core.tokenizer.*;
 import steve6472.orbiter.world.collision.ShapeExp;
 import steve6472.orbiter.world.collision.ShapeToken;
 import steve6472.orbiter.world.collision.expression.NumberExp;
 import steve6472.orbiter.world.collision.expression.ParameterExp;
+import steve6472.orbiter.world.collision.expression.StringExp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,10 +21,20 @@ public class ParameterParslet implements PrefixParselet<ShapeExp>
     @Override
     public ShapeExp parse(Tokenizer tokenizer, TokenParser<ShapeExp> tokenParser)
     {
-        List<Float> params = new ArrayList<>(4);
-        while (tokenizer.peekToken().type() == MainTokens.NUMBER_DOUBLE || tokenizer.peekToken().type() == MainTokens.NUMBER_INT)
+        List<Either<Float, String>> params = new ArrayList<>(4);
+        while (true)
         {
-            params.add(tokenParser.parse(NumberExp.class).value());
+            Token nextType = tokenizer.peekToken().type();
+            if (!(nextType == MainTokens.NUMBER_DOUBLE || nextType == MainTokens.NUMBER_INT || nextType == MainTokens.STRING))
+                break;
+
+            if (nextType == MainTokens.STRING)
+            {
+                params.add(Either.right(tokenParser.parse(StringExp.class).value()));
+            } else
+            {
+                params.add(Either.left(tokenParser.parse(NumberExp.class).value()));
+            }
 
             if (!tokenizer.matchToken(ShapeToken.SEPARATOR, true))
             {
@@ -35,12 +44,7 @@ public class ParameterParslet implements PrefixParselet<ShapeExp>
 
         tokenizer.consumeToken(ShapeToken.PARAMETERS_END);
 
-        float[] floats = new float[params.size()];
-        for (int i = 0; i < params.size(); i++)
-        {
-            floats[i] = params.get(i);
-        }
-
-        return new ParameterExp(floats);
+        //noinspection unchecked
+        return new ParameterExp(params.toArray(Either[]::new));
     }
 }
