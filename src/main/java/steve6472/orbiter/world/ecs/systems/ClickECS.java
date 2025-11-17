@@ -55,26 +55,16 @@ public class ClickECS extends EntitySystem
             return;
 
         ConstShape shape = body.getShape();
-        if (shape instanceof CompoundShape compoundShape)
+        if (shape instanceof CompoundShape)
         {
             Collision collision = Components.COLLISION.get(entity);
             OrbiterCollisionShape orbiterCollisionShape = Registries.COLLISION.get(collision.collisionKey());
 
-            entity.add(new Click(orbiterCollisionShape.ids()[fixSubShapeId(lookAtObject.getSubShapeId2(), compoundShape.getNumSubShapes())]));
+            entity.add(new Click(orbiterCollisionShape.ids()[client.getRayTrace().getLookAtSubshapeOrdinal()]));
         } else
         {
             entity.add(new Click(-1));
         }
-    }
-
-    public static int fixSubShapeId(int id, int maxShapes)
-    {
-        String binaryString = Integer.toBinaryString(maxShapes);
-        int length = binaryString.length();
-        int ones = 0;
-        for (int i = 0; i < length; i++)
-            ones |= (1 << i);
-        return id & ones;
     }
 
     public static Entity findEntity(Client client, UUID uuid)

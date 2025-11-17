@@ -1,14 +1,24 @@
 package steve6472.orbiter.util;
 
+import com.badlogic.ashley.core.Entity;
 import com.github.stephengold.joltjni.*;
+import com.github.stephengold.joltjni.readonly.ConstShape;
+import com.github.stephengold.joltjni.readonly.ConstSubShape;
 import org.joml.Vector3f;
 import steve6472.core.util.MathUtil;
 import steve6472.flare.Camera;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
+import steve6472.orbiter.Registries;
 import steve6472.orbiter.player.PCPlayer;
+import steve6472.orbiter.world.World;
+import steve6472.orbiter.world.collision.OrbiterCollisionShape;
+import steve6472.orbiter.world.ecs.Components;
+import steve6472.orbiter.world.ecs.components.physics.Collision;
+import steve6472.orbiter.world.ecs.systems.ClickECS;
 
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Created by steve6472
@@ -24,6 +34,7 @@ public class PhysicsRayTrace
     private final BodyFilter noBodyFilter = new BodyFilter();
     private final Client client;
     private RayCastResult lookAtObject;
+    private int lookAtSubshapeOrdinal;
 
     public PhysicsRayTrace(Client client)
     {
@@ -71,13 +82,54 @@ public class PhysicsRayTrace
     {
         rayTraceGetFirst(camera, reach, true)
             .ifPresentOrElse(
-                t -> lookAtObject = t,
-                () -> lookAtObject = null
+                t ->
+                {
+                    lookAtObject = t;
+                    lookAtSubshapeOrdinal = -1;
+
+                    int bodyId = lookAtObject.getBodyId();
+                    World world = client.getWorld();
+
+                    UUID uuid = world.bodyMap().getUUIDById(bodyId);
+                    if (uuid == null)
+                        return;
+
+                    Body body = world.bodyMap().getBodyByUUID(uuid);
+                    if (body == null)
+                        return;
+
+                    ConstShape shape = body.getShape();
+                    ConstShape leafShape = shape.getLeafShape(lookAtObject.getSubShapeId2(), new int[1]);
+
+                    if (shape instanceof CompoundShape compoundShape)
+                    {
+                        ConstSubShape[] subShapes = compoundShape.getSubShapes();
+                        for (int i = 0; i < subShapes.length; i++)
+                        {
+                            if (subShapes[i].getShape().equals(leafShape))
+                            {
+                                lookAtSubshapeOrdinal = i;
+                                return;
+                            }
+                        }
+                    }
+
+                },
+                () ->
+                {
+                    lookAtObject = null;
+                    lookAtSubshapeOrdinal = -1;
+                }
             );
     }
 
     public RayCastResult getLookAtObject()
     {
         return lookAtObject;
+    }
+
+    public int getLookAtSubshapeOrdinal()
+    {
+        return lookAtSubshapeOrdinal;
     }
 }

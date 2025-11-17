@@ -9,15 +9,12 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
-import steve6472.core.util.MathUtil;
-import steve6472.flare.Camera;
 import steve6472.flare.MasterRenderer;
 import steve6472.flare.VkBuffer;
 import steve6472.flare.core.FrameInfo;
 import steve6472.flare.render.common.CommonBuilder;
 import steve6472.flare.render.common.CommonRenderSystem;
 import steve6472.flare.render.common.FlightFrame;
-import steve6472.flare.render.debug.DebugRender;
 import steve6472.flare.render.debug.objects.DebugCapsule;
 import steve6472.flare.render.debug.objects.DebugCuboid;
 import steve6472.flare.render.debug.objects.DebugSphere;
@@ -28,8 +25,6 @@ import steve6472.flare.tracy.Profiler;
 import steve6472.orbiter.Client;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
-import steve6472.orbiter.player.PCPlayer;
-import steve6472.orbiter.rendering.gizmo.Gizmos;
 import steve6472.orbiter.world.collision.OrbiterCollisionShape;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
@@ -37,7 +32,6 @@ import steve6472.orbiter.world.ecs.systems.ClickECS;
 
 import java.nio.LongBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -103,9 +97,7 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         Collision collision = Components.COLLISION.get(entity);
         OrbiterCollisionShape orbiterCollisionShape = Registries.COLLISION.get(collision.collisionKey());
 
-//        System.out.println(client.getRayTrace().getSubShapeId());
-//        renderOutline(body, orbiterCollisionShape.ids(), (short) lookAtObject.getSubShapeId2(), verticies);
-        renderOutline(body, orbiterCollisionShape.ids(), (short) 0, verticies);
+        renderOutline(body, orbiterCollisionShape.ids(), (short) client.getRayTrace().getLookAtSubshapeOrdinal(), verticies);
 
         VkBuffer buffer = flightFrame.getBuffer(0);
 
@@ -131,9 +123,6 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         transform.rotate(Convert.physToJoml(rot, new Quaternionf()));
 
         ConstShape shape = lookAtBody.getShape();
-        if (shape instanceof CompoundShape compoundShape)
-            lookatId = (short) ClickECS.fixSubShapeId(lookatId, compoundShape.getNumSubShapes());
-
         renderShape(shape, ids, lookatId, (short) 0, transform, verticies);
     }
 

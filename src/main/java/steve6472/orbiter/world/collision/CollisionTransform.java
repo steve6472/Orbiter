@@ -77,6 +77,6 @@ public class CollisionTransform
     @Override
     public String toString()
     {
-        return "CollisionTransform{" + "offset=" + offset + ", rotation=" + rotation + ", shape=" + shape + '}';
+        return "CollisionTransform{" + "offset=" + offset + ", rotation=" + rotation + ", shape=" + shape + ", id=" + id + '}';
     }
 }
