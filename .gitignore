@@ -37,6 +37,7 @@ build/
 ### Orbiter ###
 /notes/
 ffmpeg.exe
+/modules/datafix_override/orbiter/
 
 ### Flare ###
 generated/

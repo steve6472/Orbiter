@@ -1,0 +1,9 @@
+{
+    name: "Orbiter DFU",
+    description: [
+        "Datafixed model override (downgrade)"
+    ],
+    depend: ["orbiter"],
+    authors: "steve6472",
+    version: 1
+}

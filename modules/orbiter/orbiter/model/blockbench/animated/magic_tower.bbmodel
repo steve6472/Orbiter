@@ -737,27 +737,22 @@
         {
             "uuid": "a6233393-e822-1886-376c-72548f721744",
             "isOpen": true,
-            "origin": [0, -0.25, 0],
             "children": [
                 {
                     "uuid": "fca1718e-be30-bc41-0730-70b7388ae98a",
                     "isOpen": true,
-                    "origin": [0, 16.75, 0],
                     "children": [
                         {
                             "uuid": "853ffdaf-d301-213f-d340-c08c12f9caf5",
                             "isOpen": true,
-                            "origin": [0, 16.75, 0],
                             "children": [
                                 {
                                     "uuid": "cab0e3a9-f981-8bca-408f-3349ad1bb347",
                                     "isOpen": true,
-                                    "origin": [0, 16.75, 0],
                                     "children": [
                                         "994dc6cc-13bb-3a50-f2cc-022418a83660",
                                         {
                                             "uuid": "6c4ba945-bd1f-6119-263c-1c1f4ab6febf",
-                                            "origin": [0, 16.75, 0],
                                             "isOpen": true,
                                             "children": ["5083277d-28f0-4411-bc3a-ae03d6f37501", "f2d5c6f1-75cc-d938-315f-0690c77e1c9d"]
                                         }
@@ -768,7 +763,6 @@
                         {
                             "uuid": "6fbc6b59-5aaa-01cb-8576-597217543d8a",
                             "isOpen": true,
-                            "origin": [0, 16.75, 0],
                             "children": [
                                 "bdb3426e-2683-d924-868b-a1b2e0741784",
                                 "ed602b3b-b429-f153-595b-088a2542026c",
