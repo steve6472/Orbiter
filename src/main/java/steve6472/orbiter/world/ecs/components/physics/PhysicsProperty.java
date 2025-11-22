@@ -26,4 +26,8 @@ public interface PhysicsProperty extends Component
     ModifyState modifyComponent(BodyInterface bi, int body);
 
     void modifyBody(BodyInterface bi, int body);
+
+    void setEcsModifyFlag();
+    void resetEcsModifyFlag();
+    boolean wasEcsModified();
 }

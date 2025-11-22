@@ -34,6 +34,7 @@ abstract class Valuef implements PhysicsProperty
     }
 
     private float val;
+    private boolean ecsModifyFlag;
 
     public Valuef(float val)
     {
@@ -48,16 +49,19 @@ abstract class Valuef implements PhysicsProperty
     public void set(float val)
     {
         this.val = val;
+        setEcsModifyFlag();
     }
 
     public void add(float val)
     {
         this.val += val;
+        setEcsModifyFlag();
     }
 
     public void sub(float val)
     {
         this.val -= val;
+        setEcsModifyFlag();
     }
 
     public float val()
@@ -90,5 +94,20 @@ abstract class Valuef implements PhysicsProperty
     public void modifyBody(BodyInterface bi, int body)
     {
         set(bi, body, val);
+    }
+
+    public void setEcsModifyFlag()
+    {
+        ecsModifyFlag = true;
+    }
+
+    public void resetEcsModifyFlag()
+    {
+        ecsModifyFlag = false;
+    }
+
+    public boolean wasEcsModified()
+    {
+        return ecsModifyFlag;
     }
 }

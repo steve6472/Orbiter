@@ -1,6 +1,5 @@
 package steve6472.orbiter.world.ecs.systems;
 
-import com.badlogic.ashley.core.ComponentMapper;
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import com.github.stephengold.joltjni.BodyInterface;
@@ -63,7 +62,8 @@ public class UpdatePhysics extends IteratingProfiledSystem
             if (physicsProperty == null)
                 continue;
 
-            physicsProperty.modifyBody(bi, bodyId);
+            if (physicsProperty.wasEcsModified())
+                physicsProperty.modifyBody(bi, bodyId);
         }
     }
 }

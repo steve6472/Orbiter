@@ -40,6 +40,7 @@ abstract class Value3f implements PhysicsProperty
     }
 
     private float x, y, z;
+    private boolean ecsModifyFlag;
 
     public Value3f(float x, float y, float z)
     {
@@ -58,6 +59,7 @@ abstract class Value3f implements PhysicsProperty
         this.x = x;
         this.y = y;
         this.z = z;
+        setEcsModifyFlag();
     }
 
     public void add(float x, float y, float z)
@@ -65,6 +67,7 @@ abstract class Value3f implements PhysicsProperty
         this.x += x;
         this.y += y;
         this.z += z;
+        setEcsModifyFlag();
     }
 
     public void sub(float x, float y, float z)
@@ -72,6 +75,7 @@ abstract class Value3f implements PhysicsProperty
         this.x -= x;
         this.y -= y;
         this.z -= z;
+        setEcsModifyFlag();
     }
 
     public float x()
@@ -121,5 +125,23 @@ abstract class Value3f implements PhysicsProperty
     public void modifyBody(BodyInterface bi, int body)
     {
         set(bi, body, Convert.jomlToPhys(toVec3f()));
+    }
+
+    @Override
+    public void setEcsModifyFlag()
+    {
+        ecsModifyFlag = true;
+    }
+
+    @Override
+    public void resetEcsModifyFlag()
+    {
+        ecsModifyFlag = false;
+    }
+
+    @Override
+    public boolean wasEcsModified()
+    {
+        return ecsModifyFlag;
     }
 }

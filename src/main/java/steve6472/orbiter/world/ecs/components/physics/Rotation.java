@@ -1,7 +1,5 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.gdx.utils.Pool;
 import com.github.stephengold.joltjni.BodyInterface;
 import com.github.stephengold.joltjni.Quat;
 import com.github.stephengold.joltjni.RVec3;
@@ -19,7 +17,7 @@ import steve6472.orbiter.Convert;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class Rotation implements PhysicsProperty, Component, Pool.Poolable
+public class Rotation implements PhysicsProperty
 {
     public static final Codec<Rotation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
         Codec.FLOAT.fieldOf("x").forGetter(Rotation::x),
@@ -36,6 +34,7 @@ public class Rotation implements PhysicsProperty, Component, Pool.Poolable
         Rotation::new);
 
     private float x, y, z, w;
+    private boolean ecsModifyFlag;
 
     public Rotation(float x, float y, float z, float w)
     {
@@ -56,6 +55,7 @@ public class Rotation implements PhysicsProperty, Component, Pool.Poolable
         this.y = y;
         this.z = z;
         this.w = w;
+        setEcsModifyFlag();
     }
 
     public float x()
@@ -116,8 +116,20 @@ public class Rotation implements PhysicsProperty, Component, Pool.Poolable
     }
 
     @Override
-    public void reset()
+    public void resetEcsModifyFlag()
     {
-        set(0, 0, 0, 1);
+        ecsModifyFlag = false;
+    }
+
+    @Override
+    public void setEcsModifyFlag()
+    {
+        ecsModifyFlag = true;
+    }
+
+    @Override
+    public boolean wasEcsModified()
+    {
+        return ecsModifyFlag;
     }
 }

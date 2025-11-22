@@ -66,6 +66,8 @@ public class UpdateECS extends IteratingProfiledSystem
             {
                 world.markModified(entity, physicsComponent.getFirst());
             }
+
+            physicsProperty.resetEcsModifyFlag();
         }
     }
 }

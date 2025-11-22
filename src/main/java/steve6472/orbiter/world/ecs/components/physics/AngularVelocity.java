@@ -1,7 +1,5 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.gdx.utils.Pool;
 import com.github.stephengold.joltjni.BodyInterface;
 import com.github.stephengold.joltjni.readonly.Vec3Arg;
 import com.mojang.serialization.Codec;
@@ -13,7 +11,7 @@ import steve6472.core.network.BufferCodec;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class AngularVelocity extends Value3f implements Component, Pool.Poolable
+public class AngularVelocity extends Value3f
 {
     public static final Codec<AngularVelocity> CODEC = codec(AngularVelocity::new);
     public static final BufferCodec<ByteBuf, AngularVelocity> BUFFER_CODEC = bufferCodec(AngularVelocity::new);
@@ -38,11 +36,5 @@ public class AngularVelocity extends Value3f implements Component, Pool.Poolable
     protected void set(BodyInterface bi, int body, Vec3Arg vec)
     {
         bi.setAngularVelocity(body, vec);
-    }
-
-    @Override
-    public void reset()
-    {
-        set(0, 0, 0);
     }
 }
