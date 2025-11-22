@@ -7,6 +7,8 @@ import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.physics.LinearVelocity;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.components.physics.Rotation;
+import steve6472.orbiter.world.ecs.components.specific.CropPlot;
+import steve6472.orbiter.world.ecs.components.specific.SeedDispenser;
 import steve6472.orlang.OrlangValue;
 import steve6472.orlang.QueryFunctionSet;
 
@@ -74,6 +76,38 @@ public class EntityQueryFunctions extends QueryFunctionSet implements AnimationQ
             if (linearVelocity == null)
                 return 0;
             return (double) Vector3f.length(linearVelocity.x(), linearVelocity.y(), linearVelocity.z());
+        }));
+
+        functions.put("seed_dispenser_get_seed_level", OrlangValue.func(() ->
+        {
+            SeedDispenser dispenser = Components.SEED_DISPENSER.get(entity);
+            if (dispenser == null)
+                return 0;
+            return (double) dispenser.currentLevel;
+        }));
+
+        functions.put("seed_dispenser_get_max_seed_level", OrlangValue.func(() ->
+        {
+            SeedDispenser dispenser = Components.SEED_DISPENSER.get(entity);
+            if (dispenser == null)
+                return 0;
+            return (double) dispenser.maxLevel;
+        }));
+
+        functions.put("seed_dispenser_get_cooldown_percentage", OrlangValue.func(() ->
+        {
+            SeedDispenser dispenser = Components.SEED_DISPENSER.get(entity);
+            if (dispenser == null)
+                return 0;
+            return 1 - (dispenser.cooldown / (double) dispenser.maxCooldown);
+        }));
+
+        functions.put("crop_plot_get_growth", OrlangValue.func(() ->
+        {
+            CropPlot cropPlot = Components.CROP_PLOT.get(entity);
+            if (cropPlot == null)
+                return 0;
+            return cropPlot.growth;
         }));
 
         functions.put("anim_time", OrlangValue.func(() -> animTime));

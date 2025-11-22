@@ -1,6 +1,9 @@
 package steve6472.orbiter;
 
 import com.mojang.serialization.Codec;
+import org.joml.Vector3f;
+import org.joml.Vector3fKt;
+import org.joml.Vector3fc;
 import steve6472.core.registry.Key;
 import steve6472.flare.FlareConstants;
 
@@ -19,6 +22,8 @@ public final class Constants
     public static final File SETTINGS = new File("settings/orbiter_settings.json");
 
     public static final float TICKS_IN_SECOND = 60f;
+
+    public static final Vector3fc GRAVITY = new Vector3f(0,-9.81f,0);
 
 //    public static final int MP_PLAYER_MAGIC_CONSTANT = 69;
 //    public static final int CLIENT_PLAYER_MAGIC_CONSTANT = 42;

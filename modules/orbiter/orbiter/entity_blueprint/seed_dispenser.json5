@@ -1,0 +1,11 @@
+{
+    physics_body: {
+        collision: "blockbench/animated/seed_dispenser"
+    },
+    animated_model: {
+        model: "blockbench/animated/seed_dispenser",
+        controller: "orbiter:seed_dispenser"
+    },
+    seed_dispenser: {},
+    environment: {}
+}

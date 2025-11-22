@@ -56,6 +56,8 @@ public class StaticModelSnapshot implements Pool.Poolable, UUIDSnapshot
                 y = position.y();
                 z = position.z();
             });
+
+            Components.ROTATION.ifPresent(entity, rotation -> this.rotation.set(rotation.x(), rotation.y(), rotation.z(), rotation.w()));
         }
     }
 

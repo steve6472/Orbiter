@@ -1,0 +1,12 @@
+{
+    controllers: {
+        grow: {
+            initial_state: "grow",
+            states: {
+                grow: {
+                    animations: ["grow"]
+                }
+            }
+        }
+    }
+}

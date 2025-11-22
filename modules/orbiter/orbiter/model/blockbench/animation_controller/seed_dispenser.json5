@@ -1,0 +1,27 @@
+{
+    controllers: {
+        main: {
+            initial_state: "idle",
+            states: {
+                idle: {
+                    animations: ["seed_level", "cooldown"]
+                }
+            }
+        },
+        shoot: {
+            initial_state: "none",
+            states: {
+                none: {},
+                shoot: {
+                    animations: ["shoot"],
+                    transitions: [
+                        {
+                            state: "none",
+                            condition: "q.any_animation_finished"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

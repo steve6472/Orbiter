@@ -130,6 +130,9 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
     {
         if (!(shape instanceof CompoundShape) && lookatId != -1)
         {
+            if (lookatId >= ids.length)
+                return;
+
             if (isFocus && (ids[lookatId].isEmpty() || !ids[lookatId].equals(ids[currentId])))
                 return;
 

@@ -6,6 +6,7 @@ import steve6472.flare.MasterRenderer;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.ui.GlobalProperties;
 import steve6472.orbiter.world.ecs.systems.*;
+import steve6472.orbiter.world.ecs.systems.specific.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +70,17 @@ public class WorldSystems
         engine.addSystem(braodcastClientPosition = new BroadcastClientPosition());
         engine.addSystem(primitiveEmitter = new ParticleEmitterSystem(world));
         engine.addSystem(new ClickConsumerTest());
+
+        /*
+         * Gameplay
+         */
+        engine.addSystem(new LifetimeTicksSystem());
+        engine.addSystem(new VelocitySystem());
+
+        engine.addSystem(new FillSeedDispenserSystem());
+        engine.addSystem(new CropPlotGrowthSystem());
+        engine.addSystem(new DispenseSeedsSystem());
+        engine.addSystem(new SeedPlantSystem());
 
         // Last
         engine.addSystem(networkSync = new NetworkSync(OrbiterApp.getInstance().getNetwork())); //"Network Sync", ""

@@ -19,6 +19,7 @@ import java.util.stream.LongStream;
  * Date: 9/17/2025
  * Project: Orbiter <br>
  */
+@Deprecated
 public class Tags implements Component
 {
     /*

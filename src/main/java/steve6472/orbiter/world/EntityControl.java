@@ -218,9 +218,12 @@ public interface EntityControl extends WorldSounds
     {
         BodyInterface bodyInterface = physics().getBodyInterface();
         int id = bodyMap().getIdByUUID(uuid);
-        bodyInterface.removeBody(id);
-        bodyInterface.destroyBody(id);
-        bodyMap().removeBody(id);
+        if (bodyInterface.isAdded(id))
+        {
+            bodyInterface.removeBody(id);
+            bodyInterface.destroyBody(id);
+            bodyMap().removeBody(id);
+        }
 
         for (Entity entity : ecsEngine().getEntitiesFor(Family.all(UUIDComp.class).get()))
         {

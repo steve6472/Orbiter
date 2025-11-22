@@ -60,6 +60,15 @@ public class ComponentEntry<T extends Component> implements Keyable, Serializabl
             func.accept(t);
     }
 
+    public void ifPresentOrElse(Entity entity, Consumer<T> func, Runnable emptyAction)
+    {
+        T t = get(entity);
+        if (t != null)
+            func.accept(t);
+        else
+            emptyAction.run();
+    }
+
     public T create(PooledEngine engine)
     {
         return engine.createComponent(clazz);

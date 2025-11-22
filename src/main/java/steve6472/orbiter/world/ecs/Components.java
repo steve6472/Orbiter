@@ -6,6 +6,7 @@ import steve6472.orbiter.Constants;
 import steve6472.orbiter.Registries;
 import steve6472.orbiter.world.ecs.components.*;
 import steve6472.orbiter.world.ecs.components.event.Click;
+import steve6472.orbiter.world.ecs.components.specific.*;
 import steve6472.orbiter.world.emitter.ParticleEmitters;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.core.ComponentEntry;
@@ -31,6 +32,16 @@ public class Components
     public static final ComponentEntry<Friction> FRICTION = register("friction", Friction.class, builder -> builder.persistent(Friction.CODEC).network(Friction.BUFFER_CODEC));
     public static final ComponentEntry<Collision> COLLISION = register("collision", Collision.class, builder -> builder.persistent(Collision.CODEC).network(Collision.BUFFER_CODEC));
     public static final ComponentEntry<PCCharacter> PC_CHARACTER = register("pc_character", PCCharacter.class, builder -> builder.persistent(PCCharacter.CODEC).network(PCCharacter.BUFFER_CODEC));
+
+    /*
+     * Gameplay
+     */
+    public static final ComponentEntry<SeedDispenser> SEED_DISPENSER = register("seed_dispenser", SeedDispenser.class);
+    public static final ComponentEntry<SeedBag> SEED_BAG = register("seed_bag", SeedBag.class);
+    public static final ComponentEntry<CropPlot> CROP_PLOT = register("crop_plot", CropPlot.class);
+    public static final ComponentEntry<Gravity> GRAVITY = register("value", Gravity.class);
+    public static final ComponentEntry<LifetimeTicks> LIFETIME_TICKS = register("lifetime_ticks", LifetimeTicks.class);
+    public static final ComponentEntry<Seed> SEED = register("seed", Seed.class);
 
     /*
      * Rendering

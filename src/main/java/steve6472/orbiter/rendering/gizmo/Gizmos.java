@@ -5,6 +5,8 @@ import steve6472.orbiter.rendering.gizmo.shapes.FilledLineCuboid;
 import steve6472.orbiter.rendering.gizmo.shapes.LineCuboid;
 import steve6472.orbiter.rendering.gizmo.shapes.LineGizmo;
 import steve6472.orbiter.rendering.gizmo.shapes.PointGizmo;
+import steve6472.orbiter.util.AABB;
+import steve6472.orbiter.world.particle.components.MaxAge;
 
 import java.util.List;
 
@@ -160,6 +162,12 @@ public class Gizmos
     {
         return addGizmo(new FilledLineCuboid(center, halfWidth, halfHeight, halfDepth, color, color, DEFAULT_LINE_WIDTH));
     }
+
+    public static GizmoRenderSettings filledLineCuboid(AABB aabb, int color)
+    {
+        return filledLineCuboidFromSize(aabb.getCenter(), aabb.getSize().x, aabb.getSize().y, aabb.getSize().z, color);
+    }
+
     public static GizmoRenderSettings filledLineCuboidFromSize(Vector3f center, float width, float height, float depth, int color)
     {
         return addGizmo(new FilledLineCuboid(center, width / 2f, height / 2f, depth / 2f, color, color, DEFAULT_LINE_WIDTH));

@@ -160,6 +160,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
         ObjectVsBroadPhaseLayerFilter ovbFilter = new ObjectVsBroadPhaseLayerFilterTable(layerMap, numBpLayers, ovoFilter, Constants.Physics.NUM_OBJ_LAYERS);
 
         PhysicsSystem result = new PhysicsSystem();
+        result.setGravity(Constants.GRAVITY.x(), Constants.GRAVITY.y(), Constants.GRAVITY.z());
 
         // Set high limits, even though this sample app uses only 2 bodies:
         int maxBodies = 5_000;
@@ -296,9 +297,9 @@ public class World implements EntityControl, EntityModify, WorldSounds
         Gizmos.line(new Vector3f(0, 0, 0), new Vector3f(0, 1, 0), 0xff00ff00, 3f);
         Gizmos.line(new Vector3f(0, 0, 0), new Vector3f(0, 0, 1), 0xff0000ff, 3f);
 
-        float yOffset = (float) (Math.sin(Math.toRadians((System.currentTimeMillis() % 3600) / 10d)) * 0.4f);
-        Gizmos.filledLineCuboid(new Vector3f(0.5f, 1.5f + yOffset, 0.5f), 0.3f, 0xffa0a0a0, 0x6080cc30, 2f);
-        Gizmos.filledLineCuboid(new Vector3f(1.5f, 1.5f - yOffset, 0.5f), 0.3f, 0x60cc3080, 1f);
+//        float yOffset = (float) (Math.sin(Math.toRadians((System.currentTimeMillis() % 3600) / 10d)) * 0.4f);
+//        Gizmos.filledLineCuboid(new Vector3f(0.5f, 1.5f + yOffset, 0.5f), 0.3f, 0xffa0a0a0, 0x6080cc30, 2f);
+//        Gizmos.filledLineCuboid(new Vector3f(1.5f, 1.5f - yOffset, 0.5f), 0.3f, 0x60cc3080, 1f);
 
         // Temporary "crosshair"
         RayCastResult lookAtObject = OrbiterApp.getInstance().getClient().getRayTrace().getLookAtObject();

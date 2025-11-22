@@ -30,6 +30,7 @@ public class HoldSystem extends EntitySystem
     private float holdPointDistance = PCPlayer.REACH;
 
     private Body heldBody;
+    private int bodyId;
     private TwoBodyConstraint holdConstraint;
     private final PreviousState previousState = new PreviousState();
 
@@ -119,6 +120,7 @@ public class HoldSystem extends EntitySystem
         resultOpt.ifPresent(result ->
         {
             heldBody = client.getWorld().bodyMap().getBodyById(result.getBodyId());
+            bodyId = result.getBodyId();
             if (heldBody == null)
                 return;
 
@@ -168,7 +170,7 @@ public class HoldSystem extends EntitySystem
         });
     }
 
-    private void endHolding()
+    private void endHolding(boolean restoreState)
     {
         // Already not holding
         if (!isHolding())
@@ -177,10 +179,12 @@ public class HoldSystem extends EntitySystem
         client.getWorld().physics().removeConstraint(holdConstraint);
         holdPointDistance = PCPlayer.REACH;
 
-        previousState.restoreState(heldBody);
+        if (restoreState)
+            previousState.restoreState(heldBody);
 
         heldBody = null;
         holdConstraint = null;
+        bodyId = 0;
     }
 
     private boolean isHolding()
@@ -196,12 +200,21 @@ public class HoldSystem extends EntitySystem
         if (holdPoint == null)
             holdPoint = createHoldPoint();
 
+        if (heldBody != null)
+        {
+            Body bodyById = client.getWorld().bodyMap().getBodyById(bodyId);
+            if (bodyById == null)
+            {
+                endHolding(false);
+            }
+        }
+
         if (Keybinds.HOLD_OBJECT.isActive())
         {
             startHolding();
         } else
         {
-            endHolding();
+            endHolding(true);
         }
         profiler.pop();
     }
