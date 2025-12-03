@@ -1,7 +1,5 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
-import com.badlogic.ashley.core.Component;
-import com.badlogic.gdx.utils.Pool;
 import com.github.stephengold.joltjni.BodyInterface;
 import com.github.stephengold.joltjni.enumerate.EActivation;
 import com.github.stephengold.joltjni.readonly.Vec3Arg;
@@ -14,7 +12,7 @@ import steve6472.core.network.BufferCodec;
  * Date: 10/2/2024
  * Project: Orbiter <br>
  */
-public class Position extends Value3f implements Component, Pool.Poolable
+public class Position extends Value3f
 {
     public static final Codec<Position> CODEC = codec(Position::new);
     public static final BufferCodec<ByteBuf, Position> BUFFER_CODEC = bufferCodec(Position::new);
@@ -39,11 +37,5 @@ public class Position extends Value3f implements Component, Pool.Poolable
     protected void set(BodyInterface bi, int body, Vec3Arg vec)
     {
         bi.setPosition(body, vec.toRVec3(), EActivation.Activate);
-    }
-
-    @Override
-    public void reset()
-    {
-        set(0, 0, 0);
     }
 }

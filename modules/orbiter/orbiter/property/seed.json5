@@ -1,0 +1,5 @@
+{
+    type: "enum",
+    range: ["wheat", "carrot", "potato", "magic_bean"],
+    default: "wheat"
+}

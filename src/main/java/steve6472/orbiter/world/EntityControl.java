@@ -15,6 +15,7 @@ import steve6472.flare.assets.model.blockbench.animation.controller.AnimationCon
 import steve6472.orbiter.Constants;
 import steve6472.orbiter.Convert;
 import steve6472.orbiter.Registries;
+import steve6472.orbiter.actions.Action;
 import steve6472.orbiter.audio.Sound;
 import steve6472.orbiter.audio.WorldSounds;
 import steve6472.orbiter.network.api.Connections;
@@ -22,6 +23,7 @@ import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.network.packets.game.clientbound.CreateCustomEntity;
 import steve6472.orbiter.network.packets.game.clientbound.RemoveEntity;
 import steve6472.orbiter.network.packets.game.clientbound.CreateEntity;
+import steve6472.orbiter.properties.Property;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.blueprints.ParticleEmittersBlueprint;
 import steve6472.orbiter.world.ecs.components.AnimatedModel;
@@ -29,12 +31,12 @@ import steve6472.orbiter.world.ecs.components.OrlangEnv;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.*;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
-import steve6472.orbiter.world.emitter.EmitterQueryFunctions;
 import steve6472.orbiter.world.emitter.ParticleEmitter;
 import steve6472.orbiter.world.emitter.ParticleEmitters;
-import steve6472.orlang.OrlangEnvironment;
+import steve6472.orlang.OrlangValue;
 
 import java.util.*;
+import java.util.function.UnaryOperator;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
@@ -51,6 +53,7 @@ public interface EntityControl extends WorldSounds
     Engine ecsEngine();
     JoltBodies bodyMap();
     NetworkMain network();
+    World getItself();
 
     private Connections connections()
     {
@@ -58,22 +61,32 @@ public interface EntityControl extends WorldSounds
     }
 
 
-    default Entity addEntity(EntityBlueprint entityBlueprint, UUID uuid, boolean broadcast)
+    default Entity addEntity(EntityBlueprint entityBlueprint, UUID uuid, Map<String, OrlangValue> arguments, boolean broadcast)
     {
-        return addEntity(entityBlueprint, uuid, broadcast, new Vector3f(RandomUtil.randomFloat(-1, 1), RandomUtil.randomFloat(0.5f, 1.5f), RandomUtil.randomFloat(-1, 1)));
+        Vector3f randomSpawnPos = new Vector3f(RandomUtil.randomFloat(-1, 1), RandomUtil.randomFloat(0.5f, 1.5f), RandomUtil.randomFloat(-1, 1));
+        return addEntity(entityBlueprint, uuid, arguments, randomSpawnPos, broadcast);
     }
 
-    default Entity addEntity(EntityBlueprint entityBlueprint, UUID uuid, boolean broadcast, Vector3f pos)
+    default Entity addEntity(EntityBlueprint entityBlueprint, UUID uuid, Map<String, OrlangValue> arguments, Vector3f pos, boolean broadcast)
     {
-        List<Component> components = entityBlueprint.createEntityComponents(uuid);
-        Entity entity = createEntity(components);
+        Map<String, Property> spawnArguments = entityBlueprint.getSpawnArguments().required();
+        Set<String> required = new HashSet<>(spawnArguments.keySet());
+        required.removeAll(arguments.keySet());
+        if (!required.isEmpty())
+        {
+            CONTROL_LOGGER.severe("Missing required spawn arguments: " + required);
+            return null;
+        }
+
+        Entity entity = ecsEngine().createEntity();
+        List<Component> components = entityBlueprint.createEntityComponents(entity, uuid);
+        createEntity(entity, components);
 
         // Attach entity query functions
         OrlangEnv orlangEnv = Components.ENVIRONMENT.get(entity);
         if (orlangEnv != null)
         {
-            OrlangEnvironment env = orlangEnv.env;
-            env.queryFunctionSet = new EntityQueryFunctions(entity);
+            orlangEnv.setQueryFunctionSet(QueryFunction.ENTITY, entity);
         }
 
         // Attach emitter query functions to existing emitters
@@ -82,7 +95,7 @@ public interface EntityControl extends WorldSounds
         {
             for (ParticleEmitter emitter : emitters.emitters)
             {
-                emitter.environment.queryFunctionSet = new EmitterQueryFunctions(entity);
+                emitter.environment.queryFunctionSet = QueryFunction.EMITTER.createFunctionSet(entity);
                 emitter.emitterTick();
             }
         }
@@ -101,7 +114,7 @@ public interface EntityControl extends WorldSounds
                 ParticleEmitter emitter = emitterEntry.toEmitter();
                 if (!particleData.locator().isBlank())
                     emitter.locator = particleData.locator();
-                emitter.environment.queryFunctionSet = new EmitterQueryFunctions(entity);
+                emitter.environment.queryFunctionSet = QueryFunction.EMITTER.createFunctionSet(entity);
                 emitter.emitterTick();
 
                 ParticleEmitters particleEmitters = Components.PARTICLE_EMITTERS.get(entity);
@@ -144,6 +157,11 @@ public interface EntityControl extends WorldSounds
         // Special physics tag handling
         handlePhysics(entity, components, pos);
 
+        if (orlangEnv != null)
+        {
+            entityBlueprint.getEvent(Constants.Events.ON_SPAWN).ifPresent(action -> Action.startAction(action, getItself(), entity, arguments, UnaryOperator.identity()));
+        }
+
         // Broadcast new entity to peers
         if (broadcast && connections() != null && network().lobby().isHost())
             connections().broadcastPacket(new CreateEntity(uuid, entityBlueprint.key()));
@@ -154,7 +172,7 @@ public interface EntityControl extends WorldSounds
     default Entity addCustomEntity(UUID uuid, Collection<Component> components, boolean broadcast)
     {
         components.add(new UUIDComp(uuid));
-        Entity entity = createEntity(components);
+        Entity entity = createEntity(ecsEngine().createEntity(), components);
 
         Vector3f pos = new Vector3f();
         Position position = Components.POSITION.get(entity);
@@ -242,9 +260,8 @@ public interface EntityControl extends WorldSounds
         return Stream.of(ecsEngine().getEntitiesFor(Family.all(UUIDComp.class).get()).toArray(Entity.class)).filter(e -> Components.UUID.get(e).uuid().equals(uuid)).findAny();
     }
 
-    private Entity createEntity(Collection<Component> components)
+    private Entity createEntity(Entity entity, Collection<Component> components)
     {
-        Entity entity = ecsEngine().createEntity();
         for (Component component : components)
         {
             entity.add(component);

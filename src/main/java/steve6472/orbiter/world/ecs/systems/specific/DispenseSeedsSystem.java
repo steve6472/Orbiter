@@ -20,13 +20,14 @@ import steve6472.orbiter.world.ecs.components.physics.LinearVelocity;
 import steve6472.orbiter.world.ecs.components.physics.Position;
 import steve6472.orbiter.world.ecs.components.physics.Rotation;
 import steve6472.orbiter.world.ecs.components.specific.CropPlot;
-import steve6472.orbiter.world.ecs.components.specific.LifetimeTicks;
+import steve6472.orbiter.world.ecs.components.LifetimeTicks;
 import steve6472.orbiter.world.ecs.components.specific.Seed;
 import steve6472.orbiter.world.ecs.components.specific.SeedDispenser;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 import steve6472.orbiter.world.ecs.systems.VelocitySystem;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -72,7 +73,7 @@ public class DispenseSeedsSystem extends IteratingProfiledSystem
             Position plotPosition = Components.POSITION.get(cropPlotEntity);
             CropPlot cropPlot = Components.CROP_PLOT.get(cropPlotEntity);
 
-            boolean validTarget = box.containsPoint(targetPos, plotPosition.toVec3f());
+            boolean validTarget = box.containsPointTranslated(targetPos, plotPosition.toVec3f());
             if (validTarget)
                 Gizmos.point(plotPosition.toVec3f(), cropPlot.hasSeed ? 0xffff0000 : 0xff00ff00).alwaysOnTop();
 
@@ -116,13 +117,16 @@ public class DispenseSeedsSystem extends IteratingProfiledSystem
                 return;
             }
 
-            Entity projectileEntity = OrbiterApp.getInstance().getClient().getWorld().addEntity(projectileBlueprint, UUID.randomUUID(), true, launchStart);
-            projectileEntity.add(new Position(launchStart.x, launchStart.y, launchStart.z));
-            projectileEntity.add(new LinearVelocity(launchResult.velocity.x, launchResult.velocity.y, launchResult.velocity.z));
-            projectileEntity.add(new LifetimeTicks(flightTicks));
-            projectileEntity.add(new Seed());
-            Quaternionf quaternionf = randomQuaternion();
-            projectileEntity.add(new Rotation(quaternionf.x, quaternionf.y, quaternionf.z, quaternionf.w));
+            Entity projectileEntity = OrbiterApp.getInstance().getClient().getWorld().addEntity(projectileBlueprint, UUID.randomUUID(), Map.of(), launchStart, true);
+            if (projectileEntity != null)
+            {
+                projectileEntity.add(new Position(launchStart.x, launchStart.y, launchStart.z));
+                projectileEntity.add(new LinearVelocity(launchResult.velocity.x, launchResult.velocity.y, launchResult.velocity.z));
+                projectileEntity.add(new LifetimeTicks(flightTicks));
+                projectileEntity.add(new Seed());
+                Quaternionf quaternionf = randomQuaternion();
+                projectileEntity.add(new Rotation(quaternionf.x, quaternionf.y, quaternionf.z, quaternionf.w));
+            }
 
             return;
         }

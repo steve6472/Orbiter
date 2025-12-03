@@ -1,0 +1,179 @@
+{
+    blueprints: {
+        physics_body: {
+            collision: "blockbench/animated/seed_dispenser_new"
+        }
+    },
+
+    components: {
+        animated_model: {
+            model: "blockbench/animated/seed_dispenser_new",
+            controller: "orbiter:seed_dispenser"
+        },
+        environment: {},
+        properties: {}
+    },
+
+    events: {
+        on_spawn: {
+            type: "sequence",
+            actions: [
+                {
+                    type: "orlang",
+                    code: "v.randomTick = math.random_integer(0, 19)"
+                },
+                {
+                    type: "apply_properties",
+                    default: [
+                        "seed_dispenser/max_cooldown",
+                        "seed_dispenser/max_seeds",
+                        "seed_dispenser/cooldown",
+                        "seed_dispenser/current_seeds"
+                    ]
+                }
+            ]
+        },
+
+        on_tick: {
+            type: "sequence",
+            actions: [
+                {
+                    type: "call_event",
+                    event: "seed_dispenser/do_cooldown"
+                },
+                {
+                    type: "call_event",
+                    condition: "q.tickTime % 20 == v.randomTick",
+                    event: "seed_dispenser/detect_bag"
+                },
+                {
+                    type: "call_event",
+                    condition: "q.property('seed_dispenser/cooldown') <= 0 && q.property('seed_dispenser/current_seeds') > 0",
+                    event: "seed_dispenser/shoot"
+                }
+            ]
+        },
+
+        "seed_dispenser/do_cooldown": {
+            type: "sequence",
+            actions: [
+                {
+                    type: "apply_properties",
+                    add: {
+                        "seed_dispenser/cooldown": "$math.max(0, q.property('seed_dispenser/cooldown') + -1)"
+                    }
+                }
+            ]
+        },
+
+        "seed_dispenser/detect_bag": {
+            type: "for_each",
+            filter: {
+                type: "all_of",
+                max: 1,
+                sort: "random",
+                initial: {
+                    type: "shape_cuboid",
+                    half_sizes: [0.45, 0.15, 0.45],
+                    offset: [0, 0.55, 0],
+                    offset_local: true,
+                    rotate_local: true,
+                    include_self: false
+                },
+                filters: [
+                    {
+                        type: "has_properties",
+                        all: ["seed", "seed_bag/count"]
+                    }
+                ]
+            },
+            actions: [
+                {
+                    type: "orlang",
+                    entity: "initiator",
+                    // q.property('property', 'iterated') to be able to move data between entities
+                    code: "t.removeCount = math.min(q.propertyFrom('seed_bag/count', 'iterated'), q.propertyFrom('seed_dispenser/max_seeds', 'initiator') - q.propertyFrom('seed_dispenser/current_seeds', 'initiator'))"
+                },
+                {
+                    type: "apply_properties",
+                    entity: "initiator",
+                    add: {
+                        "seed_dispenser/current_seeds": "$q.property('seed_dispenser/current_seeds') + t.removeCount"
+                    }
+                },
+                {
+                    type: "if_else",
+                    entity: "initiator",
+                    condition: "q.propertyFrom('seed_bag/count', 'iterated') - t.removeCount <= 0",
+                    // all of these can be either array or single, it gets parsed to array anyways
+                    if_true: {
+                        type: "remove_entity",
+                        entity: "iterated"
+                    },
+                    else: [
+                        {
+                            type: "apply_properties",
+                            entity: "iterated",
+                            add: {
+                                "seed_bag/count": "$q.property('seed_bag/count') - t.removeCount"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+
+        "seed_dispenser/shoot": {
+            type: "sequence",
+            actions: [
+                {
+                    type: "apply_properties",
+                    add: {
+                        "seed_dispenser/cooldown": "$q.property('seed_dispenser/max_cooldown')"
+                    }
+                },
+                // todo: particles
+                {
+                    type: "for_each",
+                    filter: {
+                        type: "all_of",
+                        initial: {
+                            type: "shape_cuboid",
+                            half_sizes: [1.25, 0.3, 1.25],
+                            offset: [0, -0.2, -2],
+                            offset_local: true
+                        },
+                        filters: [
+                            {
+                                type: "test_properties",
+                                all: {
+                                    // this one is useless but I gotta make this work too (:
+                                    "crop_plot/growth": "$t.value <= 0.0"
+                                },
+                                exclide: "seed"
+                            }
+                        ]
+                    },
+                    max: 1,
+                    sort: "random",
+                    actions: [
+                        {
+                            type: "apply_properties",
+                            entity: "initiator",
+                            add: {
+                                "seed_dispenser/current_seeds": "$q.property('seed_dispenser/current_seeds') + -1"
+                            }
+                        },
+                        {
+                            type: "animation_force_transition",
+                            entity: "initiator",
+                            controller: "shoot",
+                            state: "shoot"
+                        }
+                        // TODO: spawn the projectile, calculate taget SOMEHOW, prob orlang and temp values
+                    ]
+                }
+            ]
+        }
+    }
+}

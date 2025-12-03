@@ -55,7 +55,7 @@ public class PCPlayer implements Player
     {
         this.client = client;
         ecsEntity = new Entity();
-        List<Component> components = Registries.ENTITY_BLUEPRINT.get(CLIENT_PLAYER_BLUEPRINT).createEntityComponents(uuid);
+        List<Component> components = Registries.ENTITY_BLUEPRINT.get(CLIENT_PLAYER_BLUEPRINT).createEntityComponents(ecsEntity, uuid);
         for (Component component : components)
         {
             ecsEntity.add(component);

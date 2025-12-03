@@ -1,7 +1,7 @@
 package steve6472.orbiter.util;
 
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 /**
  * Created by steve6472
@@ -10,8 +10,8 @@ import org.joml.Vector3f;
  */
 public class AABB
 {
-    private final Vector3f min;
-    private final Vector3f max;
+    private final Vector3fc min;
+    private final Vector3fc max;
 
     private AABB(Vector3f min, Vector3f max)
     {
@@ -38,6 +38,11 @@ public class AABB
         return new AABB(min, max);
     }
 
+    public static AABB fromCenterRadius(Vector3f center, float radius)
+    {
+        return fromCenterHalfSize(center, radius, radius, radius);
+    }
+
     public static AABB fromSize(float width, float height, float depth)
     {
         Vector3f half = new Vector3f(width, height, depth).mul(0.5f);
@@ -48,30 +53,10 @@ public class AABB
 
     public boolean containsPoint(Vector3f point)
     {
-        return (point.x >= min.x && point.x <= max.x) && (point.y >= min.y && point.y <= max.y) && (point.z >= min.z && point.z <= max.z);
+        return (point.x >= min.x() && point.x <= max.x()) && (point.y >= min.y() && point.y <= max.y()) && (point.z >= min.z() && point.z <= max.z());
     }
 
-    /**
-     * Tests if a point lies inside a *rotated* AABB.
-     *
-     * @param point    world-space point
-     * @param center   box center (world-space)
-     * @param rotation quaternion representing box rotation
-     */
-    public boolean containsPoint(Vector3f center, Vector3f point, Quaternionf rotation)
-    {
-        // Convert point -> local space of unrotated AABB
-        Vector3f local = new Vector3f(point).sub(center);
-
-        // Apply inverse rotation to bring into box local-space
-        Quaternionf inv = new Quaternionf(rotation).invert();
-        inv.transform(local);
-
-        // Now test against this box's extents
-        return containsPoint(local.add(center));
-    }
-
-    public boolean containsPoint(Vector3f center, Vector3f point)
+    public boolean containsPointTranslated(Vector3f center, Vector3f point)
     {
         Vector3f halfSize = new Vector3f(max).sub(min).mul(0.5f);
         Vector3f local = new Vector3f(point).sub(center);
@@ -92,6 +77,11 @@ public class AABB
     public Vector3f getCenter()
     {
         return new Vector3f(max).add(min).mul(0.5f);
+    }
+
+    public Vector3f getHalfSize()
+    {
+        return new Vector3f(max).sub(min).mul(0.5f);
     }
 
     public Vector3f getSize()

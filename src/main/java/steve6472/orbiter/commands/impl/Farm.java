@@ -8,7 +8,9 @@ import steve6472.orbiter.commands.Command;
 import steve6472.orbiter.commands.CommandSource;
 import steve6472.orbiter.network.api.NetworkMain;
 import steve6472.orbiter.world.ecs.core.EntityBlueprint;
+import steve6472.orlang.OrlangValue;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class Farm extends Command
@@ -24,14 +26,17 @@ public class Farm extends Command
 			NetworkMain network = OrbiterApp.getInstance().getNetwork();
 			if ((network.connections() != null && network.lobby().isHost()) || !network.lobby().isLobbyOpen())
 			{
-				EntityBlueprint blueprint = Registries.ENTITY_BLUEPRINT.get(Constants.key("seed_dispenser"));
-				c.getSource().getWorld().addEntity(blueprint, UUID.randomUUID(), true);
+				EntityBlueprint blueprint = Registries.ENTITY_BLUEPRINT.get(Constants.key("seed_dispenser_new"));
+				c.getSource().getWorld().addEntity(blueprint, UUID.randomUUID(), Map.of(), true);
 
-				blueprint = Registries.ENTITY_BLUEPRINT.get(Constants.key("bag_of_seeds"));
-				c.getSource().getWorld().addEntity(blueprint, UUID.randomUUID(), true);
+				blueprint = Registries.ENTITY_BLUEPRINT.get(Constants.key("bag_of_seeds_new"));
+				c.getSource().getWorld().addEntity(blueprint, UUID.randomUUID(), Map.of("seed", OrlangValue.string("wheat"), "count", OrlangValue.num(99)), true);
 
-				blueprint = Registries.ENTITY_BLUEPRINT.get(Constants.key("crop_plot"));
-				c.getSource().getWorld().addEntity(blueprint, UUID.randomUUID(), true);
+				blueprint = Registries.ENTITY_BLUEPRINT.get(Constants.key("bag_of_seeds_new"));
+				c.getSource().getWorld().addEntity(blueprint, UUID.randomUUID(), Map.of("seed", OrlangValue.string("magic_bean"), "count", OrlangValue.num(15)), true);
+
+				blueprint = Registries.ENTITY_BLUEPRINT.get(Constants.key("crop_plot_new"));
+				c.getSource().getWorld().addEntity(blueprint, UUID.randomUUID(), Map.of(), true);
 			} else
 			{
 				c.getSource().sendFeedback("Client spawning not supported yet! (need packet for command send and then client command handling... ugh)");

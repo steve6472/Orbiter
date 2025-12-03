@@ -1,15 +1,12 @@
 package steve6472.orbiter.world.ecs.components.physics;
 
-import com.github.stephengold.joltjni.Body;
 import com.github.stephengold.joltjni.BodyInterface;
-import com.github.stephengold.joltjni.readonly.Vec3Arg;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
+import steve6472.orbiter.util.ComponentCodec;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -21,9 +18,9 @@ abstract class Valuef implements PhysicsProperty
 {
     protected static <S extends Valuef> Codec<S> codec(Function<Float, S> constructor)
     {
-        return RecordCodecBuilder.create(instance -> instance.group(
+        return ComponentCodec.create(instance -> instance.group(
             Codec.FLOAT.fieldOf("val").forGetter(S::val)
-        ).apply(instance, constructor));
+        ).apply(instance, a -> () -> constructor.apply(a)));
     }
 
     protected static <S extends Valuef> BufferCodec<ByteBuf, S> bufferCodec(Function<Float, S> constructor)

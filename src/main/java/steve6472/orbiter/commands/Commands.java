@@ -26,6 +26,7 @@ public class Commands
         new Spawn(dispatcher);
         new Farm(dispatcher);
         new DebugECS(dispatcher);
+        new PrintProperties(dispatcher);
 
         new ChatCommand(dispatcher);
     }

@@ -36,6 +36,7 @@ public class Components
     /*
      * Gameplay
      */
+    public static final ComponentEntry<Properties> PROPERTIES = register("properties", Properties.class, builder -> builder.persistent(Properties.CODEC).network(Properties.BUFFER_CODEC));
     public static final ComponentEntry<SeedDispenser> SEED_DISPENSER = register("seed_dispenser", SeedDispenser.class);
     public static final ComponentEntry<SeedBag> SEED_BAG = register("seed_bag", SeedBag.class);
     public static final ComponentEntry<CropPlot> CROP_PLOT = register("crop_plot", CropPlot.class);
@@ -48,7 +49,7 @@ public class Components
      */
     public static final ComponentEntry<IndexModel> MODEL = register("model", IndexModel.class, builder -> builder.persistent(IndexModel.CODEC).network(IndexModel.BUFFER_CODEC));
     public static final ComponentEntry<AnimatedModel> ANIMATED_MODEL = register("animated_model", AnimatedModel.class, builder -> builder.persistent(AnimatedModel.CODEC).network(AnimatedModel.BUFFER_CODEC));
-    public static final ComponentEntry<OrlangEnv> ENVIRONMENT = register("environment", OrlangEnv.class);
+    public static final ComponentEntry<OrlangEnv> ENVIRONMENT = register("environment", OrlangEnv.class, builder -> builder.persistent(OrlangEnv.CODEC));
 
     /*
      * Particle
@@ -67,6 +68,9 @@ public class Components
     public static final ComponentEntry<Tag.Physics> TAG_PHYSICS = register("tag_physics", Tag.Physics.class, builder -> builder.persistent(Tag.PHYSICS.codec()).network(Tag.PHYSICS.networkCodec()));
     public static final ComponentEntry<Tag.FireflyAI> TAG_FIREFLY_AI = register("tag_firefly_ai", Tag.FireflyAI.class, builder -> builder.persistent(Tag.FIREFLY_AI.codec()).network(Tag.FIREFLY_AI.networkCodec()));
     public static final ComponentEntry<Tag.ClientCharacter> TAG_CLIENT_HANDLED = register("tag_client_character", Tag.ClientCharacter.class, builder -> builder.persistent(Tag.CLIENT_CHARACTER.codec()).network(Tag.CLIENT_CHARACTER.networkCodec()));
+    public static final ComponentEntry<Tag.HasOnTickEvent> HAS_ON_TICK_EVENT = register("has_on_tick_event", Tag.HasOnTickEvent.class, builder -> builder.persistent(Tag.HAS_ON_TICK_EVENT.codec()));
+    public static final ComponentEntry<Tag.HasOnInteractEvent> HAS_ON_INTERACT_EVENT = register("has_on_interact_event", Tag.HasOnInteractEvent.class, builder -> builder.persistent(Tag.HAS_ON_INTERACT_EVENT.codec()));
+    public static final ComponentEntry<Tag.InteractHighlightOverride> INTERACT_HIGHLIGHT_OVERRIDE = register("interact_highlight_override", Tag.InteractHighlightOverride.class, builder -> builder.persistent(Tag.INTERACT_HIGHLIGHT_OVERRIDE.codec()));
 
     /*
      * Event
@@ -77,6 +81,7 @@ public class Components
      * Internal
      */
     public static final ComponentEntry<UUIDComp> UUID = register("uuid", UUIDComp.class, builder -> builder.persistent(UUIDComp.CODEC));
+    public static final ComponentEntry<BlueprintReference> BLUEPRINT_REFERENCE = register("blueprint_reference", BlueprintReference.class, builder -> builder.persistent(BlueprintReference.CODEC));
     public static final ComponentEntry<NetworkUpdates> NETWORK_UPDATES = register("network_updates", NetworkUpdates.class, builder -> builder);
     public static final ComponentEntry<NetworkRemove> NETWORK_REMOVE = register("network_remove", NetworkRemove.class, builder -> builder);
     public static final ComponentEntry<NetworkAdd> NETWORK_ADD = register("network_add", NetworkAdd.class, builder -> builder);

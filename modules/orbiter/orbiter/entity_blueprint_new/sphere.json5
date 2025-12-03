@@ -1,0 +1,7 @@
+{
+    blueprints: {
+        physics_body: {
+            model: "blockbench/static/sphere/25_cm"
+        }
+    }
+}

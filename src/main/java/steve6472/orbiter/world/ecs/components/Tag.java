@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import steve6472.core.network.BufferCodec;
 import steve6472.orbiter.network.ExtraBufferCodecs;
+import steve6472.orbiter.util.ComponentCodec;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,10 +26,16 @@ public final class Tag
     public static final Physics PHYSICS = new Physics();
     public static final FireflyAI FIREFLY_AI = new FireflyAI();
     public static final ClientCharacter CLIENT_CHARACTER = new ClientCharacter();
+    public static final HasOnTickEvent HAS_ON_TICK_EVENT = new HasOnTickEvent();
+    public static final HasOnInteractEvent HAS_ON_INTERACT_EVENT = new HasOnInteractEvent();
+    public static final InteractHighlightOverride INTERACT_HIGHLIGHT_OVERRIDE = new InteractHighlightOverride();
 
     public static final class Physics extends TagClass<Physics> { private Physics() {super(nextId());} }
     public static final class FireflyAI extends TagClass<FireflyAI> { private FireflyAI() {super(nextId());} }
     public static final class ClientCharacter extends TagClass<ClientCharacter> { private ClientCharacter() {super(nextId());} }
+    public static final class HasOnTickEvent extends TagClass<HasOnTickEvent> { private HasOnTickEvent() {super(nextId());} }
+    public static final class HasOnInteractEvent extends TagClass<HasOnInteractEvent> { private HasOnInteractEvent() {super(nextId());} }
+    public static final class InteractHighlightOverride extends TagClass<InteractHighlightOverride> { private InteractHighlightOverride() {super(nextId());} }
 
     /*
      * Serialization stuff
@@ -56,7 +63,8 @@ public final class Tag
         {
             this.id = id;
             TAGS.add(this);
-            codec = Codec.INT.xmap(i -> (T) TAGS.get(i), (T c) -> c.id);
+//            codec = ComponentCodec.xmap(Codec.INT, i -> () -> (T) TAGS.get(i), (T c) -> c.id);
+            codec = ComponentCodec.unit(() -> (T) TAGS.get(id));
             networkCodec = BufferCodec.of(ExtraBufferCodecs.VAR_INT, a -> a.id, i -> (T) TAGS.get(i));
             CLASSES.put(getClass(), this);
         }

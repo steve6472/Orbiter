@@ -44,7 +44,7 @@ public class SeedPlantSystem extends IteratingProfiledSystem
                 Gizmos.filledLineCuboid(cropPlotBox.translate(plotPosition.toVec3f()), 0x40cc3080);
             }
 
-            if (!cropPlotBox.containsPoint(plotPosition.toVec3f(), seedPosition.toVec3f()))
+            if (!cropPlotBox.containsPointTranslated(plotPosition.toVec3f(), seedPosition.toVec3f()))
                 continue;
 
             if (!cropPlot.hasSeed)

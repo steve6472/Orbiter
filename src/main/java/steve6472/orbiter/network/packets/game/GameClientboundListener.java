@@ -19,6 +19,7 @@ import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -52,7 +53,7 @@ public class GameClientboundListener extends OrbiterPacketListener
     {
         OrbiterApp orbiter = OrbiterApp.getInstance();
         World world = orbiter.getClient().getWorld();
-        world.addEntity(Registries.ENTITY_BLUEPRINT.get(entityType), uuid, false);
+        world.addEntity(Registries.ENTITY_BLUEPRINT.get(entityType), uuid, Map.of(), false);
     }
 
     private static final Family UUID_FAMILY = Family.all(UUIDComp.class).get();

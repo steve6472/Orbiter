@@ -21,7 +21,11 @@ import java.util.List;
  */
 public interface ExtraBufferCodecs
 {
-    BufferCodec<ByteBuf, Vector3f> VEC3F = BufferCodec.of(BufferCodecs.FLOAT, Vector3f::x, BufferCodecs.FLOAT, Vector3f::y, BufferCodecs.FLOAT, Vector3f::z, Vector3f::new);
+    BufferCodec<ByteBuf, Vector3f> VEC3F = BufferCodec.of(
+        BufferCodecs.FLOAT, Vector3f::x,
+        BufferCodecs.FLOAT, Vector3f::y,
+        BufferCodecs.FLOAT, Vector3f::z,
+        Vector3f::new);
 
     BufferCodec<ByteBuf, User> USER = new BufferCodec<>()
     {

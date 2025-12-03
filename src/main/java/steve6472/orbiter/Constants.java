@@ -24,6 +24,7 @@ public final class Constants
     public static final float TICKS_IN_SECOND = 60f;
 
     public static final Vector3fc GRAVITY = new Vector3f(0,-9.81f,0);
+    public static final String ORCODE_PREFIX = "$";
 
 //    public static final int MP_PLAYER_MAGIC_CONSTANT = 69;
 //    public static final int CLIENT_PLAYER_MAGIC_CONSTANT = 42;
@@ -49,6 +50,17 @@ public final class Constants
         Key IN_GAME_MENU = key("panel/in_game/menu");
         Key IN_GAME_CHAT = key("panel/in_game/chat");
         Key IN_GAME_ECS_PROFILER = key("panel/in_game/ecs_profiler");
+    }
+
+    /*
+     * Gameplay stuff
+     */
+
+    public interface Events
+    {
+        Key ON_SPAWN = key("on_spawn");
+        Key ON_TICK = key("on_tick");
+        Key ON_INTERACTION = key("on_interaction");
     }
 
     /// Set in userIndex2 <br>

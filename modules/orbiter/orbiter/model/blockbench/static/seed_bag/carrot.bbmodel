@@ -4,7 +4,7 @@
         "model_format": "free",
         "box_uv": false
     },
-    "name": "bag_of_seeds",
+    "name": "carrot",
     "model_identifier": "",
     "visible_box": [1, 1, 0],
     "variable_placeholders": "",
@@ -181,8 +181,8 @@
     ],
     "textures": [
         {
-            "name": "orbiter:bag_of_seeds",
-            "relative_path": "../../../textures/model/bag_of_seeds.png",
+            "name": "orbiter:seed_bag/carrot",
+            "relative_path": "../../../../textures/model/seed_bag/carrot.png",
             "folder": "block",
             "namespace": "",
             "id": "0",
@@ -206,7 +206,7 @@
             "internal": true,
             "saved": true,
             "uuid": "cb5b8467-4626-5b3b-5828-a58d62ed6beb",
-            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAoklEQVR4AcSRsQ2DQAxFwTNkh0yQ9OmiLJOOIehYBtHRwwTswA6gd5ILPsgcFUhP97/tM+hj9fe99P9fAg3qqTmFPPZ6PjYl9TSpAVoxLVz1Nk5z4XDZNSce0IBW0hfweeBNNLiPzqwMwgVRM6eXlUG06DCD6IL2NhlEwVXdUMJugRau+pSBX+Jf85YjfEZPY/jTtCWgdeDMpxDPhqL+/QtWAAAA///Hlzy4AAAABklEQVQDANeeYCHT+ARNAAAAAElFTkSuQmCC"
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAzUlEQVR4AaSRIQ7CQBBFp2u4A4YEg8KCxiBIuAUGxUUwKAw3wCMwaCwIAoIEBHcgISl5k4yZtLubtsnrzv8z252dhtNqVn52S4UYvMYzxD1hMOxJ57GX+e+tKa8x8YDYEzCm/bEcn2dCxWs1a17hfn3J+lbK5TvSEq8x8YDYox3QHliSGEzH1qwZRD9A0t/Za2rqyJpB3Wb8yhmQyEVnYMWxwU02hwKs1lbtwESTVWdgG/nXnFKF1fg1UNxdbAsg9gUp3f4KqRNS+dYd/AEAAP//3mepNgAAAAZJREFUAwC2+3ghnGUFuQAAAABJRU5ErkJggg=="
         }
     ]
 }

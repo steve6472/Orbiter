@@ -36,7 +36,7 @@ public class AttractTestSystem extends EntitySystem
         if (world == null)
             return;
 
-        if (!Keybinds.TEST_ATTRACT.isActive())
+        if (!Keybinds.TEST_ATTRACT.isActive() || !OrbiterApp.getInstance().isMouseGrabbed())
             return;
 
         Camera camera = client.getCamera();

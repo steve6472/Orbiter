@@ -1,0 +1,400 @@
+{
+    "meta": {
+        "format_version": "5.0",
+        "model_format": "free",
+        "box_uv": false
+    },
+    "name": "wheat",
+    "model_identifier": "",
+    "visible_box": [1, 1, 0],
+    "variable_placeholders": "q.property('crop_plot/growth')=q.anim_time",
+    "variable_placeholder_buttons": [],
+    "timeline_setups": [],
+    "unhandled_root_fields": {},
+    "resolution": {
+        "width": 16,
+        "height": 16
+    },
+    "elements": [
+        {
+            "name": "cube",
+            "box_uv": false,
+            "render_order": "default",
+            "locked": false,
+            "allow_mirror_modeling": true,
+            "from": [-5, 0.5, 0],
+            "to": [5, 10.5, 0],
+            "autouv": 0,
+            "color": 8,
+            "origin": [0, 0.5, 0],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 10, 10],
+                    "texture": 1
+                },
+                "east": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "south": {
+                    "uv": [9, 0, 19, 10],
+                    "texture": 1
+                },
+                "west": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "up": {
+                    "uv": [0, 0, 10, 0]
+                },
+                "down": {
+                    "uv": [0, 0, 10, 0]
+                }
+            },
+            "type": "cube",
+            "uuid": "4afba149-553e-f51f-9fa5-b79ddfc4fe1a"
+        },
+        {
+            "name": "cube",
+            "box_uv": false,
+            "render_order": "default",
+            "locked": false,
+            "allow_mirror_modeling": true,
+            "from": [-5, 0.5, 3],
+            "to": [5, 10.5, 3],
+            "autouv": 0,
+            "color": 8,
+            "origin": [0, 0.5, 3],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 10, 10],
+                    "texture": 1
+                },
+                "east": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "south": {
+                    "uv": [9, 0, 19, 10],
+                    "texture": 1
+                },
+                "west": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "up": {
+                    "uv": [0, 0, 10, 0]
+                },
+                "down": {
+                    "uv": [0, 0, 10, 0]
+                }
+            },
+            "type": "cube",
+            "uuid": "9a9ad606-8382-a726-c741-7ea746852a10"
+        },
+        {
+            "name": "cube",
+            "box_uv": false,
+            "render_order": "default",
+            "locked": false,
+            "allow_mirror_modeling": true,
+            "from": [-5, 0.5, -3],
+            "to": [5, 10.5, -3],
+            "autouv": 0,
+            "color": 8,
+            "origin": [0, 0.5, -3],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 10, 10],
+                    "texture": 1
+                },
+                "east": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "south": {
+                    "uv": [9, 0, 19, 10],
+                    "texture": 1
+                },
+                "west": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "up": {
+                    "uv": [0, 0, 10, 0]
+                },
+                "down": {
+                    "uv": [0, 0, 10, 0]
+                }
+            },
+            "type": "cube",
+            "uuid": "e14df3d2-c76b-aff3-9d07-1f86ab64d10e"
+        },
+        {
+            "name": "cube",
+            "box_uv": false,
+            "render_order": "default",
+            "locked": false,
+            "allow_mirror_modeling": true,
+            "from": [0, 0.5, -5],
+            "to": [0, 10.5, 5],
+            "autouv": 0,
+            "color": 1,
+            "origin": [0, 0.5, 0],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "east": {
+                    "uv": [1, 10, 11, 20],
+                    "texture": 1
+                },
+                "south": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "west": {
+                    "uv": [0, 10, 10, 20],
+                    "texture": 1
+                },
+                "up": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "down": {
+                    "uv": [0, 0, 0, 10]
+                }
+            },
+            "type": "cube",
+            "uuid": "694d51ea-35a6-940f-14f2-5cccfac49030"
+        },
+        {
+            "name": "cube",
+            "box_uv": false,
+            "render_order": "default",
+            "locked": false,
+            "allow_mirror_modeling": true,
+            "from": [-3, 0.5, -5],
+            "to": [-3, 10.5, 5],
+            "autouv": 0,
+            "color": 1,
+            "origin": [-3, 0.5, 0],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "east": {
+                    "uv": [10, 10, 20, 20],
+                    "texture": 1
+                },
+                "south": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "west": {
+                    "uv": [11, 10, 21, 20],
+                    "texture": 1
+                },
+                "up": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "down": {
+                    "uv": [0, 0, 0, 10]
+                }
+            },
+            "type": "cube",
+            "uuid": "0d4e42ca-fc34-1360-937b-f370ce5e11f9"
+        },
+        {
+            "name": "cube",
+            "box_uv": false,
+            "render_order": "default",
+            "locked": false,
+            "allow_mirror_modeling": true,
+            "from": [3, 0.5, -5],
+            "to": [3, 10.5, 5],
+            "autouv": 0,
+            "color": 1,
+            "origin": [3, 0.5, 0],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "east": {
+                    "uv": [10, 10, 20, 20],
+                    "texture": 1
+                },
+                "south": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "west": {
+                    "uv": [11, 10, 21, 20],
+                    "texture": 1
+                },
+                "up": {
+                    "uv": [0, 0, 0, 10]
+                },
+                "down": {
+                    "uv": [0, 0, 0, 10]
+                }
+            },
+            "type": "cube",
+            "uuid": "1e2880e5-2e54-b21c-6b8e-32646fd1633b"
+        }
+    ],
+    "groups": [
+        {
+            "uuid": "450912b8-7c21-9156-9e5c-76866c73f86a",
+            "export": true,
+            "locked": false,
+            "origin": [0, -0.5, 0],
+            "rotation": [0, 0, 0],
+            "color": 0,
+            "name": "plot",
+            "children": [],
+            "reset": false,
+            "shade": true,
+            "mirror_uv": false,
+            "selected": false,
+            "visibility": true,
+            "autouv": 0,
+            "isOpen": true,
+            "primary_selected": false
+        },
+        {
+            "uuid": "2c110922-ed67-076d-dfa1-1c048f0048bc",
+            "export": true,
+            "locked": false,
+            "origin": [0, 0.5, 0],
+            "rotation": [0, 0, 0],
+            "color": 0,
+            "name": "crop",
+            "children": [],
+            "reset": false,
+            "shade": true,
+            "mirror_uv": false,
+            "selected": false,
+            "visibility": true,
+            "autouv": 0,
+            "isOpen": true,
+            "primary_selected": false
+        }
+    ],
+    "outliner": [
+        {
+            "uuid": "450912b8-7c21-9156-9e5c-76866c73f86a",
+            "isOpen": true,
+            "children": [
+                {
+                    "uuid": "2c110922-ed67-076d-dfa1-1c048f0048bc",
+                    "isOpen": true,
+                    "children": [
+                        "4afba149-553e-f51f-9fa5-b79ddfc4fe1a",
+                        "9a9ad606-8382-a726-c741-7ea746852a10",
+                        "e14df3d2-c76b-aff3-9d07-1f86ab64d10e",
+                        "694d51ea-35a6-940f-14f2-5cccfac49030",
+                        "0d4e42ca-fc34-1360-937b-f370ce5e11f9",
+                        "1e2880e5-2e54-b21c-6b8e-32646fd1633b"
+                    ]
+                }
+            ]
+        }
+    ],
+    "textures": [
+        {
+            "name": "orbiter:crop_plot/empty",
+            "relative_path": "../../../../textures/model/crop_plot/empty.png",
+            "folder": "block",
+            "namespace": "",
+            "id": "1",
+            "group": "",
+            "width": 32,
+            "height": 32,
+            "uv_width": 32,
+            "uv_height": 32,
+            "particle": false,
+            "use_as_default": false,
+            "layers_enabled": false,
+            "sync_to_project": "",
+            "render_mode": "default",
+            "render_sides": "auto",
+            "pbr_channel": "color",
+            "frame_time": 1,
+            "frame_order_type": "loop",
+            "frame_order": "",
+            "frame_interpolate": false,
+            "visible": true,
+            "internal": true,
+            "saved": true,
+            "uuid": "30c8deeb-63b9-ffef-03f4-2a046c6920ec",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAnUlEQVR4AeyT0QmAMAxEaxcRlxDcwNlcxjEcwU/x2yEq95HPNgQSQiDCUfDA3L3Geuxrk2iblyZRYZ7K+OZ2BkgC5gTwx4w22TzAaDg88wDX+0wY1JN5gN5gep8B6nl/RSJCp3XGvwJs+UgcqbgEqDXXkPPjEUBzrpXEj0cA7TQpxCQAClryJ4D7lEirOX3HnwAl8TqTQBIwJ8At9w8AAP//mcivhgAAAAZJREFUAwAQ24hBlSaFZQAAAABJRU5ErkJggg=="
+        },
+        {
+            "name": "orbiter:crop_plot/wheat",
+            "relative_path": "../../../../textures/model/crop_plot/wheat.png",
+            "folder": "block",
+            "namespace": "",
+            "id": "2",
+            "group": "",
+            "width": 32,
+            "height": 32,
+            "uv_width": 32,
+            "uv_height": 32,
+            "particle": false,
+            "use_as_default": false,
+            "layers_enabled": false,
+            "sync_to_project": "",
+            "render_mode": "default",
+            "render_sides": "auto",
+            "pbr_channel": "color",
+            "frame_time": 1,
+            "frame_order_type": "loop",
+            "frame_order": "",
+            "frame_interpolate": false,
+            "visible": true,
+            "internal": true,
+            "saved": true,
+            "uuid": "2b92271b-09ce-9b08-05be-de67c8e780cc",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABsklEQVR4AeyU0U0DQQxE966EkBb4oxoKoAxqQJRBAYgyKIAvaCHQwrFvkgkmYS9eKRJSdAjf2N6xPbt32bH889+RgOn1espoyvJO9ZIAN5ue1lN5+CjCWul8dfXvWOszPJGTjzE2+3qrVbfrAsZ8zW5F7YayXho8uD02xmZXj5uB2OghNCTv2OtG5+H12ugmILtevW+0W2KGgjQFHc/x4PaYXoGHMsC7iUNoGOM5HtweO3oFFHu3FkMuDmWdHBjz5Hrt1ytQ8fNG4OYgCZBhIHFp8LTW8dDPkFfwV81h/jB2TSvv9TmUgOGlDCYNDZ/11lrMw+sxCaDAl8ycz9q5TQL4wn0Dft5vb0Mw5j343EIlgI/LX/zqpo6qtxwY8zWr+yErFH7GJIAvm2HgcLe9DUFi52mGnxEKN2sSwFHzJYMcPT5IjA/SMApCIILAmIfXYxJAo8zOEGJBCMQHY75nOFwJYAcEIDvCB4nxjVmh1GRNAkTe3WxzPkIQASIQHyTGB1Xf8fgRkCzi2E1t+V7P4F5AvM1aPg1bazEPL2t7AdmCc/MWAcsJLCewnMDln8Cpm/MbAAD//7yln0sAAAAGSURBVAMA5TCiUITysGsAAAAASUVORK5CYII="
+        }
+    ],
+    "animations": [
+        {
+            "uuid": "a8010144-b632-9ccf-58b7-8b1e3326e777",
+            "name": "grow",
+            "loop": "loop",
+            "override": false,
+            "length": 1,
+            "snapping": 100,
+            "selected": true,
+            "group_name": "",
+            "anim_time_update": "",
+            "blend_weight": "",
+            "start_delay": "",
+            "loop_delay": "",
+            "animators": {
+                "450912b8-7c21-9156-9e5c-76866c73f86a": {
+                    "name": "plot",
+                    "type": "bone",
+                    "rotation_global": false,
+                    "quaternion_interpolation": false
+                },
+                "2c110922-ed67-076d-dfa1-1c048f0048bc": {
+                    "name": "crop",
+                    "type": "bone",
+                    "rotation_global": false,
+                    "quaternion_interpolation": false,
+                    "keyframes": [
+                        {
+                            "channel": "scale",
+                            "data_points": [
+                                {
+                                    "x": "q.property('crop_plot/growth')",
+                                    "y": "q.property('crop_plot/growth')",
+                                    "z": "q.property('crop_plot/growth')"
+                                }
+                            ],
+                            "uuid": "7612c1bb-3387-429b-dbac-7c4266e1808c",
+                            "time": 0,
+                            "color": -1,
+                            "uniform": true,
+                            "interpolation": "linear"
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "animation_variable_placeholders": "q.property('crop_plot/growth')=q.anim_time"
+}

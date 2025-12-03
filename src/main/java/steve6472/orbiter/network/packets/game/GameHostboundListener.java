@@ -68,7 +68,7 @@ public class GameHostboundListener extends OrbiterPacketListener
             if (entity == OrbiterApp.getInstance().getClient().player().ecsEntity())
             {
                 Entity fakeEntity = new Entity();
-                List<Component> components = Registries.ENTITY_BLUEPRINT.get(Constants.key("mp_player")).createEntityComponents(OrbiterApp.getInstance().getClient().getClientUUID());
+                List<Component> components = Registries.ENTITY_BLUEPRINT.get(Constants.key("mp_player")).createEntityComponents(fakeEntity, OrbiterApp.getInstance().getClient().getClientUUID());
                 for (Component component : components)
                 {
                     fakeEntity.add(component);

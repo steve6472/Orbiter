@@ -1,0 +1,5 @@
+{
+    type: "int",
+    range: [0, 99],
+    default: 0
+}

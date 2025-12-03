@@ -2,6 +2,11 @@ package steve6472.orbiter;
 
 import com.github.stephengold.joltjni.Jolt;
 import com.github.stephengold.joltjni.JoltPhysicsObject;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -50,6 +55,7 @@ import steve6472.orbiter.ui.MDUtil;
 import steve6472.orbiter.ui.OrbiterUIRender;
 import steve6472.orbiter.ui.panel.*;
 import steve6472.orbiter.world.World;
+import steve6472.orbiter.world.ecs.components.Properties;
 import steve6472.test.DebugUILines;
 
 import java.util.Optional;

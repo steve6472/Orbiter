@@ -1,0 +1,66 @@
+{
+    blueprints: {
+        physics_body: {
+            collision: "blockbench/static/bag_of_seeds"
+        }
+    },
+
+    components: {
+        environment: {},
+        // TODO: remove, temp until events and component_group works
+        model: "blockbench/static/bag_of_seeds",
+        properties: {}
+    },
+
+    component_groups: {
+        empty: {
+            model: "blockbench/static/seed_bag/empty"
+        },
+        wheat: {
+            model: "blockbench/static/seed_bag/wheat"
+        },
+        carrot: {
+            model: "blockbench/static/seed_bag/carrot"
+        },
+        potato: {
+            model: "blockbench/static/seed_bag/potato"
+        },
+        magic_bean: {
+            model: "blockbench/static/seed_bag/magic_bean"
+//            ,
+//            particle_emitters: [
+//                "orbiter:fire/spark"
+//            ]
+        }
+    },
+
+    spawn_arguments: {
+        required: {
+            seed: "orbiter:seed"
+        },
+        optional: {
+            count: "seed_bag/count"
+        }
+    },
+
+    events: {
+        // take in arguments when created (support in entity definition and from command)
+        on_spawn: {
+            type: "sequence",
+            actions: [
+                {
+                    type: "apply_properties",
+                    add: {
+                        // $ means orcode instead of a string literal
+                        seed: "$q.argument('seed')",
+                        "seed_bag/count": "$q.argumentOrDefaultProperty('count', 'seed_bag/count')"
+                    }
+                },
+                {
+                    type: "add_component_groups",
+                    groups: "$q.property('seed')"
+                }
+            ]
+        }
+    }
+}

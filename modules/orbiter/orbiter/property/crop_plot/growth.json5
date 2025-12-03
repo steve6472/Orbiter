@@ -1,0 +1,5 @@
+{
+    type: "double",
+    range: [0, 1],
+    default: 0
+}

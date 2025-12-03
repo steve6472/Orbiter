@@ -16,11 +16,11 @@ import java.util.List;
  */
 public class DrawableGizmoPrimitives implements GizmoPrimitives
 {
-    public static final int LINE_COUNT = 4096;
+    public static final int LINE_COUNT = 8192;
     public static final int LINE_VERTEX_COUNT = 2;
     public static final int LINE_FLOAT_COUNT = 3 + 4;
 
-    public static final int POINT_COUNT = 1024;
+    public static final int POINT_COUNT = 2048;
     public static final int POINT_VERTEX_COUNT = 1;
     public static final int POINT_FLOAT_COUNT = 3 + 4 + 1;
 

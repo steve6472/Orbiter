@@ -4,7 +4,6 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import org.joml.Vector3f;
 import steve6472.orbiter.Constants;
-import steve6472.orbiter.rendering.gizmo.Gizmos;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.physics.LinearVelocity;

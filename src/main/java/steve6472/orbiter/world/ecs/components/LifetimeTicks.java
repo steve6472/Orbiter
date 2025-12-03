@@ -1,4 +1,4 @@
-package steve6472.orbiter.world.ecs.components.specific;
+package steve6472.orbiter.world.ecs.components;
 
 import com.badlogic.ashley.core.Component;
 

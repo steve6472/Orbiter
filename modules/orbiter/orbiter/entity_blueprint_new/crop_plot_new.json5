@@ -1,0 +1,181 @@
+{
+    blueprints: {
+        physics_body: {
+            model: "blockbench/static/crop_plot/empty"
+        }
+    },
+
+    components: {
+        environment: {},
+        properties: {}
+    },
+
+    component_groups: {
+        grown_override: {
+            interact_highlight_override: {}
+        },
+        wheat: {
+            animated_model: {
+                model: "blockbench/animated/crop_plot/wheat",
+                controller: "orbiter:crop_plot"
+            }
+        },
+        carrot: {
+            animated_model: {
+                model: "blockbench/animated/crop_plot/carrot",
+                controller: "orbiter:crop_plot"
+            }
+        },
+        potato: {
+            animated_model: {
+                model: "blockbench/animated/crop_plot/potato",
+                controller: "orbiter:crop_plot"
+            }
+        },
+        magic_bean: {
+            animated_model: {
+                model: "blockbench/animated/crop_plot/magic_bean",
+                controller: "orbiter:crop_plot"
+            }
+
+//            ,particle_emitters: [
+//                "orbiter:fire/spark"
+//            ]
+        }
+    },
+
+    spawn_arguments: {
+        optional: {
+            seed: "orbiter:seed"
+        }
+    },
+
+    // events are called from the engine or custom, namespaced
+    // Events have arguments that can be querried q.argument('name')
+    events: {
+        on_spawn: {
+            type: "sequence",
+            actions: [
+                {
+                    type: "orlang",
+                    code: [
+                        "v.randomTick = math.random_integer(0, 59)"
+                    ]
+                },
+                {
+                    type: "if_else",
+                    condition: "q.hasArgument('seed')",
+                    if_true: [
+                        {
+                            type: "call_event",
+                            event: "crop_plot/set_seed",
+                            arguments: {
+                                seed: "$q.argument('seed')"
+                            }
+                        }
+                    ],
+                    else: [
+                        {
+                            type: "call_event",
+                            event: "crop_plot/set_empty"
+                        }
+                    ]
+                }
+            ]
+        },
+
+        // Grow if plot has a seed
+        on_tick: {
+            type: "sequence",
+            actions: [
+                {
+                    type: "apply_properties",
+                    condition: "q.tickTime % 60 == v.randomTick && q.hasProperty('seed')",
+                    add: {
+                        "crop_plot/growth": "$math.min(1, q.property('crop_plot/growth') + q.property('crop_plot/growth_speed'))"
+                    }
+                },
+                {
+                    type: "add_component_groups",
+                    condition: "q.hasProperty('seed') && q.property('crop_plot/growth') == 1",
+                    groups: "grown_override"
+                }
+            ]
+        },
+
+        on_interaction: {
+            type: "sequence",
+            // id: "", optional, if unspecified react to any click NOPE -> an argument for the event instead, still called 'id', used in condition
+            condition: "q.hasProperty('seed') && q.property('crop_plot/growth') == 1",
+            actions: [
+                {
+                    type: "create_entity",
+                    blueprint: "orbiter:bag_of_seeds_new",
+                    // pass arguments to on_spawn of the new entity
+                    arguments: {
+                        seed: "$q.property('seed')"
+                    }
+                    // todo: position
+                },
+                {
+                    type: "create_entity",
+                    // 10% chance to spawn extra seeds
+                    condition: "math.random(0, 1) <= 0.1",
+                    blueprint: "orbiter:bag_of_seeds_new",
+                    arguments: {
+                        seed: "$q.property('seed')"
+                    }
+                },
+                // todo: particles
+                {
+                    type: "call_event",
+                    event: "crop_plot/set_empty"
+                }
+            ]
+        },
+
+        "crop_plot/set_seed": {
+            type: "sequence",
+            condition: "!q.hasProperty('seed')",
+            actions: [
+                {
+                    type: "apply_properties",
+                    add: {
+                        seed: "$q.argument('seed')",
+                        // magic bean grows 5x slower
+                        "crop_plot/growth_speed": "$math.random(0.002, 0.004) / (q.property('seed') == 'magic_bean' ? 5 : 1)"
+                    },
+                    default: ["crop_plot/growth"]
+                },
+                {
+                    type: "add_component_groups",
+                    groups: "$q.argument('seed')"
+                }
+            ]
+        },
+
+        "crop_plot/set_empty": {
+            type: "sequence",
+            actions: [
+                {
+                    type: "remove_component_groups",
+                    condition: "q.hasProperty('seed')",
+                    // Can take in orlang to dynamically select a variant
+                    groups: ["$q.property('seed')", "grown_override"]
+                },
+                {
+                    // apply_properties order: add, default, remove
+                    type: "apply_properties",
+                    // add (or change) selected properties
+                    add: {
+                        "crop_plot/growth_speed": 0
+                    },
+                    // sets selected properties to the default value
+                    default: "crop_plot/growth",
+                    // remove selected properties
+                    remove: "seed"
+                }
+            ]
+        }
+    }
+}

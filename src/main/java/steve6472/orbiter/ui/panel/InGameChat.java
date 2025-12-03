@@ -4,9 +4,11 @@ import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.tree.CommandNode;
 import io.github.benjaminamos.tracy.Tracy;
 import steve6472.core.log.Log;
 import steve6472.core.registry.Key;
+import steve6472.core.util.RandomUtil;
 import steve6472.flare.registry.FlareRegistries;
 import steve6472.flare.tracy.FlareProfiler;
 import steve6472.flare.ui.font.render.Text;
@@ -28,6 +30,7 @@ import steve6472.orbiter.ui.MDUtil;
 import steve6472.radiant.LuauTable;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -81,20 +84,33 @@ public class InGameChat extends PanelView
             if (nVal.isBlank()) return;
 
             LuauTable table = new LuauTable();
-            lastSuggestions = getSuggestions(nVal, nVal.length());
+            ParseResults<CommandSource> parseResults = commands.dispatcher.parse(nVal, createSource());
+            Map<CommandNode<CommandSource>, CommandSyntaxException> exceptions = parseResults.getExceptions();
+
+            lastSuggestions = getSuggestions(parseResults, nVal.length());
+            if (lastSuggestions.isEmpty() && !exceptions.isEmpty())
+            {
+                int i = 0;
+                for (CommandNode<CommandSource> commandSourceCommandNode : exceptions.keySet())
+                {
+                    CommandSyntaxException exception = exceptions.get(commandSourceCommandNode);
+                    table.add(i + 1, new LuauTable().add("text", exception.getMessage()).add("is_error", true));
+                    i++;
+                    break;
+                }
+            }
 
             for (int i = 0; i < Math.min(lastSuggestions.size(), MAX_COMMAND_SUGGESTIONS); i++)
             {
-                table.add(i + 1, lastSuggestions.get(i).getText());
+                table.add(i + 1, new LuauTable().add("text", lastSuggestions.get(i).getText()).add("is_error", false));
             }
 
             commandSuggestions.set(table);
         });
     }
 
-    private List<Suggestion> getSuggestions(String text, int caret)
+    private List<Suggestion> getSuggestions(ParseResults<CommandSource> parseResults, int caret)
     {
-        ParseResults<CommandSource> parseResults = commands.dispatcher.parse(text, createSource());
         CompletableFuture<Suggestions> suggestions = commands.dispatcher.getCompletionSuggestions(parseResults, caret);
 
         try

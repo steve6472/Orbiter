@@ -10,9 +10,7 @@ import org.joml.Vector3f;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
 import steve6472.orbiter.Convert;
-
-import java.util.function.Consumer;
-import java.util.function.Function;
+import steve6472.orbiter.util.ComponentCodec;
 
 /**
  * Created by steve6472
@@ -23,11 +21,11 @@ abstract class Value3f implements PhysicsProperty
 {
     protected static <S extends Value3f> Codec<S> codec(Function3<Float, Float, Float, S> constructor)
     {
-        return RecordCodecBuilder.create(instance -> instance.group(
+        return ComponentCodec.create(instance -> instance.group(
             Codec.FLOAT.fieldOf("x").forGetter(S::x),
             Codec.FLOAT.fieldOf("y").forGetter(S::y),
             Codec.FLOAT.fieldOf("z").forGetter(S::z)
-        ).apply(instance, constructor));
+        ).apply(instance, (a, b, c) -> () -> constructor.apply(a, b, c)));
     }
 
     protected static <S extends Value3f> BufferCodec<ByteBuf, S> bufferCodec(Function3<Float, Float, Float, S> constructor)

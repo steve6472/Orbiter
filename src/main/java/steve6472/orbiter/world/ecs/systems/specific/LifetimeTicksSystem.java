@@ -4,7 +4,7 @@ import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
 import steve6472.orbiter.OrbiterApp;
 import steve6472.orbiter.world.ecs.Components;
-import steve6472.orbiter.world.ecs.components.specific.LifetimeTicks;
+import steve6472.orbiter.world.ecs.components.LifetimeTicks;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
 
 /**

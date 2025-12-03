@@ -1,0 +1,4 @@
+{
+    type: "double",
+    default: 0.01
+}

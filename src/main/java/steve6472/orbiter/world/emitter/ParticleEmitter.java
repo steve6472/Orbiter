@@ -3,6 +3,7 @@ package steve6472.orbiter.world.emitter;
 import com.badlogic.ashley.core.Component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import steve6472.orbiter.util.ComponentCodec;
 import steve6472.orbiter.util.Holder;
 import steve6472.orbiter.world.emitter.lifetime.EmitterLifetime;
 import steve6472.orbiter.world.emitter.rate.EmitterRate;
@@ -21,14 +22,14 @@ import java.util.Optional;
  */
 public class ParticleEmitter implements Component
 {
-    public static final Codec<ParticleEmitter> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final Codec<ParticleEmitter> CODEC = ComponentCodec.create(instance -> instance.group(
         OrVec3.CODEC.optionalFieldOf("offset", new OrVec3()).forGetter(o -> o.offset),
         EmitterShape.CODEC.optionalFieldOf("shape", PointShape.INSTANCE).forGetter(o -> o.shape),
         EmitterLifetime.CODEC.fieldOf("lifetime").forGetter(o -> o.lifetime),
         EmitterRate.CODEC.fieldOf("rate").forGetter(o -> o.rate),
         ParticleBlueprint.REGISTRY_OR_INLINE_CODEC.fieldOf("particle").forGetter(o -> o.particleData),
         EnvData.CODEC.optionalFieldOf("environment").forGetter(o -> Optional.ofNullable(o.environmentData))
-    ).apply(instance, (offset, shape, lifetime, rate, particleData, env) -> {
+    ).apply(instance, (offset, shape, lifetime, rate, particleData, env) -> () -> {
         ParticleEmitter emitter = new ParticleEmitter();
         emitter.offset = offset;
         emitter.shape = shape;

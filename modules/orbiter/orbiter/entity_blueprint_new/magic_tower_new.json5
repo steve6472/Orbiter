@@ -1,0 +1,90 @@
+{
+    blueprints: {
+        physics_body: {
+            collision: "blockbench/animated/magic_tower"
+        }
+    },
+
+    components: {
+        animated_model: {
+            model: "blockbench/animated/magic_tower",
+            controller: "orbiter:magic_tower"
+        },
+        environment: {}
+    },
+
+    events: {
+        on_spawn: {
+            type: "orlang",
+            code: [
+                "v.randomTick = math.random_integer(0, 59)",
+                "v.tickAlways = true"
+            ]
+        },
+
+        on_tick: {
+            type: "sequence",
+            // 5% each second
+            condition: "(v.tickAlways || math.random(1, 0) <= 0.05) && (q.tickTime % 60 == v.randomTick)",
+            actions: [
+                //todo: spawn extra particles
+                {
+                    // each loop store entity uuid to environment so it can be retrieved
+                    type: "for_each",
+                    filter: {
+                        type: "all_of",
+                        sort: "random",
+                        max: 4,
+                        initial: {
+                            type: "shape_sphere",
+                            radius: 4,
+                            offset: [0, 1, 0],
+                            offset_local: true
+                            //                            ,sort: "nearest"
+                        },
+                        //                        max: [1, 9999] default is 9999
+                        //                        sort: [arbitrary, nearest, furthest, random] default is arbitrary
+                        filters: [
+                            {
+                                type: "has_properties",
+                                all: ["seed", "crop_plot/growth", "crop_plot/growth_speed"],
+                                exclude: "magic_tower_boost"
+                            }
+                        ]
+                    },
+                    actions: [
+                        {
+                            type: "apply_properties",
+                            // do action on iterated entity, iterated is default when in for_each
+                            //                            entity: "iterated",
+                            add: {
+                                magic_tower_boost: "$q.property('crop_plot/growth_speed')"
+                            }
+                        },
+                        {
+                            type: "schedule",
+                            delay: 10,
+                            unit: "second",
+                            actions: [
+                                {
+                                    // this already runs on the entity the schedule was added to
+                                    type: "apply_properties",
+                                    add: {
+                                        "crop_plot/growth_speed": "$q.property('magic_tower_boost')"
+                                    },
+                                    remove: ["magic_tower_boost"]
+                                }
+                            ]
+                        },
+                        {
+                            type: "apply_properties",
+                            add: {
+                                "crop_plot/growth_speed": "$q.property('magic_tower_boost') * 30.0"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

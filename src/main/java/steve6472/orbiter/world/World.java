@@ -68,6 +68,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
     private final WorldSystems systems;
     final ParticleSystems particleSystems;
     private final List<Source> soundSources;
+    public long ticks;
 
     private final ScheduledExecutorService tickExecutor;
 
@@ -118,6 +119,7 @@ public class World implements EntityControl, EntityModify, WorldSounds
                 profiler.popPush("snapshot world state");
                 OrbiterApp.getInstance().getClient().snapshotWorldState();
 
+                ticks++;
                 profiler.pop();
             } catch (Exception exception)
             {
@@ -211,6 +213,12 @@ public class World implements EntityControl, EntityModify, WorldSounds
     public NetworkMain network()
     {
         return OrbiterApp.getInstance().getNetwork();
+    }
+
+    @Override
+    public World getItself()
+    {
+        return this;
     }
 
     public void tick(float frameTime)

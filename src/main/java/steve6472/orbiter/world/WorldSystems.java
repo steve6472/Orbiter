@@ -70,21 +70,25 @@ public class WorldSystems
         engine.addSystem(braodcastClientPosition = new BroadcastClientPosition());
         engine.addSystem(primitiveEmitter = new ParticleEmitterSystem(world));
         engine.addSystem(new ClickConsumerTest());
+        engine.addSystem(new EventInteract());
 
         /*
          * Gameplay
          */
         engine.addSystem(new LifetimeTicksSystem());
         engine.addSystem(new VelocitySystem());
+        engine.addSystem(new EventTick(world));
 
         engine.addSystem(new FillSeedDispenserSystem());
         engine.addSystem(new CropPlotGrowthSystem());
         engine.addSystem(new DispenseSeedsSystem());
         engine.addSystem(new SeedPlantSystem());
+//        engine.addSystem(new TestIntersections());
 
         // Last
         engine.addSystem(networkSync = new NetworkSync(OrbiterApp.getInstance().getNetwork())); //"Network Sync", ""
         engine.addSystem(updatePhysics = new UpdatePhysics(world)); // "Update Physics Positions", "Updates Physics Positions with data from last tick ECS Systems"
+//        engine.addSystem(new DebugShowPhysicsBounds());
         engine.addSystem(removeEventComponents = new RemoveEventComponents());
     }
 

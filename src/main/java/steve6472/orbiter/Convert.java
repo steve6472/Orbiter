@@ -1,5 +1,6 @@
 package steve6472.orbiter;
 
+import com.github.stephengold.joltjni.AaBox;
 import com.github.stephengold.joltjni.Quat;
 import com.github.stephengold.joltjni.Vec3;
 import com.github.stephengold.joltjni.readonly.Vec3Arg;
@@ -7,6 +8,7 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import steve6472.orbiter.util.AABB;
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -59,6 +61,11 @@ public class Convert
     public static Quaternionf physGetToJomlQuat(Function<Quat, Quat> getter)
     {
         return physGetToJoml(getter, new Quaternionf());
+    }
+
+    public static AABB physToJoml(AaBox box)
+    {
+        return AABB.fromMinMax(physToJoml(box.getMin()), physToJoml(box.getMax()));
     }
 
 /*    public static Matrix4f physToJoml(Mat44 mat, Matrix4f store)

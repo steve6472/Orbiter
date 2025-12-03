@@ -5,12 +5,12 @@ import com.github.stephengold.joltjni.Quat;
 import com.github.stephengold.joltjni.RVec3;
 import com.github.stephengold.joltjni.enumerate.EActivation;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import org.joml.Quaternionf;
 import steve6472.core.network.BufferCodec;
 import steve6472.core.network.BufferCodecs;
 import steve6472.orbiter.Convert;
+import steve6472.orbiter.util.ComponentCodec;
 
 /**
  * Created by steve6472
@@ -19,12 +19,12 @@ import steve6472.orbiter.Convert;
  */
 public class Rotation implements PhysicsProperty
 {
-    public static final Codec<Rotation> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final Codec<Rotation> CODEC = ComponentCodec.create(instance -> instance.group(
         Codec.FLOAT.fieldOf("x").forGetter(Rotation::x),
         Codec.FLOAT.fieldOf("y").forGetter(Rotation::y),
         Codec.FLOAT.fieldOf("z").forGetter(Rotation::z),
         Codec.FLOAT.fieldOf("w").forGetter(Rotation::w)
-    ).apply(instance, Rotation::new));
+    ).apply(instance, (_, _, _, _) -> Rotation::new));
 
     public static final BufferCodec<ByteBuf, Rotation> BUFFER_CODEC = BufferCodec.of(
         BufferCodecs.FLOAT, Rotation::x,

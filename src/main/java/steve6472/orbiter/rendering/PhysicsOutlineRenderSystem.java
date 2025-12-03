@@ -50,6 +50,8 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
     private final Vector4f color;
     private final boolean isFocus;
 
+    private static final int OUTLINE_OVERRIDE = -42;
+
     public PhysicsOutlineRenderSystem(MasterRenderer masterRenderer, boolean isFocus, Client client)
     {
         super(masterRenderer, isFocus ? OrbiterPipelines.PHYSICS_OUTLINE_FOCUS : OrbiterPipelines.PHYSICS_OUTLINE, CommonBuilder.create()
@@ -92,12 +94,21 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
         if (entity == null)
             return;
 
+        int ordinal = client.getRayTrace().getLookAtSubshapeOrdinal();
+        if (Components.INTERACT_HIGHLIGHT_OVERRIDE.has(entity))
+        {
+            if (!isFocus)
+                return;
+
+            ordinal = OUTLINE_OVERRIDE;
+        }
+
         List<Struct> verticies = new ArrayList<>();
 
         Collision collision = Components.COLLISION.get(entity);
         OrbiterCollisionShape orbiterCollisionShape = Registries.COLLISION.get(collision.collisionKey());
 
-        renderOutline(body, orbiterCollisionShape.ids(), client.getRayTrace().getLookAtSubshapeOrdinal(), verticies);
+        renderOutline(body, orbiterCollisionShape.ids(), ordinal, verticies);
 
         VkBuffer buffer = flightFrame.getBuffer(0);
 
@@ -128,7 +139,11 @@ public class PhysicsOutlineRenderSystem extends CommonRenderSystem
 
     private void renderShape(ConstShape shape, String[] ids, int lookatId, short currentId, Matrix4f bodyTransform, List<Struct> verticies)
     {
-        if (!(shape instanceof CompoundShape) && lookatId != -1)
+        if (isFocus && lookatId == OUTLINE_OVERRIDE)
+        {
+
+        }
+        else if (!(shape instanceof CompoundShape) && lookatId != -1)
         {
             if (lookatId >= ids.length)
                 return;

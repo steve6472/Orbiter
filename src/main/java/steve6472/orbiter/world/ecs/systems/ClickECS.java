@@ -33,38 +33,38 @@ public class ClickECS extends EntitySystem
     @Override
     public void update(float deltaTime)
     {
-        if (!Keybinds.INTERACT_OBJECT.isActive())
-            return;
-
-        Client client = OrbiterApp.getInstance().getClient();
-
-        RayCastResult lookAtObject = client.getRayTrace().getLookAtObject();
-        if (lookAtObject == null)
-            return;
-
-        UUID uuid = client.getWorld().bodyMap().getUUIDById(lookAtObject.getBodyId());
-        if (uuid == null)
-            return;
-
-        Body body = client.getWorld().bodyMap().getBodyById(lookAtObject.getBodyId());
-        if (body == null)
-            return;
-
-        Entity entity = findEntity(client, uuid);
-        if (entity == null)
-            return;
-
-        ConstShape shape = body.getShape();
-        if (shape instanceof CompoundShape)
-        {
-            Collision collision = Components.COLLISION.get(entity);
-            OrbiterCollisionShape orbiterCollisionShape = Registries.COLLISION.get(collision.collisionKey());
-
-            entity.add(new Click(orbiterCollisionShape.ids()[client.getRayTrace().getLookAtSubshapeOrdinal()]));
-        } else
-        {
-            entity.add(new Click(""));
-        }
+//        if (!Keybinds.INTERACT_OBJECT.isActive())
+//            return;
+//
+//        Client client = OrbiterApp.getInstance().getClient();
+//
+//        RayCastResult lookAtObject = client.getRayTrace().getLookAtObject();
+//        if (lookAtObject == null)
+//            return;
+//
+//        UUID uuid = client.getWorld().bodyMap().getUUIDById(lookAtObject.getBodyId());
+//        if (uuid == null)
+//            return;
+//
+//        Body body = client.getWorld().bodyMap().getBodyById(lookAtObject.getBodyId());
+//        if (body == null)
+//            return;
+//
+//        Entity entity = findEntity(client, uuid);
+//        if (entity == null)
+//            return;
+//
+//        ConstShape shape = body.getShape();
+//        if (shape instanceof CompoundShape)
+//        {
+//            Collision collision = Components.COLLISION.get(entity);
+//            OrbiterCollisionShape orbiterCollisionShape = Registries.COLLISION.get(collision.collisionKey());
+//
+//            entity.add(new Click(orbiterCollisionShape.ids()[client.getRayTrace().getLookAtSubshapeOrdinal()]));
+//        } else
+//        {
+//            entity.add(new Click(""));
+//        }
     }
 
     public static Entity findEntity(Client client, UUID uuid)

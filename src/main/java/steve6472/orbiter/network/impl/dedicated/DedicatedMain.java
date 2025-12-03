@@ -22,6 +22,8 @@ import steve6472.orbiter.network.packets.game.hostbound.GameHeartbeatHostbound;
 import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.components.MPControlled;
 
+import java.util.Map;
+
 /**
  * Created by steve6472
  * Date: 8/20/2025
@@ -57,7 +59,7 @@ public class DedicatedMain implements NetworkMain
     {
         connections().sendPacket(sender, new EnterWorld());
 
-        Entity playerEntity = world.addEntity(Registries.ENTITY_BLUEPRINT.get(Constants.key("mp_player")), sender.uuid(), false);
+        Entity playerEntity = world.addEntity(Registries.ENTITY_BLUEPRINT.get(Constants.key("mp_player")), sender.uuid(), Map.of(), false);
         world.addComponent(playerEntity, new MPControlled(sender.uuid()));
         BodyInterface bodyInterface = world.physics().getBodyInterface();
         bodyInterface.setUserData(world.bodyMap().getIdByUUID(sender.uuid()), Constants.PhysicsFlags.MP_PLAYER);

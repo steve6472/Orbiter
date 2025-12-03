@@ -9,6 +9,11 @@
         main: "orbiter:widget/command_suggestion"
     },
 
+    styles: {
+        normal: "orbiter:chat/feedback",
+        error: "orbiter:chat/error"
+    },
+
     states: {
         clickable: true,
         focusable: false

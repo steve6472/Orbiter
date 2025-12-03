@@ -8,9 +8,13 @@ import steve6472.core.registry.Registry;
 import steve6472.core.setting.Setting;
 import steve6472.flare.input.Keybind;
 import steve6472.flare.registry.RegistryCreators;
+import steve6472.orbiter.actions.ActionType;
+import steve6472.orbiter.actions.filter.FilterType;
 import steve6472.orbiter.audio.Sound;
 import steve6472.orbiter.audio.SoundLoader;
 import steve6472.orbiter.network.Packets;
+import steve6472.orbiter.properties.Property;
+import steve6472.orbiter.properties.PropertyType;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
 import steve6472.orbiter.world.collision.OrbiterCollisionShape;
@@ -39,9 +43,19 @@ public class Registries extends RegistryCreators
 {
     private static final Logger LOGGER = Log.getLogger(Registries.class);
 
+    static
+    {
+        NAMESPACE = Constants.NAMESPACE;
+    }
+
     /*
      * Typed
      */
+    public static final Registry<PropertyType<?>> PROPERTY_TYPE = createRegistry("property_type", () -> PropertyType.bootstrap());
+    public static final Registry<ActionType<?>> ACTION = createRegistry("action", () -> ActionType.bootstrap());
+    public static final Registry<FilterType<?>> FILTER = createRegistry("filter", () -> FilterType.bootstrap());
+
+    public static final ObjectRegistry<Property> PROPERTY = createObjectRegistry("property", Property::bootstrap);
     // Components of emitters
     public static final Registry<EmitterShapeType<?>> EMITTER_SHAPE = createRegistry("emitter_shape", () -> EmitterShapeType.POINT_SHAPE);
     public static final Registry<EmitterRateType<?>> EMITTER_RATE = createRegistry("emitter_rate", () -> EmitterRateType.INSTANT_RATE);
