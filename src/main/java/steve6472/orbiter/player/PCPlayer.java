@@ -7,7 +7,6 @@ import com.github.stephengold.joltjni.Character;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import steve6472.core.registry.Key;
-import steve6472.core.util.MathUtil;
 import steve6472.flare.Camera;
 import steve6472.flare.input.UserInput;
 import steve6472.flare.tracy.FlareProfiler;
@@ -118,23 +117,25 @@ public class PCPlayer implements Player
     }
 
     @Override
-    public void handleInput(UserInput userInput, VrInput vrInput, Camera camera, float frameTime)
+    public void handleInput(UserInput userInput, VrInput vrInput, Camera camera, float frameTime, boolean isMouseGrabbed)
     {
         Profiler profiler = FlareProfiler.frame();
         profiler.push("camera loook");
-        processCameraLook(userInput, camera);
+        processCameraLook(userInput, camera, isMouseGrabbed);
         profiler.pop();
     }
 
-    private void processCameraLook(UserInput userInput, Camera camera)
+    private void processCameraLook(UserInput userInput, Camera camera, boolean isMouseGrabbed)
     {
         Vector2i mousePos = userInput.getMousePositionRelativeToTopLeftOfTheWindow();
-        camera.head(mousePos.x, mousePos.y, Settings.SENSITIVITY.get());
+        if (isMouseGrabbed)
+            camera.head(mousePos.x, mousePos.y, Settings.SENSITIVITY.get());
         camera.updateViewMatrix();
     }
 
     public void worldTick(Camera camera)
     {
+        boolean isMouseGrabbed = OrbiterApp.getInstance().isMouseGrabbed();
         Profiler profiler = FlareProfiler.world();
         double speed = 1;
 
@@ -149,25 +150,25 @@ public class PCPlayer implements Player
         if (character.isSupported())
             jumpCooldown = Math.max(--jumpCooldown, 0);
 
-        if (Keybinds.FORWARD.isActive())
+        if (isMouseGrabbed && Keybinds.FORWARD.isActive())
         {
             x += Math.sin(camera.yaw()) * -speed;
             z += Math.cos(camera.yaw()) * -speed;
         }
 
-        if (Keybinds.BACKWARD.isActive())
+        if (isMouseGrabbed && Keybinds.BACKWARD.isActive())
         {
             x += Math.sin(camera.yaw()) * speed;
             z += Math.cos(camera.yaw()) * speed;
         }
 
-        if (Keybinds.LEFT.isActive())
+        if (isMouseGrabbed && Keybinds.LEFT.isActive())
         {
             x += Math.sin(camera.yaw() + Math.PI / 2.0) * -speed;
             z += Math.cos(camera.yaw() + Math.PI / 2.0) * -speed;
         }
 
-        if (Keybinds.RIGHT.isActive())
+        if (isMouseGrabbed && Keybinds.RIGHT.isActive())
         {
             x += Math.sin(camera.yaw() + Math.PI / 2.0) * speed;
             z += Math.cos(camera.yaw() + Math.PI / 2.0) * speed;
@@ -181,7 +182,7 @@ public class PCPlayer implements Player
         character.setLinearVelocity(linearVelocity);
         profiler.pop();
 
-        if (Keybinds.JUMP.isActive() && character.isSupported() && jumpCooldown == 0)
+        if (isMouseGrabbed && Keybinds.JUMP.isActive() && character.isSupported() && jumpCooldown == 0)
         {
             character.addLinearVelocity(new Vec3(0, 3, 0));
             jumpCooldown = JUMP_COOLDOWN;

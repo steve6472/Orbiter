@@ -49,12 +49,12 @@ public class Client
         soundMaster.setup();
     }
 
-    public void handleInput(UserInput userInput, VrInput vrInput, float frameTime)
+    public void handleInput(UserInput userInput, VrInput vrInput, float frameTime, boolean isMouseGrabbed)
     {
         Profiler profiler = FlareProfiler.frame();
         profiler.push("player input");
         if (world != null && player != null)
-            player.handleInput(userInput, vrInput, camera, frameTime);
+            player.handleInput(userInput, vrInput, camera, frameTime, isMouseGrabbed);
 
         profiler.popPush("soundmaster");
         soundMaster.setListenerOrientation(camera.getViewMatrix());

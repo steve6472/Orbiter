@@ -29,5 +29,5 @@ public interface Player
     Vector3f getEyePos();
     Vector3f getCenterPos();
 
-    void handleInput(UserInput userInput, VrInput vrInput, Camera camera, float frameTime);
+    void handleInput(UserInput userInput, VrInput vrInput, Camera camera, float frameTime, boolean isMouseGrabbed);
 }

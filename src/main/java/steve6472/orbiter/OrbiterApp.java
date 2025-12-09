@@ -257,8 +257,7 @@ public class OrbiterApp extends FlareApp
         float frameTime = frameInfo.frameTime();
         float tickDuration = 1f / Constants.TICKS_IN_SECOND;
         profiler.popPush("handle input");
-        if ((isMouseGrabbed) || VrData.VR_ON)
-            client.handleInput(input(), vrInput(), frameTime);
+        client.handleInput(input(), vrInput(), frameTime, isMouseGrabbed);
 
         profiler.popPush("tick");
         timeToNextTick -= frameTime;
