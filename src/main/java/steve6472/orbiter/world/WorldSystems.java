@@ -66,7 +66,7 @@ public class WorldSystems
         engine.addSystem(updateClientData = new UpdateClientData());
 
         engine.addSystem(holdSystem = new HoldSystem());
-        engine.addSystem(new AttractTestSystem());
+//        engine.addSystem(new AttractTestSystem());
         engine.addSystem(braodcastClientPosition = new BroadcastClientPosition());
         engine.addSystem(primitiveEmitter = new ParticleEmitterSystem(world));
         engine.addSystem(new ClickConsumerTest());
@@ -78,6 +78,7 @@ public class WorldSystems
         engine.addSystem(new LifetimeTicksSystem());
         engine.addSystem(new VelocitySystem());
         engine.addSystem(new EventTick(world));
+        engine.addSystem(new HoldInteract());
 
         engine.addSystem(new FillSeedDispenserSystem());
         engine.addSystem(new CropPlotGrowthSystem());

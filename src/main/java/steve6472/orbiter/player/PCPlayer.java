@@ -19,8 +19,11 @@ import steve6472.orbiter.ui.GlobalProperties;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.physics.Collision;
 import steve6472.orbiter.world.ecs.components.physics.PCCharacter;
+import steve6472.orbiter.world.ecs.core.EntityBlueprint;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static steve6472.orbiter.Convert.jomlToPhys;
@@ -49,6 +52,7 @@ public class PCPlayer implements Player
 
     public static float REACH = 2;
     public static float STRENGTH = 1;
+    private final Map<String, Runnable> PATTERNS = new HashMap<>();
 
     public PCPlayer(UUID uuid, Client client)
     {
@@ -75,6 +79,18 @@ public class PCPlayer implements Player
         PhysicsSystem physics = client.getWorld().physics();
         character = new Character(settings, new RVec3(0, 1, 0), new Quat(), Constants.PhysicsFlags.CLIENT_PLAYER, physics);
         character.addToPhysicsSystem();
+
+
+        PATTERNS.put("lel", () -> teleport(new Vector3f(0, 4, 0)));
+        PATTERNS.put("lllll", () ->
+        {
+            EntityBlueprint blueprint = Registries.ENTITY_BLUEPRINT.get(Constants.key("magic_tower_new"));
+            client.getWorld().addEntity(blueprint, UUID.randomUUID(), Map.of(), true);
+        });
+        PATTERNS.put("elefiri", () ->
+        {
+            OrbiterApp.getInstance().window().closeWindow();
+        });
     }
 
     @Override
@@ -195,5 +211,14 @@ public class PCPlayer implements Player
             character.setPosition(position);
             character.setLinearVelocity(new Vec3(0, 0, 0));
         }
+    }
+
+    public void castHex(String pattern)
+    {
+        Runnable runnable = PATTERNS.get(pattern);
+        if (runnable != null)
+            runnable.run();
+        else
+            System.err.println("Unknown pattern " + pattern);
     }
 }

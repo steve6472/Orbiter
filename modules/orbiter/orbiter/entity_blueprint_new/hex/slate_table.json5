@@ -1,0 +1,7 @@
+{
+    blueprints: {
+        physics_body: {
+            model: "blockbench/static/hex/slate_table"
+        }
+    }
+}

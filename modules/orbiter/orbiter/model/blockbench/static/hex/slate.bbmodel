@@ -1,0 +1,127 @@
+{
+    "meta": {
+        "format_version": "5.0",
+        "model_format": "free",
+        "box_uv": false
+    },
+    "name": "slate",
+    "model_identifier": "",
+    "visible_box": [1, 1, 0],
+    "variable_placeholders": "",
+    "variable_placeholder_buttons": [],
+    "timeline_setups": [],
+    "unhandled_root_fields": {},
+    "resolution": {
+        "width": 16,
+        "height": 16
+    },
+    "elements": [
+        {
+            "name": "cube",
+            "box_uv": false,
+            "render_order": "default",
+            "locked": false,
+            "allow_mirror_modeling": true,
+            "from": [-4, -0.5, -4],
+            "to": [4, 0.5, 4],
+            "autouv": 0,
+            "color": 1,
+            "origin": [0, -0.5, 0],
+            "faces": {
+                "north": {
+                    "uv": [8, 0, 16, 1],
+                    "texture": 0
+                },
+                "east": {
+                    "uv": [8, 1, 16, 2],
+                    "texture": 0
+                },
+                "south": {
+                    "uv": [8, 2, 16, 3],
+                    "texture": 0
+                },
+                "west": {
+                    "uv": [8, 3, 16, 4],
+                    "texture": 0
+                },
+                "up": {
+                    "uv": [8, 8, 0, 0],
+                    "texture": 0
+                },
+                "down": {
+                    "uv": [8, 8, 0, 16],
+                    "texture": 0
+                }
+            },
+            "type": "cube",
+            "uuid": "87744c15-b3d8-96cb-2cee-faf317cfb0f9"
+        },
+        {
+            "name": "collision",
+            "box_uv": false,
+            "render_order": "default",
+            "locked": false,
+            "allow_mirror_modeling": true,
+            "from": [-4, -0.5, -4],
+            "to": [4, 0.5, 4],
+            "autouv": 1,
+            "color": 1,
+            "visibility": false,
+            "origin": [0, -0.5, 0],
+            "faces": {
+                "north": {
+                    "uv": [0, 0, 8, 1]
+                },
+                "east": {
+                    "uv": [0, 0, 8, 1]
+                },
+                "south": {
+                    "uv": [0, 0, 8, 1]
+                },
+                "west": {
+                    "uv": [0, 0, 8, 1]
+                },
+                "up": {
+                    "uv": [0, 0, 8, 8]
+                },
+                "down": {
+                    "uv": [0, 0, 8, 8]
+                }
+            },
+            "type": "cube",
+            "uuid": "1f6b9692-969c-eb59-e052-72b98a1cbf96"
+        }
+    ],
+    "groups": [],
+    "outliner": ["87744c15-b3d8-96cb-2cee-faf317cfb0f9", "1f6b9692-969c-eb59-e052-72b98a1cbf96"],
+    "textures": [
+        {
+            "name": "orbiter:slate",
+            "relative_path": "../../../../textures/model/slate.png",
+            "folder": "block",
+            "namespace": "",
+            "id": "0",
+            "group": "",
+            "width": 16,
+            "height": 16,
+            "uv_width": 16,
+            "uv_height": 16,
+            "particle": false,
+            "use_as_default": false,
+            "layers_enabled": false,
+            "sync_to_project": "",
+            "render_mode": "default",
+            "render_sides": "auto",
+            "pbr_channel": "color",
+            "frame_time": 1,
+            "frame_order_type": "loop",
+            "frame_order": "",
+            "frame_interpolate": false,
+            "visible": true,
+            "internal": true,
+            "saved": true,
+            "uuid": "404cc0fd-0cbe-a670-f5b3-743c0d0952b9",
+            "source": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABLklEQVR4AZSSMVLDQAxFFc2EghR2GhoKYi7AhBswnIDh3phcAIcTRC5CQQpnn2xltvFmsjPf0urr/13Z1td6O7w/vA2fjx8eI6cOnlfNkMfIo66S1ub+SexkUi/rCZWs7+rEiO+DI4LoI1ca7dTLtnpxkyaZ7f9+XdisNl5D4G7Tw9JhUyoKWS8rafudsA4ZGY0Rx97xZlFTRJZuwBg0rNMYY20c6efYLcCXtYsA+4DadCLXRthN18cwOOpz0MM/J1XC6YyCaEQvcHPCqCsvqrWdvyxLo0Ag7I77y5egNgdt7ds5BOSILY0FqDlZeCgczUTGICfGnliCG4SAxjzHjFoJbhCNERHkRuzn4AaQuSA3gitBEYIQEfO9XFn+I4WI3lvE9F9GCBMiBMCMWMIZAAD//3Q+wVsAAAAGSURBVAMAQlDG02m5Js4AAAAASUVORK5CYII="
+        }
+    ]
+}

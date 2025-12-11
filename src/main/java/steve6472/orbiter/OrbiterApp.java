@@ -2,11 +2,6 @@ package steve6472.orbiter;
 
 import com.github.stephengold.joltjni.Jolt;
 import com.github.stephengold.joltjni.JoltPhysicsObject;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
@@ -23,7 +18,6 @@ import steve6472.flare.pipeline.Pipelines;
 import steve6472.flare.render.*;
 import steve6472.flare.tracy.FlareProfiler;
 import steve6472.flare.tracy.Profiler;
-import steve6472.flare.vr.VrData;
 import steve6472.moondust.*;
 import steve6472.moondust.builtin.BuiltinEventCalls;
 import steve6472.moondust.builtin.JavaFunctions;
@@ -51,11 +45,11 @@ import steve6472.orbiter.rendering.snapshot.system.gizmo.PointGizmoRenderSystem;
 import steve6472.orbiter.rendering.snapshot.system.gizmo.TriGizmoRenderSystem;
 import steve6472.orbiter.settings.Keybinds;
 import steve6472.orbiter.settings.Settings;
+import steve6472.orbiter.ui.HexCast;
 import steve6472.orbiter.ui.MDUtil;
 import steve6472.orbiter.ui.OrbiterUIRender;
 import steve6472.orbiter.ui.panel.*;
 import steve6472.orbiter.world.World;
-import steve6472.orbiter.world.ecs.components.Properties;
 import steve6472.test.DebugUILines;
 
 import java.util.Optional;
@@ -174,6 +168,7 @@ public class OrbiterApp extends FlareApp
         addRenderSystem(new DebugLineRenderSystem(masterRenderer(), Pipelines.DEBUG_LINE));
         addRenderSystem(new UIRenderSystem(masterRenderer(), new MoonDustUIRender(this), 256f));
         addRenderSystem(new UIFontRender(masterRenderer(), new MoonDustUIFontRender()));
+        addRenderSystem(new UIRenderSystem(masterRenderer(), new HexCast(this), 256f));
         addRenderSystem(new UIRenderSystem(masterRenderer(), new OrbiterUIRender(this), 256f));
         // Debug
         addRenderSystem(new UILineRender(masterRenderer(), new DebugWidgetUILines()));
@@ -343,7 +338,8 @@ public class OrbiterApp extends FlareApp
         profiler.popPush("keybinds processing");
 
         if (Keybinds.ESCAPE.isActive()) processEscape();
-        if (Keybinds.CHAT.isActive() && !(MDUtil.isPanelOpen(Constants.UI.IN_GAME_MENU) && MDUtil.isPanelOpen(Constants.UI.SETTINGS))) processChat();
+        if (Keybinds.CHAT.isActive() && !(MDUtil.isPanelOpen(Constants.UI.IN_GAME_MENU) || MDUtil.isPanelOpen(Constants.UI.SETTINGS) || MDUtil.isPanelOpen(Constants.UI.HEX))) processChat();
+        if (Keybinds.HEX.isActive() && !(MDUtil.isPanelOpen(Constants.UI.IN_GAME_MENU) || MDUtil.isPanelOpen(Constants.UI.SETTINGS) || MDUtil.isPanelOpen(Constants.UI.IN_GAME_CHAT) || MDUtil.isPanelOpen(Constants.UI.IN_GAME_CHAT))) processHex();
 
         if (Keybinds.ENTER.isActive() || Keybinds.ENTER_KP.isActive() && MDUtil.isPanelOpen(Constants.UI.IN_GAME_CHAT))
         {
@@ -380,6 +376,11 @@ public class OrbiterApp extends FlareApp
         {
             MDUtil.removePanel(Constants.UI.LOBBY_MENU_DEDICATED);
             MDUtil.addPanel(Constants.UI.IN_GAME_MENU);
+        } else if (MDUtil.isPanelOpen(Constants.UI.HEX))
+        {
+            MDUtil.removePanel(Constants.UI.HEX);
+            setMouseGrab(true);
+            HexCast.isHexOpen = false;
         } else
         {
             if (MDUtil.isPanelOpen(Constants.UI.SETTINGS))
@@ -400,6 +401,16 @@ public class OrbiterApp extends FlareApp
             Optional<Widget> child = panel.getChild("chat_field");
             child.ifPresent(w -> MoonDust.getInstance().focus(w));
             setMouseGrab(false);
+        }
+    }
+
+    private void processHex()
+    {
+        if (!MDUtil.isPanelOpen(Constants.UI.HEX) && !MDUtil.isPanelOpen(Constants.UI.MAIN_MENU))
+        {
+            MDUtil.addPanel(Constants.UI.HEX);
+            setMouseGrab(false);
+            HexCast.isHexOpen = true;
         }
     }
 
