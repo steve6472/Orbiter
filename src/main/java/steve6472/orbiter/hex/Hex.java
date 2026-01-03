@@ -68,12 +68,12 @@ public record Hex(int q, int r, int s)
         if (o == null || getClass() != o.getClass())
             return false;
         Hex hex = (Hex) o;
-        return q == hex.q && r == hex.r;
+        return q == hex.q && r == hex.r && s == hex.s;
     }
 
     @Override
     public int hashCode()
     {
-        return Objects.hash(q, r);
+        return Objects.hash(q, r, s);
     }
 }

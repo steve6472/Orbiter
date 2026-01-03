@@ -30,7 +30,8 @@ public class HexCast extends UIRenderImpl
     private final OrbiterApp orbiter;
 
     private static final Key LINE = Constants.key("hex/line");
-    private static final Key LINE_lAST = Constants.key("hex/line_last");
+    private static final Key LINE_LAST = Constants.key("hex/line_last");
+    private static final Key LINE_OLD = Constants.key("hex/line_old");
     private static final Key DOT = Constants.key("hex/dot");
     private static final Key DOT_NEAR = Constants.key("hex/dot_near");
     private static final Key WHITE = Constants.key("hex/white");
@@ -39,21 +40,18 @@ public class HexCast extends UIRenderImpl
 
     public static boolean isHexOpen = false;
 
-    private final HexPatternDrawer drawer = new HexPatternDrawer();
+    private static final HexPatternDrawer drawer = new HexPatternDrawer();
 
     public HexCast(OrbiterApp orbiter)
     {
         this.orbiter = orbiter;
     }
 
-    private void drawHex(List<Vector2f> corners)
+    public static void openHex()
     {
-        for (int j = 0; j < corners.size(); j++)
-        {
-            Vector2f first = corners.get(j);
-            Vector2f second = corners.get(j == corners.size() - 1 ? 0 : j + 1);
-            createLine((int) first.x, (int) first.y, (int) second.x, (int) second.y, 0, 3, 3, getTextureEntry(LINE));
-        }
+        isHexOpen = true;
+        drawer.currentPattern.clear();
+        drawer.oldPatterns.clear();
     }
 
     @Override
@@ -63,11 +61,6 @@ public class HexCast extends UIRenderImpl
             return;
 
         float pixelScale = MoonDust.getInstance().getPixelScale();
-
-        int xCount = (int) ((orbiter.window().getWidth() / pixelScale) / SPREAD);
-        int yCount = (int) ((orbiter.window().getHeight() / pixelScale) / SPREAD);
-        int xFix = (int) ((orbiter.window().getWidth() / pixelScale) - (xCount * SPREAD)) / 2;
-        int yFix = (int) ((orbiter.window().getHeight() / pixelScale) - (yCount * SPREAD)) / 2;
 
         HexGrid grid = new HexGrid(new Layout(Orientation.POINTY, new Vector2f(32, 32), new Vector2f(46, 48)));
         sprite((int) (grid.layout().origin().x / pixelScale) - 2, (int) (grid.layout().origin().y / pixelScale) - 2, 0, 5, 5, DOT_NEAR);
@@ -81,18 +74,6 @@ public class HexCast extends UIRenderImpl
 
         Vector2i cursor = orbiter.input().getMousePositionRelativeToTopLeftOfTheWindow();
         Hex hexUnderCursor = grid.pixelToHex(new Vector2f(cursor));
-
-        if (xFix <= POINT_SIZE / 2 + 1)
-        {
-            xCount--;
-            xFix = (int) ((orbiter.window().getWidth() / pixelScale) - (xCount * SPREAD)) / 2;
-        }
-
-        if (yFix <= POINT_SIZE / 2 + 1)
-        {
-            yCount--;
-            yFix = (int) ((orbiter.window().getHeight() / pixelScale) - (yCount * SPREAD)) / 2;
-        }
 
         if (Keybinds.HOLD_OBJECT.isActive())
         {
@@ -109,26 +90,56 @@ public class HexCast extends UIRenderImpl
         Vector2i underMouse = grid.hexToPixel(hexUnderCursor).get(RoundingMode.FLOOR, new Vector2i());
         if (!drawer.currentPattern.isEmpty())
         {
-            if (drawer.currentPattern.size() == 1)
-            {
-                Hex lastHex = drawer.currentPattern.getLast();
-                Vector2i lastHexScreen = grid.hexToPixel(lastHex).get(RoundingMode.FLOOR, new Vector2i());
-                createLine(lastHexScreen.x, lastHexScreen.y, underMouse.x, underMouse.y, 0, 8, 5, getTextureEntry(LINE));
-            } else
-            {
-                for (int i = 0; i < drawer.currentPattern.size() - 2; i++)
-                {
-                    Hex last = drawer.currentPattern.get(i);
-                    Hex next = drawer.currentPattern.get(i + 1);
-                    Vector2i lastPos = grid.hexToPixel(last).get(RoundingMode.FLOOR, new Vector2i());
-                    Vector2i nextPos = grid.hexToPixel(next).get(RoundingMode.FLOOR, new Vector2i());
-                    createLine(lastPos.x, lastPos.y, nextPos.x, nextPos.y, 0, 8, 5, getTextureEntry(LINE));
-                }
+            drawPattern(drawer.currentPattern, grid, LINE);
+            drawLastLine(grid);
+        }
 
-                Hex lastHex = drawer.currentPattern.get(drawer.currentPattern.size() - 2);
-                Vector2i lastHexPos = grid.hexToPixel(lastHex).get(RoundingMode.FLOOR, new Vector2i());
-                createLine(lastHexPos.x, lastHexPos.y, underMouse.x, underMouse.y, 0, 8, 5, getTextureEntry(LINE_lAST));
-            }
+        for (List<Hex> oldPattern : drawer.oldPatterns)
+        {
+            drawPattern(oldPattern, grid, LINE_OLD);
+        }
+    }
+
+    private void drawLastLine(HexGrid grid)
+    {
+        if (drawer.currentPattern.size() > 1)
+        {
+            Hex secondToLastHex = drawer.currentPattern.get(drawer.currentPattern.size() - 2);
+            Hex lastHex = drawer.currentPattern.getLast();
+            Vector2i secondToLastHexPox = grid.hexToPixel(secondToLastHex).get(RoundingMode.FLOOR, new Vector2i());
+            Vector2i lastHexPos = grid.hexToPixel(lastHex).get(RoundingMode.FLOOR, new Vector2i());
+            createLine(secondToLastHexPox.x, secondToLastHexPox.y, lastHexPos.x, lastHexPos.y, 0, 8, 5, getTextureEntry(LINE_LAST));
+        }
+
+        if (!drawer.currentPattern.isEmpty())
+        {
+            Vector2i cursor = orbiter.input().getMousePositionRelativeToTopLeftOfTheWindow();
+
+            Hex lastHex = drawer.currentPattern.getLast();
+            Vector2i lastHexPos = grid.hexToPixel(lastHex).get(RoundingMode.FLOOR, new Vector2i());
+            createLine(lastHexPos.x, lastHexPos.y, cursor.x, cursor.y, 0, 8, 5, getTextureEntry(LINE_LAST));
+        }
+    }
+
+    private void drawPattern(List<Hex> pattern, HexGrid grid, Key textureKey)
+    {
+        for (int i = 0; i < pattern.size() - 1; i++)
+        {
+            Hex last = pattern.get(i);
+            Hex next = pattern.get(i + 1);
+            Vector2i lastPos = grid.hexToPixel(last).get(RoundingMode.FLOOR, new Vector2i());
+            Vector2i nextPos = grid.hexToPixel(next).get(RoundingMode.FLOOR, new Vector2i());
+            createLine(lastPos.x, lastPos.y, nextPos.x, nextPos.y, 0, 8, 5, getTextureEntry(textureKey));
+        }
+    }
+
+    private void drawHex(List<Vector2f> corners)
+    {
+        for (int j = 0; j < corners.size(); j++)
+        {
+            Vector2f first = corners.get(j);
+            Vector2f second = corners.get(j == corners.size() - 1 ? 0 : j + 1);
+            createLine((int) first.x, (int) first.y, (int) second.x, (int) second.y, 0, 3, 3, getTextureEntry(LINE));
         }
     }
 

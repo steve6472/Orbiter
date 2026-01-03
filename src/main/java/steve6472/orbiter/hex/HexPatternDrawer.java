@@ -10,10 +10,27 @@ import java.util.List;
  */
 public class HexPatternDrawer
 {
+    public final List<List<Hex>> oldPatterns = new ArrayList<>();
+
     public final List<Hex> currentPattern = new ArrayList<>();
 
     public void addHexCoords(Hex hexCoords)
     {
+        if (intersectsOldPattern(hexCoords))
+            return;
+
+        // Backtracking
+        if (currentPattern.size() >= 2)
+        {
+            if (currentPattern.get(currentPattern.size() - 2).equals(hexCoords))
+            {
+                currentPattern.removeLast();
+            }
+        }
+
+        if (isExistingPair(hexCoords))
+            return;
+
         if (currentPattern.isEmpty())
         {
             currentPattern.add(hexCoords);
@@ -24,21 +41,40 @@ public class HexPatternDrawer
         {
             currentPattern.add(hexCoords);
         }
+    }
 
-        // Backtracking
-        if (currentPattern.size() >= 3)
+    private boolean intersectsOldPattern(Hex hexCoords)
+    {
+        for (List<Hex> oldPattern : oldPatterns)
         {
-            if (currentPattern.get(currentPattern.size() - 3).equals(hexCoords))
-            {
-                currentPattern.removeLast();
-                currentPattern.removeLast();
-            }
+            if (oldPattern.contains(hexCoords))
+                return true;
         }
+        return false;
+    }
+
+    private boolean isExistingPair(Hex hexCoords)
+    {
+        if (currentPattern.size() < 2)
+            return false;
+        Hex last = currentPattern.getLast();
+
+        for (int i = 0; i < currentPattern.size() - 1; i++)
+        {
+            Hex hex1 = currentPattern.get(i);
+            Hex hex2 = currentPattern.get(i + 1);
+
+            if ((hex1.equals(last) && hex2.equals(hexCoords)) || (hex1.equals(hexCoords) && hex2.equals(last)))
+                return true;
+        }
+        return false;
     }
 
     public String finishPattern()
     {
         String r = get();
+        if (currentPattern.size() >= 2)
+            oldPatterns.add(List.copyOf(currentPattern));
         currentPattern.clear();
         return r;
     }

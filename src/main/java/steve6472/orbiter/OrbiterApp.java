@@ -410,7 +410,7 @@ public class OrbiterApp extends FlareApp
         {
             MDUtil.addPanel(Constants.UI.HEX);
             setMouseGrab(false);
-            HexCast.isHexOpen = true;
+            HexCast.openHex();
         }
     }
 
