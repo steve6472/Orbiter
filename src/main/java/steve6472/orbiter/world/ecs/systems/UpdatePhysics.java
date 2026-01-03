@@ -10,6 +10,7 @@ import steve6472.orbiter.world.World;
 import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
+import steve6472.orbiter.world.ecs.components.physics.PCCharacter;
 import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
 import steve6472.orbiter.world.ecs.core.ComponentEntry;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
@@ -31,7 +32,7 @@ public class UpdatePhysics extends IteratingProfiledSystem
 
     public UpdatePhysics(World world)
     {
-        super(Family.all(UUIDComp.class, Tag.Physics.class).get());
+        super(Family.all(UUIDComp.class, Tag.Physics.class).exclude(PCCharacter.class).get());
         this.world = world;
     }
 

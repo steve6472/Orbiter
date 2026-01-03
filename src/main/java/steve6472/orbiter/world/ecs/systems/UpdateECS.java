@@ -2,7 +2,6 @@ package steve6472.orbiter.world.ecs.systems;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.ashley.core.Family;
-import com.github.stephengold.joltjni.Body;
 import com.github.stephengold.joltjni.BodyInterface;
 import com.mojang.datafixers.util.Pair;
 import steve6472.core.log.Log;
@@ -11,6 +10,7 @@ import steve6472.orbiter.world.ecs.Components;
 import steve6472.orbiter.world.ecs.components.Tag;
 import steve6472.orbiter.world.ecs.components.UUIDComp;
 import steve6472.orbiter.world.ecs.components.physics.ModifyState;
+import steve6472.orbiter.world.ecs.components.physics.PCCharacter;
 import steve6472.orbiter.world.ecs.components.physics.PhysicsProperty;
 import steve6472.orbiter.world.ecs.core.ComponentEntry;
 import steve6472.orbiter.world.ecs.core.IteratingProfiledSystem;
@@ -31,7 +31,7 @@ public class UpdateECS extends IteratingProfiledSystem
 
     public UpdateECS(World world)
     {
-        super(Family.all(UUIDComp.class, Tag.Physics.class).get());
+        super(Family.all(UUIDComp.class, Tag.Physics.class).exclude(PCCharacter.class).get());
         this.world = world;
     }
 

@@ -242,15 +242,17 @@ public class World implements EntityControl, EntityModify, WorldSounds
         Player player = client.player();
 
         profiler.popPush("player world tick");
-        ((PCPlayer) player).worldTick(client.getCamera());
+        ((PCPlayer) player).worldTick(client.getCamera(), timePerStep);
 
         profiler.popPush("physics");
         int errors = physics.update(timePerStep, collisionSteps, tempAllocator, jobSystem);
         assert errors == EPhysicsUpdateError.None : errors;
 
         profiler.popPush("player post sim");
-        Character character = ((PCPlayer) player).character;
-        character.postSimulation(0.01f);
+        PCPlayer pcPlayer = ((PCPlayer) player);
+        BroadPhaseLayerFilter bplFilter = physics.getDefaultBroadPhaseLayerFilter(Constants.Physics.OBJ_LAYER_MOVING);
+        ObjectLayerFilter olFilter = physics.getDefaultLayerFilter(Constants.Physics.OBJ_LAYER_MOVING);
+        pcPlayer.character.extendedUpdate(timePerStep, Convert.jomlToPhys(pcPlayer.gravity), pcPlayer.updateSettings, bplFilter, olFilter, pcPlayer.allBodies, pcPlayer.allShapes, tempAllocator);
 
         profiler.popPush("updateRayTrace");
         client.getRayTrace().updateLookAt(client.getCamera(), PCPlayer.REACH);

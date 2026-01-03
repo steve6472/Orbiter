@@ -3,7 +3,6 @@ package steve6472.orbiter.player;
 import com.badlogic.ashley.core.Component;
 import com.badlogic.ashley.core.Entity;
 import com.github.stephengold.joltjni.*;
-import com.github.stephengold.joltjni.Character;
 import org.joml.Vector2i;
 import org.joml.Vector3f;
 import steve6472.core.registry.Key;
@@ -43,16 +42,24 @@ public class PCPlayer implements Player
     public static final float EYE_HEIGHT = 1.5f;
     public static final float STEP_HEIGHT = 0.4f;
     public static final float PENETRATION_CONSTANT = 0.19f;
-    public static final int JUMP_COOLDOWN = 10;
+    public static final int JUMP_COOLDOWN = 3;
 
     private final Client client;
-    public final Character character;
+    public final ExtendedUpdateSettings updateSettings;
+    public final CharacterVirtual character;
+    public final BodyFilter allBodies;
+    public final ShapeFilter allShapes;
     public final Entity ecsEntity;
     private float jumpCooldown = 0;
 
     public static float REACH = 2;
     public static float STRENGTH = 1;
     private final Map<String, Runnable> PATTERNS = new HashMap<>();
+
+    public Vector3f gravity = new Vector3f(Constants.GRAVITY);
+    public float jumpStrength = 3;
+    public float groundFriction = 0.8f;
+    public float airFriction = 0.85f;
 
     public PCPlayer(UUID uuid, Client client)
     {
@@ -72,13 +79,20 @@ public class PCPlayer implements Player
         if (!(collision.shape() instanceof ConvexShape convexCollisionShape))
             throw new RuntimeException("Player capsule collision is not convex!");
 
-        CharacterSettings settings = new CharacterSettings();
+        CharacterVirtualSettings settings = new CharacterVirtualSettings();
         settings.setShape(convexCollisionShape);
-        settings.setLayer(Constants.Physics.OBJ_LAYER_MOVING);
+        settings.setSupportingVolume(new Plane(Vec3.sAxisY(), 0.7f));
+        settings.setMaxStrength(500);
 
         PhysicsSystem physics = client.getWorld().physics();
-        character = new Character(settings, new RVec3(0, 1, 0), new Quat(), Constants.PhysicsFlags.CLIENT_PLAYER, physics);
-        character.addToPhysicsSystem();
+        character = new CharacterVirtual(settings, new RVec3(0, 1, 0), new Quat(), Constants.PhysicsFlags.CLIENT_PLAYER, physics);
+
+        allBodies = new BodyFilter();
+        allShapes = new ShapeFilter();
+
+        updateSettings = new ExtendedUpdateSettings();
+        updateSettings.setStickToFloorStepDown(Vec3.sZero());
+        updateSettings.setWalkStairsStepUp(Vec3.sZero());
 
 
         PATTERNS.put("lel", () -> teleport(new Vector3f(0, 4, 0)));
@@ -149,22 +163,20 @@ public class PCPlayer implements Player
         camera.updateViewMatrix();
     }
 
-    public void worldTick(Camera camera)
+    public void worldTick(Camera camera, float timePerStep)
     {
         boolean isMouseGrabbed = OrbiterApp.getInstance().isMouseGrabbed();
-        Profiler profiler = FlareProfiler.world();
-        double speed = 1;
+        double speed = 25;
 
         if (Keybinds.SPRINT.isActive())
         {
-            speed *= 2.5d;
+            speed *= 1.75d;
         }
 
         double x = 0;
         double z = 0;
 
-        if (character.isSupported())
-            jumpCooldown = Math.max(--jumpCooldown, 0);
+        jumpCooldown = Math.max(--jumpCooldown, 0);
 
         if (isMouseGrabbed && Keybinds.FORWARD.isActive())
         {
@@ -190,19 +202,27 @@ public class PCPlayer implements Player
             z += Math.cos(camera.yaw() + Math.PI / 2.0) * speed;
         }
 
-        // TODO: this HAS to run on world tick, it blocks render thread
-        profiler.push("get");
-        Vec3 linearVelocity = character.getLinearVelocity();
-        linearVelocity.setX((float) x);
-        linearVelocity.setZ((float) z);
-        character.setLinearVelocity(linearVelocity);
-        profiler.pop();
+        Vector3f linearVelocity = Convert.physToJoml(character.getLinearVelocity());
+        linearVelocity.add((float) x * timePerStep, 0, (float) z * timePerStep);
 
-        if (isMouseGrabbed && Keybinds.JUMP.isActive() && character.isSupported() && jumpCooldown == 0)
+        if (character.isSupported())
         {
-            character.addLinearVelocity(new Vec3(0, 3, 0));
-            jumpCooldown = JUMP_COOLDOWN;
+            linearVelocity.mul(groundFriction, 1, groundFriction);
+            // set Y to 0
+            linearVelocity.setComponent(1, 0);
+            if (isMouseGrabbed && Keybinds.JUMP.isActive() && jumpCooldown == 0)
+            {
+                linearVelocity.add(0, jumpStrength, 0);
+                jumpCooldown = JUMP_COOLDOWN;
+            }
+        } else
+        {
+            linearVelocity.mul(airFriction, 1, airFriction);
         }
+
+        linearVelocity.add(gravity.x * timePerStep, gravity.y * timePerStep, gravity.z * timePerStep);
+
+        character.setLinearVelocity(Convert.jomlToPhys(linearVelocity));
 
         RVec3 position = character.getPosition();
         if (position.y() < -10)

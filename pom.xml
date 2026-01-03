@@ -55,7 +55,7 @@
         <dependency>
             <groupId>com.github.stephengold</groupId>
             <artifactId>jolt-jni-Windows64</artifactId>
-            <version>3.4.0</version>
+            <version>3.5.0</version>
             <classifier>DebugSp</classifier>
             <scope>runtime</scope>
         </dependency>

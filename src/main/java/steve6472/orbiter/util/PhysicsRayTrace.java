@@ -59,11 +59,11 @@ public class PhysicsRayTrace
     public Optional<RayCastResult> rayTraceGetFirst(Vector3f position, Vector3f direction, float distance, boolean excludeClientPlayer)
     {
         BodyFilter bodyFilter = noBodyFilter;
-        if (excludeClientPlayer)
-        {
-            bodyFilter = new IgnoreMultipleBodiesFilter();
-            ((IgnoreMultipleBodiesFilter) bodyFilter).ignoreBody(((PCPlayer) client.player()).character.getBodyId());
-        }
+//        if (excludeClientPlayer)
+//        {
+//            bodyFilter = new IgnoreMultipleBodiesFilter();
+//            ((IgnoreMultipleBodiesFilter) bodyFilter).ignoreBody(((PCPlayer) client.player()).character.getBodyId());
+//        }
 
         rayTrace(position, direction, distance, closestHitCollector, bodyFilter);
         if (!closestHitCollector.hadHit())
